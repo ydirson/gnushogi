@@ -1,5 +1,14 @@
 ChangeLog will start with GNU Shogi 1.0 patchlevel 11 (04/07/1993)
 
+version 1.3.2
+    07/2004
+        Numerous little fixes to keep the program working on modern
+        Linuxes.
+
+version 1.3.1
+    07/2001
+	New piece bitmaps (westernized and Japanese).
+	
 version 1.3
     06/1999
         gnushogi is now only one executable.

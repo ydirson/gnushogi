@@ -24,6 +24,7 @@
 # the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 
+VERSION     = 1.3.2
 GNUSHOGIDIR = ./gnushogi
 XSHOGIDIR   = ./xshogi
 
@@ -82,27 +83,32 @@ xshogi_clean:
 
 
 #
+# Building a distribution.
+#
+
+dist: 
+	./make_dist $(VERSION)
+
+
+#
 # Return to a pristine pre-configuration state.
 #
 
 DISTCLEANFILES = \
-	config.cache config.log config.status config.h \
-	Makefile $(GNUSHOGIDIR)/Makefile $(XSHOGIDIR)/Makefile
+	config.cache config.log config.status config.h Makefile \
+    $(GNUSHOGIDIR)/Makefile $(GNUSHOGIDIR)/Makefile.profile \
+    $(XSHOGIDIR)/Makefile autom4te.cache
 
 distclean: clean
-	for file in $(DISTCLEANFILES); do \
-        if [ -f $$file ]; then rm $$file; fi; \
-        done
+	rm -rf $(DISTCLEANFILES)
 
 
 #
-# Extra cleanup, for the maintainer only :-)
+# Extra cleanup, for the maintainer only.
 #
 
-MAINTAINERCLEANFILES = configure config.h.in doc/gnushogi.info
+MAINTAINERCLEANFILES = configure config.h.in doc/gnushogi.info 
 
 maintainerclean: distclean
-	for file in $(MAINTAINERCLEANFILES); do \
-        if [ -f $$file ]; then rm $$file; fi; \
-        done
+	rm -f $(MAINTAINERCLEANFILES)
 

@@ -67,8 +67,8 @@ LCURSES =   -lcurses -ltermcap
 
 CC          = @CC@
 CWARNINGS   = @WARNINGS@
-CEXTRAFLAGS = @CEXTRAFLAGS@
-CFLAGS      = @CFLAGS@ $(CEXTRAFLAGS) $(CWARNINGS) -I..
+CEXTRAFLAGS = @CEXTRAFLAGS2@
+CFLAGS      = -g $(CEXTRAFLAGS) $(CWARNINGS) -I..
 
 
 # The hashfile is a record of positions seen. It is used by
@@ -142,8 +142,6 @@ pat2inc:
 sizetest:
 	$(CC) $(CFLAGS) -o sizetest sizetest.o $(LIBS)
 
-profile:
-	$(MAKE) -f Makefile.profile gnushogi
 
 #
 # Object files.
@@ -254,6 +252,11 @@ clean:
 	@for file in $(CLEANFILES); do \
 	if [ -f $$file ]; then rm $$file; fi; \
 	done
+	@-find . -name gmon.out  -exec rm {} \;
+	@-find . -name '*.bb'    -exec rm {} \;
+	@-find . -name '*.bbg'   -exec rm {} \;
+	@-find . -name '*.da'    -exec rm {} \;
+	@-find . -name '*.gcov'  -exec rm {} \;
 
 
 #

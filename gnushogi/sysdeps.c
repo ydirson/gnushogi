@@ -42,6 +42,10 @@
 #include <sys/filio.h>
 #endif
 
+#if HAVE_ERRNO_H
+/* Definition of errno(). */
+#include <errno.h>
+#endif
 
 /* Forward declarations. */
 

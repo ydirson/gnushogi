@@ -31,6 +31,9 @@
  *
  */
 
+/* Hack for anal-retentive ANSI-compliance if desired: */
+#define inline
+
 /* FIXME: this file needs to be reorganized in some rational manner. */
 
 #ifndef _GNUSHOGI_H_
@@ -136,6 +139,10 @@ typedef unsigned long  ULONG;
 #  endif
 #endif
 
+#ifdef HAVE_SETLINEBUF
+/* Not necessarily included in <stdio.h> */
+extern void setlinebuf(FILE *__stream);
+#endif
 
 #define RWA_ACC "r+"
 #define WA_ACC "w+"
@@ -217,8 +224,13 @@ extern void movealgbr(short m, char *s);
 #define OPENING_HINT 0x141d /* P7g-7f (20->29) */
 
 /* truth values */
+#ifndef false
 #define false 0
+#endif
+
+#ifndef true
 #define true  1
+#endif
 
 /* colors */
 #define black   0
@@ -1075,7 +1087,6 @@ typedef enum
 } VerifyMove_mode;
 
 extern int VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv);
-extern void AgeTT();
 extern unsigned short TTage;
 
 #endif /* _GNUSHOGI_H_ */

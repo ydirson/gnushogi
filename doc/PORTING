@@ -4,7 +4,7 @@ Porting GNU shogi
 NOTE: this file may be seriously outdated.  I haven't had time to go over
 it yet.  Let me know if there are problems.
 
--- Mike (mvanier@bbb.caltech.edu)
+-- Mike (mvanier@cs.caltech.edu)
 
 
 This describes how to port GNU shogi to machines with scarce memory.

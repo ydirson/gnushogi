@@ -123,9 +123,9 @@ GNU shogi is a program that plays shogi, the Japanese version of chess,
 against a human (or computer) opponent.  This file describes how to use
 GNU shogi and also gives background information about the game of shogi.
 
-This file describes GNU shogi version 1.3.  It was written by me, Mike
+This file describes GNU shogi version 1.3.2.  It was written by me, Mike
 Vanier, the current maintainer of GNU shogi.  My email address is
-@email{mvanier@@bbb.caltech.edu}.
+@email{mvanier@@cs.caltech.edu}.
 
 
 GNU shogi is actually two programs: 
@@ -1396,14 +1396,14 @@ Black in hand: S, G
  |    | bN |    |  f       
 ----------------+
      
-Black in hand: S, G
+Black in hand: 2G
 
 \endVerbatim
 @end tex
 
 @sp 1
 
-Here, Black plays G*2b, White plays K1c, and Black plays S*1d mate.
+Here, Black plays G*2b, White plays K1c, and Black plays G*1d mate.
 More typical tsume problems range from 5 moves to arbitrarily high
 numbers of moves, and they can be quite brain-busting.  Tsume problems
 may seem artificial, but in the closing stages of the game where both
@@ -1505,7 +1505,7 @@ Maka-dai-dai (great-great-great) shogi, played on a 19x19 board with 192
 pieces.  For those for whom Dai-dai shogi is just too small :-)
 
 @item
-Tai (grand) shogi, played on a 25x25 board with 377 pieces!  Until
+Tai (grand) shogi, played on a 25x25 board with 354 pieces!  Until
 recently, this was thought to be the biggest chess game ever devised,
 but now there is...
 
@@ -1736,12 +1736,12 @@ BOOK
 @sp 1
 
 The book gnushogi.tbk consists of a sequence of openings.  An opening
-begins with a line starting with a # (the rest of the line is a
-comment).  Following this is a series of moves in algebraic notation
-alternating black and white separated by white space.  A move may have a
-? after it indicating this move should never be made in this position.
-Moves are stored as position:move so transpositions between openings can
-take place.
+begins with a line starting with a # (the rest of the line is a comment).
+Following this is a series of moves in algebraic notation alternating
+between black and white separated by whitespace.  A move may have a ?
+after it indicating this move should never be made in this position.  Moves
+are stored as position:move so transpositions between openings can take
+place.
 
 @sp 1
 
@@ -1885,7 +1885,7 @@ turns off use of the opening library.
 causes the computer to play both sides of a shogi game.
 
 @item black 
-causes the computer to take the white pieces, if the computer is to move
+causes the computer to play as White, if the computer was to move
 first.
 
 @item bsave 
@@ -2029,7 +2029,7 @@ set recapture mode.
 backout the last level for both sides.  Equal to 2 undo's.
 
 @item reverse 
-causes the board display to be reversed.  That is, the black pieces will
+causes the board display to be reversed.  That is, the Black's pieces will
 now appear at the top of the board.
 
 @item rv 
@@ -2062,7 +2062,7 @@ may also type ``remove''.  This is equivalent to two ``undo'''s
 (e.g. retract one move for each side).
 
 @item white 
-causes the computer to take the black pieces, if the computer is to move
+causes the computer to play as Black; if the computer is to move
 first the go command must be given.
 
 @item xget 
@@ -2239,20 +2239,12 @@ Determines whether xshogi displays its pieces and squares with two
 colors or four.  You shouldn't have to specify monochrome.  xshogi will
 determine if this is necessary.
 
-@item -wpc or -blackPieceColor color
-Color specification for black pieces suitable for XParseColor(3X11).
-Default: #FFFFCC.  These colors look good on a DEC workstation.  If you
-need different colors, try using the xcolors application.  Source for
-xcolors can be found in the X11 contrib directory.
+@item -pc or -pieceColor color
+Color specification for pieces suitable for XParseColor().
+Default: #FFFFD7.  
 
-@item -bpc or -whitePieceColor color
-Same for white pieces.  Default: #202020.
-
-@item -lsc or -lightSquareColor color
-Same for light squares.  Default: #C8C365.
-
-@item -dsc or -darkSquareColor color
-Same for dark squares.  Default: #77A26D.
+@item -sc or -squareColor color
+Same for squares.  Default: #EBDFB0.
 
 @item -wps or -westernPieceSet (True | False)
 Choose the Western style piece set.
@@ -2328,10 +2320,8 @@ be set similarly:
 
 If you are using a grayscale monitor, try setting the colors to:
 
-     XShogi*blackPieceColor:     gray100 @*
-     XShogi*whitePieceColor:     gray0   @*
-     XShogi*lightSquareColor:    gray60  @*
-     XShogi*darkSquareColor:     gray40
+     XShogi*pieceColor:     gray100 @*
+     XShogi*squareColor:    gray60  @*
 
 @end table
 
@@ -2430,14 +2420,14 @@ the side to play next by clicking on the Black or White indicator at the
 top of the screen.
 
 @item Challenge
-allows to make a two display game between two human players.  Enter the
-display you want to connect to.  If you are allowed to connect, a new
-board is displayed at the remote display.  Challenge mode can only be
-stopped by pressing ``quit''.
+allows you to make a two display game between two human players.  Enter
+the display you want to connect to.  If you are allowed to connect, a
+new board is displayed at the remote display.  Challenge mode can only
+be stopped by pressing ``quit''.
 
 @item Select Level
-allows to reset the clocks for both players.  Enter the number of moves
-and the number of minutes in which the moves should be done.
+allows you to reset the clocks for both players.  Enter the number of
+moves and the number of minutes in which the moves should be done.
 
 @item Move NOW
 force computer to stop thinking and to make the current best move.
@@ -2605,7 +2595,7 @@ Here are some useful URLs:
 
 @table @asis
 
-@item Pieter Stouten's shogi page: @uref{http://www.halcyon.com/stouten/shogi.html}
+@item Pieter Stouten's shogi page: @uref{http://www.shogi.net}
 This is the main shogi-related site on the internet, with links to
 almost all the other sites.
 
@@ -2664,7 +2654,7 @@ for being the ambassador of shogi to the West.
 
 @item
 Pieter Stouten, for having the most comprehensive shogi site on the
-World Wide Web @uref{http://www.halcyon.com/stouten/shogi.html}, and for
+World Wide Web (@uref{http://www.shogi.net}), and for
 maintaining the shogi-l mailing list.  Go to Pieter's web site for more
 information on subscribing to the list.  Also thanks to everyone who
 contributes and has contributed to that list.
@@ -2687,7 +2677,7 @@ program.
 
 The motto of GNU shogi is ``100% bug-free or you don't pay!'' :-)  In the
 extremely unlikely case (*ahem*) that you do find a bug, please send me
-(Mike Vanier) an email at @email{mvanier@@bbb.caltech.edu}.  Also, feel
+(Mike Vanier) an email at @email{mvanier@@cs.caltech.edu}.  Also, feel
 free to send me comments, complaints, out-and-out raves, suggestions,
 plane tickets to Hawaii, and/or large suitcases filled with unmarked,
 untraceable hundred-dollar bills.

@@ -4,7 +4,9 @@
 
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(gnushogi/gnushogi.h)
+AC_PREREQ(2.57)
+AC_INIT([gnushogi],[1.3.2],[mvanier@cs.caltech.edu])
+AC_CONFIG_SRCDIR([version.h])
 AC_CONFIG_HEADER(config.h)
 
 
@@ -54,10 +56,12 @@ AC_CHECK_LIB(termcap, tgoto)
 # C compiler warnings.
 #
 
-if [[ $ac_cv_prog_gcc = yes ]]
+if [[ $ac_cv_c_compiler_gnu = yes ]]
 then
-WARNINGS="-Wall -Wno-implicit-int"
+WARNINGS="-Wall -Wno-implicit-int -Wstrict-prototypes -ansi -pedantic"
 CEXTRAFLAGS="-fsigned-char -funroll-loops \$(HASH)"
+# For profiling targets:
+CEXTRAFLAGS2="-fsigned-char -pg -fprofile-arcs -ftest-coverage \$(HASH)"
 else
 # Who knows what warnings your compiler uses?
 WARNINGS=
@@ -66,6 +70,7 @@ fi
 
 AC_SUBST(WARNINGS)
 AC_SUBST(CEXTRAFLAGS)
+AC_SUBST(CEXTRAFLAGS2)
 
 
 #
@@ -78,8 +83,9 @@ echo
 
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h sys/file.h sys/ioctl.h sys/time.h unistd.h)
-AC_CHECK_HEADERS(time.h sys/time.h sys/filio.h)
+AC_CHECK_HEADERS([fcntl.h stdlib.h string.h sys/file.h sys/ioctl.h])
+AC_CHECK_HEADERS([sys/param.h sys/time.h unistd.h])
+AC_CHECK_HEADERS(errno.h)
 AC_HEADER_TIME
 
 
@@ -92,6 +98,9 @@ AC_MSG_CHECKING(for typedefs)
 echo
 
 AC_C_CONST
+AC_HEADER_STDBOOL
+AC_C_INLINE
+AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
@@ -111,9 +120,13 @@ echo
 AC_MSG_CHECKING(for library functions)
 echo
 
+AC_FUNC_FORK
+AC_PROG_GCC_TRADITIONAL
+AC_FUNC_MALLOC
 AC_FUNC_SETVBUF_REVERSED
 AC_TYPE_SIGNAL
-AC_CHECK_FUNCS(gethostname gettimeofday strstr strtol)
+AC_CHECK_FUNCS([dup2 gethostname gettimeofday memset pow strcasecmp])
+AC_CHECK_FUNCS([strchr strerror strrchr strstr strtol])
 AC_CHECK_FUNCS(memcpy bcopy)
 AC_CHECK_FUNCS(setlinebuf setvbuf)
 
@@ -194,5 +207,9 @@ AC_SUBST(XSHOGICLEAN)
 echo
 echo outputting files...
 
-AC_OUTPUT(Makefile gnushogi/Makefile xshogi/Makefile)
+AC_CONFIG_FILES([Makefile
+                 gnushogi/Makefile
+				 gnushogi/Makefile.profile
+                 xshogi/Makefile])
+AC_OUTPUT
 

@@ -40,8 +40,6 @@ static short sqking, sqxking;
 static short InCheck = false, GenerateAllMoves = false;
 static short check_determined = false;
 
-static short INCscore = 0;
-
 short deepsearchcut = true;
 short tas = false, taxs = false, ssa = false;
 
