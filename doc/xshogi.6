@@ -159,11 +159,13 @@ to get all his pieces protected in the promotion zone.
 The following command line options also correspond to X resources
 that you can set in your
 .IR \&.Xdefaults
+or
+.IR \&.Xresources
 file.
 .TP 8
 .B standard Xt options
 .IR xshogi
-accepts standard Xt options like -display, -geometry, and -iconic.
+accepts standard Xt options like -display, -geometry, -iconic, -bg etc.
 .TP 8
 .B -tc or -timeControl minutes[:seconds]
 Amount of time for a set of moves determined by
@@ -300,36 +302,18 @@ The default is False.  The
 resource specifies what font to use.  
 .TP 8
 .B -mono or -monoMode "(True | False)"
-Determines whether
-.IR xshogi
-displays its pieces and squares with two colors or four.
-You shouldn't have to specify monochrome.
+Monochrome mode.  You shouldn't have to specify monochrome.
 .IR xshogi
 will determine if this is necessary.
 .TP 8
-.B -wpc or -blackPieceColor color
-Color specification for black pieces
-suitable for
-.IR XParseColor (3X11).
-Default: #FFFFCC.
-These colors look good on a DEC workstation.
-If you need different colors, try using the
-.IR xcolors
-application.  Source for
-.IR xcolors
-can be found in the X11/R4 contrib directory.
+.B -pc or -pieceColor color
+Color specification for pieces suitable for
+.IR XParseColor().
+Default: #FFFFD7.
 .TP 8
-.B -bpc or -whitePieceColor color
-Same for white pieces.
-Default: #202020.
-.TP 8
-.B -lsc or -lightSquareColor color
-Same for light squares.
-Default: #C8C365.
-.TP 8
-.B -dsc or -darkSquareColor color
-Same for dark squares.
-Default: #77A26D.
+.B -sc or -squareColor color
+Same for squares.
+Default: #EBDFB0.
 .TP 8
 .B -wps or -westernPieceSet (True | False)
 Choose the Western style piece set.
@@ -416,13 +400,10 @@ XShogi*coordFont:    helvetica_10
 If you are using a grayscale monitor, try setting the colors to:
 .sp 1
 .br
-XShogi*blackPieceColor:     gray100
+XShogi*pieceColor:     gray100
 .br
-XShogi*whitePieceColor:     gray0
+XShogi*squareColor:    gray60
 .br
-XShogi*lightSquareColor:    gray60
-.br
-XShogi*darkSquareColor:     gray40
 .SH COMMAND BUTTONS AND KEYS
 .TP 8
 .B Quit
@@ -524,13 +505,13 @@ clear the board.  You can set the side to play next
 by clicking on the Black or White indicator at the top of the screen.
 .TP 8
 .B Challenge
-allows to make a two display game between two human players.
+allows you to make a two display game between two human players.
 Enter the display you want to connect to. If you are allowed to
 connect, a new board is displayed at the remote display.
 Challenge mode can only be stopped by pressing "quit".
 .TP 8
 .B Select Level
-allows to reset the clocks for both players.
+allows you to reset the clocks for both players.
 Enter the number of moves and the number of minutes in which the
 moves should be done.
 .TP 8
@@ -565,8 +546,10 @@ Original authors of XBoard:  Chris Sears and Dan Sears.
 Enhancements for XBoard (Version 2.0):  Tim Mann.
 .LP
 Conversion to XShogi (Version 1.1):  Matthias Mutz.
+.LP
+Current maintainer: Mike Vanier.
 .SH COPYRIGHT
-XShogi borrows its piece bitmaps from CRANES Shogi.
+XShogi borrows some of its piece bitmaps from CRANES Shogi.
 .LP
 Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts.
 Enhancements Copyright 1992 Free Software Foundation, Inc.

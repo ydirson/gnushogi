@@ -14,7 +14,7 @@
  * Modified implementation of ISS mode for XShogi:  Matthias Mutz
  * Current maintainer:                              Michael C. Vanier
  *
- * XShogi borrows its piece bitmaps from CRANES Shogi.
+ * XShogi borrows some of its piece bitmaps from CRANES Shogi.
  *
  * Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts.
  * Enhancements Copyright 1992 Free Software Foundation, Inc.
@@ -72,15 +72,19 @@ COMMENT ["#"]([^\n])*
 
 %%
 
-"\n"      { lines++; cols = 1; }
+"White wins" { return WHITE_WINS; }
+"Black wins" { return BLACK_WINS; }
+"Draw"       { return DRAW;       }
+
+"\n"      { lines++; cols = 1;       }
 "+"       { cols++;  return PROMOTE; }
-"*"       { cols++;  return DROPS; }
-"'"       { cols++;  return DROPS; }
-"."       { cols++;  return COLON; }
-{PIECE}   { yylval.string = yytext; cols += strlen(yytext); return PIECE;  }
-{SQUARE}  { yylval.string = yytext; cols += strlen(yytext); return SQUARE; }
-{NUMBER}  { yylval.string = yytext; cols += strlen(yytext); return NUMBER; }
-{COMMENT} { yylval.string = yytext; lines++; cols = 1; return COMMENT; }
+"*"       { cols++;  return DROPS;   }
+"'"       { cols++;  return DROPS;   }
+"."       { cols++;  return COLON;   }
+{PIECE}   { yylval.string = yytext; cols += strlen(yytext); return PIECE;   }
+{SQUARE}  { yylval.string = yytext; cols += strlen(yytext); return SQUARE;  }
+{NUMBER}  { yylval.string = yytext; cols += strlen(yytext); return NUMBER;  }
+{COMMENT} { yylval.string = yytext; lines++; cols = 1;      return COMMENT; }
 .         { cols++; }
 
 %%

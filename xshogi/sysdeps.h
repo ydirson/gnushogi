@@ -13,7 +13,7 @@
  * Modified implementation of ISS mode for XShogi:  Matthias Mutz
  * Current maintainer:                              Michael C. Vanier
  *
- * XShogi borrows its piece bitmaps from CRANES Shogi.
+ * XShogi borrows some of its piece bitmaps from CRANES Shogi.
  *
  * Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts.
  * Enhancements Copyright 1992 Free Software Foundation, Inc.
@@ -64,12 +64,7 @@
 #ifndef _SYSDEPS_H_
 #define _SYSDEPS_H_
 
-#if defined(LINUX)
-/* Avoid multiple definitions of wide char type.  */
-#define X_WCHAR /* This should work, but doesn't. */
-#define __EMX__ /* This is an outrageous hack!    */
-#endif
-
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -78,6 +73,16 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <fcntl.h>
+
+/*
+ * Stuff that isn't reliably included (on Linux, anyway).
+ */
+
+extern FILE *fdopen(int fd, const char *modes);
+extern int   fileno(FILE *stream);
+extern int   kill(pid_t pid, int sig);
+extern int   strcasecmp(const char *s1, const char *s2);
+extern int   gethostname(char *name, size_t len);
 
 
 /*

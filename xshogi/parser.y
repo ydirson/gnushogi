@@ -15,7 +15,7 @@
  * Modified implementation of ISS mode for XShogi:  Matthias Mutz
  * Current maintainer:                              Michael C. Vanier
  *
- * XShogi borrows its piece bitmaps from CRANES Shogi.
+ * XShogi borrows some of its piece bitmaps from CRANES Shogi.
  *
  * Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts.
  * Enhancements Copyright 1992 Free Software Foundation, Inc.
@@ -92,7 +92,8 @@ extern void MakeMove(ShogiMove *move_type, int from_x, int from_y,
 %}
 
 %start goal
-%token PROMOTE DROPS PIECE SQUARE NUMBER COMMENT COLON
+%token PROMOTE DROPS PIECE SQUARE NUMBER COMMENT COLON 
+%token BLACK_WINS WHITE_WINS DRAW
       
 %union { int val; char* string; }
 
@@ -170,12 +171,28 @@ extern void MakeMove(ShogiMove *move_type, int from_x, int from_y,
         strcpy(moveList[currentMove], currentMoveString);
         MakeMove(&move_type, from_x, from_y, to_x, to_y);
     }
+  | BLACK_WINS 
+    { 
+		loaded_game_finished = 1;
+		DisplayMessage("Black wins", False);
+	}
+  | WHITE_WINS 
+    { 
+		loaded_game_finished = 1;
+		DisplayMessage("White wins", False);
+	}
+  | DRAW
+    { 
+		loaded_game_finished = 1;
+		DisplayMessage("Draw", False);
+	}
  ;         
 
  promotion:
    | PROMOTE 
-    { move_type = (BlackOnMove(currentMove) ? BlackPromotion : WhitePromotion); 
-      strcat(currentMoveString,"+"); }
+     { move_type = (BlackOnMove(currentMove) 
+					? BlackPromotion : WhitePromotion); 
+       strcat(currentMoveString,"+"); }
  ;
 
 %%

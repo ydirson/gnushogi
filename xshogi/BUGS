@@ -1,7 +1,25 @@
-KNOWN BUGS OR PROBLEMS
-----------------------
+KNOWN BUGS, PROBLEMS, AND MISFEATURES
+-------------------------------------
 
 We only have Western-style piece bitmaps for the small-size board, which is
 not very pleasant to use.  If you try to use the medium- or large-size
-board with Western bitmaps you get garbage bitmaps instead.
+board with Western bitmaps you get garbage bitmaps instead.  The small
+bitmaps are pretty lame, too; we need new Western bitmaps at all sizes.
+
+I'd prefer if the True/False options were changed to -opt e.g.
+-mono or -no_mono (not necessary to have -no_opt in all cases, though).
+
+charPieceColor has no effect; the piece bitmap is *always* black.
+
+I've seen pawns disappear for no obvious reason; they come back on the next
+move.  This is extremely hard to reproduce.  I call this the "disappearing
+pawn bug"; the pawn is still there, but you can't see it.  It almost always
+happens with this opening: P2f P3d P2e B3c and the pawn on 3d disappears.
+
+The coordinate printing is pretty lame.
+
+When you hit "Pause" and then move, the move isn't shown on the screen
+until the computer makes its next move.
+
+
 

@@ -13,7 +13,7 @@
  * Modified implementation of ISS mode for XShogi:  Matthias Mutz
  * Current maintainer:                              Michael C. Vanier
  *
- * XShogi borrows its piece bitmaps from CRANES Shogi.
+ * XShogi borrows some of its piece bitmaps from CRANES Shogi.
  *
  * Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts.
  * Enhancements Copyright 1992 Free Software Foundation, Inc.
@@ -64,15 +64,15 @@
 #ifndef _BITMAPS_H_
 #define _BITMAPS_H_
 
-/* 
+/*
  * Naming conventions:
  *
  * R  -- reverse orientation
  * P  -- promoted piece
  * W  -- westernized bitmap
- * _m -- medium-sized piece (49x49)
  * _l -- large-sized piece  (64x64)
- * (default is small-sized piece) (32x32)
+ * _m -- medium-sized piece (49x49)
+ * (default name: small-sized piece) (32x32)
  *
  */
 
@@ -83,9 +83,11 @@
 #include "eastern_bitmaps/bigsolidR.xbm"
 #include "eastern_bitmaps/smallsolidR.xbm"
 
-/* 
- * Westernized piece bitmaps.
- * Thanks to Paul Raines for making the "westernized" bitmaps available.
+/*** Westernized piece bitmaps. ***/
+
+/*
+ * Thanks to Bernhard Maerz for the new westernized bitmaps.
+ * These are only available in the large size.
  */
 
 #include "western_bitmaps/kingW.xbm"
@@ -119,7 +121,9 @@
 #include "western_bitmaps/pawnPRW.xbm"
 
 
-/* Eastern piece bitmaps. */
+/*** Eastern piece bitmaps. ***/
+
+/* Small sized bitmaps. */
 
 #include "eastern_bitmaps/king.xbm"
 #include "eastern_bitmaps/rook.xbm"
@@ -146,6 +150,33 @@
 #include "eastern_bitmaps/lancePR.xbm"
 #include "eastern_bitmaps/pawnR.xbm"
 #include "eastern_bitmaps/pawnPR.xbm"
+
+/*
+ * Alternative top bitmaps for eastern pieces (promoted rook and bishop
+ * only).  Thanks to Ken'ichi Nakayama for providing these bitmaps.
+ * Similar comments apply for medium and large-sized bitmaps.
+ */
+
+#if defined(TOP_PART_BITMAPS)
+
+#include "eastern_bitmaps/rookP.top.xbm"
+#include "eastern_bitmaps/bishopP.top.xbm"
+
+#include "eastern_bitmaps/rookPR.top.xbm"
+#include "eastern_bitmaps/bishopPR.top.xbm"
+
+#else   /* !TOP_PART_BITMAPS */
+
+#include "eastern_bitmaps/rookP.xbm"
+#include "eastern_bitmaps/bishopP.xbm"
+
+#include "eastern_bitmaps/rookPR.xbm"
+#include "eastern_bitmaps/bishopPR.xbm"
+
+#endif  /* TOP_PART_BITMAPS  */
+
+
+/*** Medium-sized bitmaps. ***/
 
 #include "eastern_bitmaps/bigsolid_m.xbm"
 #include "eastern_bitmaps/smallsolid_m.xbm"
@@ -178,6 +209,32 @@
 #include "eastern_bitmaps/pawnR_m.xbm"
 #include "eastern_bitmaps/pawnPR_m.xbm"
 
+#if defined(TOP_PART_BITMAPS)
+
+#include "eastern_bitmaps/rookP_m.top.xbm"
+#include "eastern_bitmaps/bishopP_m.top.xbm"
+
+#include "eastern_bitmaps/rookPR_m.top.xbm"
+#include "eastern_bitmaps/bishopPR_m.top.xbm"
+
+#else   /* !TOP_PART_BITMAPS */
+
+#include "eastern_bitmaps/rookP_m.xbm"
+#include "eastern_bitmaps/bishopP_m.xbm"
+
+#include "eastern_bitmaps/rookPR_m.xbm"
+#include "eastern_bitmaps/bishopPR_m.xbm"
+
+#endif  /* TOP_PART_BITMAPS  */
+
+
+/*** Large bitmaps. ***/
+
+/*
+ * The new large eastern bitmaps were kindly provided by Bernhard Maerz.
+ * Thanks Bernhard!
+ */
+
 #include "eastern_bitmaps/bigsolid_l.xbm"
 #include "eastern_bitmaps/smallsolid_l.xbm"
 #include "eastern_bitmaps/bigsolidR_l.xbm"
@@ -209,24 +266,7 @@
 #include "eastern_bitmaps/pawnR_l.xbm"
 #include "eastern_bitmaps/pawnPR_l.xbm"
 
-/* 
- * Alternative top bitmaps for eastern pieces (promoted rook and bishop
- * only).  Thanks to Ken'ichi Nakayama for providing these bitmaps.  
- */
-
 #if defined(TOP_PART_BITMAPS)
-
-#include "eastern_bitmaps/rookP.top.xbm"
-#include "eastern_bitmaps/bishopP.top.xbm"
-
-#include "eastern_bitmaps/rookPR.top.xbm"
-#include "eastern_bitmaps/bishopPR.top.xbm"
-
-#include "eastern_bitmaps/rookP_m.top.xbm"
-#include "eastern_bitmaps/bishopP_m.top.xbm"
-
-#include "eastern_bitmaps/rookPR_m.top.xbm"
-#include "eastern_bitmaps/bishopPR_m.top.xbm"
 
 #include "eastern_bitmaps/rookP_l.top.xbm"
 #include "eastern_bitmaps/bishopP_l.top.xbm"
@@ -236,25 +276,13 @@
 
 #else   /* !TOP_PART_BITMAPS */
 
-#include "eastern_bitmaps/rookP.xbm"
-#include "eastern_bitmaps/bishopP.xbm"
-
-#include "eastern_bitmaps/rookPR.xbm"
-#include "eastern_bitmaps/bishopPR.xbm"
-
-#include "eastern_bitmaps/rookP_m.xbm"
-#include "eastern_bitmaps/bishopP_m.xbm"
-
-#include "eastern_bitmaps/rookPR_m.xbm"
-#include "eastern_bitmaps/bishopPR_m.xbm"
-
 #include "eastern_bitmaps/rookP_l.xbm"
 #include "eastern_bitmaps/bishopP_l.xbm"
 
 #include "eastern_bitmaps/rookPR_l.xbm"
 #include "eastern_bitmaps/bishopPR_l.xbm"
 
-#endif  /* TOP_PART_BITMAPS */
+#endif  /* TOP_PART_BITMAPS  */
 
 #endif /* _BITMAPS_H_ */
 
