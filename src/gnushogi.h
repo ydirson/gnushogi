@@ -23,59 +23,123 @@
  * along with GNU Shogi; see the file COPYING.  If not, write to
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+ 
 
-#if defined THINK_C 
 
-/* #define NONDSP */
-/* #define DEBUG */
-/* #define DEBUG41 */
-/* #define DEBUG40 */
-/* #define DEBUG_EVAL */
+#if defined THINK_C
+
 /* OPT */
 /* #define XSHOGI */
 /* #define BAREBONES */
 #define GDX
+#define SMALL_MEMORY
+#define SLOW_CPU
+/* #define SAVE_SSCORE */
 #define SAVE_PTYPE_DISTDATA
 #define SAVE_DISTDATA
+#define SAVE_NEXTPOS
 #define HARDTIMELIMIT
-#define DEBUG9
-/* #define NULLMOVE */
+#define DEEPSEARCHCUT
+#define NULLMOVE
 #define VERYBUGGY
-#define CHECKTRP
-#define AG4
 #define QUIETBACKGROUND
 /* #define HASGETTIMEOFDAY */
-#define K32SEGMENTS
-struct timeval {
-        long    tv_sec;         /* seconds */
-        long    tv_usec;        /* and microseconds */
-};
-extern int gettimeofday(struct timeval *tp, void *tzp);
+#define clocktime() (100l * clock() / CLOCKS_PER_SEC)
 #define HISTORY
 /* #define EXACTHISTORY */
 #define CACHE
-#define NOSCORESPACE
 #define SEMIQUIETBOOKGEN
 /* #define NOTTABLE */
 /* GENOPT */
 #define DROPBONUS
 #define FIELDBONUS
 #define TESUJIBONUS
+#define USE_PATTERN
 /* FILES */
 #define LANGFILE "gnushogi.lang"
 #define BOOK "gnushogi.book"
 #define BINBOOK "gnushogi.book.data"
 #define HASHFILE "gnushogi.hash"
 #define PATTERNFILE "gnushogi.pattern"
+/* #define DEBUG */    
+
+#define NOBYTEOPS
+#include <string.h>
+
+#define small_short char
+#define small_ushort unsigned char
+
+#elif defined MSDOS
+
+/* OPT */
+/* #define XSHOGI */
+/* #define BAREBONES */
+#define GDX
+#define SMALL_MEMORY
+#define SLOW_CPU
+/* #define SAVE_SSCORE */
+#define SAVE_PTYPE_DISTDATA
+#define SAVE_DISTDATA
+#define SAVE_NEXTPOS
+#define HARDTIMELIMIT
+#define DEEPSEARCHCUT
+#define DEBUG9
+#define NULLMOVE
+#define VERYBUGGY
+#define QUIETBACKGROUND
+/* #define HASGETTIMEOFDAY */
+#define clocktime() (100l * clock() / CLOCKS_PER_SEC)
+#define HISTORY
+#define EXACTHISTORY
+#define CACHE
+#define SEMIQUIETBOOKGEN
+/* #define NOTTABLE */
+/* GENOPT */
+#define DROPBONUS
+#define FIELDBONUS
+#define TESUJIBONUS
+#define USE_PATTERN
+/* FILES */
+#define LANGFILE "gnushogi.lan"
+#define BOOK "gnushogi.boo"
+#define BINBOOK "gnushogi.dat"
+#define HASHFILE "gnushogi.has"
+#define PATTERNFILE "gnushogi.pat"
 /* #define DEBUG */
+
+#define NOBYTEOPS
+#include <mem.h>
+
 #define small_short char
 #define small_ushort unsigned char
 
 #else
+/*
+ * type small_short must cover -128..127. In case of trouble,
+ * try to uncommend "signed". If this doesn't help, use short. 
+ */
+#define signed /* signed */
 
-#define small_short char
-#define small_ushort short
+#define small_short signed char
+#define small_ushort unsigned char
 
+#endif
+    
+
+#if !defined NOBYTEOPS
+#if !defined NOMEMSET
+#define bcopy(src,dst,len) memcpy(dst,src,len)
+#define bzero(dst,len) memset (dst,0,len)
+#else 
+#define bcopy(src,dst,len) \
+  { int i; char *psrc=(char *)src, *pdst=(char *)dst;\
+    for (i=len; i; pdst[--i] = psrc[i]);\
+  }
+#define bzero(dst,len) \
+  { int i; char *pdst=(char *)dst;\
+    for (i=len; i; pdst[--i] = 0);\
+  }
+#endif
 #endif
 
 
@@ -111,6 +175,7 @@ ShowDBLine (char *, short int, short int,
 #elif defined MSDOS
 #include <time.h>
 #include <malloc.h>
+#define malloc(size) farmalloc(size)
 #define RWA_ACC "r+b"
 #define WA_ACC "w+b"
 #ifdef timeout
@@ -125,7 +190,7 @@ ShowDBLine (char *, short int, short int,
 #include <sys/types.h>
 #include <sys/times.h>
 #endif /* MSDOS */
-#if defined NONDSP || defined THINK_C
+#if defined NONDSP || defined THINK_C || defined MSDOS
 #define printz printf
 #define scanz scanf
 #else
@@ -157,6 +222,7 @@ ShowDBLine (char *, short int, short int,
 #endif
 
 #define NO_PIECES 15
+#define MAX_CAPTURED 19
 #define NO_PTYPE_PIECES 15
 #define NO_SQUARES 81
 #define NO_COLS 9
@@ -167,19 +233,19 @@ ShowDBLine (char *, short int, short int,
 #endif
 
 /* Piece values and relative values */
-#define valueP   70 /* 1 */
-#define valuePp 150 /* 2 */
-#define valueL  240 /* 3 */
-#define valueN  250 /* 4 */
-#define valueLp 260 /* 5 */
-#define valueNp 270 /* 6 */
-#define valueS  340 /* 7 */
-#define valueSp 350 /* 8 */
-#define valueG  360 /* 9 */
-#define valueB  850 /* 10 */
-#define valueBp 870 /* 11 */
-#define valueR  920 /* 12 */
-#define valueRp 970 /* 13 */
+#define valueP    95 /*  1 */
+#define valuePp  150 /*  2 */
+#define valueL   240 /*  3 */
+#define valueN   250 /*  4 */
+#define valueLp  260 /*  5 */
+#define valueNp  270 /*  6 */
+#define valueS   340 /*  7 */
+#define valueSp  350 /*  8 */
+#define valueG   360 /*  9 */
+#define valueB   850 /* 10 */
+#define valueBp  870 /* 11 */
+#define valueR   920 /* 12 */
+#define valueRp  970 /* 13 */
 #define valueK  1200 /* 14 */
 #define SCORE_LIMIT 12000
 
@@ -218,6 +284,11 @@ ShowDBLine (char *, short int, short int,
 #define WhiteKing PieceList[white][0]
 #define OwnKing PieceList[c1][0]
 #define EnemyKing PieceList[c2][0]
+
+
+/* board properties */
+#define InPromotionZone(color,sq) ((color == black) ? (sq > 53) : (sq < 27))
+
 
 /* constants */
 
@@ -293,70 +364,88 @@ ShowDBLine (char *, short int, short int,
  */
 #if defined NOTTABLE
 #define vttblsz 0
-#elif defined MSDOS
-#define vttblsz (1 << 11)
-#elif defined THINK_C
+#elif defined SMALL_MEMORY
+#if !defined SAVE_SSCORE
 #define vttblsz (1 << 10)
-#define huge
+#else
+#define vttblsz (1 << 12)
+#endif
 #else
 #ifdef DEBUG
-#define vttblsz (1 << 11)
-#else
-#define vttblsz (1 << 16)
+#define vttblsz (8001)
+#else /* !DEBUG */
+#define vttblsz (100001)
 #endif
-/* #define vttblsz (1 << 17) */
-#define huge
-#endif /* MSDOS */
+#endif
+
+#if defined SMALL_MEMORY
+#define MINTTABLE (0)
+#else
+#ifdef DEBUG
+#define MINTTABLE (2000)	/* min ttable size -1 */
+#else
+#define MINTTABLE (8000)	/* min ttable size -1 */
+#endif
+#endif
+
 #define ttblsz vttblsz
 
-#if defined THINK_C
-#define TREE 2200		/* max number of tree entries */
+#if defined SMALL_MEMORY
+#if !defined SAVE_SSCORE
+#define TREE 1500               /* max number of tree entries */
 #else
-#define TREE 4000		/* max number of tree entries */
+#define TREE 2500               /* max number of tree entries */
+#endif
+#else
+#define TREE 4000               /* max number of tree entries */
 #endif
 
-#define MAXDEPTH 20		/* max depth a search can be carried */
-#define MINDEPTH 2		/* min search depth =1 (no hint), >1 hint */
-#define MAXMOVES 300		/* max number of half moves in a game */
-#if defined THINK_C
-#define BOOKSIZE 1000
-#elif defined MSDOS
-#define BOOKSIZE 10000		/* Number of unique position/move combinations allowed */
+#define MAXDEPTH 20             /* max depth a search can be carried */
+#define MINDEPTH 2              /* min search depth =1 (no hint), >1 hint */
+#define MAXMOVES 300            /* max number of half moves in a game */
+#define CPSIZE 235              /* size of lang file max */
+#if defined SMALL_MEMORY
+#if defined SAVE_SSCORE
+#define ETABLE (1<<10)		/* static eval cache */
 #else
-#define BOOKSIZE 250000		/* Number of unique position/move combinations allowed */
+#define ETABLE (1<<8)		/* static eval cache */
 #endif
-#define CPSIZE 235		/* size of lang file max */
-#ifdef THINK_C
-#define ETABLE (2<<10)		/* static eval cache */
 #else
-#define ETABLE (2<<12)		/* static eval cache */
+#define ETABLE (10001)          /* static eval cache */
 #endif
 /***************** tuning paramaters **********************************************/
+#if defined SLOW_CPU
+#define MINRESPONSETIME 1000
+#else
+#define MINRESPONSETIME 100
+#endif
 #define MINGAMEIN 4
 #define MINMOVES 15
-#define CHKDEPTH 1		/* always look forward CHKDEPTH half-moves if in check */
-#ifdef THINK_C
-#define DEPTHBEYOND 9	        /* Max to go beyond Sdepth */
+#define CHKDEPTH 1              /* always look forward CHKDEPTH half-moves if in check */
+#if defined SLOW_CPU
+#define DEPTHBEYOND 7           /* Max to go beyond Sdepth */
 #else
-#define DEPTHBEYOND 11	        /* Max to go beyond Sdepth */
+#define DEPTHBEYOND 11          /* Max to go beyond Sdepth */
 #endif
-#define HASHDEPTH 4		/* depth above which to use HashFile */
-#define HASHMOVELIMIT 40	/* Use HashFile only for this many moves */
-#define PTVALUE 0	        /* material value below which pawn threats at 5 & 3 are used */
-#define ZDEPTH 3		/* depth beyond which to check ZDELTA for extra time */
-#define ZDELTA 10		/* score delta per ply to cause extra time to be given */
-#ifdef THINK_C
-#define ZNODES (flag.tsume ? 200 : 500)	 /* check the time every ZNODES positions */
+#define HASHDEPTH 4             /* depth above which to use HashFile */
+#define HASHMOVELIMIT 40        /* Use HashFile only for this many moves */
+#define PTVALUE 0               /* material value below which pawn threats at 5 & 3 are used */
+#define ZDEPTH 3                /* depth beyond which to check ZDELTA for extra time */
+#define ZDELTA 10               /* score delta per ply to cause extra time to be given */
+#define BESTDELTA 90
+/* about 1/2 second worth of nodes for your machine */
+#if defined SLOW_CPU
+#define ZNODES (flag.tsume ? 150 : 300)  /* check the time every ZNODES positions */
 #else
 #define ZNODES (flag.tsume ? 400 : 1000) /* check the time every ZNODES positions */
 #endif
-#define MAXTCCOUNTX  10		/* max number of time clicks per search to complete ply */
-#define MAXTCCOUNTR 4		/* max number of time clicks per search extensions*/
-#define SCORESPLIM 8		/* Score space doesn't apply after this stage */
-#define SDEPTHLIM Sdepth+1
-#define HISTORYLIM 4096		/* Max value of history killer */
+#define MAXTCCOUNTX  10         /* max number of time clicks per search to complete ply */
+#define MAXTCCOUNTR 4           /* max number of time clicks per search extensions*/
+#define SCORESPLIM 8            /* Score space doesn't apply after this stage */
+#define SDEPTHLIM (Sdepth+1)
+#define HISTORYLIM 4096         /* Max value of history killer */
 #ifdef EXACTHISTORY
-#ifdef THINK_C
+#if defined SMALL_MEMORY
 #define HISTORY_MASK 0x8000     /* mask to MSB of history index */
 #define HISTORY_SIZE 0x10000    /* size of history table */
 #else
@@ -368,18 +457,20 @@ ShowDBLine (char *, short int, short int,
 #define HISTORY_MASK 0x3fff     /* mask to significant bits of history index */
 #define HISTORY_SIZE (1 << 14)  /* size of history table */
 #endif
-                                               
+					       
 #define sizeof_history (sizeof(unsigned short) * (size_t)HISTORY_SIZE)
 
 #ifdef EXACTHISTORY
 /* Map from.to (8bit.8bit) to from.to (0.7bit.8bit) */
-#define hmove(mv) (mv & 0x7fff)
+#define khmove(mv) (mv & 0x7fff)
+#define hmove(mv) ((mv & 0x7fff) ^ 0x5555)
 #else
 /* Map from.to (8bit.8bit) to from.to (00.7bit.7bit) */
 /* Swap bits of ToSquare in case of promotions, hoping that
    no catastrophic collision occur. */
-#define hmove(mv) (((mv & 0x7f00) >> 1) | \
-                   ((mv & 0x0080) ? ((mv & 0x007f) ^ 0x007f) : (mv & 0x007f)))
+#define khmove(mv) (((mv & 0x7f00) >> 1) | \
+		   ((mv & 0x0080) ? ((mv & 0x007f) ^ 0x007f) : (mv & 0x007f)))
+#define hmove(mv) (khmove(mv) ^ 0x2aaa)
 #endif
 
 /* mask color to 15th bit */
@@ -389,20 +480,20 @@ ShowDBLine (char *, short int, short int,
      extern void algbr (short int f, short int t, short int flag);
 static
 unsigned short
-hindex(unsigned short c, unsigned short mv)
+khindex(unsigned short c, unsigned short mv)
 { unsigned short h;
-  h = hmove(mv);
+  h = khmove(mv);
 #ifdef EXACTHISTORY
   if ( (h & 0xff) != (mv & 0xff) ||
        ((h>>8) & 0x7f) != ((mv>>8) & 0x7f) ) { 
      algbr ( mv >> 8, mv & 0xff, 0);
-     printf("hindex error h=%x mv=%x %s\n",h,mv,mvstr[0]);
+     printf("khindex error h=%x mv=%x %s\n",h,mv,mvstr[0]);
   }                
 #else
   if ( ((h & 0x7f) ^ ((mv&0x0080)?0x007f:0)) != (mv & 0x7f) ||
        ((h>>7) & 0x7f) != ((mv>>8) & 0x7f) ) { 
      algbr ( mv >> 8, mv & 0xff, 0);
-     printf("hindex error h=%x mv=%x %s\n",h,mv,mvstr[0]);
+     printf("khindex error h=%x mv=%x %s\n",h,mv,mvstr[0]);
   }                
 #endif
 #ifdef EXACTHISTORY 
@@ -413,37 +504,45 @@ hindex(unsigned short c, unsigned short mv)
 #endif
   if ( h >= HISTORY_SIZE ) {
     printf("hindex(%x,%x)=%x exceeds HISTORY_SIZE=%d\n",
-              c, mv, h, HISTORY_SIZE);
+	      c, mv, h, HISTORY_SIZE);
     exit(1);
   };
   return (h);
 }
+#define hindex(c,mv) ((c ? HISTORY_MASK : 0) | hmove(mv))
 #else
 #ifdef EXACTHISTORY
+#define khindex(c,mv) ((c ? HISTORY_MASK : 0) | khmove(mv))
 #define hindex(c,mv) ((c ? HISTORY_MASK : 0) | hmove(mv))
 #else 
 /* for white, swap bits, hoping that no catastrophic collision occur. */
+#define khindex(c,mv) (c ? ((~khmove(mv)) & HISTORY_MASK) : khmove(mv))
 #define hindex(c,mv) (c ? ((~hmove(mv)) & HISTORY_MASK) : hmove(mv))
 #endif
 #endif /* DEBUG */
 
-#define EWNDW 10		/* Eval window to force position scoring at depth greater than Sdepth + 2 */
-#define WAWNDW 90		/* alpha window when computer black*/
-#define WBWNDW 90		/* beta window when computer black*/
-#define BAWNDW 90		/* alpha window when computer white*/
-#define BBWNDW 90		/* beta window when computer white*/
-#define BXWNDW 90		/* window to force position scoring at lower */
-#define WXWNDW 90		/* window to force position scoring at lower */
+#define EWNDW 10                /* Eval window to force position scoring at depth greater than Sdepth + 2 */
+#define WAWNDW 90               /* alpha window when computer black*/
+#define WBWNDW 90               /* beta window when computer black*/
+#define BAWNDW 90               /* alpha window when computer white*/
+#define BBWNDW 90               /* beta window when computer white*/
+#define BXWNDW 90               /* window to force position scoring at lower */
+#define WXWNDW 90               /* window to force position scoring at lower */
 
-#define DITHER 5		/* max amount random can alter a pos value */
-#define LBONUS 1		/* points per stage value of L increases */
-#define BBONUS 2		/* points per stage value of B increases */
-#define RBONUS 2		/* points per stage value of R increases */
-                                                           
+#define DITHER 5                /* max amount random can alter a pos value */
+#define LBONUS 1                /* points per stage value of L increases */
+#define BBONUS 2                /* points per stage value of B increases */
+#define RBONUS 2                /* points per stage value of R increases */
+							   
 #define QUESTIONABLE (valueK)   /* malus for questionable moves */
+
+#if defined STUPID
+#undef STUPID
+#endif
+
 #define STUPID (valueR<<1)      /* malus for stupid moves */
 
-#define KINGPOSLIMIT ( -1)	/* King positional scoring limit */
+#define KINGPOSLIMIT ( -1)      /* King positional scoring limit */
 #define KINGSAFETY  32
 #define MAXrehash (7)
 
@@ -472,20 +571,21 @@ hindex(unsigned short c, unsigned short mv)
 #define BLACKAG4
 #endif
 /************************* parameters for Opening Book *********************************/
-#define BOOKFAIL 5		/* if no book move found for BOOKFAIL turns stop using book */
-#ifdef THINK_C
-#define BOOKMAXPLY 18		/* Max plys to keep in book database */
+#if defined SMALL_MEMORY
+#define BOOKSIZE 10000          /* Number of unique position/move combinations allowed */
 #else
-#define BOOKMAXPLY 28		/* Max plys to keep in book database */
+#define BOOKSIZE 20000          /* Number of unique position/move combinations allowed */
 #endif
+#define BOOKMAXPLY 40           /* Max plys to keep in book database */
+#define BOOKFAIL (BOOKMAXPLY/2) /* if no book move found for BOOKFAIL turns stop using book */
 #define BOOKPOCKET 64
-#define BOOKRAND 1000		/* used to select an opening move from a list */
-#define BOOKENDPCT 950		/* 5 % chance a BOOKEND will stop the book */
-#define DONTUSE -32768		/* flag move as don't use */
+#define BOOKRAND 1000           /* used to select an opening move from a list */
+#define BOOKENDPCT 950          /* 5 % chance a BOOKEND will stop the book */
+#define DONTUSE -32768          /* flag move as don't use */
 /*************************** Book access defines ****************************************/
 #define SIDEMASK 0x1
-#define LASTMOVE 0x4000		/* means this is the last move of an opening */
-#define BADMOVE 0x8000		/* means this is a bad move in this position */
+#define LASTMOVE 0x4000         /* means this is the last move of an opening */
+#define BADMOVE 0x8000          /* means this is a bad move in this position */
 /****************************************************************************************/
      struct hashval
      {
@@ -495,8 +595,11 @@ hindex(unsigned short c, unsigned short mv)
      {
        unsigned long hashbd;
        unsigned short mv;
-       unsigned char flags, depth;	/* char saves some space */
+       unsigned char depth; /* unsigned char saves some space */
+       unsigned char flags;
+#ifdef notdef
        unsigned short age;
+#endif
        short score;
 #ifdef HASHTEST
        unsigned char bd[PTBLBDSIZE];
@@ -509,30 +612,31 @@ hindex(unsigned short c, unsigned short mv)
      { 
 	unsigned long ehashbd;
 	short int escore[2];
+#if !defined SAVE_SSCORE
 	short int sscore[NO_SQUARES];
+#endif
 	short int score;
 	small_short hung[2];
 #ifdef CACHETEST
-       	unsigned char bd[PTBLBDSIZE];
+	unsigned char bd[PTBLBDSIZE];
 #endif /* CACHETEST */ 
      } ;
+
 #if defined CACHE
 typedef struct etable etable_field[ETABLE];
 extern etable_field *etab[2];
 #endif
 
 /*
- * persistent transposition table. The size must be a power of 2. If you
- * change the size, be sure to run gnuchess -c before anything else.
+ * persistent transposition table. By default, the size is (1 << vfilesz). If you
+ * change the size, be sure to run gnuchess -c [vfilesz] before anything else.
  */
 #define frehash 6
-#ifdef MSDOS
-#define Deffilesz (1 << 11) -1
-#elif defined THINK_C
-#define Deffilesz (vttblsz - 1)
+#if defined SMALL_MEMORY
+#define vfilesz 10
 #else
-#define Deffilesz (1 << 17) -1
-#endif /* MSDOS */
+#define vfilesz 14
+#endif
      struct fileentry
      {
        unsigned char bd[PTBLBDSIZE];
@@ -546,20 +650,22 @@ extern etable_field *etab[2];
      {
        small_ushort f, t;
        short score, reply, width;
+       short INCscore;
        unsigned short flags;
      };
      struct GameRec
      {
-       unsigned short gmove;	/* this move */
-       short score;		/* score after this move */
-       short depth;		/* search depth this move */
+       unsigned short gmove;    /* this move */
+       short score;             /* score after this move */
+       short depth;             /* search depth this move */
        long time;               /* search time this move */
-       short piece;		/* piece captured */
-       short color;		/* color */
-       short flags;		/* move flags capture, promote, castle */
-       short Game50;		/* flag for repetition */
-       long nodes;		/* nodes searched for this move */
-       unsigned long hashkey, hashbd;	/* board key before this move */
+       short fpiece;            /* moved or dropped piece */
+       short piece;             /* piece captured */
+       short color;             /* color */
+       short flags;             /* move flags capture, promote, castle */
+       short Game50;            /* flag for repetition */
+       long nodes;              /* nodes searched for this move */
+       unsigned long hashkey, hashbd;   /* board key before this move */
 #ifdef DEBUG40
        int d1;
        int d2;
@@ -578,30 +684,30 @@ extern etable_field *etab[2];
 
      struct flags
      {
-       short mate;		/* the game is over */
-       short post;		/* show principle variation */
-       short quit;		/* quit/exit */
-       short regularstart;	/* did the game start from standard
+       short mate;              /* the game is over */
+       short post;              /* show principle variation */
+       short quit;              /* quit/exit */
+       short regularstart;      /* did the game start from standard
 				 * initial board ? */
-       short reverse;		/* reverse board display */
-       short bothsides;		/* computer plays both sides */
-       short hash;		/* enable/disable transposition table */
-       short force;		/* enter moves */
-       short easy;		/* disable thinking on opponents time */
-       short beep;		/* enable/disable beep */
-       short timeout;		/* time to make a move */
-       short musttimeout;	/* time to make a move */
-       short back;		/* time to make a move */
-       short rcptr;		/* enable/disable recapture heuristics */
-       short rv;		/* reverse video */
-       short stars;		/* add stars to uxdsp screen */
-       short coords;		/* add coords to visual screen */
+       short reverse;           /* reverse board display */
+       short bothsides;         /* computer plays both sides */
+       short hash;              /* enable/disable transposition table */
+       short force;             /* enter moves */
+       short easy;              /* disable thinking on opponents time */
+       short beep;              /* enable/disable beep */
+       short timeout;           /* time to make a move */
+       short musttimeout;       /* time to make a move */
+       short back;              /* time to make a move */
+       short rcptr;             /* enable/disable recapture heuristics */
+       short rv;                /* reverse video */
+       short stars;             /* add stars to uxdsp screen */
+       short coords;            /* add coords to visual screen */
        short shade;
-       short material;		/* draw on lack of material */
-       short illegal;		/* illegal position */
-       short onemove;		/* timing is onemove */
-       short gamein;		/* timing is gamein */
-       short tsume;		/* first consider checks */
+       short material;          /* draw on lack of material */
+       short illegal;           /* illegal position */
+       short onemove;           /* timing is onemove */
+       short gamein;            /* timing is gamein */
+       short tsume;             /* first consider checks */
      };
 
 #ifdef DEBUG
@@ -612,13 +718,14 @@ extern etable_field *etab[2];
 #ifdef HISTORY
      extern unsigned short *history;
 #endif
+     extern long znodes;
      extern char *ColorStr[2];
      extern unsigned short int MV[MAXDEPTH];
      extern int MSCORE;
      extern int mycnt1, mycnt2;
      extern short int ahead;
      extern short int xshogi;
-     extern struct leaf Tree[], *root,rootnode;
+     extern struct leaf *Tree, *root,rootnode;
      extern char savefile[], listfile[];
      extern short TrPnt[];
      extern small_short board[], color[]; 
@@ -630,7 +737,7 @@ extern etable_field *etab[2];
   { short piece, color;\
     for (color = black; color <= white; color++)\
       for (piece = 0; piece < NO_PIECES; piece++)\
-        Captured[color][piece] = 0;\
+	Captured[color][piece] = 0;\
   }
 #else
 #define ClearCaptured() \
@@ -639,7 +746,9 @@ extern etable_field *etab[2];
 
      extern small_short Mvboard[];
 
+#if !defined SAVE_SVALUE
      extern short svalue[NO_SQUARES];
+#endif
      extern short pscore[2]; /* eval.c */
      extern int EADD; /* eval.c */
      extern int EGET; /* eval.c */
@@ -649,11 +758,14 @@ extern etable_field *etab[2];
      extern short dither, player;
      extern short xwndw, contempt;
      extern long ResponseTime, ExtraTime, MaxResponseTime, et, et0, time0, ft;
+#ifdef INTERRUPT_TEST
+     extern long itime0, it;
+#endif
      extern long reminus, replus;
      extern long GenCnt, NodeCnt, ETnodes, EvalNodes, HashAdd, HashCnt, HashCol, THashCol,
       FHashCnt, FHashAdd;
      extern short HashDepth, HashMoveLimit;
-     extern struct GameRec GameList[];
+     extern struct GameRec *GameList;
      extern short GameCnt, Game50;
      extern short Sdepth, MaxSearchDepth;
      extern int Book;
@@ -669,17 +781,16 @@ extern etable_field *etab[2];
      extern unsigned short hint;
      extern short int TOflag;
      extern short stage, stage2; 
-     extern small_short ChkFlag[], CptrFlag[];
+     extern small_short ChkFlag[], CptrFlag[], TesujiFlag[];
      extern short Pscore[], Tscore[];
      extern /*unsigned*/ short rehash;  /* -1 is used as a flag --tpm */
      extern unsigned int ttblsize;
-     extern short mtl[], pmtl[], hung[], emtl[];
+     extern short mtl[], hung[];
      extern small_short Pindex[];
      extern small_short PieceCnt[];
      extern short FROMsquare, TOsquare;
      extern small_short HasPiece[2][NO_PIECES];
      extern const short kingP[];
-     extern const small_short sweep[];
      extern unsigned short killr0[], killr1[];
      extern unsigned short killr2[], killr3[];
      extern unsigned short PV, SwagHt, Swag0, Swag1, Swag2, Swag3, Swag4, sidebit;
@@ -696,8 +807,17 @@ extern etable_field *etab[2];
 typedef unsigned char next_array[NO_SQUARES][NO_SQUARES];
 typedef small_short   distdata_array[NO_SQUARES][NO_SQUARES];
 
+#if defined SAVE_NEXTPOS
+     extern const small_short nunmap[(NO_COLS+2)*(NO_ROWS+4)];
+     extern const small_short inunmap[NO_SQUARES];
+     extern const small_short direc[NO_PTYPE_PIECES][8];
+     extern short first_direction(short ptyp, short *d, short sq);
+     extern short next_direction(short ptyp, short *d, short sq);
+     extern short next_position(short ptyp, short *d, short sq, short u);
+#else
      extern next_array *nextpos[NO_PTYPE_PIECES];
      extern next_array *nextdir[NO_PTYPE_PIECES];
+#endif
 
      extern const small_short ptype[2][NO_PIECES];
 
@@ -705,23 +825,35 @@ typedef small_short   distdata_array[NO_SQUARES][NO_SQUARES];
      extern FILE *hashfile;
      extern unsigned int starttime;
 
+#if defined USE_PATTERN
+     /* eval.c */
+typedef small_short Mpiece_array[2][NO_SQUARES];
+     extern Mpiece_array *Mpiece[NO_PIECES];
+     extern short ADVNCM[NO_PIECES];
+#endif
+
 #ifdef SAVE_DISTDATA
 #define distance(a,b) \
 	((abs(column (a) - column (b)) > abs (row (a) - row (b)))\
 	? abs(column (a) - column (b)) : abs (row (a) - row (b)))
 #else
-     extern small_short distdata[NO_SQUARES][NO_SQUARES]; 
-#define distance(a,b) (int)distdata[(int)a][(int)b]
+     extern distdata_array *distdata; 
+#define distance(a,b) (int)(*distdata)[(int)a][(int)b]
 #endif
      extern short ptype_distance (short ptyp, short f, short t);
+
+#if defined UNKNOWN
+#undef UNKNOWN
+#endif
 
 #define UNKNOWN 'U'
 #define STATIC_ROOK 'S'
 #define RANGING_ROOK 'R'
 
      extern char GameType[2];
+     void ShowGameType(void);
    
-#define CANNOT_REACH -1
+#define CANNOT_REACH (-1)
 
 #ifdef SAVE_PTYPE_DISTDATA
 #define piece_distance(side,piece,f,t) \
@@ -732,19 +864,19 @@ typedef small_short   distdata_array[NO_SQUARES][NO_SQUARES];
 		(short)(*ptype_distdata[ptype[side][piece]])[f][t]
 #endif                      
 
-     extern union U admin;
      extern short unsigned bookmaxply;
      extern int unsigned bookcount;
      extern int unsigned booksize;
      extern unsigned long hashkey, hashbd;
-     extern struct hashval hashcode[2][NO_PIECES][NO_SQUARES+(2*NO_PIECES)];
+     extern struct hashval hashcode[2][NO_PIECES][NO_SQUARES];
+     extern struct hashval drop_hashcode[2][NO_PIECES][MAX_CAPTURED];
      extern char *CP[];
 #ifdef QUIETBACKGROUND
      extern short background;
 #endif /* QUIETBACKGROUND */
 
 #if ttblsz
-     extern struct hashentry huge *ttable[2];
+     extern struct hashentry *ttable[2];
 #endif
 
 /*
@@ -767,6 +899,12 @@ typedef small_short   distdata_array[NO_SQUARES][NO_SQUARES];
     }\
 }
 
+#define UpdateDropHashbd(side, piece, count) \
+{\
+  hashbd ^= drop_hashcode[side][piece][count].bd;\
+  hashkey ^= drop_hashcode[side][piece][count].key;\
+}
+
 
 
 
@@ -786,7 +924,10 @@ typedef small_short   distdata_array[NO_SQUARES][NO_SQUARES];
      extern int parse (FILE * fd, short unsigned int *mv, short int side, char *opening);
      extern void GetOpenings (void);
      extern int OpeningBook (unsigned short int *hint, short int side);
-     extern void SelectMove (short int side, short int iop);
+
+typedef enum { FOREGROUND_MODE = 1, BACKGROUND_MODE } SelectMove_mode;
+
+     extern void SelectMove (short int side, SelectMove_mode iop);
      extern int
       search (short int side,
 	       short int ply,
@@ -844,11 +985,14 @@ typedef small_short   distdata_array[NO_SQUARES][NO_SQUARES];
 
 #endif /* HASHFILE */
 #endif /* ttblsz */
+#if !defined SAVE_NEXTPOS
      extern void Initialize_moves (void);
-     extern void MoveList (short int side, short int ply);
-     extern void CaptureList (short int side, short int ply);
+#endif
+     extern void MoveList (short int side, short int ply, short int in_check);
+     extern void CaptureList (short int side, short int ply, short int in_check);
 
      extern void ataks (short int side, long int *a);
+     extern int SqAtakd (short int square, short int side, short int *blockable);
 
 extern void
       MakeMove (short int side,
@@ -877,7 +1021,7 @@ extern void
      extern void ExaminePosition (void);
      extern void UpdateWeights (void);
      extern void Initialize (void);
-     extern void InputCommand (void);
+     extern void InputCommand (char *command);
      extern void ExitChess (void);
      extern void ClrScreen (void);
      extern void SetTimeControl (void);
@@ -887,8 +1031,18 @@ extern void
 		      short int t,
 		      short int flag,
 		      short int iscastle);
-     extern void ElapsedTime (short int iop);
+
+typedef enum { COMPUTE_AND_INIT_MODE = 1, COMPUTE_MODE
+#ifdef INTERRUPT_TEST
+		, INIT_INTERRUPT_MODE, COMPUTE_INTERRUPT_MODE
+#endif
+    } ElapsedTime_mode; 
+
+     extern void ElapsedTime (ElapsedTime_mode iop);
      extern void ShowSidetoMove (void);
+#ifdef USE_PATTERN
+     extern void ShowPatternCount (short side, short n);
+#endif
      extern void SearchStartStuff (short int side);
      extern void ShowDepth (char ch);
      extern void TerminateSearch (int);
@@ -927,9 +1081,24 @@ extern void
      extern void ShowNodeCnt (long int NodeCnt);
      extern void ShowLine (short unsigned int *bstline);
      extern int pick (short int p1, short int p2);
-     extern int VerifyMove (char *s, short int inp, unsigned short *mv);
+     extern short int repetition (void);
+     extern void TimeCalc (void);
+     extern short DropPossible (short int piece, short int side, short int sq); /* genmoves.c */
+     extern short IsCheckmate (short int side, short int in_check, short int blockable); /* genmoves.c */
+
+
+typedef enum { VERIFY_AND_MAKE_MODE, VERIFY_AND_TRY_MODE, UNMAKE_MODE } VerifyMove_mode;
+
+     extern int VerifyMove (char *s, VerifyMove_mode iop, unsigned short *mv);
      extern void AgeTT();
      extern unsigned short TTage;
 #ifdef GDX
+  struct gdxadmin
+  {
+    unsigned int bookcount;
+    unsigned int booksize;
+    unsigned long maxoffset;
+  };
+
      extern struct gdxadmin B;
 #endif

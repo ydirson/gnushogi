@@ -431,7 +431,7 @@ ShowResults (short int score, short unsigned int *bstline, char ch)
       d = 7;
       for (ply = 1; bstline[ply] > 0; ply++)
 	{
-	  if (ply % 4 == 1)
+	  if (ply % 2 == 1)
 	    {
 	      gotoXY (TAB, ++d);
 	      ClrEoln ();
@@ -445,6 +445,31 @@ ShowResults (short int score, short unsigned int *bstline, char ch)
 	  gotoXY (TAB, ++d);
 	  ClrEoln ();
 	}
+    }
+}
+
+#ifdef USE_PATTERN
+void
+ShowPatternCount (short side, short n)
+{
+  if (flag.post)
+    {
+	gotoXY(TAB+10+3*side,20);
+	if ( n >= 0 )
+          printz("%3d",n);
+	else
+          printz("   ");
+    }
+}
+#endif
+
+void
+ShowGameType (void)
+{
+  if (flag.post)
+    {
+    	gotoXY(TAB,20);
+        printz("%c vs. %c",GameType[black],GameType[white]);
     }
 }
 
@@ -659,7 +684,11 @@ ShowPostnValue (short int sq)
   gotoXY (4 + 5 * VIR_C (sq), 5 + 2 * (7 - VIR_R (sq)));
   score = ScorePosition (color[sq]);
   if (color[sq] != neutral)
+#if defined SAVE_SVALUE
+    printz ("??? ");
+#else
     printz ("%3d ", svalue[sq]);
+#endif
   else
     printz ("   ");
 }
@@ -886,7 +915,7 @@ SelectLevel (char *sx)
   printz (CP[27]);
 
   OperatorTime = 0;
-  TCmoves = 60;
+  TCmoves = 40;
   TCminutes = 5;
   TCseconds = 0;
 
@@ -897,20 +926,20 @@ SelectLevel (char *sx)
   switch (item)
     {
     case 1:
-      TCmoves = 60;
+      TCmoves = 40;
       TCminutes = 5;
       break;
     case 2:
-      TCmoves = 60;
+      TCmoves = 40;
       TCminutes = 15;
       break;
     case 3:
-      TCmoves = 60;
+      TCmoves = 40;
       TCminutes = 30;
       break;
     case 4:
       TCmoves = 40;
-      TCminutes = 30;
+      TCminutes = 45;
       break;
     case 5:
       TCmoves = 40;

@@ -25,6 +25,9 @@
  * Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include "gnushogi.h" 
+#ifdef DEBUG
+#include <assert.h>
+#endif
 #if !defined OLDTIME && defined HASGETTIMEOFDAY
 double pow();
 #endif
@@ -32,9 +35,7 @@ short background = 0;
 static short int DepthBeyond;
 unsigned short int PrVar[MAXDEPTH];
 extern char mvstr[4][6];
-#if ttblsz
-extern short int recycle;
-#endif
+extern short int recycle, ISZERO;
 #ifdef NULLMOVE
 short int null;         /* Null-move already made or not */
 short int PVari;        /* Is this the PV */
@@ -49,66 +50,85 @@ struct leaf *dbptr;
 #endif 
 
 
+
+#ifdef DEBUG_EVAL
+extern short debug_eval;
+extern FILE *debug_eval_file;
+#endif
+
+
 short int zwndw;
 
-#include "ataks.h"
 
-#include "debug41.h"
-/* ............    MOVE GENERATION & SEARCH ROUTINES    .............. */
-
-#ifdef REPITITION
-
-inline
-short int
-repetition ()
-
-/*  Check for draw by threefold repetition.  */
-
+#ifdef DEBUG41
+void
+debug41 (short int score, short unsigned int xxx[], char ch)
 {
-  register short i, c,cnt;
-  register unsigned short m;
-  short b[NO_SQUARES];
+  register int i;
+  FILE *D;
+  int r, c, l;
+  struct leaf *xnode;
 
-  cnt = c = 0;
-  /* try to avoid work */
-  if (GameCnt > Game50 + 2)
+  D = fopen ("/tmp/DEBUG", "a+");
+  if (D == NULL)
     {
-#if defined(NOMEMSET) || defined(MSDOS)
-      for (i = 0; i < NO_SQUARES; b[i++] = 0);
-#else
-      memset ((char *) b, 0, (unsigned long)sizeof (b));
-#endif /* NOMEMSET */
-      for (i = GameCnt; i >= Game50; i--)
-	{
-	  m = GameList[i].gmove;
-	  /* does piece exist on diff board? */
-	  if (b[m & 0xff])
-	    {
-	      /* does diffs cancel out, piece back? */
-	      if ((b[m >> 8] += b[m & 0xff]) == 0)
-		--c;
-	      b[m & 0xff] = 0;
-	    }
-	  else
-	    {
-	      /* create diff */
-	      ++c;
-	      /* does diff cancel out another diff? */
-	      if (!(b[m >> 8] -= (b[m & 0xff] = board[m & 0xff] +
-				  (color[m & 0xff] << 8))))
-		--c;;
-	    }
-	  /* if diff count is 0 we have a repetition */
-	  if (c == 0)
-	    if ((i ^ GameCnt) & 1)
-	      cnt++;
-	}
+      perror ("opening D");
     }
-    return cnt;
+
+  ElapsedTime (2);
+  fprintf (D, "%2d%c %6d %4ld %8ld  ", Sdepth, ch, score, et / 100, NodeCnt);
+
+  for (i = 1; xxx[i]; i++)
+    {
+      if ((i > 1) && (i % 8 == 1))
+	fprintf (D, "\n                          ");
+      algbr ((short) (xxx[i] >> 8), (short) (xxx[i] & 0xFF), false);
+      fprintf (D, "%5s ", mvstr[0]);
+    }
+  fprintf (D, "\n");
+  fclose (D);
 }
 
 #endif
 
+
+
+
+/* ............    MOVE GENERATION & SEARCH ROUTINES    .............. */
+
+
+
+
+short int
+repetition ()
+
+/*  Check for draw by fourfold repetition 
+ *  (same side, same captures, same board).
+ *  WARNING: this is not save yet due to possible hash collisions.  
+ */
+
+{     
+  short int i, cnt = 0;
+
+#ifndef NOREPETITION
+  struct GameRec *g;
+
+  if (GameCnt > Game50 + 6)
+    {             
+      for (i = GameCnt-1; i >= Game50; i -= 2)
+	{ 
+	  g = &GameList[i];
+	  if ( g->hashkey == hashkey && g->hashbd == hashbd )
+	    {
+	      cnt++;
+	    }
+	}
+    }
+
+#endif
+
+  return (cnt);
+}
 
 
 int plyscore, globalscore;
@@ -153,6 +173,7 @@ int traceflag = 0;
 int traceply = 0;
 #endif
 int bookflag = false;
+int Jscore = 0;
 
 /* #define PLYDEBUG */
 
@@ -161,9 +182,37 @@ static int MaxPly = 0;
 static int MaxDepth = 0;
 #endif
 
-static int TCcount, TCleft = 0;
+static int TCcount;
+static long TCleft = 0;
+
+
+
+#ifdef DEBUG4
+static void debug4(short Sdepth, short alpha, short beta, short stage)
+{
+  if (debuglevel & 4)
+    {
+      int j;
+
+      printf ("Sdepth %d alpha %d beta %d stage %d\n", Sdepth, alpha, beta, stage);
+      for (j = 1; j < 2; j++)
+	{
+	  int idb;
+
+	  for (idb = TrPnt[j]; idb < TrPnt[j + 1]; idb++)
+	    {
+	      algbr (Tree[idb].f, Tree[idb].t, Tree[idb].flags);
+	      printf ("level 4 %d-->%d %s %d %d\n", j, idb, mvstr[0], Tree[idb].score, Tree[idb].width);
+	    }
+	}
+    }
+}
+#endif
+
+
+
 void
-SelectMove (short int side, short int iop)
+SelectMove (short int side, SelectMove_mode iop)
 
 
 /*
@@ -179,37 +228,57 @@ SelectMove (short int side, short int iop)
   static short int i, tempb, tempc, tempsf, tempst, xside, rpt;
   static short int alpha, beta, score;
   static struct GameRec *g;
-  int Jscore = 0;
+  short blocked;
 #ifdef PLYDEBUG
   MaxPly = 0;
   MaxDepth = 0;
 #endif
 #ifdef DEBUG
 
-if(debuglevel & (512|1024)){
+if ( debuglevel & (512 | 1024) ) {
 	char b[32];
-	short c1,c2,r1,r2;
-	tracen=0;
+	short c1,c2,r1,r2,piece;
+	tracen = 0;
 	traceflag = false;
 	traceply = 0;
-	tracelog[0]=0;
-	while(true){
-	  printf("debug?");
+	tracelog[0] = 0;
+	while ( true ) {
+	  printf( "debug?" );
 	  gets(b);
-	  if(b[0] == 'p')traceply = atoi(&b[1]);
-	  else
-	  if(b[0] == '\0')break;
-	  else{
-		c1 = '9' - b[0];
-      		r1 = 'i' - b[1];
-      		c2 = '9' - b[2];
-      		r2 = 'i' - b[3];
-      		trace[++tracen] = (locn (r1, c1) << 8) | locn (r2, c2);
-	  }
-	  if(tracen == 0 && traceply >0)traceflag = true;
+	  if ( b[0] == 'p' ) 
+		traceply = atoi(&b[1]);
+	  else if ( b[0] == '\0' )
+		break;
+	  else 
+	    {
+		if ( b[1] = '*' || b[1] == '\'' ) 
+		  {      
+		    for (piece = pawn; piece <= king; piece++)
+			if ( b[0] == pxx[piece] || b[0] == qxx[piece] )
+			  break;
+		    c2 = '9' - b[2];
+      		    r2 = 'i' - b[3];
+		    if ( side == white )
+	piece += NO_PIECES;		
+      		    trace[++tracen] = ((NO_SQUARES+piece) << 8) | locn (r2, c2);
+		  }
+		else
+		  {
+		    c1 = '9' - b[0];
+      		    r1 = 'i' - b[1];
+      		    c2 = '9' - b[2];
+      		    r2 = 'i' - b[3];
+      		    trace[++tracen] = (locn (r1, c1) << 8) | locn (r2, c2);
+		    if ( b[4] == '+' )
+			trace[tracen] |= 0x80;
+		  }
+	    }
+	  if (tracen == 0 && traceply > 0) 
+		traceflag = true;
 	}
 	
-}
+}         
+
 #endif
 
 #ifdef BOOKTEST
@@ -220,10 +289,107 @@ if(debuglevel & (512|1024)){
   flag.timeout = false;
   flag.back = false;
   flag.musttimeout = false;
-  xside = side ^ 1;    
+
+  xside = side ^ 1;
+
 #if ttblsz
   recycle = (GameCnt % rehash) - rehash;
 #endif
+
+#ifdef ALTERNATIVE_TC
+
+  if (iop == BACKGROUND_MODE)
+    {
+      /* if background mode set response time to infinite */
+      ResponseTime = 9999999;
+      background = true;
+    }
+  else
+    {           
+      int DetermineTCcount = true;
+
+      player = side;
+      if (TCflag)
+	{
+	  TCcount = 0;
+	  background = false;
+	  if (TimeControl.moves[side] < 1)
+	    TimeControl.moves[side] = 1;
+	  /* special case time per move specified */
+	  if (flag.onemove)
+	    { 
+	      ResponseTime = TimeControl.clock[side] - 100;
+	      TCleft = 0;
+	    }
+	  else
+	    {
+	      /* calculate avg time per move remaining */
+	      if ( TimeControl.clock[side] <= 0 )
+		{
+		  ResponseTime = 0;
+		  TCleft = (long)MINRESPONSETIME / MAXTCCOUNTX;
+		}
+	      else
+		{
+		  short rtf = 2, tcq = 3;
+	          TimeControl.clock[side] += TCadd;
+	          ResponseTime = 
+                      (TimeControl.clock[side]) /
+                      (((TimeControl.moves[side]) * rtf) + 1);
+	          TCleft = (long)ResponseTime / tcq; 
+	          ResponseTime += TCadd/2;
+		}
+	      if (TimeControl.moves[side] < 5)
+		{
+		  TCcount = MAXTCCOUNTX - 10;
+		  if ( TCcount < 0 ) TCcount = 0;
+		  DetermineTCcount = false;
+		}    
+	    }
+	  if (ResponseTime < MINRESPONSETIME)
+	    {
+	      ResponseTime = MINRESPONSETIME;	
+	      TCcount = MAXTCCOUNTX - 10;
+	      if ( TCcount < 0 ) TCcount = 0;
+	      DetermineTCcount = false;
+	    }
+#ifndef HARDTIMELIMIT
+	  else if (ResponseTime < 2*MINRESPONSETIME)
+	    {
+	      TCcount = MAXTCCOUNTX - 10;
+	      if ( TCcount < 0 ) TCcount = 0;
+	      DetermineTCcount = false;
+	    }
+#endif
+	}
+      else
+	{ 
+	  TCleft = 0;
+	  ResponseTime = MaxResponseTime;
+          ElapsedTime(COMPUTE_AND_INIT_MODE);
+	}
+                  
+      if ( DetermineTCcount )
+        if ( TCleft  )
+	  {
+            int AllowedCounts = ((int)((TimeControl.clock[side] - ResponseTime)) / 2) / TCleft;
+
+	    if (AllowedCounts > MAXTCCOUNTX)
+	      TCcount = 0;
+	    else
+	      TCcount = MAXTCCOUNTX - AllowedCounts;
+	  }
+        else
+          {
+            TCcount = MAXTCCOUNTX;
+          }
+    }
+
+  if ( ResponseTime < MINRESPONSETIME )
+    ResponseTime = MINRESPONSETIME; 
+
+#else
+
   /* if background mode set to infinite */
   if (iop == 2)
     {
@@ -234,59 +400,57 @@ if(debuglevel & (512|1024)){
     {
       player = side;
       if (TCflag)
-	{
+        {
           TCcount = 0;
-	  background = false;
-	  if (TimeControl.moves[side] < 1)
-	    TimeControl.moves[side] = 1;
-	  /* special case time per move specified */
-	  if (flag.onemove)
-	    {
-	      ResponseTime = TimeControl.clock[side] - 100;
-	      TCleft = 0;
-	    }
-	  else
-	    {
-	      /* calculate avg time per move remaining */
-	      TimeControl.clock[side] += TCadd;
-	      ResponseTime = 
-                  (TimeControl.clock[side]) / 
-                  (((TimeControl.moves[side]) * 2) + 1);
-	      TCleft = (int)ResponseTime / 3; 
-	      ResponseTime += TCadd/2;
-	      if (TimeControl.moves[side] < 5)
-		  TCcount = MAXTCCOUNTX - 10;
-	    }
-	  if (ResponseTime < 100)
-	    {
-	      ResponseTime = 100;
-	      TCcount = MAXTCCOUNTX - 10;
-	    }
-	  else if (ResponseTime < 200)
-	    {
-	      TCcount = MAXTCCOUNTX - 10;
-	    }
-	}
-      else
-	{
-	  ResponseTime = MaxResponseTime;
-	  TCleft = 0;
-          ElapsedTime(1);
-	}
-      if ( TCleft )
-	{
-          TCcount = ((int)((TimeControl.clock[side] - ResponseTime)) / 2) / TCleft;
+          background = false;
+          if (TimeControl.moves[side] < 1)
+            TimeControl.moves[side] = 1;
+          /* special case time per move specified */
+          if (flag.onemove)
+            {
+              ResponseTime = TimeControl.clock[side] - 100;
+              TCleft = 0;
+            }
+          else
+            {
+              /* calculate avg time per move remaining */
+              TimeControl.clock[side] += TCadd;
 
-	  if (TCcount > MAXTCCOUNTX)
-	    TCcount = 0;
-	  else
-	    TCcount = MAXTCCOUNTX - TCcount;
-	}
+              ResponseTime = (TimeControl.clock[side]) / (((TimeControl.moves[side]) * 2) + 1);
+              TCleft = (int) ResponseTime / 3;
+              ResponseTime += TCadd / 2;
+              if (TimeControl.moves[side] < 5)
+                TCcount = MAXTCCOUNTX - 10;
+            }
+          if (ResponseTime < 101)
+            {
+              ResponseTime = 100;
+              TCcount = MAXTCCOUNTX - 10;
+            }
+          else if (ResponseTime < 200)
+            {
+              TCcount = MAXTCCOUNTX - 10;
+            }
+        }
       else
         {
-          TCcount = MAXTCCOUNTX;
+          ResponseTime = MaxResponseTime;
+          TCleft = 0;
+          ElapsedTime (1);
         }
+      if (TCleft)
+        {
+          TCcount = ((int) ((TimeControl.clock[side] - ResponseTime)) / 2) / TCleft;
+          if (TCcount > MAXTCCOUNTX)
+            TCcount = 0;
+          else
+            TCcount = MAXTCCOUNTX - TCcount;
+        }
+      else
+        TCcount = MAXTCCOUNTX;
     }
+
+#endif
 
   ExtraTime = 0;
   ExaminePosition ();
@@ -297,33 +461,59 @@ if(debuglevel & (512|1024)){
 #endif /* QUIETBACKGROUND */
     ShowSidetoMove ();
 
-#ifdef notdef
-  if (TCflag && TCcount < MAXTCCOUNT)
-    if (score < SCORETIME)
-      {
-	ExtraTime += TCleft;
-	TCcount++;
-      }
-#endif
-
 #ifdef QUIETBACKGROUND
   if (!background)
 #endif /* QUIETBACKGROUND */
     SearchStartStuff (side);
 
 #ifdef HISTORY
-#if defined(NOMEMSET) || defined(MSDOS)
-  for (i = 0; i < HISTORY_SIZE; i++)
-    history[i] = 0;
+#if defined(NOMEMSET)
+  { long i;
+    for (i = 0; i < HISTORY_SIZE; i++)
+      history[i] = 0;
+  }
 #else
-  memset ((unsigned char *) history, 0, (unsigned long)sizeof_history);
+  memset ((unsigned char *) history, 0, (size_t)sizeof_history);
 #endif /* NOMEMSET */
 #endif
 
   FROMsquare = TOsquare = -1;
   PV = 0;
-  if (iop == 1)
+  if (iop == FOREGROUND_MODE)
     hint = 0;
+    
+#ifdef DEBUG
+  { 
+    char buf1[8], buf2[8], buf3[8], buf4[8];
+    movealgbr(GameList[GameCnt].gmove,buf1);
+    movealgbr(PrVar[1],buf2);
+    movealgbr(PrVar[2],buf3);
+    movealgbr(PrVar[3],buf4);
+    printf("gmove: %s PrVar[1]: %s PrVar[2]: %s PrVar[3]: %s\n",
+		buf1, buf2, buf3, buf4);
+  }
+#endif
+
+  /*            
+   * If the last move was the hint, select the computed answer to the
+   * hint as first move to examine.
+   */
+                   
+#if MAXDEPTH > 3
+  if ( GameCnt > 0 ) {
+    SwagHt = (GameList[GameCnt].gmove == PrVar[2]) ? PrVar[3] : 0;
+  } else      
+#endif
+    SwagHt = 0;
+
+#ifdef DEBUG
+  {
+    char buf[8];
+    movealgbr(SwagHt,buf);
+    printf("SwagHt = %s\n", buf); 
+  }
+#endif
+
   for (i = 0; i < MAXDEPTH; i++)
     PrVar[i] = killr0[i] = killr1[i] = killr2[i] = killr3[i] = 0;
 
@@ -334,10 +524,29 @@ if(debuglevel & (512|1024)){
   rpt = 0;
   TrPnt[1] = 0;
   root = &Tree[0];
-  MoveList (side, 1);
+  MoveList (side, 1, -1);
   for (i = TrPnt[1]; i < TrPnt[2]; i++)
     if (!pick (i, TrPnt[2] - 1))
-      break;
+      break;  
+
+#ifdef DEBUG_EVAL
+  if ( debug_eval )
+    { short j;
+      for (j = TrPnt[1]; j < TrPnt[2]; j++)
+        {
+          struct leaf *node = &Tree[j];
+          algbr (node->f, node->t, node->flags);
+          fprintf (debug_eval_file, "%s %s %s %s %d", 
+            mvstr[0], mvstr[1], mvstr[2], mvstr[3],node->score);
+          if ( node->flags )
+	    { char s[80];
+	      FlagString(node->flags, s);
+	      fprintf(debug_eval_file,"%s",s);
+	    }  
+          fprintf (debug_eval_file, "\n");
+        }
+    }
+#endif
 
   /* can I get a book move? */
 
@@ -355,9 +564,12 @@ if(debuglevel & (512|1024)){
   GenCnt = NodeCnt = ETnodes = EvalNodes = HashCnt = FHashAdd = HashAdd = FHashCnt = THashCol = HashCol = 0;
 
   globalscore = plyscore = score;
+  Jscore = 0;
   zwndw = 20;
 
-#include "debug4.h"
+#ifdef DEBUG4
+  debug4(Sdepth,alpha,beta,stage);
+#endif
 
   /********************* main loop ********************************/
 
@@ -371,7 +583,12 @@ if(debuglevel & (512|1024)){
       null = 0;
       PVari = 1;
 #endif
+      /* terminate search at DepthBeyond ply past goal depth */
+#if defined THINK_C || defined MSDOS
+      DepthBeyond = Sdepth + ((Sdepth == 1) ? 5 : 7);
+#else
       DepthBeyond = Sdepth + ((Sdepth == 1) ? 7 : 11);
+#endif
 
 #if !defined BAREBONES
 #ifdef QUIETBACKGROUND
@@ -381,6 +598,7 @@ if(debuglevel & (512|1024)){
 #endif
       /* search at this level returns score of PV */
       score = search (side, 1, Sdepth, alpha, beta, PrVar, &rpt);
+
       /* save PV as killer */
       for (i = 1; i <= Sdepth; i++)
 	killr0[i] = PrVar[i];
@@ -397,13 +615,19 @@ if(debuglevel & (512|1024)){
 #endif
 	  if (TCflag && TCcount < MAXTCCOUNTR)
 	    {
-	      TCcount = MAXTCCOUNTR - 1;
+#ifdef HARDTIMELIMIT
+	      ExtraTime += (MAXTCCOUNTR - TCcount) * TCleft;
+#else
 	      ExtraTime += (8 * TCleft);
+#endif
+	      TCcount = MAXTCCOUNTR - 1;
 	    }
-	  score = search (side, 1, Sdepth, -(SCORE_LIMIT+999), score, PrVar, &rpt);
-	}
+
+	  score = search (side, 1, Sdepth, -(SCORE_LIMIT+999), (SCORE_LIMIT+999), PrVar, &rpt);
+	} 
+
       /* high search failure re-search with (score, +inf) limits */
-      if (score > beta && !(root->flags & exact))
+      else if (score > beta && !(root->flags & exact))
 	{
 #if !defined BAREBONES
 	  replus++;
@@ -412,8 +636,9 @@ if(debuglevel & (512|1024)){
 #endif /* QUIETBACKGROUND */
 	    ShowDepth ('+');
 #endif
-	  score = search (side, 1, Sdepth, score, (SCORE_LIMIT+999), PrVar, &rpt);
+	  score = search (side, 1, Sdepth, -(SCORE_LIMIT+999), (SCORE_LIMIT+999), PrVar, &rpt);
 	}
+
       /**************** out of search ********************************************/
       if (flag.musttimeout || Sdepth >= MaxSearchDepth)
 	flag.timeout = true;
@@ -431,9 +656,11 @@ if(debuglevel & (512|1024)){
 	      ExtraTime += TCleft;
 	    }
 	}
-      if (score > (Jscore - zwndw) && score > (Tree[1].score + 250)) ExtraTime = 0;
-      ElapsedTime(2);
-      if (root->flags & exact) flag.timeout = true;
+      if (score > (Jscore - zwndw) && score > (Tree[1].score + 250))
+	 ExtraTime = 0;
+      ElapsedTime(COMPUTE_MODE);
+      if (root->flags & exact)
+	flag.timeout = true;
       /*else if (Tree[1].score < -SCORE_LIMIT) flag.timeout = true;*/
 #if defined OLDTIME || !defined HASGETTIMEOFDAY
       else if (!(Sdepth < MINDEPTH) && TCflag && ((4 * et) > (2*ResponseTime + ExtraTime)))
@@ -446,14 +673,49 @@ if(debuglevel & (512|1024)){
 /************************ time control ***********************************/
 
       /* save PV as killer */
-      for (i = 1; i <= Sdepth + 1; i++) killr0[i] = PrVar[i];
-      if (!flag.timeout) Tscore[0] = score;
+      for (i = 1; i <= Sdepth + 1; i++)
+	killr0[i] = PrVar[i];
+      if (!flag.timeout) 
+	Tscore[0] = score;
       /* if (!flag.timeout) */
-      for (i = TrPnt[1]+1; i < TrPnt[2]; i++) if (!pick (i, TrPnt[2] - 1)) break;
+/*
+      for (i = TrPnt[1]+1; i < TrPnt[2]; i++) 
+	if (!pick (i, TrPnt[2] - 1))
+	  break;
+*/
       /* if done or nothing good to look at quit */
-      if ((root->flags & exact) || (score < -SCORE_LIMIT)) flag.timeout = true;
+      if ((root->flags & exact) || (score < -SCORE_LIMIT))
+	flag.timeout = true;
       /* find the next best move put below root */
-#include "debug13.h"
+#ifdef DEBUG13
+      if (flag.timeout && !background)
+	{
+	  FILE *D;
+	  int r, c, l;
+	  struct leaf *xnode;
+
+	  D = fopen ("/tmp/DEBUG", "a+");
+	  fprintf (D, " %d ply %d sco %d TC %d gl %d cnt %d\n",
+		   Sdepth, plyscore, score, TCcount,
+		   globalpnt, TrPnt[2] - TrPnt[1]);
+	  for (i = 1; tmp[i]; i++)
+	    {
+	      algbr (tmp[i] >> 8, tmp[i] & 0xff, 0);
+	      fprintf (D, "%s ", mvstr[0]);
+	    }
+	  fprintf (D, "\n");
+	  for (i = 1; PrVar[i]; i++)
+	    {
+	      algbr (PrVar[i] >> 8, PrVar[i] & 0xff, 0);
+	      fprintf (D, "%s ", mvstr[0]);
+	    }
+	  fprintf (D, "\n");
+	  algbr (root->f, root->t, root->flags);
+	  fprintf (D, "%s ", mvstr[0]);
+	  fprintf (D, "\n");
+	  fclose (D);
+	}
+#endif
       if (!flag.timeout)
 	{
 	  /* */
@@ -479,28 +741,54 @@ if(debuglevel & (512|1024)){
       debug41 (score, PrVar, '.');
 #endif
 #endif
-#include "debug16.h"
+#ifdef DEBUG4
+      if (debuglevel & 16)
+	{
+	  int j;
+
+	  printf ("Sdepth %d alpha %d beta %d stage %d\n", Sdepth, alpha, beta, stage);
+	  for (j = 1; j < 2; j++)
+	    {
+	      int idb;
+
+	      for (idb = TrPnt[j]; idb < TrPnt[j + 1]; idb++)
+		{
+		  algbr (Tree[idb].f, Tree[idb].t, Tree[idb].flags);
+		  printf ("level 16 %d-->%d %s %d %d %x\n", Sdepth, idb, mvstr[0], Tree[idb].score, Tree[idb].width, Tree[idb].flags);
+		}
+	    }
+	}
+#endif
     }
 
   /******************************* end of main loop ***********************************/
 
   /* background mode */
-  if (iop == 2)
-    return;
-#include "debug4.h"
-  if (rpt >= 2)
+  if (iop == BACKGROUND_MODE)
+    {
+      return;
+    }
+
+#ifdef DEBUG4
+  debug4(Sdepth,alpha,beta,stage);
+#endif
+
+  if (rpt >= 3)
     {
       root->flags |= draw;
       DRAW = CP[101];		/* Repetition */
     }
   else
-    /* if no moves and not in check then draw */
-  if ((score == -(SCORE_LIMIT+999)) && !(SqAtakd (PieceList[side][0], xside)))
+    /* if no moves and not in check then mate for shogi (draw for chess) */
+#ifdef notdef 
+  if ((score == -(SCORE_LIMIT+999)) && !(SqAtakd (PieceList[side][0], xside, &blocked)))
     {
-      root->flags |= draw;
+      root->flags |= mate;
       DRAW = CP[87];		/* No moves */
     }
-  else if (GameCnt == MAXMOVES)
+  else        
+#endif
+  if (GameCnt == MAXMOVES)
     {
       root->flags |= draw;
       DRAW = CP[80];		/* Max Moves */
@@ -510,7 +798,7 @@ if(debuglevel & (512|1024)){
     hint = ((PrVar[1]) ? PrVar[2] : 0);
 
   /* if not mate or draw make move and output it */
-  if (((score > -(SCORE_LIMIT+999)) && (rpt <= 2)) || (root->flags & draw))
+  if (((score > -(SCORE_LIMIT+999)) && (rpt <= 3)) || (root->flags & draw))
     {
       MakeMove (side, &Tree[0], &tempb, &tempc, &tempsf, &tempst, &INCscore);
       algbr (root->f, root->t, (short) root->flags);
@@ -527,8 +815,9 @@ if(debuglevel & (512|1024)){
       flag.mate = flag.illegal = true;
     }
   /* If Time Control get the elapsed time */
-  if ( TCflag )
-    ElapsedTime (1);
+  if ( TCflag )                   
+    ElapsedTime (COMPUTE_AND_INIT_MODE);
+  /* update time control info */
   OutputMove ();
   /* if mate set flag */
 #if BESTDEBUG
@@ -536,11 +825,6 @@ if(debuglevel & (512|1024)){
 #endif
   if ((score == -(SCORE_LIMIT+999) || score == (SCORE_LIMIT+998)))
     flag.mate = true;
-  /* if mate clear hint */
-  if (flag.mate)
-    hint = 0;
-  Game50 = GameCnt;
-  /*ZeroRPT; */ 
   /* add move to game list */
   g->score = score;
   g->nodes = NodeCnt;
@@ -549,11 +833,21 @@ if(debuglevel & (512|1024)){
   g->time = TCcount;
 */
   g->depth = Sdepth;
-#include "debug40.h"
+
+#ifdef DEBUG40
+  g->d1 = TCcount;
+  g->d2 = ResponseTime;
+  g->d3 = ExtraTime;
+  g->d4 = TCleft;
+  g->d5 = et;
+  g->d6 = hint;
+  g->d7 = whichway;
+#endif
+
   /* update time control info */
   if (TCflag)
     {
-#if defined HARDTIMELIMIT
+#if defined XSHOGI
       TimeControl.clock[side] -= (et + OperatorTime + 45);
       timecomp[compptr] = (et + OperatorTime + 45);
 #else
@@ -565,11 +859,9 @@ if(debuglevel & (512|1024)){
     }
   /* check for end conditions */
   if ((root->flags & draw) /* && flag.bothsides */ )
-#if !defined CLIENT
-     flag.mate = true;
-#else 
-	;
-#endif
+    {
+      flag.mate = true;
+    }
   else if (GameCnt == MAXMOVES)
     {
       flag.mate = true;
@@ -578,9 +870,13 @@ if(debuglevel & (512|1024)){
   else
     /* switch to other side */
     player = xside;
+  /* if mate clear hint */
+  if (flag.mate)
+    hint = 0;
   Sdepth = 0;
 }
 
+                 
 int
 search (short int side,
 	register short int ply,
@@ -616,7 +912,7 @@ search (short int side,
 #ifdef DEBUG
   int xxxtmp;
   int tracetmp;
-#endif
+#endif         
   NodeCnt++;
 #ifdef PLYDEBUG
   if (ply > MaxPly) {
@@ -634,7 +930,7 @@ search (short int side,
 #endif
   if (NodeCnt > ETnodes )
     { 
-      ElapsedTime (2);
+      ElapsedTime (COMPUTE_MODE);
 #if TIMEDEBUG
       printf("looking for a timeout... et=%d Resp.Time=%d ExtraTime=%d Sdepth=%d\n",
                et, ResponseTime, ExtraTime, Sdepth);
@@ -663,13 +959,13 @@ search (short int side,
 		}
 	    }
 	}
-	else       if (flag.back)
+	else if (flag.back)
         {
           flag.back = false;
           flag.timeout = true;
           flag.musttimeout = false;
         } 
-    }
+    }                                          
   else if (!TCflag && flag.musttimeout && Sdepth > MINDEPTH)
     {
       flag.timeout = true;
@@ -681,10 +977,6 @@ search (short int side,
   xside = side ^ 1;
   score = evaluate (side, ply, alpha, beta, INCscore, &InChk);
 
-
-#ifndef REPITITION
-  *rpt = 0;
-#else
   /*
    * check for possible repitition if so call repitition - rpt is
    * repeat count
@@ -694,14 +986,14 @@ search (short int side,
       *rpt = repetition ();
 
       /*
-       * repeat position >2 don't need to return score it's taken
+       * repeat position >3 don't need to return score it's taken
        * care of above
        */
-      if (*rpt == 1) score /= 2;
+      if (*rpt == 1) { score /= 3; score *= 2; }
+      else if (*rpt == 2) score /= 2;
     }
   else
     *rpt = 0;
-#endif
 
   /* score > SCORE_LIMIT its a draw or mate */
   if (score > SCORE_LIMIT)
@@ -712,13 +1004,17 @@ search (short int side,
   /* Do we need to add depth because of special conditions */
   /* if in check or in capture sequence search deeper */
   /*************************************** depth extensions ***********************************/
+#ifdef HARDTIMELIMIT
+  /* if ( !flag.timeout ) */
+#endif
   if (depth > 0)
     {
       /* Allow opponent a chance to check again */
-      if (InChk)
-	depth = (depth < 2) ? 2 : depth;
-      else if ( flag.rcptr && (score > alpha) &&
-                (score < beta) && (ply > 2) && CptrFlag[ply - 1] && CptrFlag[ply - 2] )
+      if (InChk) {
+	if (depth < 2) depth = 2;
+      } else if ( flag.rcptr && (score > alpha) &&
+                (score < beta) && (ply > 2) && 
+		CptrFlag[ply - 1] && CptrFlag[ply - 2] )
 	++depth;
     }
   else 
@@ -731,6 +1027,11 @@ search (short int side,
 		ChkFlag[ply - 2] && ChkFlag[ply - 4] &&
 		ChkFlag[ply - 2] != ChkFlag[ply - 4]))
 	depth = 1;
+#ifdef notdef
+      else if ( score >= alpha &&
+		TesujiFlag[ply - 1] )
+	depth = 1;
+#endif
     }
   /*******************************************************************************************/
   /* try the local transition table if it's there */
@@ -741,7 +1042,13 @@ search (short int side,
 	{
 	  bstline[ply] = PV;
 	  bstline[ply + 1] = 0;
-#include "debug64.h"
+#ifdef DEBUG4
+	  if (debuglevel & 64)
+	    {
+	      algbr (PV >> 8, PV & 0xff, 0);
+	      printf ("-get-> d=%d s=%d p=%d a=%d b=%d %s\n", depth, score, ply, alpha, beta, mvstr[0]);
+	    }
+#endif
 	  if (beta == -((SCORE_LIMIT+1000)*2))
 	    return (score);
 	  if (alpha > beta)
@@ -752,28 +1059,6 @@ search (short int side,
       else if (hashfile && (depth > HashDepth) && (GameCnt < HashMoveLimit)
 	 && (ProbeFTable (side, depth, ply, &alpha, &beta, &score) == true))
 	{
-#ifdef notdef
-	  int hgood = false;
-	  int f = PV >> 8;
-	  int t = PV & 0xff;
-	  register int i;
-
-	  /*
-	   * if you find something put it in the local table
-	   * for future reference
-	   */
-	  hgood = false;
-	  for (i = TrPnt[ply]; i < TrPnt[ply + 1]; i++)
-	    {
-	      if (Tree[i].f == f && Tree[i].t == t)
-		{
-		  hgood = true;
-		  break;
-		}
-	    }
-	  if (hgood)
-	    {
-#endif
 	      PutInTTable (side, score, depth, ply, alpha, beta, PV);
 	      bstline[ply] = PV;
 	      bstline[ply + 1] = 0;
@@ -781,11 +1066,58 @@ search (short int side,
 		return (score);
 	      if (alpha > beta)
 		return (alpha);
-#ifdef notdef
+#ifdef DEBUG10
+	  else
+	    {
+	      FILE *D;
+	      int r, c, l;
+	      struct leaf *xnode;
+              short side;
+
+	      D = fopen ("/tmp/DEBUG", "w");
+	      pnt = TrPnt[2];
+	      fprintf (D, "hashfile failure\n");
+	      algbr (PV >> 8, PV & 0xff, 0);
+	      fprintf (D, "inout move is %s\n", mvstr);
+	      fprintf (D, "legal move are \n");
+	      for (r = TrPnt[ply]; r < TrPnt[ply + 1]; r++)
+		{
+		  xnode = &Tree[r];
+		  algbr (xnode->f, xnode->t, (short) xnode->flags);
+		  fprintf (D, "%s %s %s %s\n", mvstr[0], mvstr[1], mvstr[2], mvstr[3]);
+		}
+	      fprintf (D, "\n current board is\n");
+	      for (r = 8; r >= 0; r--)
+		{
+		  for (c = 0; c <= 8; c++)
+		    {
+		      l = locn (r, c);
+                      if ( is_promoted[board[l]] )
+                        fprintf (D, "+");
+                      else 
+                        fprintf (D, " ");
+		      if (color[l] == neutral)
+			fprintf (D, "-");
+		      else if (color[l] == black)
+			fprintf (D, "%c", qxx[board[l]]);
+		      else
+			fprintf (D, "%c", pxx[board[l]]);
+		    }
+		  fprintf (D, "\n");
+		}
+	      fprintf (D, "\n");
+	      for (side = black; side <= white; side++)
+	  	{ short piece, c; 
+	    	  fprintf(D, (side==black)?"black ":"white ");
+            	  for (piece = pawn; piece <= king; piece++)
+	      	    if (c = Captured[side][piece]) 
+		      fprintf (D, "%i%c ",c,pxx[piece]);
+                  fprintf (D, "\n");
+                };
+	      fclose (D);
 	    }
-#endif
-#include "debug10.h"
-	}
+#endif /* DEBUG10 */
+       }
 #endif /* HASHFILE */
     }
 #endif /* ttblsz */
@@ -816,14 +1148,14 @@ search (short int side,
    * only capture moves
    */
   if (ply > 1)
-    if (depth > 0  || ply<(SDEPTHLIM) || 
-	(background && ply<Sdepth + 2))
+    if (depth > 0  || ply < (SDEPTHLIM) || 
+	(background && ply < Sdepth + 2))
       {
-	MoveList (side, ply);
+	MoveList (side, ply, InChk);
       }
     else
       {
-        CaptureList (side, ply);
+        CaptureList (side, ply, InChk);
       }
 
   /* no moves return what we have */
@@ -845,8 +1177,9 @@ search (short int side,
   PVarisave = PVari;
   if (!null &&                         /* no previous null-move */
       !PVari &&                        /* no null-move during the PV */
-      (ply > 1) &                      /* not at ply 1 */
-      (depth > 1) &&                   /* not during the quienscesearch */
+      (ply > 2) &                      /* not at ply 1 */
+      (ply <= Sdepth) &&
+      (depth > 3) &&           
       !InChk)                          /* no check */
     /* enough material such that zugzwang is unlike but who knows which value
        is suitable? */
@@ -866,9 +1199,10 @@ search (short int side,
       
       nxtline[ply + 1] = 0;
       CptrFlag[ply] = 0;
+      TesujiFlag[ply] = 0;
       Tscore[ply] = score;
-      /*PVsave = PV;
-      PV = 0;*/
+      PVsave = PV;
+      PV = 0;
       null = 1;
       g = &GameList[++GameCnt];
       g->hashkey = hashkey;
@@ -880,18 +1214,20 @@ search (short int side,
       g->piece = 0;
       g->color = neutral;
       
-      best = -search(xside, ply+1, depth - 2, -beta-1, -beta, nxtline,&rcnt);
+      best = -search (xside, ply+1, depth - 2, - beta-1, -beta, nxtline, &rcnt);
       null = 0;
-      /*PV = PVsave;*/
+      PV = PVsave;
       GameCnt--;
-      if (best > beta)
+      if (best < alpha) 
+	best = -(SCORE_LIMIT+3000);
+      else if (best > beta)
  	return (best);
       else
  	best = -(SCORE_LIMIT+3000);
     }
 #endif
   /* if best so far is better than alpha set alpha to best */
-  if (best>alpha) 
+  if (best > alpha) 
     alpha = best;
   /********************** main loop ************************************************************************/
   /* look at each move until no more or beta cutoff */
@@ -910,12 +1246,12 @@ search (short int side,
 	continue;
 #ifdef DEBUG
 	if(debuglevel & (512 | 1024)){
-		if(!tracen)traceflag = ((ply >traceply)?false:true);
+		if ( !tracen ) traceflag = ((ply >traceply)?false:true);
 	 	else
 		if(ply <= tracen && (ply ==1 || traceflag))
 			{ 
 			if(trace[ply] == (Tree[pnt].t |(Tree[pnt].f<<8))) traceflag = true; else traceflag = false; }
-		tracelog[ply] = (Tree[pnt].t |(Tree[pnt].f<<8));
+		tracelog[ply] = (Tree[pnt].t | (Tree[pnt].f<<8));
 		tracelog[ply+1] = 0;
 }
 #endif
@@ -933,8 +1269,17 @@ search (short int side,
       if ( !(node->flags & exact) )
 	{
 	  /* make the move and go deeper */
+#ifdef DEBUG_EVAL
+	  if ( debug_eval )
+	    {                                   
+		algbr(node->f, node->t, 0);
+		fprintf(debug_eval_file,"%s (ply %d depth %d)\n",
+		  	  mvstr[0], ply, depth);
+	    }
+#endif	  
 	  MakeMove (side, node, &tempb, &tempc, &tempsf, &tempst, &INCscore);
 	  CptrFlag[ply] = (node->flags & capture);
+	  TesujiFlag[ply] = (node->flags & tesuji) && (node->flags & dropmask);
 	  Tscore[ply] = node->score;
 	  PV = node->reply;
 #ifdef DEBUG
@@ -945,11 +1290,27 @@ search (short int side,
 				 (depth > 0)?depth-1:0,
 				 -beta, -alpha,
 				 nxtline, &rcnt);
+/*
+          if(!flag.timeout)node->score = score;
+*/
 	  node->width = (ply % 2 == 1) ? (TrPnt[ply + 2] - TrPnt[ply + 1]) : 0;
-	  if (abs (node->score) > SCORE_LIMIT) node->flags |= exact;
-	  else if (rcnt == 1) node->score /= 2;
-#include "debug256.h"
-	  if ((rcnt >= 2 || GameCnt - Game50 > 99 || (node->score == (SCORE_LIMIT+999) - ply && !ChkFlag[ply])))
+	  if (node->score > SCORE_LIMIT || node->score < -SCORE_LIMIT) 
+	    node->flags |= exact;
+	  else if (rcnt == 1) 
+	    node->score /= 2;
+#ifdef DEBUG
+	  traceflag = tracetmp;
+          if (debuglevel & 256 || ((debuglevel & 1024) && traceflag && 
+			 	   (!traceply || ply<= traceply))) {
+             int i;
+             algbr(node->f, node->t, node->flags);
+             for (i = 1; i < ply; i++)
+                printf("    ");
+             printf("%s S%d d%d p%d n%d s%d a%d b%d best%d x%d\n", 
+		mvstr[0], Sdepth, depth, ply, node->score, score, alpha, beta, best,xxxtmp);
+          }
+#endif
+	  if ((rcnt >= 3 || (node->score == (SCORE_LIMIT+999) - ply && !ChkFlag[ply])))
 	    {
 	      node->flags |= (draw | exact);
 	      DRAW = CP[58];	/* Draw */
@@ -973,7 +1334,9 @@ search (short int side,
 	   * an exact score increment by depth
 	   */
 	  if (depth > 0 && node->score > alpha && !(node->flags & exact))
-	    node->score += depth;
+	    {
+	      node->score += depth;
+	    }
 	  best = node->score;
 	  pbst = pnt;
 	  if (best > alpha) { alpha = best; }
@@ -1020,8 +1383,10 @@ search (short int side,
 	        debug41 (best, bstline, '&');
 #endif
 #else /* !BAREBONES */
-	      if ( !background && Sdepth >2 && best < alpha) {
-	         ExtraTime=8*TCleft;
+	      if ( !background && Sdepth > 2) {
+		if ( best < alpha) { 
+		  TCcount = 0; ExtraTime += 9*TCleft; 
+		}
 	      }
 #endif
 	    }
@@ -1039,7 +1404,35 @@ search (short int side,
   PVari = PVarisave;
 #endif
 #ifdef DEBUG
-#include "debug512.h"
+if (debuglevel & 2560)
+{
+	int             j;
+
+	if (debuglevel & 512 && (tracen > 0 && traceflag))
+	{
+	traceline[0]='\0';
+	for (j=1;tracelog[j];j++){
+		algbr(tracelog[j]>>8,tracelog[j]&0xff,0);
+		strcat(traceline," ");
+		strcat(traceline,mvstr[0]);
+	}
+
+	printf("Ply %d alpha %d beta %d score %d %s\n", ply, alpha, beta, score,traceline);
+	if(debuglevel & 2048){
+		for (j = ply; j < ply + 1; j++)
+		{
+			int             idb;
+
+			for (idb = TrPnt[j]; idb < TrPnt[j + 1]; idb++)
+			{
+				algbr(Tree[idb].f, Tree[idb].t, Tree[idb].flags);
+				printf("level 512 %d-->%d %s %d %d %x\n", ply, idb, mvstr[0], Tree[idb].score, Tree[idb].width, Tree[idb].flags);
+			}
+		}
+}
+}
+	}
+
 #endif
 
   /*
@@ -1070,12 +1463,12 @@ printf("FT %d %d %d %x\n",side,best,depth,mv);
 #endif /* ttblsz */
   if (depth > 0)
     {
-#ifdef HISTORY
-      unsigned short h;
-      h = mv;
-      if (history[hindex(side,h)] < HISTORYLIM)
-	history[hindex(side,h)] += (unsigned short) 1<<depth;
-#endif
+#if defined HISTORY
+      unsigned short h,x;
+      h = mv;      
+      if (history[x=hindex(side,h)] < HISTORYLIM)
+	history[x] += (unsigned short) 1<<depth;
+#endif               //
       if (node->t != (short)(GameList[GameCnt].gmove & 0xFF))
 	if (best <= beta)
 	  killr3[ply] = mv;
@@ -1138,41 +1531,41 @@ drop (short int side, short int piece, short int f, short int t, short int iop)
 
 {
   if ( iop == 1 )
-    {   short cv;
+    {   short cv, n;
 	board[t] = piece;
 	color[t] = side;
+#if !defined SAVE_SVALUE
 	svalue[t] = 0;
+#endif
 	mtl[side] -= (cv = CatchedValue(side,piece));
 	mtl[side] += value[piece];
-        --Captured[side][piece];
+	n = Captured[side][piece]--;
+	UpdateDropHashbd (side, piece, n);
+        UpdateHashbd (side, piece, -1, t);
 	UpdatePieceList (side, t, 2);
 	if ( piece == pawn )
 	  {
 	    ++PawnCnt[side][column(t)];
- 	    pmtl[side] -= cv;
-	    pmtl[side] += value[pawn];
 	  };
         Mvboard[t]++;
 	HasPiece[side][piece]++;
-        UpdateHashbd (side, piece, f, t);
     }
   else
-    {   short cv;
+    {   short cv, n;
 	board[t] = no_piece;
 	color[t] = neutral;
-	++Captured[side][piece];
+	n = ++Captured[side][piece];
+	UpdateDropHashbd (side, piece, n);
+        UpdateHashbd (side, piece, -1, t);
 	mtl[side] += (cv = CatchedValue(side,piece));
 	mtl[side] -= value[piece];
 	UpdatePieceList (side, t, 1);
 	if ( piece == pawn )
 	  {
 	    --PawnCnt[side][column(t)];
- 	    pmtl[side] += cv;
-	    pmtl[side] -= value[pawn];
 	  };
         Mvboard[t]--;
 	HasPiece[side][piece]--;
-        UpdateHashbd (side, piece, f, t);
     }
 
 }
@@ -1183,39 +1576,40 @@ static
 int
 CheckHashKey ()
 { unsigned long chashkey, chashbd;
-  short side, offset, sq, Stposition;
+  short side, sq, Stposition;
   chashbd = chashkey = 0;
-  Stposition = true;
   for (sq = 0; sq < NO_SQUARES; sq++)
-    { 
-      if ((color[sq] != Stcolor[sq]) || (board[sq] != Stboard[sq]))
-        Stposition = false;
+    {
       if (color[sq] != neutral)
         {
 	  chashbd ^= hashcode[color[sq]][board[sq]][sq].bd;
 	  chashkey ^= hashcode[color[sq]][board[sq]][sq].key;
-        }
+        } 
+      /* hashcodes for initial board are 0 ! */
+      if ( Stcolor[sq] != neutral )
+	{
+          chashbd ^= hashcode[Stcolor[sq]][Stboard[sq]][sq].bd;
+          chashkey ^= hashcode[Stcolor[sq]][Stboard[sq]][sq].key;
+	}
     }
-  for ( side = 0, offset = NO_SQUARES; side <= 1; side++, offset += NO_PIECES ) {
+  for ( side = 0; side <= 1; side++ ) {
     short piece;
-    for ( piece = pawn; piece <= king; piece++ ) {
+    for ( piece = 0; piece < NO_PIECES; piece++ ) {
        short n = Captured[side][piece];
+#ifdef DEBUG
+	 assert(n==0 || piece>0);
+#endif
        if ( n > 0 ) {
-  	 unsigned long bd, key;
-	 unsigned short fpiece = piece + offset;
-         short i;
+	 short i;   
          Stposition = false;
-	 bd = hashcode[side][piece][fpiece].bd;
-	 key = hashcode[side][piece][fpiece].key;
-         for ( i = 0; i < n; i++ ) {
-           chashbd ^= bd;
-           chashkey ^= key;
-         };   
+	 for ( i = 1; i <= n; i++ )
+	  {
+	    chashbd ^= drop_hashcode[side][piece][i].bd;
+	    chashkey ^= drop_hashcode[side][piece][i].key;
+	  }
        };
     };
   };       
-  if ( Stposition )
-    chashbd = chashkey = 0;
   if ( chashbd != hashbd ) 
     printf("chashbd %ld != hashbd %ld\n",chashbd,hashbd);
   if ( chashkey != hashkey ) 
@@ -1253,8 +1647,7 @@ MakeMove (short int side,
   g->hashbd = hashbd;
   FROMsquare = f = node->f;
   TOsquare = t = (node->t & 0x7f);
-
-  *INCscore = 0;
+  *INCscore = (short int)node->INCscore;
   g->Game50 = Game50;
   g->gmove = (f << 8) | node->t;
   g->flags = node->flags;
@@ -1266,23 +1659,37 @@ MakeMove (short int side,
     }
 #endif
 
+  rpthash[side][hashkey & 0xFF]++, ISZERO++;
+
+#ifdef DEBUG
+  assert(f!=NO_SQUARES);
+#endif
+
   if (f > NO_SQUARES )
     { short piece;
       piece = f - NO_SQUARES;
       if ( side == white ) piece -= NO_PIECES;
-      g->flags = node->flags = dropmask | piece; 
+      g->fpiece = piece;
+#ifdef DEBUG
+      assert(node->flags & dropmask);
+      assert((node->flags & pmask) == piece);
+#endif
       g->piece = *tempb = no_piece;
       g->color = *tempc = neutral;
+#if !defined SAVE_SVALUE
       *tempsf = 0;
       *tempst = svalue[t];
+#endif
       (void) drop (side, piece, f, t, 1);
-      Game50 = GameCnt;
     }
   else
-    {
-      Game50 = GameCnt;
+    { short piece;
+
+#if !defined SAVE_SVALUE
       *tempsf = svalue[f];
       *tempst = svalue[t];
+#endif
+      g->fpiece = board[f];
       g->piece = *tempb = board[t];
       g->color = *tempc = color[t];
       fromb = board[f];
@@ -1297,25 +1704,24 @@ MakeMove (short int side,
 	    }
 	  mtl[xside] -= value[*tempb];
 	  HasPiece[xside][*tempb]--;
-	  { short n, fpiece, upiece = unpromoted[*tempb];
-	    ++Captured[side][upiece];
+	  { short n, upiece = unpromoted[*tempb];
+	    /* add "upiece" captured by "side" */ 
+	    n = ++Captured[side][upiece];
+	    UpdateDropHashbd (side, upiece, n);
 	    mtl[side] += CatchedValue(side,upiece);
- 	    fpiece = upiece + NO_SQUARES;
-	    if ( side == white )
-	      fpiece += NO_PIECES;
-	    UpdateHashbd (side, upiece, fpiece, -1);
 	  }
-	  if (*tempb == pawn)
-	    {
-	      pmtl[xside] -= value[pawn];
-	      pmtl[side] += CatchedValue(side,pawn);
-	    }
+	  /* remove "*tempb" of "xside" from board[t] */
 	  UpdateHashbd (xside, *tempb, -1, t);
+#if !defined SAVE_SVALUE
+	  *INCscore += *tempst; /* add value of catched piece to own score */
+#endif
 	  Mvboard[t]++;
 	}
       color[t] = fromc;
+#if !defined SAVE_SVALUE
       svalue[t] = svalue[f];
       svalue[f] = 0;
+#endif
       Pindex[t] = Pindex[f];
       PieceList[side][Pindex[t]] = t;
       color[f] = neutral;
@@ -1323,19 +1729,24 @@ MakeMove (short int side,
       if (node->flags & promote)
 	{ short tob;
 	  board[t] = tob = promoted[fromb];
-	  UpdateHashbd (side, fromb, f, -1);
+	  /* remove unpromoted piece from board[f] */
+	  UpdateHashbd (side, fromb, f, -1);         
+	  /* add promoted piece to board[t] */
 	  UpdateHashbd (side, tob, -1, t);
 	  mtl[side] += value[tob] - value[fromb];
 	  if ( fromb == pawn )
 	    { --PawnCnt[side][column(f)];
-	      pmtl[side] -= value[pawn];
             };
 	  HasPiece[side][fromb]--;
 	  HasPiece[side][tob]++;
+#if !defined SAVE_SVALUE
+	  *INCscore -= *tempsf;
+#endif
 	}
       else
 	{
 	  board[t] = fromb;
+	  /* remove piece from board[f] and add it to board[t] */
 	  UpdateHashbd (side, fromb, f, t);
 	}
       Mvboard[f]++;
@@ -1346,6 +1757,9 @@ MakeMove (short int side,
       printf("error in MakeMove: %s\n", mvstr[0]);
       exit(1);
     }
+#endif
+#ifdef DEBUG
+    assert(Captured[black][0]==0 && Captured[white][0]==0);
 #endif
 }
 
@@ -1368,27 +1782,40 @@ UnmakeMove (short int side,
   f = node->f;
   t = node->t & 0x7f;
   Game50 = GameList[GameCnt].Game50;
+
+#ifdef DEBUG
+  assert(f != NO_SQUARES);
+
   if (f > NO_SQUARES )
     { short piece;
       piece = f - NO_SQUARES;
       if ( piece >= NO_PIECES ) piece -= NO_PIECES;
-      node->flags = (dropmask | piece); 
-    }
+      assert(node->flags & dropmask);
+      assert((node->flags & pmask) == piece);
+    }       
+#endif
+
   if (node->flags & dropmask)
     {
       (void) drop (side, (node->flags & pmask), f, t, 2);
+#if !defined SAVE_SVALUE
       svalue[t] = *tempst;
+#endif
     } 
   else
     { short tob, fromb;
       color[f] = color[t];
       board[f] = tob = fromb = board[t];
+#if !defined SAVE_SVALUE
       svalue[f] = *tempsf;
+#endif
       Pindex[f] = Pindex[t];
       PieceList[side][Pindex[f]] = f;
       color[t] = *tempc;
       board[t] = *tempb;
+#if !defined SAVE_SVALUE
       svalue[t] = *tempst;
+#endif
       /* Undo move */
       if (node->flags & promote)
 	{ 
@@ -1397,11 +1824,12 @@ UnmakeMove (short int side,
 	  if ( fromb == pawn )
 	    {
 	      ++PawnCnt[side][column (f)];
-	      pmtl[side] += value[pawn];
 	    }
 	  HasPiece[side][fromb]++;
 	  HasPiece[side][tob]--;
-	  UpdateHashbd (side, fromb, f, -1);
+	  /* add unpromoted piece to board[f] */
+	  UpdateHashbd (side, fromb, f, -1);    
+	  /* remove promoted piece from board[t] */
           UpdateHashbd (side, tob, -1, t);
 	}
       else
@@ -1411,11 +1839,12 @@ UnmakeMove (short int side,
 	      --PawnCnt[side][column (t)];
 	      ++PawnCnt[side][column (f)];
 	    };
+	  /* remove piece from board[t] and add it to board[f] */
 	  UpdateHashbd (side, fromb, f, t);
 	}
       /* Undo capture */
       if (*tempc != neutral)
-	{ short fpiece, upiece = unpromoted[*tempb];
+	{ short n, upiece = unpromoted[*tempb];
 	  UpdatePieceList (*tempc, t, 2);
 	  if (*tempb == pawn)
 	    {
@@ -1424,29 +1853,26 @@ UnmakeMove (short int side,
 	  mtl[xside] += value[*tempb];
 	  HasPiece[xside][*tempb]++;
 	  mtl[side] -= CatchedValue(side,upiece);
-          fpiece = upiece + NO_SQUARES;
-          if (side == white) 
-              fpiece += NO_PIECES;
-	  UpdateHashbd (side, upiece, fpiece, -1);
-	  if (*tempb == pawn)
-	    {
-	      pmtl[xside] += value[pawn];
-	      pmtl[side] -= CatchedValue(side,pawn);
-	    }
-	  --Captured[side][upiece];
+	  /* remove "upiece" captured by "side" */
+	  n = Captured[side][upiece]--;
+	  UpdateDropHashbd (side, upiece, n);
+	  /* replace captured piece on board[t] */
 	  UpdateHashbd (xside, *tempb, -1, t);
 	  Mvboard[t]--;
 	}
       Mvboard[f]--;
-      /* rpthash[side][hashkey & 0xFF]--; */
     }
     GameCnt--;
+    rpthash[side][hashkey & 0xFF]--, ISZERO--;
 #ifdef HASHKEYTEST
     algbr(f,t,node->flags);
     if ( CheckHashKey () ) {
       printf("error in UnmakeMove: %s\n", mvstr[0]);
       exit(1);
     }
+#endif
+#ifdef DEBUG
+    assert(Captured[black][0]==0 && Captured[white][0]==0);
 #endif
 }
 
@@ -1466,67 +1892,48 @@ InitializeStats (void)
 
 {
   register short i, sq;
-#if HASHKEYTEST
-  short Stposition;
-#endif
   for (i = 0; i < NO_COLS; i++)
     {
       PawnCnt[black][i] = PawnCnt[white][i] = 0;
     }
-  mtl[black] = mtl[white] = pmtl[black] = pmtl[white] = 0;
+  mtl[black] = mtl[white] = 0;
   PieceCnt[black] = PieceCnt[white] = 0;
   hashbd = hashkey = 0;
-#if HASHKEYTEST
-  Stposition = true;
-#endif
   for (sq = 0; sq < NO_SQUARES; sq++)
-    {                       
-#if HASHKEYTEST
-      if (color[sq] != Stcolor[sq] || board[sq] != Stboard[sq])
-         Stposition = false;
-#endif
+    {             
       if (color[sq] != neutral)
         {
 	  mtl[color[sq]] += value[board[sq]];
 	  if (board[sq] == pawn)
 	    {
-	      pmtl[color[sq]] += value[pawn];
-	      ++PawnCnt[color[sq]][column (sq)];
+	      ++PawnCnt[color[sq]][column(sq)];
 	    }
 	  Pindex[sq] = ((board[sq] == king) ? 0 : ++PieceCnt[color[sq]]);
 
 	  PieceList[color[sq]][Pindex[sq]] = sq;
-	  hashbd ^= hashcode[color[sq]][board[sq]][sq].bd;
-	  hashkey ^= hashcode[color[sq]][board[sq]][sq].key;
+	  UpdateHashbd(color[sq],board[sq],sq,-1);
         }
+      /* hashcodes for initial board are 0 ! */
+      if ( Stcolor[sq] != neutral )
+        UpdateHashbd(Stcolor[sq],Stboard[sq],sq,-1);
     }
-  { short color, offset;
-    for ( color = 0, offset = NO_SQUARES; color <= 1; color++, offset += NO_PIECES ) {
+  { short side;
+    for ( side = 0; side <= 1; side++ ) {
       short piece;
-      for ( piece = pawn; piece <= king; piece++ ) {
-         short n = Captured[color][piece];
+      for ( piece = 0; piece < NO_PIECES; piece++ ) {
+         short n = Captured[side][piece];
 	 if ( n > 0 ) {
-	   unsigned long bd, key;
-	   unsigned short fpiece = piece + offset;
-#if HASHKEYTEST
-           Stposition = false;
-#endif
-	   bd = hashcode[color][piece][fpiece].bd;
-	   key = hashcode[color][piece][fpiece].key;
-    	   Captured[color][piece] = 0;
-           for ( i = 0; i < n; i++ ) {
-	     ++Captured[color][piece];
-	     mtl[color] += CatchedValue(color,piece);
-             hashbd ^= bd;
-             hashkey ^= key;
+    	   Captured[side][piece] = 0;
+           for ( i = 1; i <= n; i++ ) {
+	     ++Captured[side][piece];
+	     UpdateDropHashbd(side,piece,i);
+	     mtl[side] += CatchedValue(side,piece);
            };
          };
       };
     };
   }
 #ifdef HASHKEYTEST
-    if ( Stposition )
-      hashbd = hashkey = 0;
     if ( CheckHashKey () ) {
       printf("error in InitializeStats\n");
       exit(1);

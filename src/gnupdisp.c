@@ -48,13 +48,18 @@ test_distance ()
 
 
 void
-main ()
+main (int argc, char **argv)
 
 {
 
   short d, sq, side; 
   PatternFields pattern;
   char s[80], *Lang = NULL; 
+  
+#ifdef THINK_C
+#include <console.h>
+  ccommand(&argv);
+#endif
 
   InitConst (Lang);
   Initialize_dist ();

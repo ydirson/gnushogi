@@ -35,28 +35,28 @@
 #if defined THINK_C
 #include <console.h>
 #include <time.h>
-#define MAKE_BOOK
-#endif
-
-#if !defined K32SEGMENTS
-#include "main_data1.c"
-#include "main_data2.c"
 #endif
 
 
-#if defined HASGETTIMEOFDAY && defined THINK_C
+struct leaf *Tree, *root;
 
-#define USEC_PER_CLOCK (1000000 / CLOCKS_PER_SEC)
+short FROMsquare, TOsquare;
 
-int gettimeofday(struct timeval *tp, void *tzp)
-{ 
-   long clock_count = (long)clock();
-   tp->tv_sec = clock_count / CLOCKS_PER_SEC;
-   tp->tv_usec = (clock_count % CLOCKS_PER_SEC) * USEC_PER_CLOCK;
-   return(0);
-}
+small_short ChkFlag[MAXDEPTH], CptrFlag[MAXDEPTH], TesujiFlag[MAXDEPTH];
+short Pscore[MAXDEPTH], Tscore[MAXDEPTH];
+small_short Pindex[NO_SQUARES];
 
-#endif
+short mtl[2], hung[2];
+small_short PieceCnt[2];
+
+struct GameRec *GameList;
+
+char *ColorStr[2];
+char *CP[CPSIZE];
+
+long znodes;
+
+
 
 /*
  * In a networked enviroment gnuchess might be compiled on different hosts
@@ -80,7 +80,7 @@ gsrand (unsigned int seed)
 }
 
 #if ttblsz
-struct hashentry huge *ttable[2];
+struct hashentry *ttable[2];
 unsigned int ttblsize;
 #endif
 #ifdef BINBOOK
@@ -89,7 +89,8 @@ extern char *binbookfile;
 extern char *bookfile;
 
 unsigned long hashkey, hashbd;
-struct hashval hashcode[2][NO_PIECES][NO_SQUARES+(2*NO_PIECES)];
+struct hashval hashcode[2][NO_PIECES][NO_SQUARES];
+struct hashval drop_hashcode[2][NO_PIECES][MAX_CAPTURED];
 
 char savefile[128] = "";
 char listfile[128] = "";
@@ -104,12 +105,17 @@ small_short PieceList[2][NO_SQUARES];
 small_short PawnCnt[2][NO_COLS];
 small_short Captured[2][NO_PIECES];
 small_short Mvboard[NO_SQUARES];
+#if !defined SAVE_SVALUE
 short svalue[NO_SQUARES];
+#endif
 struct flags flag;
 
 short opponent, computer, WAwindow, WBwindow, BAwindow, BBwindow, dither,
   INCscore;
 long ResponseTime, ExtraTime, MaxResponseTime, et, et0, time0, ft;
+#ifdef INTERRUPT_TEST
+long it, itime0;
+#endif
 long GenCnt, NodeCnt, ETnodes, EvalNodes, HashCnt, HashAdd, FHashCnt, FHashAdd,
   HashCol, THashCol, filesz, hashmask, hashbase;
 long replus, reminus;
@@ -133,9 +139,6 @@ unsigned short killr0[MAXDEPTH], killr1[MAXDEPTH];
 unsigned short killr2[MAXDEPTH], killr3[MAXDEPTH];
 unsigned short PV, SwagHt, Swag0, Swag1, Swag2, Swag3, Swag4, sidebit;
 
-const small_short sweep[NO_PIECES] =
-{false, false, true,  false, false, false, true, true,
-        false, false, false, false, true,  true,  false };
 small_short HasPiece[2][NO_PIECES]; 
 const short kingP[3] =
 {4, 76, 0};
@@ -157,6 +160,7 @@ unsigned int starttime;
 short int ahead = true, hash = true;
 
 
+
 #if defined XSHOGI
 void
 TerminateChess (int sig)
@@ -170,7 +174,7 @@ TerminateChess (int sig)
 
 int timeopp[MINGAMEIN], timecomp[MINGAMEIN];
 int compptr, oppptr;
-inline void
+void
 TimeCalc ()
 {
 /* adjust number of moves remaining in gamein games */
@@ -201,6 +205,9 @@ TimeCalc ()
   else if (TimeControl.moves[computer] < MINMOVES && !increment) increment++;
 /* if I am doing really well use more time per move */
   else if (me > him && tcompsum < topsum) increment = -1;
+/* if not fischer clock be careful about time */
+  if(TCadd == 0 && increment >0)increment += 2;
+  if(me == 0 && increment >0)increment += 2;
   TimeControl.moves[computer] += increment;
 }
 
@@ -253,10 +260,23 @@ main (int argc, char **argv)
   char *xwin = 0;
   char *Lang = NULL;
   size_t n;
+
 #ifdef THINK_C
   console_options.ncols = 100;
   cshow(stdout);
+#ifdef NONDSP
+  ccommand(&argv);
 #endif
+#endif    
+
+  {
+    small_short x = -1;
+    if ( x >= 0 ) {
+      ShowMessage("datatype 'small_short' is unsigned; check gnushogi.h\n");
+      exit(1);
+    }
+  }
+
 #if defined CACHE
   n = sizeof(struct etable) * (size_t)ETABLE;
   if ( !(etab[0] = (etable_field *)malloc(n)) ) {
@@ -265,12 +285,40 @@ main (int argc, char **argv)
   if ( !(etab[1] = (etable_field *)malloc(n)) ) {
     ShowMessage ("cannot allocate cache table 1\n");
   }
+#if !defined BAREBONES && defined NONDSP
+  { char s[80];
+    sprintf(s,"evaluation cache is %ld",(long)ETABLE);
+    ShowMessage(s);
+  }
 #endif
+#endif
+
 #if defined HISTORY
   if ( !(history = (unsigned short *)malloc(sizeof_history)) ) {
     ShowMessage ("cannot allocate history table\n");
+  } else {
+#if defined(NOMEMSET)
+    long i;
+    for (i = 0; i < HISTORY_SIZE; i++)
+      history[(unsigned short)i] = 0;
+#else
+    memset ((unsigned char *) history, 0, (size_t)sizeof_history);
+#endif /* NOMEMSET */
   }
 #endif
+
+  n = sizeof(struct leaf) * (size_t)TREE;
+  if ( !(Tree = (struct leaf *)malloc(n)) ) {
+    ShowMessage ("cannot allocate search tree space\n");
+    exit(1);
+  }
+
+  n = sizeof(struct GameRec) * (size_t)(MAXMOVES + MAXDEPTH);
+  if ( !(GameList = (struct GameRec *)malloc(n)) ) {
+    ShowMessage ("cannot allocate game record space\n");
+    exit(1);
+  }
+
 #if defined THINK_C
   gsrand (starttime = ((unsigned int) time ((time_t *) 0)));	/* init urand */
 #else
@@ -293,13 +341,6 @@ main (int argc, char **argv)
   ColorStr[0] = CP[118];
   ColorStr[1] = CP[119];
   
-#if defined MAKE_BOOK
-  bookfile = BOOK;
-  binbookfile = BINBOOK;
-  booksize = 8000;
-  bookmaxply = 40;
-#endif
-
   while (argc > 1 && ((argv[1][0] == '-') || (argv[1][0] == '+')))
     {
       switch (argv[1][1])
@@ -366,10 +407,7 @@ main (int argc, char **argv)
 	    ttblsize = atoi (argv[2]);
 	  argc--;
 	  argv++;
-	  if (ttblsize > 0 && ttblsize < 24)
-	    ttblsize = (1 << ttblsize);
-	  else
-	    ttblsize = ttblsz;
+	  if ((ttblsize <= MINTTABLE)) ttblsize = (MINTTABLE)+1;
 	  break;
 #ifdef HASHFILE
 	case 't':	/* create or test persistent transposition
@@ -413,10 +451,12 @@ if(n.depth >MAXDEPTH) {printf("ERROR\n");exit(1);}
 				 * table */
 	  if (argc > 2)
 	    filesz = atoi (argv[2]);
+	  else
+	    filesz = vfilesz;
 	  if (filesz > 0 && filesz < 24)
 	    filesz = (1 << filesz) - 1 + MAXrehash;
 	  else
-	    filesz = Deffilesz + MAXrehash;
+	    filesz = filesz + MAXrehash;
 	  if ((hashfile = fopen (HASHFILE, RWA_ACC)) == NULL)
 	    hashfile = fopen (HASHFILE, WA_ACC);
 	  if (hashfile != NULL)
@@ -523,7 +563,9 @@ if(n.depth >MAXDEPTH) {printf("ERROR\n");exit(1);}
     }
   Initialize ();
   Initialize_dist ();
+#if !defined SAVE_NEXTPOS
   Initialize_moves ();
+#endif
 #ifdef DEBUG_INITS
   DebugInits ();
 #endif
@@ -558,10 +600,10 @@ if(n.depth >MAXDEPTH) {printf("ERROR\n");exit(1);}
   while (!(flag.quit))
     {
       oppptr = (oppptr + 1) % MINGAMEIN;
-      if (flag.bothsides && !flag.mate)
-	SelectMove (opponent, 1);
-      else
-	InputCommand ();
+      if (flag.bothsides && !flag.mate) {
+	SelectMove (opponent, FOREGROUND_MODE);
+      } else
+	InputCommand (NULL);
       if (opponent == white)
 	if (flag.gamein || TCadd)
 	  {
@@ -582,8 +624,11 @@ if(n.depth >MAXDEPTH) {printf("ERROR\n");exit(1);}
 
       compptr = (compptr + 1) % MINGAMEIN;
       if (!(flag.quit || flag.mate || flag.force))
-	{
-	  SelectMove (computer, 1);
+	{ 
+#ifdef INTTERRUPT_TEST
+	  printf("starting search...\n");
+#endif
+	  SelectMove (computer, FOREGROUND_MODE);
 	  if (computer == white)
 	    if (flag.gamein)
 	      {

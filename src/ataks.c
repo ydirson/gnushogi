@@ -35,7 +35,11 @@ ataks (short int side, long int *a)
 {
   register short u, sq;
   long int c;
+#ifdef SAVE_NEXTPOS
+  short d;
+#else
   register unsigned char *ppos, *pdir;
+#endif
   short i, piece; 
   small_short *PL;
 
@@ -51,26 +55,209 @@ ataks (short int side, long int *a)
       piece = board[sq];
       ptyp = ptype[side][piece];
       c = control[piece];
-      if (sweep[piece])
+#ifdef SAVE_NEXTPOS
+      u = first_direction(ptyp,&d,sq);
+#else
+      ppos = (*nextpos[ptyp])[sq];
+      pdir = (*nextdir[ptyp])[sq];
+      u = ppos[sq];
+#endif
+      do {
+          a[u] = ((a[u]+1) | c);
+#ifdef SAVE_NEXTPOS
+          u = ((color[u] == neutral) ? next_position(ptyp,&d,sq,u)
+				     : next_direction(ptyp,&d,sq));
+#else
+          u = ((color[u] == neutral) ? ppos[u] : pdir[u]);
+#endif
+      } while (u != sq);
+   }
+}
+
+
+
+#define CHECK_DISTANCE
+
+
+int
+SqAtakd (short int square, short int side, short int *blockable)
+
+/*
+ * See if any piece with color 'side' ataks sq.
+ * *blockable == attack could be blocked by drop  
+ */
+
+{
+#ifdef SAVE_NEXTPOS
+  short d;
+#else
+  register unsigned char *ppos, *pdir;
+#endif
+  register short u, ptyp;
+
+ /*
+  * First check neigboured squares,
+  * then check Knights.
+  * then check Bishops,
+  * last check Rooks,
+  */                                         
+
+  *blockable = false;          
+
+  /* try a capture from direct neighboured squares */
+
+  ptyp = ptype[black][king];
+#ifdef SAVE_NEXTPOS
+  u = first_direction(ptyp,&d,square);
+#else
+  pdir = (*nextdir[ptyp])[square];
+  u = pdir[square];
+#endif
+  do
+    {
+      if (color[u] == side)
+	/* can piece reach square in one step ? */
+#ifdef CHECK_DISTANCE
+        if ( piece_distance(side,board[u],u,square) == 1 )
+	  return(true);
+#else   
 	{
-	  ppos = (*nextpos[ptyp])[sq];
-	  pdir = (*nextdir[ptyp])[sq];
-	  u = ppos[sq];
+	  short v;
+	  short ptypv = ptype[side][board[u]];
+#ifdef SAVE_NEXTPOS
+	  short dv;
+	  v = first_direction(ptypv,&dv,u);
+#else 
+	  unsigned char *qdir;
+	  qdir = (*nextdir[ptypv])[u];
+	  v = qdir[u];
+#endif 
 	  do
 	    {
-	      a[u] = ((a[u]+1) | c);
-	      u = ((color[u] == neutral) ? ppos[u] : pdir[u]);
-	  } while (u != sq);
+	      if (v == square)
+		return (true);
+#ifdef SAVE_NEXTPOS
+	      v = next_direction(ptypv,&dv,u);
+#else
+	      v = qdir[v];
+#endif
+	  } while (v != u);
 	}
+#endif
+#ifdef SAVE_NEXTPOS
+      u = next_direction(ptyp,&d,square);
+#else
+      u = pdir[u];
+#endif
+  } while (u != square);
+
+  /* try a knight capture (using xside's knight moves) */
+
+  ptyp = ptype[side ^ 1][knight];
+#ifdef SAVE_NEXTPOS
+  u = first_direction(ptyp,&d,square);
+#else
+  pdir = (*nextdir[ptyp])[square];
+  u = pdir[square];
+#endif
+  do
+    {
+      if (color[u] == side && board[u] == knight)
+	return (true);
+#ifdef SAVE_NEXTPOS
+      u = next_direction(ptyp,&d,square);
+#else
+      u = pdir[u];
+#endif
+  } while (u != square);
+
+  *blockable = true;
+
+  /* try a (promoted) bishop capture */
+
+  ptyp = ptype[black][bishop];
+#ifdef SAVE_NEXTPOS
+  u = first_direction(ptyp,&d,square);
+#else
+  ppos = (*nextpos[ptyp])[square];
+  pdir = (*nextdir[ptyp])[square];
+  u = ppos[square];
+#endif
+  do
+    {
+      if (color[u] == neutral)
+#ifdef SAVE_NEXTPOS
+	u = next_position(ptyp,&d,square,u);
+#else
+	u = ppos[u];
+#endif
       else
 	{
-	  pdir = (*nextdir[ptyp])[sq];
-	  u = pdir[sq];		/* follow captures thread for pawns */
-	  do
-	    {
-	      a[u] = ((a[u]+1) | c);
-	      u = pdir[u];
-	  } while (u != sq);
+	  if (color[u] == side && (unpromoted[board[u]] == bishop))
+	    return (true);
+#ifdef SAVE_NEXTPOS
+	  u = next_direction(ptyp,&d,square);
+#else
+	  u = pdir[u];
+#endif
 	}
-    }
+  } while (u != square);
+
+  /* try a (promoted) rook capture */
+
+  ptyp = ptype[black][rook];
+#ifdef SAVE_NEXTPOS
+  u = first_direction(ptyp,&d,square);
+#else
+  ppos = (*nextpos[ptyp])[square];
+  pdir = (*nextdir[ptyp])[square];
+  u = ppos[square];
+#endif
+  do
+    {
+      if (color[u] == neutral)
+#ifdef SAVE_NEXTPOS
+	u = next_position(ptyp,&d,square,u);
+#else
+	u = ppos[u];
+#endif
+      else
+	{
+	  if (color[u] == side && (unpromoted[board[u]] == rook))
+	    return (true);
+#ifdef SAVE_NEXTPOS
+	  u = next_direction(ptyp,&d,square);
+#else
+	  u = pdir[u];
+#endif
+	}
+  } while (u != square);
+
+  /* try a lance capture (using xside's lance moves) */
+
+  ptyp = ptype[side ^ 1][lance];
+#ifdef SAVE_NEXTPOS
+  u = first_direction(ptyp,&d,square);
+#else
+  ppos = (*nextpos[ptyp])[square];
+  u = ppos[square];
+#endif
+  do
+    {
+      if (color[u] == neutral)
+#ifdef SAVE_NEXTPOS
+	u = next_position(ptyp,&d,square,u);
+#else
+	u = ppos[u];
+#endif
+      else
+	{
+	  if (color[u] == side && (board[u] == lance))
+	    return (true);
+	  u = square;
+	}
+  } while (u != square);
+                     
+  return (false);
+
 }

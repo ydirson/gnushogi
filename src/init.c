@@ -32,20 +32,9 @@
 #endif
 
 extern unsigned int TTadd;
+unsigned int ttbllimit;
 
 /* .... MOVE GENERATION VARIABLES AND INITIALIZATIONS .... */
-
-
-#if !defined K32SEGMENTS
-#include "init_data1.c"
-#include "init_data2.c"
-#include "init_data3.c"
-#include "init_data4.c"
-#include "init_data1b.c"
-#include "init_data2b.c"
-#include "init_data3b.c"
-#include "init_data4b.c"
-#endif
 
 
 #ifdef USE_PATTERN
@@ -60,6 +49,10 @@ extern unsigned int TTadd;
 #define odd(a) ((a) & 1)
 
 
+#ifdef MSDOS
+#define malloc(size) farmalloc(size)
+#endif
+
 
 const small_short piece_of_ptype[NO_PTYPE_PIECES] =
 { pawn, lance, knight, silver, gold, bishop, rook, pbishop, prook, king,
@@ -70,6 +63,11 @@ const small_short side_of_ptype[NO_PTYPE_PIECES] =
 { black, black, black, black, black, black, black, black, black, black,
     white, white, white, white, white };
 
+#ifdef SAVE_NEXTPOS
+static const sweep[NO_PTYPE_PIECES] =
+{ false, true, false, false, false, true, true, true, true, false,
+    false, true, false, false, false };
+#endif
 
 
 short
@@ -188,6 +186,10 @@ ptype_distance (short ptyp, short f, short t)
 }
 
 
+#ifndef SAVE_DISTDATA
+distdata_array *distdata;
+#endif
+
 #ifndef SAVE_PTYPE_DISTDATA
 distdata_array *ptype_distdata[NO_PTYPE_PIECES];
 #endif
@@ -198,18 +200,25 @@ Initialize_dist (void)
 {
   register short a, b, d, di, ptyp;
 #ifndef SAVE_DISTDATA
+  if ( (distdata = (distdata_array *) malloc (sizeof(distdata_array))) == NULL )
+    {
+      ShowMessage("cannot allocate distdata space...");
+      exit(1);
+    }
   for (a = 0; a < NO_SQUARES; a++)
     for (b = 0; b < NO_SQUARES; b++)
       {
 	d = abs (column (a) - column (b));
 	di = abs (row (a) - row (b));
-	distdata[a][b] = (small_short)((d > di) ? d : di);
+	(*distdata)[a][b] = (small_short)((d > di) ? d : di);
       }
 #endif
 #ifndef SAVE_PTYPE_DISTDATA
   for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++)
     {
-      if ( (ptype_distdata[ptyp] = (distdata_array *) malloc (sizeof(next_array))) == NULL )
+      size_t space = sizeof(distdata_array);
+      ptype_distdata[ptyp] = (distdata_array *) malloc (space);
+      if ( ptype_distdata[ptyp] == NULL )
         {
           ShowMessage("cannot allocate ptype_distdata space...");
           exit(1);
@@ -235,35 +244,12 @@ Initialize_dist (void)
  */
 
 
-extern next_array pawn_nextdir, lance_nextdir, knight_nextdir;
-extern next_array silver_nextdir, gold_nextdir, bishop_nextdir;
-extern next_array rook_nextdir, pbishop_nextdir, prook_nextdir;
-extern next_array king_nextdir, wpawn_nextdir, wlance_nextdir;
-extern next_array wknight_nextdir, wsilver_nextdir, wgold_nextdir;
-
-extern next_array pawn_nextpos, lance_nextpos, knight_nextpos;
-extern next_array silver_nextpos, gold_nextpos, bishop_nextpos;
-extern next_array rook_nextpos, pbishop_nextpos, prook_nextpos;
-extern next_array king_nextpos, wpawn_nextpos, wlance_nextpos;
-extern next_array wknight_nextpos, wsilver_nextpos, wgold_nextpos;
+#if !defined SAVE_NEXTPOS
+next_array *nextdir[NO_PTYPE_PIECES], *nextpos[NO_PTYPE_PIECES]; 
+#endif
 
 
-
-next_array *nextdir[NO_PTYPE_PIECES] = 
-{ &pawn_nextdir, &lance_nextdir, &knight_nextdir, 
-  &silver_nextdir, &gold_nextdir, &bishop_nextdir, &rook_nextdir,
-  &pbishop_nextdir, &prook_nextdir,
-  &king_nextdir, &wpawn_nextdir, &wlance_nextdir, &wknight_nextdir,
-  &wsilver_nextdir, &wgold_nextdir };
-
-next_array *nextpos[NO_PTYPE_PIECES] = 
-{ &pawn_nextpos, &lance_nextpos, &knight_nextpos, 
-  &silver_nextpos, &gold_nextpos, &bishop_nextpos, &rook_nextpos,
-  &pbishop_nextpos, &prook_nextpos,
-  &king_nextpos, &wpawn_nextpos, &wlance_nextpos, &wknight_nextpos,
-  &wsilver_nextpos, &wgold_nextpos };
-
-/*
+/*                                           
  * ptype is used to separate black and white pawns, like this; ptyp =
  * ptype[side][piece] piece can be used directly in nextpos/nextdir when
  * generating moves for pieces that are not white pawns.
@@ -292,7 +278,10 @@ const small_short is_promoted[NO_PIECES] =
     true, true, true, true, true, true, false };
 
 /* data used to generate nextpos/nextdir */
-static const small_short direc[NO_PTYPE_PIECES][8] =
+#if !defined SAVE_NEXTPOS
+static
+#endif 
+const small_short direc[NO_PTYPE_PIECES][8] =
 {
    11,  0,  0,  0,  0,  0,  0,  0 ,   /*  0 ptype_pawn */
    11,  0,  0,  0,  0,  0,  0,  0 ,   /*  1 ptype_lance */
@@ -301,8 +290,8 @@ static const small_short direc[NO_PTYPE_PIECES][8] =
    10, 11, 12, -1,  1,-11,  0,  0 ,   /*  4 ptype_gold */
    10, 12,-12,-10,  0,  0,  0,  0 ,   /*  5 ptype_bishop */
    11, -1,  1,-11,  0,  0,  0,  0 ,   /*  6 ptype_rook */
-   10, 11, 12, -1,  1,-12,-11,-10 ,   /*  7 ptype_pbishop */
-   10, 11, 12, -1,  1,-12,-11,-10 ,   /*  8 ptype_prook */
+   10, 12,-12,-10, 11, -1,  1,-11 ,   /*  7 ptype_pbishop */
+   11, -1,  1,-11, 10, 12,-12,-10 ,   /*  8 ptype_prook */
    10, 11, 12, -1,  1,-12,-11,-10 ,   /*  9 ptype_king */
   -11,  0,  0,  0,  0,  0,  0,  0 ,   /* 10 ptype_wpawn */
   -11,  0,  0,  0,  0,  0,  0,  0 ,   /* 11 ptype_wlance */
@@ -319,7 +308,10 @@ small_short diagonal(short d)
 static const small_short max_steps[NO_PTYPE_PIECES] = 
 {1, 8, 1, 1, 1, 8, 8, 8, 8, 1, 1, 8, 1, 1, 1 };
 
-static const small_short nunmap[(NO_COLS+2)*(NO_ROWS+4)] =
+#if !defined SAVE_NEXTPOS
+static
+#endif 
+const small_short nunmap[(NO_COLS+2)*(NO_ROWS+4)] =
 {
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
@@ -336,7 +328,58 @@ static const small_short nunmap[(NO_COLS+2)*(NO_ROWS+4)] =
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 
+#ifdef SAVE_NEXTPOS
+const small_short inunmap[NO_SQUARES] =
+{
+  23, 24, 25, 26, 27, 28, 29, 30, 31, 
+  34, 35, 36, 37, 38, 39, 40, 41, 42,
+  45, 46, 47, 48, 49, 50, 51, 52, 53,
+  56, 57, 58, 59, 60, 61, 62, 63, 64,
+  67, 68, 69, 70, 71, 72, 73, 74, 75,
+  78, 79, 80, 81, 82, 83, 84, 85, 86,
+  89, 90, 91, 92, 93, 94, 95, 96, 97,
+ 100,101,102,103,104,105,106,107,108,
+ 111,112,113,114,115,116,117,118,119 }; 
+#endif
+
 int InitFlag = false;
+
+
+#if defined SAVE_NEXTPOS
+
+short next_direction(short ptyp, short *d, short sq)
+{
+  short delta, to, sfrom = inunmap[sq];
+  do { 
+    (*d)++;
+    if ( *d >= 8 ) return sq;
+    delta = direc[ptyp][*d];
+    if ( delta == 0 ) return sq;
+    to = nunmap[sfrom + delta];
+  } while ( to < 0 );
+  return to;  
+}
+
+short next_position(short ptyp, short *d, short sq, short u)
+{
+  if ( *d < 4 && sweep[ptyp] ) {
+    short to = nunmap[inunmap[u]+direc[ptyp][*d]];
+    if ( to < 0 )
+	return next_direction(ptyp,d,sq);
+    else
+	return to;
+  } else {
+    return next_direction(ptyp,d,sq);
+  } 
+}
+
+short first_direction(short ptyp, short *d, short sq)
+{
+  *d = -1;
+  return next_direction(ptyp,d,sq);
+}
+
+#else
 
 void
 Initialize_moves (void)
@@ -356,16 +399,28 @@ Initialize_moves (void)
   short fpo=23,tpo=120;
 
   for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++)
-    for (po = 0; po < NO_SQUARES; po++)
-      for (p0 = 0; p0 < NO_SQUARES; p0++)
-	{ 
-	  (*nextpos[ptyp])[po][p0] = (unsigned char) po;
-	  (*nextdir[ptyp])[po][p0] = (unsigned char) po;
+    {
+      if ( !(nextdir[ptyp] = (next_array *) malloc ((size_t)sizeof(next_array))) )
+	{
+          ShowMessage ("cannot allocate nextdir space\n"); 
+	  exit(1);
 	}
+      if ( !(nextpos[ptyp] = (next_array *) malloc ((size_t)sizeof(next_array))) )
+	{
+          ShowMessage ("cannot allocate nextpos space\n"); 
+	  exit(1);
+	}
+      for (po = 0; po < NO_SQUARES; po++)
+        for (p0 = 0; p0 < NO_SQUARES; p0++)
+	  { 
+	    (*nextpos[ptyp])[po][p0] = (unsigned char) po;
+	    (*nextdir[ptyp])[po][p0] = (unsigned char) po;
+	  }
+    }
 	
   for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++) 
     for (po = fpo; po < tpo; po++)
-      if (nunmap[po] >= 0)
+      if (nunmap[po] >= (small_short)0)
 	{ 
 	  ppos = (*nextpos[ptyp])[nunmap[po]];
 	  pdir = (*nextdir[ptyp])[nunmap[po]];
@@ -386,7 +441,7 @@ Initialize_moves (void)
                        * move two steps diagonal) or (promoted
                        * bishops wishes to move two steps non-diagonal) 
 		       */                     
-		      if ( (nunmap[p0] < 0) ||
+		      if ( (nunmap[p0] < (small_short)0) ||
                            ((ptyp == ptype_prook) && (s > 0) && diagonal(delta)) ||
                            ((ptyp == ptype_pbishop) && (s > 0) && !diagonal(delta)) )
 			break;
@@ -431,6 +486,8 @@ Initialize_moves (void)
 	}
 }
 
+#endif
+
 
 void
 NewGame (void)
@@ -444,7 +501,7 @@ NewGame (void)
 #ifdef HASGETTIMEOFDAY
   struct timeval tv;
 #endif
-  compptr = oppptr = -1;
+  compptr = oppptr = 0;
   stage = stage2 = -1;		/* the game is not yet started */
   flag.illegal = flag.mate = flag.post = flag.quit = flag.reverse = flag.bothsides = flag.onemove = flag.force = false;
   flag.material = flag.coords = flag.hash = flag.easy = flag.beep = flag.rcptr = true;
@@ -457,6 +514,7 @@ NewGame (void)
 #endif /* MSDOS && !SEVENBIT */
   mycnt1 = mycnt2 = 0;
   GenCnt = NodeCnt = et0 = dither =  XCmore = 0;
+  znodes = ZNODES;
   WAwindow = WAWNDW;
   WBwindow = WBWNDW;
   BAwindow = BAWNDW;
@@ -467,12 +525,12 @@ NewGame (void)
   contempt = 0;
   GameCnt = 0;
   Game50 = 1;
-  CptrFlag[0] = false;
+  CptrFlag[0] = TesujiFlag[0] = false;
   hint = OPENING_HINT;
   ZeroRPT ();
   GameType[0] = GameType[1] = UNKNOWN;
   Pscore[0] = Tscore[0] = (SCORE_LIMIT+3000);
-  opponent = black;
+  opponent = player = black;
   computer = white;
   for (l = 0; l < TREE; l++)
     Tree[l].f = Tree[l].t = 0;
@@ -481,7 +539,7 @@ NewGame (void)
     {
       for (c = black; c <= white; c++)
 	for (p = pawn; p <= king; p++)
-	  for (l = 0; l < (NO_SQUARES+(2*NO_PIECES)); l++)
+	  for (l = 0; l < NO_SQUARES; l++)
 	    {
 	      hashcode[c][p][l].key = (((unsigned long) urand ()));
 	      hashcode[c][p][l].key += (((unsigned long) urand ()) << 16);
@@ -492,6 +550,21 @@ NewGame (void)
 	      hashcode[c][p][l].key += (((unsigned long) urand ()) << 48);
 	      hashcode[c][p][l].bd += (((unsigned long) urand ()) << 32);
 	      hashcode[c][p][l].bd += (((unsigned long) urand ()) << 48);
+#endif
+	    }
+      for (c = black; c <= white; c++)
+	for (p = pawn; p <= king; p++)
+	  for (l = 0; l < MAX_CAPTURED; l++)
+	    {
+	      drop_hashcode[c][p][l].key = (((unsigned long) urand ()));
+	      drop_hashcode[c][p][l].key += (((unsigned long) urand ()) << 16);
+	      drop_hashcode[c][p][l].bd = (((unsigned long) urand ()));
+	      drop_hashcode[c][p][l].bd += (((unsigned long) urand ()) << 16);
+#ifdef LONG64
+	      drop_hashcode[c][p][l].key += (((unsigned long) urand ()) << 32);
+	      drop_hashcode[c][p][l].key += (((unsigned long) urand ()) << 48);
+	      drop_hashcode[c][p][l].bd += (((unsigned long) urand ()) << 32);
+	      drop_hashcode[c][p][l].bd += (((unsigned long) urand ()) << 48);
 #endif
 	    }
     }
@@ -510,13 +583,14 @@ NewGame (void)
 #else
   time0 = time ((long *) 0);
 #endif
-  ElapsedTime (1);
+  /* resetting reference time */
+  ElapsedTime (COMPUTE_AND_INIT_MODE);
   flag.regularstart = true;
   Book = BOOKFAIL;
   if (!InitFlag)
     {
-	char sx[256];
-	strcpy(sx,"level");
+      char sx[256];
+      strcpy(sx,CP[169]);
       if (TCflag)
 	SetTimeControl ();
       else if (MaxResponseTime == 0)
@@ -532,12 +606,16 @@ NewGame (void)
 #endif
       InitFlag = true;
     }
-  hashbd = hashkey = 0;
 #if ttblsz
-  ZeroTTable ();
-  TTadd = 0;
+  if(TTadd){ZeroTTable (); TTadd = 0;}
 #endif /* ttblsz */
-}
+  hashbd = hashkey = 0;
+  return;
+}     
+
+
+#if !defined GDISPLAY
+
 
 void
 InitConst (char *lang)
@@ -545,12 +623,13 @@ InitConst (char *lang)
   FILE *constfile;
   char s[256];
   char sl[5];
+  char buffer[120];
   int len, entry;
   char *p, *q;
   constfile = fopen (LANGFILE, "r");
   if (!constfile)
     {
-      printf ("NO LANGFILE\n");
+      ShowMessage ("NO LANGFILE");
       exit (1);
     }
   while (fgets (s, sizeof (s), constfile))
@@ -563,13 +642,14 @@ InitConst (char *lang)
 	  break;
       if (q == &s[8])
 	{
-	  printf ("{ error in cinstfile\n");
+	  ShowMessage("{ error in cinstfile");
 	  exit (1);
 	}
       *q = '\0';
       if (s[3] != ':' || s[7] != ':' || s[8] != '{')
 	{
-	  printf ("Langfile format error %s\n", s);
+	  sprintf (buffer,"Langfile format error %s", s);
+	  ShowMessage(buffer);
 	  exit (1);
 	}
       s[3] = s[7] = '\0';
@@ -583,7 +663,7 @@ InitConst (char *lang)
       entry = atoi (s);
       if (entry < 0 || entry >= CPSIZE)
 	{
-	  printf ("Langfile number error\n");
+	  ShowMessage("Langfile number error");
 	  exit (1);
 	}
       for (q = p = &s[9]; *p; p++)
@@ -601,20 +681,26 @@ InitConst (char *lang)
       *q = '\0';
       if (entry < 0 || entry > 255)
 	{
-	  printf ("Langfile error %d\n", entry);
+	  sprintf (buffer,"Langfile error %d\n", entry);
+          ShowMessage(buffer);
 	  exit (0);
 	}
       CP[entry] = (char *) malloc ((unsigned) strlen (&s[9]) + 1);
       if (CP[entry] == NULL)
 	{
-	  perror ("malloc");
+	  char buffer[80];
+	  sprintf(buffer,"CP malloc, entry %d",entry);
+	  perror (buffer);
 	  exit (0);
 	}
       strcpy (CP[entry], &s[9]);
 
     }
   fclose (constfile);
-}
+}                    
+
+#endif
+
 
 #if ttblsz
 void
@@ -626,7 +712,14 @@ Initialize_ttable ()
   if (rehash < 0)
     rehash = MAXrehash;
 
-  while ( doit && ttblsize > 0 ) {
+#if !defined BAREBONES && defined NONDSP
+  { char s[80];
+    sprintf(s,"expected ttable is %ld",(long)ttblsize);
+    ShowMessage(s);
+  }
+#endif
+
+  while ( doit && ttblsize > MINTTABLE ) {
     ttable[0] = (struct hashentry *)malloc((unsigned)(sizeof(struct hashentry))*(ttblsize+rehash));
     ttable[1] = (struct hashentry *)malloc((unsigned)(sizeof(struct hashentry))*(ttblsize+rehash));
     if (ttable[0] == NULL || ttable[1] == NULL) {
@@ -637,16 +730,18 @@ Initialize_ttable ()
   }
 
   if (ttable[0] == NULL || ttable[1] == NULL) {
-    perror("memory alloc");
+    perror("ttable memory alloc");
     exit(1);
   }
 
-#if !defined BAREBONES && defined NONDSP
+#if defined NONDSP && !defined XSHOGI
   { char s[80];
-    sprintf(s,"transposition table is %d",ttblsize);
+    sprintf(s,"ttable is %ld",(long)ttblsize);
     ShowMessage(s);
   }
 #endif
+
+  ttbllimit = ttblsize<<1 - ttblsize>>2;
 }
 
 #endif /* ttblsz */

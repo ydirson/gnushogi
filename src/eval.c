@@ -25,23 +25,45 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include "gnushogi.h"
-#include "ataks.h" 
 
 #ifdef USE_PATTERN
 #include "pattern.h"
 #endif
 
-#ifdef THINK_C
-#include <string.h>
-#define bcopy(src,dst,len) memcpy(dst,src,len)
+
+#ifdef CACHE
+etable_field *etab[2];
 #endif
 
-#if !defined K32SEGMENTS
-#include "eval_data1.c"
-#endif
+
+const small_short Stboard[NO_SQUARES] =
+{lance,knight,silver,gold,king,gold,silver,knight,lance,
+ 0, bishop, 0, 0, 0, 0, 0, rook, 0,
+ pawn, pawn, pawn, pawn, pawn, pawn, pawn, pawn, pawn, 
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+ 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+ pawn, pawn, pawn, pawn, pawn, pawn, pawn, pawn, pawn, 
+ 0, rook, 0, 0, 0, 0, 0, bishop, 0,
+ lance,knight,silver,gold,king,gold,silver,knight,lance};
+
+const small_short Stcolor[NO_SQUARES] =
+{black, black, black, black, black, black, black, black, black, 
+ neutral, black, neutral, neutral, neutral, neutral, neutral, black, neutral,
+ black, black, black, black, black, black, black, black, black, 
+ neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, 
+ neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, 
+ neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, neutral, 
+ white, white, white, white, white, white, white, white, white,
+ neutral, white, neutral, neutral, neutral, neutral, neutral, white, neutral,
+ white, white, white, white, white, white, white, white, white};
+
+small_short board[NO_SQUARES], color[NO_SQUARES];
+
 
 int EADD = 0;
 int EGET = 0;
+int PUTVAR = false;
 
 
 #ifdef DEBUG_EVAL
@@ -86,20 +108,10 @@ static const short KTHRT[36] =
  -80, -80, -80, -80, -80, -80, -80, -80, -80, -80, -80, -80};
 
 
-/* No positional bonus ! */
-static const short NoAdvance[NO_SQUARES] =
-{  0,  0,  0,  0,  0,  0,  0,  0,  0,
-   0,  0,  0,  0,  0,  0,  0,  0,  0,
-   0,  0,  0,  0,  0,  0,  0,  0,  0,
-   0,  0,  0,  0,  0,  0,  0,  0,  0,
-   0,  0,  0,  0,  0,  0,  0,  0,  0,
-   0,  0,  0,  0,  0,  0,  0,  0,  0,
-   0,  0,  0,  0,  0,  0,  0,  0,  0, 
-   0,  0,  0,  0,  0,  0,  0,  0,  0, 
-   0,  0,  0,  0,  0,  0,  0,  0,  0 };
+#if !defined USE_PATTERN
 
 /* Pawn positional bonus (STATIC ROOK vs. STATIC ROOK) */
-static const short PawnAdvanceSS[NO_SQUARES] =
+static const small_short PawnAdvanceSS[NO_SQUARES] =
 {  0,  0,  0,  0,  0,  0,  0,  0,  0,
    0,  0,  0,  0,  0,  0,  0,  0,  0,
    0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -113,7 +125,7 @@ static const short PawnAdvanceSS[NO_SQUARES] =
 #define PawnAdvanceSR PawnAdvanceSS
 
 /* Pawn positional bonus (RANGING ROOK vs. STATIC ROOK) */
-static const short PawnAdvanceRS[NO_SQUARES] =
+static const small_short PawnAdvanceRS[NO_SQUARES] =
 {  0,  0,  0,  0,  0,  0,  0,  0,  0,
    0,  0,  0,  0,  0,  0,  0,  0,  0,
    0,  0,  0,  0,  0,  0,  0,  0,  0,
@@ -127,7 +139,7 @@ static const short PawnAdvanceRS[NO_SQUARES] =
 #define PawnAdvanceRR PawnAdvanceRS
 
 /* Lance positional bonus (STATIC ROOK vs. STATIC ROOK) */
-short LanceAdvanceSS[NO_SQUARES] =
+static small_short LanceAdvanceSS[NO_SQUARES] =
 { 10,  5,  5,  5,  5,  5,  5,  5, 10,
    2,  4,  4,  4,  4,  4,  4,  4,  2,
    4,  1,  1,  1,  1,  1,  1,  1,  4,
@@ -143,7 +155,7 @@ short LanceAdvanceSS[NO_SQUARES] =
 #define LanceAdvanceRR LanceAdvanceRS
 
 /* Knight positional bonus (STATIC ROOK vs. STATIC ROOK) */
-short KnightAdvanceSS[NO_SQUARES] =
+static small_short KnightAdvanceSS[NO_SQUARES] =
 {-9,  4,  4,  4, 4, 4, 4, 4,-9,
  -9,  2,  2,  2, 2, 2, 2, 2,-9,
  -9,  1,-10,  1, 1, 1, 1, 1,-9,
@@ -159,7 +171,7 @@ short KnightAdvanceSS[NO_SQUARES] =
 #define KnightAdvanceRR KnightAdvanceRS
 
 /* Silver positional bonus (STATIC ROOK vs. STATIC ROOK) */
-short SilverAdvanceSS[NO_SQUARES] =
+static small_short SilverAdvanceSS[NO_SQUARES] =
 {  0,  0,  0,  0, -6,  0,  0,  0,  0,
    0,  8,  3,  4,  0,  3,  2,  0,  0, 
    0,  0, 10,  0,  0,  6,  6,  4,  0, 
@@ -171,7 +183,7 @@ short SilverAdvanceSS[NO_SQUARES] =
    0,  0,  0,  0,  0,  0,  0,  0,  0 };
 
 /* Silver positional bonus (STATIC ROOK vs. RANGING ROOK) */
-short SilverAdvanceSR[NO_SQUARES] =
+static small_short SilverAdvanceSR[NO_SQUARES] =
 {  0,  0,  0,  0, -6,  0,  0,  0,  0,
    0, -4, -4,  4,  0,  5,  3,  0,  0, 
    0,  0, -4, -4,  2,  8,  6,  0,  0, 
@@ -183,7 +195,7 @@ short SilverAdvanceSR[NO_SQUARES] =
    0,  0,  0,  0,  0,  0,  0,  0,  0 };
 
 /* Silver positional bonus (RANGING ROOK vs. STATIC ROOK) */
-short SilverAdvanceRS[NO_SQUARES] =
+static small_short SilverAdvanceRS[NO_SQUARES] =
 { -3,  0,  0,  0,  0,  0,  0,  0, -2,
   -3, -1,  3,  3, -1, -1,  8, -1, -2, 
   -2, -2,  0,  5, -1,  9, -2,  5, -3, 
@@ -197,7 +209,7 @@ short SilverAdvanceRS[NO_SQUARES] =
 #define SilverAdvanceRR SilverAdvanceRS 
 
 /* Gold positional bonus (STATIC ROOK vs. STATIC ROOK) */
-short GoldAdvanceSS[NO_SQUARES] =
+static small_short GoldAdvanceSS[NO_SQUARES] =
 {  0,  0,  0,  0,  0,  0,  0,  0,  0,
    0,  0, 10,  0,  6,  0,  0,  0,  0, 
    0,  0,  0,  8,  0,  0,  0,  0,  0, 
@@ -209,7 +221,7 @@ short GoldAdvanceSS[NO_SQUARES] =
    0,  0,  0,  0,  0,  0,  0,  0,  0 };
 
 /* Gold positional bonus (STATIC ROOK vs. RANGING ROOK) */
-short GoldAdvanceSR[NO_SQUARES] =
+static small_short GoldAdvanceSR[NO_SQUARES] =
 {  0,  0,  0, 10,  0,  0,  0,  0,  0,
    0,  0,  0,  0,  6,  0,  0,  0,  0, 
    0,  0,  0,  0,  0,  0,  0,  0,  0, 
@@ -221,7 +233,7 @@ short GoldAdvanceSR[NO_SQUARES] =
    0,  0,  0,  0,  0,  0,  0,  0,  0 };
 
 /* Gold positional bonus (RANGING ROOK vs. STATIC ROOK) */
-short GoldAdvanceRS[NO_SQUARES] =
+static small_short GoldAdvanceRS[NO_SQUARES] =
 { -1,  0, -1,  0, -1,  0, -1, -1, -1,
   -1,  0,  4, -1,  4, -1,  8,  0, -1, 
   -2, -1,  0, -2,  0,  6,  0, -1, -2, 
@@ -235,7 +247,7 @@ short GoldAdvanceRS[NO_SQUARES] =
 #define GoldAdvanceRR GoldAdvanceRS
 
 /* Bishop positional bonus (STATIC ROOK vs. STATIC ROOK) */
-short BishopAdvanceSS[NO_SQUARES] =
+static small_short BishopAdvanceSS[NO_SQUARES] =
 {  3,  0,  0,  0,  0,  0,  0,  0,  3,
    0,  4,  0,  8,  0,  0,  0,  3,  0, 
    0,  0,  6,  0,  0,  0,  4,  0,  0, 
@@ -247,7 +259,7 @@ short BishopAdvanceSS[NO_SQUARES] =
    3,  0,  0,  0,  0,  0,  0,  0,  3 };
 
 /* Bishop positional bonus (STATIC ROOK vs. RANGING ROOK) */
-short BishopAdvanceSR[NO_SQUARES] =
+static small_short BishopAdvanceSR[NO_SQUARES] =
 {  3,  0,  0,  0,  0,  0,  0,  0,  3,
    0, 10,  0,  2,  0,  0,  0,  3,  0, 
    0,  0,  2,  0,  0,  0,  4,  0,  0, 
@@ -259,7 +271,7 @@ short BishopAdvanceSR[NO_SQUARES] =
    3,  0,  0,  0,  0,  0,  0,  0,  3 };
 
 /* Bishop positional bonus (RANGING ROOK vs. STATIC ROOK) */
-short BishopAdvanceRS[NO_SQUARES] =
+static small_short BishopAdvanceRS[NO_SQUARES] =
 {  3,  0,  0,  0,  0,  0,  0,  0,  3,
    0,  4,  0,  2,  0,  0,  0,  3,  0, 
    0,  0,  8,  0,  0,  0,  4,  0,  0, 
@@ -273,7 +285,7 @@ short BishopAdvanceRS[NO_SQUARES] =
 #define BishopAdvanceRR BishopAdvanceRS
 
 /* Rook positional bonus (STATIC ROOK vs. STATIC ROOK) */
-short RookAdvanceSS[NO_SQUARES] =
+static small_short RookAdvanceSS[NO_SQUARES] =
 {  2,  0,  0,  0,  0,  0,  0,  4,  2,
    2,  0,  0,  0,  0,  0,  0,  8,  2, 
   -2,  0,  0,  0,  0,  0,  0,  2, -2, 
@@ -285,7 +297,7 @@ short RookAdvanceSS[NO_SQUARES] =
    8,  8,  8,  8,  8,  8,  8,  8,  8 };
 
 /* Rook positional bonus (RANING ROOK vs. STATIC ROOK) */
-short RookAdvanceRS[NO_SQUARES] =
+static small_short RookAdvanceRS[NO_SQUARES] =
 {  2,  6,  6,  6,  6,  0,  0,  0,  2,
    2,  4,  4,  4,  4,  0,  0,  0,  2, 
   -2,  2,  3,  3,  3,  0,  0,  0, -2, 
@@ -300,7 +312,7 @@ short RookAdvanceRS[NO_SQUARES] =
 #define RookAdvanceRR RookAdvanceRS
 
 /* King positional bonus inopening stage (STATIC ROOK vs. STATIC ROOK) */
-static const short KingAdvanceSS[NO_SQUARES] =
+static const small_short KingAdvanceSS[NO_SQUARES] =
 {  0, -4, 10,  0, -6, -8,-10,-12,-12,
   -2,  4,  6, -6, -8, -8,-10,-12,-12,
   -6, -6, -6, -8, -8,-10,-11,-12,-12,
@@ -312,7 +324,7 @@ static const short KingAdvanceSS[NO_SQUARES] =
  -12,-12,-12,-12,-12,-12,-12,-12,-12 };
 
 /* King positional bonus inopening stage (STATIC ROOK vs. RANGING ROOK) */
-static const short KingAdvanceSR[NO_SQUARES] =
+static const small_short KingAdvanceSR[NO_SQUARES] =
 {  5, -4, -4, -4, -6, -8,-10,-12,-12,
   -2,  4, 10,  6, -8, -8,-10,-12,-12,
   -6, -6, -6, -8, -8,-10,-11,-12,-12,
@@ -324,7 +336,7 @@ static const short KingAdvanceSR[NO_SQUARES] =
  -12,-12,-12,-12,-12,-12,-12,-12,-12 };
 
 /* King positional bonus inopening stage (RANGING ROOK vs. STATIC ROOK) */
-static const short KingAdvanceRS[NO_SQUARES] =
+static const small_short KingAdvanceRS[NO_SQUARES] =
 {-12,-12, -8, -6, -4, -8,-10,-12,-12,
  -12,-12, -8, -6, -8, 12, 16, 20, -8,
  -12,-12, -6, -8, -8,-10,  0,  0, -4,
@@ -337,9 +349,10 @@ static const short KingAdvanceRS[NO_SQUARES] =
                                   
 #define KingAdvanceRR KingAdvanceRS
                      
+#endif /* !USE_PATTERN */
 
 
-static short Kfield[2][NO_SQUARES];
+static small_short Kfield[2][NO_SQUARES];
 
 char GameType[2] = { UNKNOWN, UNKNOWN };
 
@@ -347,16 +360,38 @@ char GameType[2] = { UNKNOWN, UNKNOWN };
 OpeningPattern *attack_pattern[2], *castle_pattern[2];
 #endif
 
-short Mpawn[2][NO_SQUARES]; 
-short Msilver[2][NO_SQUARES]; 
-short Mgold[2][NO_SQUARES]; 
+#if defined USE_PATTERN
 
-static short *Mlance[2]; 
-static short *Mknight[2]; 
-static short *Mbishop[2]; 
-static short *Mrook[2]; 
+/*
+static small_short Mpawn[2][NO_SQUARES]; 
+static small_short Msilver[2][NO_SQUARES]; 
+static small_short Mgold[2][NO_SQUARES]; 
+static small_short Mking[2][NO_SQUARES];
+static small_short Mlance[2][NO_SQUARES]; 
+static small_short Mknight[2][NO_SQUARES]; 
+static small_short Mbishop[2][NO_SQUARES]; 
+static small_short Mrook[2][NO_SQUARES]; 
+*/
+static Mpiece_array Mpawn, Mlance, Mknight, Msilver, Mgold,
+ 		    Mbishop, Mrook, Mking;
 
-static short Mking[2][NO_SQUARES];
+Mpiece_array *Mpiece[NO_PIECES] =
+  { NULL, &Mpawn, &Mlance, &Mknight, &Msilver, &Mgold, &Mbishop, &Mrook,
+          &Mgold, &Mgold, &Mgold, &Mgold, &Mbishop, &Mrook, &Mking };
+
+#else
+
+static small_short Mpawn[2][NO_SQUARES]; 
+static small_short Msilver[2][NO_SQUARES]; 
+static small_short Mgold[2][NO_SQUARES]; 
+static small_short Mking[2][NO_SQUARES];
+
+static small_short *Mlance[2]; 
+static small_short *Mknight[2]; 
+static small_short *Mbishop[2]; 
+static small_short *Mrook[2]; 
+
+#endif
 
 static short c1, c2;
 static small_short *PC1, *PC2;
@@ -364,8 +399,19 @@ static small_short *PC1, *PC2;
 static long *atk1, *atk2;
 
 static long int atak[2][NO_SQUARES];
-static short R2NDCOL, EDRNK2B, PWEAKH, PADVNCM, PAWNSHIELD;
-static short NADVNCM, SADVNCM, GADVNCM;
+
+#if defined USE_PATTERN
+
+short ADVNCM[NO_PIECES];
+
+#else
+
+static short PADVNCM, SADVNCM, GADVNCM, KADVNCM;
+
+#endif
+
+static short R2NDCOL, EDRNK2B, PWEAKH, PAWNSHIELD;
+static short NEDGE;
 static short PMBLTY, BDCLOSED, PSTRONG, P2STRONG;
 
 static short PawnBonus, BishopBonus, RookBonus;
@@ -377,7 +423,7 @@ static short SBEFOREG, BXCHG;
 static short LXRAY, BRXRAY;
 static short KINGED, KINGOD, PROMD;
 
-static short KCASTLD, KMOVD, KADVNCM, OPENOK, OPENWRONG;
+static short KCASTLD, KMOVD, OPENOK, OPENWRONG;
 static short ATAKD, HUNGP, HUNGX, PINVAL;
 
 #ifdef USE_PATTERN
@@ -385,9 +431,7 @@ static short PATTACK, PCASTLE;
 #endif
 
 
-short emtl[2];
 short pscore[2];
-short tmtl;
 
 
 
@@ -431,6 +475,9 @@ debug_position (FILE *D)
   fprintf(D, "\n");
 }                                      
 
+
+#if !defined SAVE_SVALUE
+
 void
 debug_svalue (FILE *D)
 { 
@@ -446,10 +493,12 @@ debug_svalue (FILE *D)
 	fprintf (D, "\n");
     }
   fprintf (D, "\n");
-}                                      
+}
+
+#endif                                      
 
 void
-debug_table (FILE *D, short *table)
+debug_table (FILE *D, small_short *table)
 { 
   short r, c;
 
@@ -511,24 +560,23 @@ debug_ataks (FILE *D)
 
 
 
-
 /* ............    POSITIONAL EVALUATION ROUTINES    ............ */
 
 /*
  * Inputs are:
- * pmtl[side] - value of pawns
  * mtl[side]  - value of all material
- * emtl[side] - value of all material - value of pawns - value of king
  * hung[side] - count of hung pieces
- * Tscore[ply] - search tree score for ply
- * ply
+ * Tscore[ply] - search tree score for ply ply
  * Pscore[ply] - positional score for ply ply
  * INCscore    - bonus score or penalty for certain moves
- * slk - single lone king flag
  * Sdepth - search goal depth
  * xwndw - evaluation window about alpha/beta
  * EWNDW - second evaluation window about alpha/beta
  * ChkFlag[ply]- checking piece at level ply or 0 if no check
+ * TesujiFlag[ply]- 1 if tesuji move at level ply or 0 if no tesuji
+ * PC1[column] - # of my pawns in this column
+ * PC2[column] - # of opponents pawns in column
+ * PieceCnt[side] - just what it says
  */
 
 
@@ -547,145 +595,77 @@ evaluate (register short int side,
  * window which is 180 points wider than the alpha-beta window (or within a
  * 50 point window during quiescence search) call ScorePosition() to
  * determine a score, otherwise return the estimated score. 
+ * "side" has to moved.
  */
 
 {
     register short evflag, xside;
-    register short int slk;
-    short s, sq;
-    int HEVAL = false;
+    short s, sq, blockable;
 
     xside = side ^ 1;
-    s = -Pscore[ply - 1] + mtl[side] - mtl[xside] + INCscore;
+    s = -Pscore[ply - 1] + mtl[side] - mtl[xside] - INCscore;
+
+#ifdef DEBUG_EVAL
+    if ( debug_eval )
+      fprintf (debug_eval_file, "estimated score at ply %d:%d, -%d+%d-%d-%d\n",
+	ply, s, Pscore[ply-1], mtl[side], mtl[xside], INCscore );
+#endif
+
     hung[black] = hung[white] = 0;
-	      /* should we use the estimete or score the position */
-	if ((ply <= Sdepth ||
-#ifdef CACHE
-    	(HEVAL = CheckEETable (side)) ||
-#endif
+
+    /* should we use the estimete or score the position */
+     
+#if !defined OLD_EVALUATE
+    if ( ply == 1 ||
+	(ply == Sdepth) ||
+	(ply > Sdepth && (s >= (alpha - 30) && s <= (beta + 30))) ||
+#else
+    if ( ply <= Sdepth ||
 	((ply == Sdepth + 1 || ply == (Sdepth + 2)) && (s > (alpha - xwndw) && s < (beta + xwndw))) ||
-	(ply > (Sdepth + 2) && s >= (alpha - EWNDW) && s <= (beta + EWNDW))))
-      {
-	  /* score the position */
-	  ataks (side, atak[side]);
-#ifdef CHECKPIECELIST
-	  if ( board[PieceList[xside][0]] != king )
-	    {
-	      printf("illegal xside PieceList\n");
-	      exit(1);
-	    }	
-#endif           
-#if ATAKSCROSSCHECK 
-	  { int b1, b2;
-            sq = PieceList[xside][0];
-            b1 = SqAtakd (sq, side);
-	    b2 = Anyatak (side, sq);
-            if ( b1 != b2 ) {
-              printf("SqAtakd %d != Anyatak %d for square %d\n",b1,b2,sq);
-              exit(1);
-            } else {
-              if ( b1 )
-	        return ((SCORE_LIMIT+1001) - ply); 
-            }
-          }
-#else
-	  if ( board[sq = PieceList[xside][0]] == king )
-	  if (Anyatak (side, sq))
-	      return ((SCORE_LIMIT+1001) - ply);
+	(ply > (Sdepth + 2) && s >= (alpha - EWNDW) && s <= (beta + EWNDW)) ||
 #endif
-	  ataks (xside, atak[xside]);
-#ifdef CHECKPIECELIST
-	  if ( board[PieceList[side][0]] != king )
-	    {
-	      printf("illegal side PieceList\n");
-	      exit(1);
-	    }	
-#endif           
-#if ATAKSCROSSCHECK 
-	  { int b1, b2;
-            sq = PieceList[side][0];
-            b1 = SqAtakd (sq, xside);
-	    b2 = Anyatak (xside, sq);
-            if ( b1 != b2 ) {
-              printf("SqAtakd %d != Anyatak %d for square %d\n",b1,b2,sq);
-              exit(1);
-            } else {
-              *InChk = b1;
-            }
-          }
-#else
-	  if ( board[sq = PieceList[side][0]] == king )
-	    *InChk = Anyatak (xside, sq);
-	  else
-	    *InChk = false;
+#ifdef CACHE
+    	(CheckEETable (side)) )
+#endif   
+
+      { short sq;
+	/* score the position */
+#ifdef DEBUG_EVAL
+        if ( debug_eval )
+          fprintf (debug_eval_file, "do NOT use the estimete\n");
 #endif
-#if !defined BAREBONES
-	  EvalNodes++;
-#endif         
-	  if ( flag.tsume )
-	    s = urand () % 50;
-	  else  
-	    s = ScorePosition (side);
+	ataks (side, atak[side]);
+	if (Anyatak (side, sq=PieceList[xside][0]) && board[sq] == king) {
+	  *InChk = (board[sq=PieceList[side][0]] == king) ? SqAtakd (sq, xside, &blockable) : false;
+	  return ((SCORE_LIMIT+1001) - ply);
+	}
+	ataks (xside, atak[xside]);
+	*InChk = (board[sq=PieceList[side][0]] == king) ? Anyatak (xside, sq) : false;
+#ifndef BAREBONES 
+	EvalNodes++;
+#endif    
+#if !defined OLD_EVALUATE
+	if ( ply > 4 )       
+#endif
+	  PUTVAR=true;
+	s = ScorePosition (side);
+	PUTVAR = false;
       }
     else
       {
-	  /* use the estimate but look at check and slk */
-	  short sq;
-	  sq = PieceList[xside][0];
-#if CHECKPIECELIST 
-	  if ( board[sq] != king )
-	    {
-	      printf("illegal xside 2 PieceList\n");
-	      exit(1);
-	    }
-#endif        
-#if ATAKSCROSSCHECK 
-	  { int b1, b2;
-	    ataks (side, atak[side]);
-            b1 = SqAtakd (sq, side);
-	    b2 = Anyatak (side, sq);
-            if ( b1 != b2 ) {
-              printf("SqAtakd %d != Anyatak %d for square %d\n",b1,b2,sq);
-              exit(1);
-            } else {
-              if ( b1 )
-	        return ((SCORE_LIMIT+1001) - ply); 
-            }
-          }
-#else
-	  if ( board[sq] == king )
-	  if ( SqAtakd (sq, side) )
-	      return ((SCORE_LIMIT+1001) - ply);
+	/* use the estimate but look at check */
+	short sq;
+#ifdef DEBUG_EVAL
+        if ( debug_eval )
+          fprintf (debug_eval_file, "use the estimete\n");
 #endif
-	  sq = PieceList[side][0];
-#if CHECKPIECELIST 
-	  if ( board[sq] != king )
-	    {
-	      printf("illegal side 2 PieceList\n");
-	      exit(1);
-	    }
-#endif
-#if ATAKSCROSSCHECK 
-	  { int b1, b2;
-	    ataks (xside, atak[xside]);
-            b1 = SqAtakd (sq, xside);
-	    b2 = Anyatak (xside, sq);
-            if ( b1 != b2 ) {
-              printf("SqAtakd %d != Anyatak %d for xsquare %d\n",b1,b2,sq);
-              exit(1);
-            } else {
-              *InChk = b1;
-            }
-          }
-#else
-	  if ( board[sq] == king )
-	    *InChk = SqAtakd (sq, xside); 
-	  else
-	    *InChk = false;
-#endif
+	*InChk = (board[sq=PieceList[side][0]] == king) ? SqAtakd (sq, xside, &blockable) : false; 
+	if ( SqAtakd (sq=PieceList[xside][0], side, &blockable) && board[sq] == king ) {
+	  return ((SCORE_LIMIT+1001) - ply);
+	}
       }
 
-    Pscore[ply] = s + (mtl[xside] - mtl[side]);
+    Pscore[ply] = s - mtl[side] + mtl[xside];
     ChkFlag[ply - 1] = ((*InChk) ? Pindex[TOsquare] : 0);
     return (s);
 }
@@ -704,20 +684,28 @@ BRLscan (register short int sq, short int *mob)
  * Increment the hung[] array if a pin is found.
  */
 {
+#ifdef SAVE_NEXTPOS
+    short d;
+#else
     register unsigned char *ppos, *pdir;
+#endif
     register short s, mobx;
     register short u, pin, ptyp;
-    short piece, *Kf, rvalue;
+    short piece, rvalue;
+    small_short *Kf;
     mobx = s = 0;
     Kf = Kfield[c1];
     piece = board[sq];
 
     rvalue = relative_value[piece];
     ptyp = ptype[c1][unpromoted[piece]];
+#ifdef SAVE_NEXTPOS
+    u = first_direction(ptyp,&d,sq);
+#else
     ppos = (*nextpos[ptyp])[sq];
     pdir = (*nextdir[ptyp])[sq];
-
     u = ppos[sq];                         
+#endif
     pin = -1;			/* start new direction */
     do
       {
@@ -728,22 +716,41 @@ BRLscan (register short int sq, short int *mob)
 #endif
 	  if (color[u] == neutral)
 	    {
-		mobx++;
+#ifdef SAVE_NEXTPOS
+		short xu, dd = d;
+		xu = next_position(ptyp,&d,sq,u);
+		if ( xu == next_direction(ptyp,&dd,sq) )
+		    pin = -1;	/* oops new direction */
+		u = xu;
+#else
 		if (ppos[u] == pdir[u])
 		    pin = -1;	/* oops new direction */
 		u = ppos[u];
+#endif
+		mobx++;
 	    }
 	  else 
 	    {   /* there is a piece in current direction */
 		if (pin < 0)
 		    {   /* it's the first piece in the current direction */
 			if (piece == lance && color[u] == c1 )
-			  {
-			      s += LPROTECT;
+			  {   
+			    if ( board[u] == pawn )
+			      {
+				s += LPROTECT;
 #ifdef DEBUG_EVAL
-			      if ( debug_eval )
-				fprintf(debug_eval_file,"adding %d for lance protection\n",LPROTECT);
+				if ( debug_eval )
+				  fprintf(debug_eval_file,"adding %d for lance protection\n",LPROTECT);
 #endif
+  			      }
+  			    else if ( in_opening_stage )
+  			      {
+				s -= 2*LPROTECT;
+#ifdef DEBUG_EVAL
+				if ( debug_eval )
+				  fprintf(debug_eval_file,"adding %d for lance protection\n",-2*LPROTECT);
+#endif
+  			      }
 			  }
 			else if ( piece == bishop && board[u] == pawn )
 			  {
@@ -765,12 +772,24 @@ BRLscan (register short int sq, short int *mob)
 				}
 			  }
 			if (board[u] == pawn || board[u] == king)
+#ifdef SAVE_NEXTPOS
+			    u = next_direction(ptyp,&d,sq);
+#else
 			    u = pdir[u];
+#endif
 			else
 			  {
+#ifdef SAVE_NEXTPOS
+			      short xu, dd = d;
+			      xu = next_position(ptyp,&d,sq,u);
+			      if ( xu != next_direction(ptyp,&dd,sq) )
+				  pin = u;	/* not on the edge and on to find a pin */
+			      u = xu;
+#else
 			      if (ppos[u] != pdir[u])
 				  pin = u;	/* not on the edge and on to find a pin */
 			      u = ppos[u];
+#endif
 			  }
 		    }
 		else
@@ -783,7 +802,7 @@ BRLscan (register short int sq, short int *mob)
 				  s += BHCLSD; 
 #ifdef DEBUG_EVAL
 				  if (debug_eval )
-				    fprintf(debug_eval_file,"add %d for own pawn in bishops direction\n",BHCLSD);
+				    fprintf(debug_eval_file,"add %d for own pawn in bishops (2) direction\n",BHCLSD);
 #endif
 				}
 			      else
@@ -791,7 +810,7 @@ BRLscan (register short int sq, short int *mob)
 				  s += BHCLSDX;
 #ifdef DEBUG_EVAL
 				  if (debug_eval )
-				    fprintf(debug_eval_file,"add %d for opponents pawn in bishops direction\n",BHCLSDX);
+				    fprintf(debug_eval_file,"add %d for opponents pawn in bishops (2) direction\n",BHCLSDX);
 #endif
 				}
 			  }
@@ -824,14 +843,23 @@ BRLscan (register short int sq, short int *mob)
 				}
 			  }   
 			pin = -1;	/* new direction */
+#ifdef SAVE_NEXTPOS
+			u = next_direction(ptyp,&d,sq);
+#else
 			u = pdir[u];
+#endif
 		    }
 	    }
       }
     while (u != sq);
     *mob = mobx;
     return s;
-}
+}                             
+
+
+
+#define ctlSG (ctlS | ctlG | ctlPp | ctlLp | ctlNp | ctlSp)
+
 
 inline
 short int
@@ -839,65 +867,128 @@ KingScan (register short int sq)
 
 /*
  * Assign penalties if king can be threatened by checks, if squares near the
- * king are controlled by the enemy (especially the queen), or if there are
- * no pawns near the king. The following must be true: board[sq] == king c1
- * == color[sq] c2 == otherside[c1]
+ * king are controlled by the enemy (especially by promoted pieces), 
+ * or if there are no own generals near the king. 
+ * The following must be true: 
+ *    board[sq] == king, c1 == color[sq], c2 == otherside[c1]
  */
 
 
 #define ScoreThreat \
-	if (color[u] != c2)\
-  	if (atk1[u] == 0 || (atk2[u] & CNT_MASK) > 1) ++cnt;\
-  	else s -= 3
+	{ if (color[u] != c2)\
+  	  if (atk1[u] == 0 || (atk2[u] & CNT_MASK) > 1) {\
+	    ++cnt;\
+	  }\
+  	  else s -= 3;\
+	}
 
 
 {
     register short cnt;
+#ifdef SAVE_NEXTPOS
+    short d;
+#else
     register unsigned char *ppos, *pdir;
+#endif
     register short int s;
     register short u, ptyp;
     short int ok;
+#ifdef DEBUG_EVAL
+    short s0;
+#endif
+
+    /* Penalties, if a king can be threatened by checks. */      
 
     s = 0;
     cnt = 0;
     { short p;
       for ( p = pawn; p < king; p++ )
-	if ( HasPiece[c2][p] )
-          { short ptyp = ptype[c2][p];
+	if ( HasPiece[c2][p] || Captured[c2][p] )
+          { short ptyp;
+	    /* if a c1 piece can reach u from sq, 
+	     * then a c2 piece can reach sq from u.
+	     * That means, each u is a square, from which a 
+	     * piece of type p and color c2 threats square sq.
+	     */
+	    ptyp = ptype[c1][p];
+#ifdef SAVE_NEXTPOS
+	    u = first_direction(ptyp,&d,sq);
+#else
 	    ppos = (*nextpos[ptyp])[sq];
 	    pdir = (*nextdir[ptyp])[sq];
 	    u = ppos[sq];
+#endif
 	    do
-	      {
+	      {  
+		/* If a p piece can reach (controls or can drop to)  
+		 * square u, then score threat. 
+		 */
 		if (atk2[u] & control[p])
-		    ScoreThreat;
+		    ScoreThreat
+		else if (Captured[c2][p] && color[u] == neutral)
+		    ScoreThreat
+#ifdef SAVE_NEXTPOS
+		u = ((color[u] == neutral) ? next_position(ptyp,&d,sq,u)
+					   : next_direction(ptyp,&d,sq));
+#else
 		u = ((color[u] == neutral) ? ppos[u] : pdir[u]);
+#endif
 	      }
 	    while (u != sq);
           }
     }
-    s += (KSFTY * KTHRT[cnt]);
+    s += (KSFTY * KTHRT[cnt]) / 16;
+
+#ifdef DEBUG_EVAL
+    s0 = s;
+    if (debug_eval )
+       fprintf(debug_eval_file,"penalty %d for possible king threats\n",
+		s0);
+#endif                        
+
+    /* Penalties, if squares near king are controlled by enemy. */
 
     cnt = 0;
     ok = false;
     ptyp = ptype[black][king];
+#ifdef SAVE_NEXTPOS
+    u = first_direction(ptyp,&d,sq);
+#else
     pdir = (*nextpos[ptyp])[sq];
     u = pdir[sq];
+#endif
     do
-      {
-	  if (board[u] == pawn)
-	      ok = true;
+      {   
+	  if ( !ok && color[u] == c1 ) 
+	    {
+	      short ptype_piece = ptype[c1][board[u]];
+	      if ( ptype_piece == ptype_silver || ptype_piece == ptype_gold )
+	        ok = true;
+	    }
 	  if (atk2[u] > atk1[u])
 	    {
 		++cnt;
+		if (atk2[u] & ctlSG)
+		  s -= 3;
 	    }
+#ifdef SAVE_NEXTPOS
+	  u = next_direction(ptyp,&d,sq);
+#else
 	  u = pdir[u];
+#endif
       }
     while (u != sq);
     if (!ok)
 	s -= KSFTY;
     if (cnt > 1)
 	s -= KSFTY;
+
+#ifdef DEBUG_EVAL
+    if (debug_eval )
+       fprintf(debug_eval_file,"penalty %d for squares near king controlled by enemy\n",
+		s-s0);
+#endif                        
+
     return (s);
 }
 
@@ -912,25 +1003,35 @@ trapped (register short int sq)
 
 {
     register short u, ptyp;
+#ifdef SAVE_NEXTPOS
+    short d;
+#else
     register unsigned char *ppos, *pdir;
+#endif
     register short int piece;
+    short rvalue;
 
     piece = board[sq];
+    rvalue = relative_value[piece];
     ptyp = ptype[c1][piece];
+#ifdef SAVE_NEXTPOS
+    u = first_direction(ptyp,&d,sq);
+#else
     ppos = (*nextpos[ptyp])[sq];
     pdir = (*nextdir[ptyp])[sq];
-      {
-	  short rvalue = relative_value[piece];
-	  u = ppos[sq];
-	  do
-	    {   
-		if (color[u] != c1)
-		    if (atk2[u] == 0 || relative_value[board[u]] >= rvalue)
-		      return (false);
-		u = ((color[u] == neutral) ? ppos[u] : pdir[u]);
-	    }
-	  while (u != sq);
-      }
+    u = ppos[sq];
+#endif
+    do {
+	if (color[u] != c1)
+	    if (atk2[u] == 0 || relative_value[board[u]] >= rvalue)
+	      return (false);
+#ifdef SAVE_NEXTPOS
+	u = ((color[u] == neutral) ? next_position(ptyp,&d,sq,u)
+				   : next_direction(ptyp,&d,sq));
+#else
+	u = ((color[u] == neutral) ? ppos[u] : pdir[u]);
+#endif
+    } while (u != sq);
 #ifdef DEBUG_EVAL
     if ( debug_eval )
       fprintf(debug_eval_file,"piece is trapped\n");
@@ -961,7 +1062,7 @@ static short on_column(short side,short piece,short c)
   return(false);
 }
 
-#define empty_square(side,square) (board[csquare(side,square)]==no_piece)
+#define empty_csquare(side,square) (board[csquare(side,square)]==no_piece)
 
 inline
 static short on_left_side(short side,short piece)
@@ -1024,9 +1125,14 @@ PawnValue (register short int sq, short int side)
 
 {
     register short s;
+    short n;
     long a1, a2;
 
-    s = Mpawn[c1][csquare(c1,sq)];
+#if defined USE_PATTERN
+    s = Mpawn[c1][sq] + 2*crow(c1,sq);
+#else
+    s = Mpawn[c1][csquare(c1,sq)] + 2*crow(c1,sq);
+#endif
 
 #ifdef DEBUG_EVAL
     if ( debug_eval )
@@ -1038,11 +1144,15 @@ PawnValue (register short int sq, short int side)
 
     /* pawn mobility */
     {
-	short u, ptyp;
+	short u, ptyp =  ptype[c1][pawn];
+#ifdef SAVE_NEXTPOS
+	short d;
+	u = first_direction(ptyp,&d,sq);
+#else
 	register unsigned char *pdir;
-	ptyp = ptype[c1][pawn];
 	pdir = (*nextdir[ptyp])[sq];
 	u = pdir[sq];
+#endif
 	if ( u != sq )
 	  if ( color[u] == neutral ) {
             s += PMBLTY;
@@ -1083,7 +1193,7 @@ PawnValue (register short int sq, short int side)
       s += (a1 & CNT_MASK);
 #ifdef DEBUG_EVAL
       if ( debug_eval )
-        fprintf(debug_eval_file,"adding %d for protected piece\n",(a1 & CNT_MASK));
+        fprintf(debug_eval_file,"adding %ld for protected piece\n",(a1 & CNT_MASK));
 #endif                             
     }
 
@@ -1103,21 +1213,22 @@ PawnValue (register short int sq, short int side)
 #endif
     }         
 
-    if ( in_opening_stage )
+    if ( in_opening_stage ) {
+
       if ( crow(c1,sq) == 2 ) /* pawn on 3d rank */
         if ( Mvboard[(c1==black)?(sq+36):(sq-36)] )
           {  /* opposing pawn has been moved (even column == (sq & 1)) */
-	     s -= (sq & 1) ? PMBLTY : (3*PMBLTY)/2;   
+	     s -= (sq & 1) ? (3*PMBLTY/2) : (2*PMBLTY);   
 #ifdef DEBUG_EVAL
 	     if ( debug_eval )
                fprintf(debug_eval_file,"adding %d for opposing pawn pushed\n",
-		           -((sq & 1) ? PMBLTY : (3*PMBLTY)/2));
+		           ((sq & 1) ? -(3*PMBLTY/2) : -(2*PMBLTY)));
 #endif         
           }
-      
-    if ( sq == csquare(c1,43) )
-      {  
-        if ( (atk2[csquare(c1,52)] & CNT_MASK) < 2 ) {
+
+      if ( GameType[c1] == STATIC_ROOK && sq == csquare(c1,43) )
+        if ( (atk2[csquare(c1,52)] & CNT_MASK) < 2 ) 
+	  {
              s += P2STRONG;
 #ifdef DEBUG_EVAL
 	     if ( debug_eval )
@@ -1125,7 +1236,29 @@ PawnValue (register short int sq, short int side)
 		           P2STRONG);
 #endif         
           }
-      }
+
+      if ( GameType[c2] == STATIC_ROOK && ccolumn(c1,sq) == 1 ) 
+	{
+	  if ( sq == csquare(c1,28) )
+	    {
+              s -= P2STRONG;
+#ifdef DEBUG_EVAL
+	      if ( debug_eval )
+                fprintf(debug_eval_file,"adding %d for pushed pawn on 8th file\n",
+		           -P2STRONG);
+#endif         
+	    }
+          if ( (atk1[csquare(c1,19)] & CNT_MASK) < 2 && (atk1[csquare(c1,28)] & CNT_MASK) < 2 ) 
+	    {   
+              s -= 2*P2STRONG;
+#ifdef DEBUG_EVAL
+	      if ( debug_eval )
+                fprintf(debug_eval_file,"adding %d for weak pawn on 8th col\n",
+		           -2*P2STRONG);
+#endif         
+            }
+        }
+    }
 
     return (s);
 }
@@ -1139,12 +1272,16 @@ LanceValue (register short int sq, short int side)
 
 {
     register short s;
-    register short fyle;
+    register short fyle, rank;
     short mob;
-    long a1, a2;
     short checked_trapped = false;
+    long a1, a2;
 
+#if defined USE_PATTERN
+    s = Mlance[c1][sq];
+#else
     s = Mlance[c1][csquare(c1,sq)];
+#endif
     
 #ifdef DEBUG_EVAL
     if ( debug_eval )
@@ -1157,7 +1294,8 @@ LanceValue (register short int sq, short int side)
     s += BRLscan (sq, &mob);
     s += LMBLTY[mob];
 
-    fyle = column (sq);
+    fyle = column(sq);
+    rank = crow(c1,sq);
 
     if (PC1[fyle] == 0)
       {
@@ -1202,9 +1340,9 @@ LanceValue (register short int sq, short int side)
 	    }                      
       }
 
-    if ( !checked_trapped && crow(c1,sq) > 2 )
+    if ( !checked_trapped && rank > 2 )
       {          
-	if (trapped (sq))
+	if (in_opening_stage || trapped (sq))
 	  {
 	    s += LDNGR;
 #ifdef DEBUG_EVAL     
@@ -1212,12 +1350,12 @@ LanceValue (register short int sq, short int side)
                 fprintf(debug_eval_file,"adding %d for lance in danger\n",LDNGR);
 #endif                             
 	  }
-	else
+	else 
 	  {
-	    s += LDNGR / 4;
+	    s += LDNGR / 2;
 #ifdef DEBUG_EVAL     
 	    if ( debug_eval )
-                fprintf(debug_eval_file,"adding %d for lance in danger\n",LDNGR / 4);
+                fprintf(debug_eval_file,"adding %d for lance in danger\n",LDNGR / 2);
 #endif                             
 	  }
       }
@@ -1226,9 +1364,9 @@ LanceValue (register short int sq, short int side)
       s += (a1 & CNT_MASK);
 #ifdef DEBUG_EVAL
       if ( debug_eval )
-        fprintf(debug_eval_file,"adding %d for protected piece\n",(a1 & CNT_MASK));
+        fprintf(debug_eval_file,"adding %ld for protected piece\n",(a1 & CNT_MASK));
 #endif             
-    }                
+    } 
 
     return (s);
 }
@@ -1243,13 +1381,18 @@ KnightValue (register short int sq, short int side)
     register short s;
     long a1, a2;    
     short checked_trapped = false;
+    short c = column(sq);
 
+#if defined USE_PATTERN
+    s = Mknight[c1][sq];
+#else
     s = Mknight[c1][csquare(c1,sq)];
+#endif
 
 #ifdef DEBUG_EVAL
     if ( debug_eval )
       fprintf(debug_eval_file,"inital value [%d] for knight on %c%c: %d\n",
-		csquare(c1,sq), cxx[column(sq)], rxx[row(sq)], s);
+		csquare(c1,sq), cxx[c], rxx[row(sq)], s);
 #endif
 
     s += PROMD * AddPromotionZoneDistanceBonus(sq);
@@ -1301,12 +1444,20 @@ KnightValue (register short int sq, short int side)
 #endif                             
 	  }
       }
+      
+    if ( c == 0 || c == 8 ) {
+      s += NEDGE;
+#ifdef DEBUG_EVAL
+      if ( debug_eval )
+        fprintf(debug_eval_file,"adding %d for knight on edge file\n",NEDGE);
+#endif             
+    }
 
     if ( a1 > 0 ) {
       s += (a1 & CNT_MASK);
 #ifdef DEBUG_EVAL
       if ( debug_eval )
-        fprintf(debug_eval_file,"adding %d for protected piece\n",(a1 & CNT_MASK));
+        fprintf(debug_eval_file,"adding %ld for protected piece\n",(a1 & CNT_MASK));
 #endif             
     }
                 
@@ -1323,7 +1474,11 @@ SilverValue (register short int sq, short int side)
     register short s;
     long a1, a2;
 
+#if defined USE_PATTERN
+    s = Msilver[c1][sq];
+#else
     s = Msilver[c1][csquare(c1,sq)];
+#endif
 
     s += KINGED * AddEnemyKingDistanceBonus(sq);
     s += KINGOD * AddOwnKingDistanceBonus(sq);
@@ -1357,11 +1512,15 @@ SilverValue (register short int sq, short int side)
 
     /* proverb: silver before gold */
     {
-	short u, ptyp;
+	short u, ptyp = ptype[c2][pawn];
+#ifdef SAVE_NEXTPOS
+	short d;
+	u = first_direction(ptyp,&d,sq);
+#else
 	register unsigned char *pdir;
-	ptyp = ptype[c2][pawn];
 	pdir = (*nextdir[ptyp])[sq];
 	u = pdir[sq];
+#endif
 	if ( u != sq )
 	  if ( color[u] == c1 && board[u] == gold )
             s += SBEFOREG;
@@ -1379,7 +1538,11 @@ GoldValue (register short int sq, short int side)
     register short s;
     long a1, a2;
 
+#if defined USE_PATTERN
+    s = Mgold[c1][sq];
+#else
     s = Mgold[c1][csquare(c1,sq)];
+#endif
 
     s += KINGED * AddEnemyKingDistanceBonus(sq);
     s += KINGOD * AddOwnKingDistanceBonus(sq);
@@ -1400,6 +1563,15 @@ GoldValue (register short int sq, short int side)
       }
     if ( a1 > 0 )
       s += (a1 & CNT_MASK);
+
+    if ( in_opening_stage &&
+	 GameType[c1] == STATIC_ROOK && GameType[c2] != STATIC_ROOK )
+	if ( Mvboard[csquare(c1,3)] )
+	  {
+		s += 2 * OPENWRONG;
+          }
+
+
     return (s);
 }
 
@@ -1414,7 +1586,11 @@ BishopValue (register short int sq, short int side)
     long a2, a1;
     short mob;
 
+#if defined USE_PATTERN
+    s = Mbishop[c1][sq];
+#else
     s = Mbishop[c1][csquare(c1,sq)];
+#endif
 
 #ifdef DEBUG_EVAL
     if (debug_eval )
@@ -1461,7 +1637,10 @@ BishopValue (register short int sq, short int side)
 	else if ( GameType[c2] == RANGING_ROOK )
 	  {
 	    /* Bishops diagonal should be open */
-	    if ( csquare(c1,sq) == 20 && on_csquare(c1,pawn,30) )
+	    if ( csquare(c1,sq) == 10 && 
+		 (!empty_csquare(c1,20) || !empty_csquare(c1,30)) )
+	      s += OPENWRONG;
+	    else if ( csquare(c1,sq) == 20 && !empty_csquare(c1,30) ) 
 	      s += OPENWRONG;
 	  }
       }     
@@ -1481,7 +1660,11 @@ RookValue (register short int sq, short int side)
     long a2, a1;
     short mob, r, c;
 
+#if defined USE_PATTERN
+    s = Mrook[c1][sq];
+#else
     s = Mrook[c1][csquare(c1,sq)];
+#endif
 
 #ifdef DEBUG_EVAL
     if (debug_eval )
@@ -1728,7 +1911,11 @@ PBishopValue (register short int sq, short int side)
     long a2, a1;
     short mob;
 
+#if defined USE_PATTERN
+    s = Mbishop[c1][sq];
+#else
     s = Mbishop[c1][csquare(c1,sq)];
+#endif
     
     if ( InPromotionZone(c1,sq) )
       s += KINGED * AddEnemyKingDistanceBonus(sq);
@@ -1765,7 +1952,11 @@ PRookValue (register short int sq, short int side)
     long a2, a1;
     short mob;
 
+#if defined USE_PATTERN
+    s = Mrook[c1][sq];
+#else
     s = Mrook[c1][csquare(c1,sq)];
+#endif
 
     if ( InPromotionZone(c1,sq) )
       s += KINGED * AddEnemyKingDistanceBonus(sq);
@@ -1805,7 +1996,11 @@ KingValue (register short int sq, short int side)
     register short fyle;
     long a2, a1;
 
+#if defined USE_PATTERN
+    s = Mking[c1][sq];
+#else
     s = Mking[c1][csquare(c1,sq)];
+#endif
 
 #ifdef DEBUG_EVAL
     if (debug_eval )
@@ -1864,7 +2059,6 @@ KingValue (register short int sq, short int side)
       }  
                         
     if ( in_opening_stage ) {
-      /* king has moved */
       if ( GameType[c1] == STATIC_ROOK )
         {
 	  /* Malus for king on right side or fifth file */
@@ -1881,7 +2075,7 @@ KingValue (register short int sq, short int side)
         }
       else if ( GameType[c1] == RANGING_ROOK )
         {
-	  /* Malusalus for king on left side or fifth file */
+	  /* Malus for king on left side or fifth file */
           short c;
 	  c = 4 - ccolumn(c1,sq);
  	  if ( c > 0 || (c == 0 && sq != kingP[c1]) ) {
@@ -1894,13 +2088,27 @@ KingValue (register short int sq, short int side)
 	  }
 	  /* Malus for king moved before rook switch */
 	  if ( sq != kingP[c1] )
-	    if ( on_csquare(side,rook,16) ) {
+	    {
+	      if ( on_csquare(c1,rook,16) ) {
 		s += 4 * OPENWRONG;         
 #ifdef DEBUG_EVAL
 	        if ( debug_eval )
 		    fprintf(debug_eval_file,"add %d for king moved before rook switch (Ranging)\n",
 				4 * OPENWRONG);
 #endif
+	      }
+	    }
+	  else
+	  /* Malus for sitting king after rook switch */
+	    {
+	      if ( !on_csquare(c1,rook,16) ) {
+	        s += 2 * OPENWRONG;
+#ifdef DEBUG_EVAL
+	        if ( debug_eval )
+		    fprintf(debug_eval_file,"add %d for sitting king after rook switch (Ranging)\n",
+				2 * OPENWRONG);
+#endif
+	      }
 	    }
 	  /* Malus for defending general moved before king switch to right side */
 	  if ( ccolumn(c1,sq) < 6 )
@@ -2000,15 +2208,23 @@ UpdatePatterns (short int side, short int GameCnt)
   char s[12];
   short xside = side ^ 1;
   OpeningPattern *p;
-#ifdef DEBUG_EVAL
-  short i;
+  short i, n = 0;
   PatternSequence *sequence;
-#endif
 
   strcpy(s,"CASTLE_?_?");
   s[7] = GameType[side];
   s[9] = GameType[xside];
   castle_pattern[side] = p = locate_opening_pattern(side,s,GameCnt);
+
+  if ( flag.post && p )
+    {
+      for (i=0,sequence=p->sequence; i<p->n; i++,sequence=sequence->next_pattern)
+ 	if ( sequence->distance[side] != CANNOT_REACH ) n++;
+    }
+
+#if defined USE_PATTERN
+  if ( p ) update_advance_bonus (side,p);
+#endif
 
 #ifdef DEBUG_EVAL
   if ( debug_eval )
@@ -2034,6 +2250,19 @@ UpdatePatterns (short int side, short int GameCnt)
   s[9] = GameType[xside];
   attack_pattern[side] = p = locate_opening_pattern(side,s,GameCnt);
   
+  if ( flag.post && p )
+    {
+      for (i=0,sequence=p->sequence; i<p->n; i++,sequence=sequence->next_pattern)
+ 	if ( sequence->distance[side] != CANNOT_REACH ) n++;
+    }
+
+
+#ifdef USE_PATTERN
+  if ( flag.post ) 
+      ShowPatternCount(side,n);
+  if ( p ) update_advance_bonus (side,p);
+#endif
+
 #ifdef DEBUG_EVAL
   if ( debug_eval )
     if ( p != NULL )
@@ -2158,14 +2387,18 @@ ScorePosition (register short int side)
 			    break;
 			}
 		      pscore[c1] += s;
+#if !defined SAVE_SVALUE
 		      svalue[sq] = s;
+#endif
 		  }
 	    }
 #ifdef DEBUG_EVAL 
           if ( debug_eval ) {                      
 	    fprintf(debug_eval_file,"pscore[black] = %d, pscore[white] = %d\n",
 		pscore[black], pscore[white]);
+#if !defined SAVE_SVALUE
 	    debug_svalue(debug_eval_file);
+#endif
 	  }
 #endif
 	  if (hung[side] > 1) {
@@ -2262,7 +2495,8 @@ ScorePosition (register short int side)
             }
 
 #ifdef CACHE
-	  PutInEETable(side,score);
+	  if ( PUTVAR )
+	    PutInEETable(side,score);
 #endif
 #ifdef DEBUG_EVAL
 	  if ( debug_eval )
@@ -2289,6 +2523,8 @@ ScorePosition (register short int side)
 
 
 
+#if !defined USE_PATTERN
+
 
 #define SS 1
 #define RS 2
@@ -2300,7 +2536,7 @@ static
     short int *PawnAdvance[2],*LanceAdvance[2],*KnightAdvance[2],
 	*SilverAdvance[2],*GoldAdvance[2],*BishopAdvance[2],*RookAdvance[2],
 	*KingAdvance[2];
-    
+ 
 
 inline
 static
@@ -2378,13 +2614,14 @@ SetOpeningStrategy(short c, short s)
 
 
 static inline void
-CopyBoard (short *a, short *b, short n, short d)
+CopyBoard (small_short *a, small_short *b, short n, short d)
 {                          
-    register short *sqa, *sqb, i;
+    register small_short *sqa, *sqb;
+    register short i;
 
-    if ( n == d )
+    if ( n == d ) {
       bcopy(a,b,NO_SQUARES*sizeof(short));
-    else 
+    } else
       for (sqa = a,sqb = b,i=0; i<NO_SQUARES; sqa++,sqb++,i++)
 	if ( n == 1 )
 	    *sqb = (*sqa) / d;
@@ -2395,6 +2632,8 @@ CopyBoard (short *a, short *b, short n, short d)
 	    *sqb = (n * (*sqa)) / d;
 }
 
+
+#endif /* USE_PATTERN */
 
 
 static inline void
@@ -2418,7 +2657,7 @@ GuessGameType (void)
        StaticRook[side] += 8;
      else if ( !on_column(side,pawn,7) )
        StaticRook[side] += 5;
-     if ( empty_square(side,5) || empty_square(side,6) )
+     if ( empty_csquare(side,5) || empty_csquare(side,6) )
        StaticRook[side] += 2;
      if ( on_left_side(side,king) )
        StaticRook[side] += 2;
@@ -2435,6 +2674,8 @@ GuessGameType (void)
        RangingRook[side] += 1;
      else
        RangingRook[side] -= 2;
+     if ( !on_right_side(side,rook) )
+       RangingRook[side] += 2;
      if ( on_right_side(side,king) )
        RangingRook[side] += 2;
      if ( on_csquare(side,bishop,20) )
@@ -2510,55 +2751,31 @@ GuessGameType (void)
 #endif
 
 
-
+static
 void
-ExaminePosition (void)
-
-/*
- * This is done one time before the search is started. Set up arrays Mwpawn,
- * Mbpawn, Mknight, Mbishop, Mking which are used in the SqValue() function
- * to determine the positional value of each piece.
- */
-
+DetermineGameType (void)
 {
-    register short i, sq, msq;
-    register short fyle;
-    short wpadv, bpadv, z, side, pp, j, k, val, Pd, rank;
-
-    ataks (black, atak[black]);
-    ataks (white, atak[white]);
-                      
-#ifdef DEBUG_EVAL
-    if ( debug_eval ) {
-      debug_position (debug_eval_file);
-      /* debug_ataks (debug_eval_file); */
-    }
-#endif
-
-    UpdateWeights ();  
-
-#ifdef NOMEMSET
-    { short c, p;
-      for ( c = black; c <= white; c++ )
-        for ( p = pawn; p <= king; p++ )
-          HasPiece[c][p] = 0;
-    }
-#else
-    memset ((char *)HasPiece, 0,(unsigned long)sizeof(HasPiece));
-#endif                             
-
-    for (side = black; side <= white; side++)
-	for (i = PieceCnt[side]; i >= 0; i--)
-	    ++HasPiece[side][board[PieceList[side][i]]];
+    short int side;
 
     GuessGameType();
 
-#ifdef USE_PATTERN
-    if ( in_opening_stage ) {
-      for (side = black; side <= white; side++)
-        UpdatePatterns (side, GameCnt);
-    }
+#if !defined XSHOGI
+    if ( flag.post )
+      ShowGameType();
 #endif
+
+#if defined USE_PATTERN
+
+    memset ((char *)Mpawn, 0, sizeof(Mpawn));
+    memset ((char *)Mlance, 0, sizeof(Mlance));
+    memset ((char *)Mknight, 0, sizeof(Mknight));
+    memset ((char *)Msilver, 0, sizeof(Msilver));
+    memset ((char *)Mgold, 0, sizeof(Mgold));
+    memset ((char *)Mbishop, 0, sizeof(Mbishop));
+    memset ((char *)Mrook, 0, sizeof(Mrook));
+    memset ((char *)Mking, 0, sizeof(Mking));
+
+#else
 
     if ( GameType[black] == STATIC_ROOK) {
 	  if ( GameType[white] == STATIC_ROOK ) {
@@ -2605,7 +2822,7 @@ ExaminePosition (void)
     CopyBoard (GoldAdvance[white], Mgold[white], GADVNCM, 10);
     CopyBoard (KingAdvance[black], Mking[black], KADVNCM, 1);
     CopyBoard (KingAdvance[white], Mking[white], KADVNCM, 1);
-                      
+
     /* Tables without weighted advances. Must not be updated! */
 
     for ( side = black; side <= white; side++ ) {
@@ -2624,22 +2841,105 @@ ExaminePosition (void)
     }
 #endif
 
-    /* Build up weighted enemy-king distance tables. */                                
-                           
-    if ( KATAK == 0 ) 
-#if defined(NOMEMSET) || defined(MSDOS)
-      for (sq = 0; sq < NO_SQUARES; sq++) 
-	Kfield[black][sq] = Kfield[white][sq] = 0;
-#else 
-      memset ((char *) Kfield, 0, (unsigned long)sizeof (Kfield));
+#endif /* USE_PATTERN */
+
+#if defined USE_PATTERN
+    if ( in_opening_stage ) {
+      for (side = black; side <= white; side++)
+        UpdatePatterns (side, GameCnt);
+    } else {
+      ShowPatternCount(black,-1);
+      ShowPatternCount(white,-1);
+    }
+#endif
+
+}
+
+
+
+void
+ExaminePosition (void)
+
+/*
+ * This is done one time before the search is started. Set up arrays Mwpawn,
+ * Mbpawn, Mknight, Mbishop, Mking which are used in the SqValue() function
+ * to determine the positional value of each piece.
+ */
+
+{
+    register short i, sq, msq;
+    register short fyle;
+    short wpadv, bpadv, z, side, pp, j, k, val, Pd, rank;
+
+#ifdef TEST_EXAMINE
+    ShowMessage("begin of ExaminePosition");
+#endif
+
+    ataks (black, atak[black]);
+    ataks (white, atak[white]);
+
+#ifdef TEST_EXAMINE
+    ShowMessage("after ataks");
+#endif
+                      
+#ifdef DEBUG_EVAL
+    if ( debug_eval ) {
+      debug_position (debug_eval_file);
+      /* debug_ataks (debug_eval_file); */
+    }
+#endif
+
+    UpdateWeights ();
+
+#ifdef TEST_EXAMINE
+    ShowMessage("after UpdateWeights");
+#endif
+
+#ifdef NOMEMSET
+    { short c, p;
+      for ( c = black; c <= white; c++ )
+        for ( p = pawn; p <= king; p++ )
+          HasPiece[c][p] = 0;
+    }
+#else
+    memset ((char *)HasPiece, 0,(unsigned long)sizeof(HasPiece));
+#endif
+
+    for (side = black; side <= white; side++)
+	for (i = PieceCnt[side]; i >= 0; i--)
+	    ++HasPiece[side][board[PieceList[side][i]]];
+
+    DetermineGameType();
+
+    /* Build up weighted enemy-king distance tables. */
+
+    if ( KATAK == 0 )
+      {
+#if defined(NOMEMSET)
+#ifdef TEST_EXAMINE
+	ShowMessage("just before 0 distance assignment");
+#endif
+	for (sq = 0; sq < NO_SQUARES; sq++)
+	  Kfield[black][sq] = Kfield[white][sq] = 0;
+#else
+#ifdef TEST_EXAMINE
+	ShowMessage("just before memset");
+#endif
+	memset ((char *) Kfield, 0, (unsigned long)sizeof (Kfield));
 #endif /* NOMEMSET */
+      }
     else
-      for (sq = 0; sq < NO_SQUARES; sq++)
-        {
-	  Kfield[black][sq] = (distance(sq,WhiteKing)==1) ? KATAK : 0;
-	  Kfield[white][sq] = (distance(sq,BlackKing)==1) ? KATAK : 0;
-        }
-    
+      {
+#ifdef TEST_EXAMINE
+	ShowMessage("just before distance assignments");
+#endif
+	for (sq = 0; sq < NO_SQUARES; sq++)
+	  {
+	    Kfield[black][sq] = (distance(sq,WhiteKing)==1) ? KATAK : 0;
+	    Kfield[white][sq] = (distance(sq,BlackKing)==1) ? KATAK : 0;
+	  }
+      }
+
 #ifdef DEBUG_EVAL
     if ( debug_eval )
       for (side=black; side<=white; side++)
@@ -2657,6 +2957,10 @@ ExaminePosition (void)
         }
 #endif
 
+#ifdef TEST_EXAMINE
+   ShowMessage("end of ExaminePosition");
+#endif
+
 }
 
 
@@ -2671,10 +2975,6 @@ UpdateWeights (void)
 {
     register short s1, dio, io, os;
 
-    emtl[black] = mtl[black] - pmtl[black] - valueK;
-    emtl[white] = mtl[white] - pmtl[white] - valueK;
-    tmtl = emtl[black] + emtl[white];
-    
     behind_in_material[black] = ((mtl[white] - mtl[black]) > valueB);
     behind_in_material[white] = ((mtl[black] - mtl[white]) > valueB);
     
@@ -2696,7 +2996,21 @@ UpdateWeights (void)
           os = (GameType[black] == STATIC_ROOK && GameType[white] == STATIC_ROOK) ? 10 : 8;
 	  dio = (in_opening_stage = io = (s1 < os)) ? (os - s1) : 0;
 
+#if defined USE_PATTERN
+	  ADVNCM[pawn]   = io?2+s1:1; /* advanced pawn bonus increment*/
+	  ADVNCM[lance]  = 1;
+	  ADVNCM[knight] = 1;
+	  ADVNCM[silver] = io?1+s1:1; /* advanced silver bonus increment */
+	  ADVNCM[gold]   = io?1+s1:1; /* advanced gold bonus increment */
+	  ADVNCM[bishop] = 1;
+	  ADVNCM[rook]   = 1;
+	  ADVNCM[king]   = io?1+s1:1; /* advanced king bonus increment */
+#else
 	  PADVNCM = io?12+s1:1;	/* advanced pawn multiplier */
+	  SADVNCM = io?15+s1:1;	/* advanced silver multiplier */
+	  GADVNCM = io?14+s1:1;	/* advanced gold multiplier */
+	  KADVNCM = io?1+s1:0;	/* advanced king multiplier */
+#endif
           PMBLTY = 5;		/* pawn mobility */
 	  PSTRONG = 3; 		/* pawn supported by rook/lance */
 	  BDCLOSED = -(dio*2);	/* bishops diagonal closed by pawn */
@@ -2705,17 +3019,15 @@ UpdateWeights (void)
 	  LHOPN = -4;		/* no own pawn on lance file ahead */
 	  LHOPNX = 4;		/* no enemy pawn on lance file ahead */
 	  LPROTECT = 6;		/* protect own piece with lance */
-	  LDNGR = -4;		/* lance is in danger */
+	  LDNGR = -6;		/* lance is in danger */
 	  LXRAY = 8;		/* lance Xray attack on piece */
 
 	  NDNGR = -4;		/* knight is in danger */
 	  KNIGHTPOST = 2;	/* knight near enemy pieces */
 	  KNIGHTSTRONG = 2;	/* occupies pawn hole */
+	  NEDGE = io?-16:-8;	/* knight is on edge file */
 
-	  SADVNCM = io?15+s1:1;	/* advanced silver multiplier */
           SBEFOREG = 2;  	/* proverb: silver before gold */
-
-	  GADVNCM = io?14+s1:1;	/* advanced gold multiplier */
 
 	  BISHOPSTRONG = 4;	/* occupies pawn hole */
 	  BHCLSD = -3;		/* first or second piece in a bishop's direction is an own pawn */
@@ -2729,16 +3041,16 @@ UpdateWeights (void)
 
 	  PINVAL = 15;		/* Pin */
 
-	  KADVNCM = io?1+s1:0;	/* advanced king multiplier */
 	  KHOPN = -8;		/* no own pawn in kings file */
 	  KHOPNX = KHOPN * 2;   /* no opponents pawn in kings file */
 	  KCASTLD = 20;         /* king protected by castle */
 	  KMOVD = 4;		/* proverb: a sitting king is a sitting duck */
 	  KATAK = io ? 1 : 8;	/* B,R,L attacks near enemy king */
-	  KSFTY = 4;            /* king safety */
+	  KSFTY = 		/* king safety */
+ 	    io ? 0 : KINGSAFETY + s1 - 20; 
 
-          OPENOK = dio*2;	/* corresponding to opening pattern */
-          OPENWRONG = -dio*3;	/* not correpsonding */
+          OPENOK = dio*3/2;	/* corresponding to opening pattern */
+          OPENWRONG = -dio*2;	/* not correpsonding */
 
           KINGOD = 2+s1/4;	/* distance to own king multiplier */
           KINGED = 3+s1/4;	/* distance to enemy king multiplier */
@@ -2755,4 +3067,3 @@ UpdateWeights (void)
 
       }
 } 
-

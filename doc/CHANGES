@@ -1,5 +1,21 @@
 ChangeLog will start with GNU Shogi 1.0 patchlevel 11 (04/07/1993)
 
+version 1.1 patchlevel 1 -> version 1.1 patchlevel 2
+  10/06/1993
+	correcting bug: MakeMove no longer destroys the node->flags
+  07/11/1993                         
+	changes according to GnuChess 4.0pl62;
+	introducing "IsCheckmate" in order to forbid checkmates
+	by dropping a pawn (illegal move);
+	correcting bug: UnmakeMove no longer destroys the node->flags
+	(especially the "exact" flag)
+  05/11/1993
+	enabling draw by repetition detection
+  04/29/1993
+	correcting "save game" and "get game";
+	introducing a "tsume" mode, which allows gnushogi especially
+	search for forced checkmates
+
 version 1.0 patchlevel 11 -> version 1.1 patchlevel 1
   04/22/1993
 	deep search cut in genmoves.c

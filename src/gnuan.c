@@ -49,7 +49,7 @@
  * For each move it will analyse the move until either it has run out of time or
  * it has reached the maximum depth.
  *
- * To build the version for background processing define BACKGROUND_ANALYSIS
+ * To build the version for background processing define BACKGROUND_ANALYSIS 1
  * either at the top of this file, or in compilation.  The files and depth
  * used are defined below.  They are MAX_DEPTH, MAX_TIME, OUT_FILE, IN_FILE
  * and PROG_FILE.  The PROG_FILE is a file that will be updated as each move
@@ -85,7 +85,6 @@ void TerminateSearch (int), Die (int);
 #endif /* MSDOS */
 
 #include "gnushogi.h"
-#include "ataks.h"
 #undef rxx
 #undef cxx
 #undef scanz
@@ -112,7 +111,7 @@ enum
 } InFileType;
 char InBuf[256];
 
-#ifdef BACKGROUND_ANALYSIS
+#if BACKGROUND_ANALYSIS
 static FILE *fpprog;
 
 #endif
@@ -235,7 +234,7 @@ algbr (short int f, short int t, short int flag)
 
 
 int
-VerifyMove (char *s, short int iop, unsigned short int *mv)
+VerifyMove (char *s, VerifyMove_mode iop, unsigned short int *mv)
 
 /*
  * Compare the string 's' to the list of legal moves available for the
@@ -246,15 +245,29 @@ VerifyMove (char *s, short int iop, unsigned short int *mv)
   static short pnt, tempb, tempc, tempsf, tempst, cnt;
   static struct leaf xnode;
   struct leaf *node;
+  char *p, *q;
+  short drop;
+ 
+  for (p=s, drop=false; *p != '\0' && !drop; p++)
+    if ( *p == '*' || *p == '\'' )
+	drop = true;
 
+  if ( !drop ) {
+    p = q = s; 
+    if ( *p == '+' ) p++;
+    if ( isalpha(*p) ) p++;
+    while ( *p != '\0' ) *q++ = *p++;
+    *q = '\0'; 
+  }
+    
   *mv = 0;
-  if (iop == 2)
+  if (iop == UNMAKE_MODE)
     {
       UnmakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
       return (false);
     }
   cnt = 0;
-  MoveList (opponent, 2);
+  MoveList (opponent, 2, -1);
   pnt = TrPnt[2];
   while (pnt < TrPnt[3])
     {
@@ -268,9 +281,9 @@ VerifyMove (char *s, short int iop, unsigned short int *mv)
 	}
     }
   if (cnt == 1)
-    {
-      MakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst, &BADscore);
-      if (SqAtakd (PieceList[opponent][0], computer))
+    { short blockable;
+      MakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst, &INCscore);
+      if (SqAtakd (PieceList[opponent][0], computer, &blockable))
 	{
 	  UnmakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
 	  printz ("Illegal move\n");
@@ -278,7 +291,7 @@ VerifyMove (char *s, short int iop, unsigned short int *mv)
 	}
       else
 	{
-	  if (iop == 1)
+	  if (iop == VERIFY_AND_TRY_MODE)
 	    return (true);
 
 	  /*
@@ -286,7 +299,7 @@ VerifyMove (char *s, short int iop, unsigned short int *mv)
            */
 	  GameList[GameCnt].depth = GameList[GameCnt].score = 0;
 	  GameList[GameCnt].nodes = 0;
-	  ElapsedTime (1);
+	  ElapsedTime (COMPUTE_AND_INIT_MODE);
 	  GameList[GameCnt].time = (short) et;
 	  TimeControl.clock[opponent] -= et;
 	  --TimeControl.moves[opponent];
@@ -349,6 +362,13 @@ ShowDepth (char ch)
 #endif /* MSDOS */
 }
 
+#ifdef USE_PATTERN
+void
+ShowPatternCount (short side, short n)
+{
+}
+#endif
+
 void
 ShowResults (short int score, unsigned short int *bstline, char ch)
 {
@@ -360,6 +380,12 @@ ShowResults (short int score, unsigned short int *bstline, char ch)
     {
       MV[i] = bstline[i];
     } MV[i] = 0;
+}
+
+
+void 
+ShowGameType (void)
+{
 }
 
 void
@@ -393,7 +419,7 @@ OutputMove (void)
 }
 
 void
-ElapsedTime (short int iop)
+ElapsedTime (ElapsedTime_mode iop)
 
 /*
  * Determine the time that has passed since the search was started. If the
@@ -426,7 +452,7 @@ ElapsedTime (short int iop)
   if (et < 0)
     et = 0;
   ETnodes += ZNODES;
-  if (iop == 1)
+  if (iop == COMPUTE_AND_INIT_MODE)
     {
       if (et > ResponseTime + ExtraTime && Sdepth > 1)
 	flag.timeout = true;
@@ -450,7 +476,7 @@ SetTimeControl (void)
       MaxResponseTime = 6000L * TCminutes;
     }
   et = 0;
-  ElapsedTime (1);
+  ElapsedTime (COMPUTE_AND_INIT_MODE);
 }
 
 void
@@ -667,7 +693,7 @@ TestSpeed (void (*f) (short int side, short int ply))
 }
 
 
-#define copym() while(*p!=' ' && *p!='\n')  *q++ = *p++;  *q='\0';
+#define copym() while (*p != ' ' && *p != '\n') *q++ = *p++; *q = '\0';
 #define skipb() while(*p==' ')p++;
 #define skip() skipb(); while(*p!=' ' && *p!='\n')p++; skipb(); 
 
@@ -737,7 +763,7 @@ GetNextMove (char *buffer)
 }
 
 void
-InputCommand (void)
+InputCommand (char *command)
 
 /*
  * Open the file of moves to analyse.  Go through the file move by move and
@@ -753,7 +779,7 @@ InputCommand (void)
   short ok;
   unsigned short mv;
   char s[80];
-#if !defined BACKGROUND_ANALYSIS
+#if !BACKGROUND_ANALYSIS
   int max_minutes;
   char inbuf[256];
 #else
@@ -773,7 +799,6 @@ InputCommand (void)
   flag.quit = false;
   flag.beep = false;
   player = opponent;
-  enable_update_display = 1;
   ft = 0;
   Book = false;
   total_white_moves = 0;
@@ -781,7 +806,7 @@ InputCommand (void)
   same_white_moves = 0;
   same_black_moves = 0;
 
-#ifdef BACKGROUND_ANALYSIS
+#if BACKGROUND_ANALYSIS
 
   /*
    * Set the in files to standard ones for analysis if background
@@ -866,7 +891,7 @@ InputCommand (void)
   fprintf (fpout, "Move Black White      Score Depth     Best Line\n");
   fprintf (fpout, "------------------------------------------------------------------\n");
 
-#ifdef BACKGROUND_ANALYSIS
+#if BACKGROUND_ANALYSIS
 
   /*
    * Update progress in the progress file if this is running in the
@@ -896,13 +921,13 @@ InputCommand (void)
       if (!strcmp (black_actual_move, "White") || !strcmp (black_actual_move, "Black") || !strcmp (black_actual_move, "draw"))
 	break;
       flag.force = 0;
-      SelectMove (computer, 1);
+      SelectMove (computer, FOREGROUND_MODE);
       Undo ();
       flag.force = 1;
       opponent = black;
       computer = white;
       player = opponent;
-      ok = VerifyMove (black_actual_move, 0, &mv);
+      ok = VerifyMove (black_actual_move, VERIFY_AND_MAKE_MODE, &mv);
 #ifdef notdef
       ExaminePosition ();
       tmpscore = ScorePosition (black);
@@ -948,13 +973,13 @@ InputCommand (void)
       if (!strcmp (white_actual_move, "White") || !strcmp (white_actual_move, "Black") || !strcmp (white_actual_move, "draw"))
 	break;
       flag.force = 0;
-      SelectMove (computer, 1);
+      SelectMove (computer, FOREGROUND_MODE);
       Undo ();
       flag.force = 1;
       opponent = white;
       computer = black;
       player = opponent;
-      ok = VerifyMove (white_actual_move, 0, &mv);
+      ok = VerifyMove (white_actual_move, VERIFY_AND_MAKE_MODE, &mv);
 #ifdef notdef
   ExaminePosition ();
   tmpscore = ScorePosition (white);
@@ -987,7 +1012,7 @@ InputCommand (void)
 	  fprintf (fpout,"\n");
 	  fflush (fpout);
 
-#ifdef BACKGROUND_ANALYSIS
+#if BACKGROUND_ANALYSIS
 
 	  /*
            * Update progress in the progress file if this is running in the

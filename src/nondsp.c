@@ -47,7 +47,7 @@ void TerminateSearch (int), Die (int);
 #include "gnushogi.h"
 
 #ifdef DEBUG
-short int debuglevel = 0;
+short int debuglevel = 1024;
 #endif /* DEBUG */
 unsigned short int MV[MAXDEPTH];
 int MSCORE;
@@ -69,7 +69,7 @@ void
 Initialize (void)
 {
   mycnt1 = mycnt2 = 0;
-#if defined XSHOGI && !defined THINK_C
+#if defined XSHOGI && !defined THINK_C && !defined MSDOS
 #ifndef SYSV
   setlinebuf (stdout);
 #else
@@ -87,7 +87,9 @@ void
 ExitChess (void)
 {
   signal (SIGTERM, SIG_IGN);
+#if !defined XSHOGI && !defined GDISPLAY
   ListGame ();
+#endif
   exit (0);
 }
 
@@ -111,8 +113,11 @@ TerminateSearch (int sig)
 #ifdef MSDOS
   sig++;			/* shut up the compiler */
 #endif /* MSDOS */
+#ifdef INTERRUPT_TEST
+  ElapsedTime(INIT_INTERRUPT_MODE);
+#endif
   if (!flag.timeout)
-    flag.musttimeout = true;
+    flag.back = true; /* previous: flag.timeout = true; */
   flag.bothsides = false;
 }
 
@@ -358,6 +363,27 @@ ShowResults (short int score, short unsigned int *bstline, char ch)
     }
 }
 
+
+#ifdef USE_PATTERN
+void
+ShowPatternCount (short side, short n)
+{
+  if (flag.post)
+    {
+        printz("%s matches %d pattern(s)\n",ColorStr[side],n);
+    }
+}
+#endif
+
+void
+ShowGameType (void)
+{
+  if (flag.post)
+    {
+        printz("%c vs. %c\n",GameType[black],GameType[white]);
+    }
+}
+
 void
 SearchStartStuff (short int side)
 {
@@ -414,7 +440,12 @@ OutputMove (void)
 #endif
   if (flag.illegal) {printf("%s\n",CP[225]);return;}
   if (mvstr[0][0] == '\0') goto nomove;
+#ifdef XSHOGI
+  /* add remaining time in milliseconds to xshogi */
+  printz ("%d. ... %s %ld\n", ++mycnt1, mvstr[0], TimeControl.clock[player]*10);
+#else
   printz ("%d. ... %s\n", ++mycnt1, mvstr[0]);
+#endif
 #ifdef notdef /* optional pass best line to frontend with move */
   if (flag.post)
     {
@@ -615,8 +646,10 @@ SelectLevel (char *sx)
 
   char T[NO_SQUARES], *p, *q;
 
-  if((p = strstr(sx,CP[169]))!=NULL) p += strlen(CP[169]);
-  else if((p = strstr(sx,CP[217]))!=NULL) p += strlen(CP[217]);
+  if ( (p = strstr(sx,CP[169])) != NULL ) 
+    p += strlen(CP[169]);
+  else if ( (p = strstr(sx,CP[217])) != NULL ) 
+    p += strlen(CP[217]);
   strcat(sx,"XX");
   q = T; *q = '\0';
   for(;*p != 'X';*q++ = *p++);
@@ -655,6 +688,9 @@ SelectLevel (char *sx)
 }
   TimeControl.clock[black] = TimeControl.clock[white] = 0;
   SetTimeControl ();
+#if defined XSHOGI
+  printz ("Clocks: %ld %ld\n",TimeControl.clock[black]*10,TimeControl.clock[white]*10);
+#endif
 }
 
 #ifdef DEBUG
@@ -709,7 +745,11 @@ ShowPostnValue (short int sq)
   short score;
   score = ScorePosition (color[sq]);
   if (color[sq] != neutral){
+#if defined SAVE_SVALUE
+    printz ("???%c ", (color[sq] == white)?'b':'w');}
+#else
     printz ("%3d%c ", svalue[sq],(color[sq] == white)?'b':'w');}
+#endif
   else
     printz(" *   ");
 }
@@ -750,7 +790,11 @@ DoDebug (void)
   for(k=0;k<(NO_COLS);k++){
       sq=j*(NO_COLS)+k;
       if (color[sq] != neutral){
+#if defined SAVE_SVALUE
+        printz ("%?????%c ", (color[sq] == white)?'b':'w');}
+#else
         printz ("%5d%c ", svalue[sq],(color[sq] == white)?'b':'w');}
+#endif
       else
         printz("    *  ");
     }

@@ -21,8 +21,6 @@ black and his opponent white, although in Shogi sets all pieces have the
 same colour. They are differentiated only in direction: pieces pointing
 away from a player are his. The pieces lie flat on the board and have
 their Japanese name written on them.
-The notation system and the inital setup in ASCII representation can be
-found in the file SHOGI.BOARD.
 
 
 THE MOVES

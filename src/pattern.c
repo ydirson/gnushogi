@@ -23,7 +23,8 @@
  * along with GNU Shogi; see the file COPYING.  If not, write to
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
+ 
+ 
 #include "gnushogi.h"
 
 #include "pattern.h"
@@ -31,7 +32,7 @@
 
 OpeningPattern *Patterns;
 
-#ifdef NONDSP
+#if defined NONDSP || defined MSDOS
 static long allocated_bytes;
 #endif
 
@@ -214,7 +215,7 @@ GetOpeningPatterns ()
     OpeningPattern *p, *q;
     short count = 0;
 
-#ifdef NONDSP                                      
+#if defined NONDSP || defined MSDOS
     allocated_bytes = 0;
 #endif
 
@@ -234,7 +235,7 @@ GetOpeningPatterns ()
 	      {
 		if ( p = (OpeningPattern *) malloc (sizeof(OpeningPattern)) )
 		  { char *pn, *ps;
-#ifdef NONDSP
+#if defined NONDSP || defined MSDOS
       		    allocated_bytes += sizeof(OpeningPattern);
 #endif
 		    if ( Patterns == NULL )
@@ -270,16 +271,18 @@ GetOpeningPatterns ()
 		  }
 	      }
 	  }
-#ifdef NONDSP
-	printf("Pattern used %d entries, %ld bytes allocated.\n",
+#if defined NONDSP || defined MSDOS
+	sprintf(s, "Pattern used %d entries, %ld bytes allocated.\n",
 			count, allocated_bytes);
+	ShowMessage(s);
 #endif  
 	fclose(fd);
       }
-#ifdef NONDSP
+#if defined NONDSP || defined MSDOS
     else
-      {     
-        printf("no pattern file '%s'",patternfile);
+      {
+	sprintf(s, "no pattern file '%s'",patternfile);
+	ShowMessage(s);
       }      
 #endif
 
@@ -640,7 +643,8 @@ OpeningPattern
    short i, j, removed;
 #ifdef DEBUG_PATTERN
    short n = 0, m = 0;
-#endif    
+#endif
+   short l = strlen(s);    
 
   /* 
    * Look for opening pattern name in the list of opening patterns.
@@ -648,7 +652,7 @@ OpeningPattern
 
    for ( p = Patterns; p != NULL; p = p->next )
      {                    
-       if ( strcmp(s,p->name) == 0 )
+       if ( strncmp(s,p->name,l) == 0 )
          break;
      }
 
@@ -728,3 +732,25 @@ OpeningPattern
 }
 
 
+void update_advance_bonus (short pside, OpeningPattern *p)
+{
+   PatternSequence *sequence;
+   PatternFields *patternfields;
+   PatternField field;
+   short i;
+
+   for ( sequence=p->sequence; sequence; sequence=sequence->next_pattern )
+     if ( sequence->distance[pside] != CANNOT_REACH )
+       {
+	  patternfields = &sequence->patternfields;
+          for ( i = 0; i < patternfields->n; i++ ) {
+            field = patternfields->field[i];
+	    if ( field.side == black ) {
+		short square = (pside == black) 
+				? field.square 
+				: NO_SQUARES - 1 - field.square;
+		(*Mpiece[field.piece])[pside][square] += ADVNCM[field.piece];
+	    }
+	  }
+       }
+}

@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <fcntl.h>
+#ifdef THINK_C
+#include <unix.h>
+#include <console.h>
+#endif
+
 #include "gnushogi.h"
 #undef rxx
 #undef cxx
@@ -76,12 +81,7 @@ cvt (m,flags)
 #endif
 
 int gfd;
-struct gdxadmin
-{
-    unsigned int bookcount;
-    unsigned int booksize;
-    unsigned long maxoffset;
-} ADMIN;
+struct gdxadmin ADMIN;
 
 #define N 2
 struct gdxdata
@@ -97,7 +97,7 @@ void
 usage (char *x)
 {
     printf ("usage %s binbookfile [ -h key bd]\n", x);
-    exit ();
+    exit (0);
 }
 
 int i;
@@ -114,6 +114,7 @@ main (argc, argv)
      int argc;
      char **argv;
 {
+    ccommand(&argv);
     if (argc == 5)
       {
 	  if (strcmp (argv[2], "-h") != 0)
@@ -127,11 +128,11 @@ main (argc, argv)
     gfd = open (argv[1], O_RDONLY);
     if (gfd >= 0)
       {
-	  read (gfd, &ADMIN, sizeof (struct gdxadmin));
+	  read (gfd, (char *)&ADMIN, sizeof (struct gdxadmin));
 	  printf ("entrysize %d\nbooksize %d\nbookcount %d\nmaxoffset %ld\n", sizeof (struct gdxdata), ADMIN.booksize, ADMIN.bookcount, ADMIN.maxoffset);
 	  for (i = 0; i < ADMIN.booksize; i++)
 	    {
-		if (0 > read (gfd, &DATA, sizeof (struct gdxdata)))
+		if (0 > read (gfd, (char *)&DATA, sizeof (struct gdxdata)))
 		  {
 		      perror ("fread");
 		      exit (1);

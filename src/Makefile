@@ -31,14 +31,13 @@
 #PATH = (. ~ ~/bin /mount/public.bones/bin /usr/local /usr/ucb /usr/bin /usr/etc)
 
 # The version number of this GNU Shogi and XShogi release
-VERS=	1.1
+VERS=	1.1p02
 
 # Relevant file areas.
 DIST=   ../README ../doc ../misc ../src
 
 # Home directory
-#HOME=/home/staff/mutz/capella
-HOME=//capella/u/mutz
+HOME=/public/projects/shogi
 
 # Distribution directory
 DISTDIR=$(HOME)
@@ -64,12 +63,13 @@ LCURSES=-lcurses -ltermcap
 
 # The compiler used for compiling this software.
 # Use this for a plain C compiler 
-#CC= cc $(OPT)
+#CC= cc $(OPT) $(GENOPT)
 # Use this for DEC's ANSI C compiler on Ultrix
-#CC= c89 $(OPT)
+#CC= c89 $(OPT) $(GENOPT)
 # Use this if you are lucky enough to have GNU CC.
-CC=	gcc -W  $(OPT)
-#CC=	cc $(OPT)
+CC=	gcc -W -fsigned-char $(OPT) $(GENOPT)
+#CC=	/usr/pub/bin/gcc -fsigned-char $(OPT) $(GENOPT)
+#CC=	cc $(OPT) $(GENOPT)
 
 # Miscellaneous CFLAGS. Uncomment the one you need and comment the other
 #CFLAGS= -p -Dinline=""	 -traditional-cpp
@@ -78,25 +78,28 @@ CC=	gcc -W  $(OPT)
 #CFLAGS= -g -traditional-cpp  # debug
 #CFLAGS= -O2 # DEC ANSI C (c89) on Ultrix.
 #CFLAGS= +O3 -Aa -D_HPUX_SOURCE -DSYSV # HPUX cc 
-#CFLAGS= -O   -finline-functions -fstrength-reduce -D__mips -D__LANGUAGE_C # gnu cc 1.40 on DS5000
-#CFLAGS= -O   -finline-functions -fstrength-reduce  # gnu cc 1.40 on others
+#CFLAGS= -O -finline-functions -fstrength-reduce -D__mips -D__LANGUAGE_C # gnu cc 1.40 on DS5000
+#CFLAGS= -O -finline-functions -fstrength-reduce  # gnu cc 1.40 on others
 #CFLAGS= -g -w -finline-functions -fstrength-reduce # gnu cc 1.40 on others
 #CFLAGS= -O2 -funroll-loops -D__mips -D__LANGUAGE_C # gnu cc 2.00 on DS5000
 #CFLAGS= -O2 -D__alpha -D__LANGUAGE_C # gnu cc 2.00 on Flamingo
-#CFLAGS= -O2 -funroll-loops -traditional-cpp # gnu cc  2.00 on SunOS
-#CFLAGS= -g -O -finline-functions -fstrength-reduce -DOLDTIME -DNOFIONREAD # gnu cc 1.40 on sun4 (acrux)
-CFLAGS= -O2 -funroll-loops -traditional-cpp -I/usr/local/include/ansi # gnu cc  2.00 on apollo (capella)
+CFLAGS= -O2 -funroll-loops -traditional-cpp # gnu cc  2.00 on SunOS
+#CFLAGS= -g -finline-functions -fstrength-reduce -DOLDTIME -DNOFIONREAD # gnu cc 1.40 on sun4
+#CFLAGS= -O2 -funroll-loops -traditional-cpp -I/usr/local/include/ansi # gnu cc  2.00 on apollo
 
 # Compression program for building distribution files
 COMPRESS= gzip
-Z= z
+Z= gz
 #COMPRESS= compress
 #Z= Z
 
+# lines per uuencoded file
+UULINES=1500
+
 # compile options for gnushogi
-# -DAG[0-4]  selects a set of values for SpaceBonus tables
 # -DQUIETBACKGROUND don't print post information in background ( easy OFF)
-# -DNOMEMSET if your machine does not support memset
+# -DNOBYTEOPS if your machine does not support bzero or bcopy
+# -DNOMEMSET if your machine does not support memset or memcopy
 # -DNODYNALPHA don't dynamically adjust alpha
 # -DHISTORY use history killer hueristic 
 # -DHASGETTIMEOFDAY use gettimeofday for more accurate timing
@@ -111,8 +114,6 @@ Z= z
 # -DXSHOGI create xshogi version
 # -DBAREBONES do not print statistics (for gnushogix version)
 # -DHARDTIMELIMIT reaching the time control means loosing the game
-# -DCHECKTRP check for search tree overflow
-# -DDEEPSEARCHCUT check for conditions that prevent move consideration for big plys
 # some debug options
 # -DDEBUG8 dump board,movelist,input move to /tmp/DEBUG if illegal move
 # -DDEBUG9 dump move list from test command
@@ -141,21 +142,24 @@ Z= z
 #	     2048 non-interactive trace print
 
 # normal  
-OPT= -DUSE_PATTERN -DGDX -DDEBUG9 -DVERYBUGGY -DCHECKTRP -DAG4 -DQUIETBACKGROUND -DHARDTIMELIMIT -DHASGETTIMEOFDAY -DCACHE -DHISTORY -DEXACTHISTORY # -DDEEPSEARCHCUT -DSEMIQUIETBOOKGEN 
+OPT= -DUSE_PATTERN -DGDX -DVERYBUGGY -DQUIETBACKGROUND -DHARDTIMELIMIT -DHASGETTIMEOFDAY -DCACHE -DNULLMOVE -DHISTORY -DEXACTHISTORY # -DSEMIQUIETBOOKGEN 
+# small memory and slow CPU  
+#OPT= -DSMALL_MEMORY -DSLOW_CPU -DSAVE_NEXTPOS -DSAVE_PTYPE_DISTDATA -DUSE_PATTERN -DGDX -DVERYBUGGY -DQUIETBACKGROUND -DHARDTIMELIMIT -DHASGETTIMEOFDAY -DNULLMOVE -DCACHE -DHISTORY # -DEXACTHISTORY -DSEMIQUIETBOOKGEN 
+# very small memory and slow CPU 
+#OPT= -DSMALL_MEMORY -DSLOW_CPU -DSAVE_SSCORE -DSAVE_NEXTPOS -DSAVE_PTYPE_DISTDATA -DUSE_PATTERN -DGDX -DVERYBUGGY -DQUIETBACKGROUND -DHARDTIMELIMIT -DHASGETTIMEOFDAY -DNULLMOVE # -DCACHE -DHISTORY -DEXACTHISTORY -DSEMIQUIETBOOKGEN 
 
 # options for genmoves.c in order to support move ordering at cost of speed
-# -DTESUJIBONUS  add bonus to a move that semms to be a tesuji
-# -DFIELDBONUS   add bonus to regular moves
-# -DDROPBONUS    add bonus to drops
-
-GENOPT= -DTESUJIBONUS -DFIELDBONUS -DDROPBONUS
-#GENOPT= -DTESUJIBONUS -DDROPBONUS
+# -DTESUJIBONUS   add bonus to a move that semms to be a tesuji
+# -DFIELDBONUS    add bonus to regular moves
+# -DDROPBONUS     add bonus to drops
+# -DDEEPSEARCHCUT check for moves not to consider at deep plys 
+GENOPT= -DTESUJIBONUS -DDROPBONUS -DFIELDBONUS -DDEEPSEARCHCUT 
 
 # Special options for gnushogix
 XSHOGI= -DXSHOGI -DBAREBONES -DHARDTIMELIMIT
 
-# Debug options for gnushogir             
-DEBUG= -DDEBUG -DDEBUG41 -DDEBUG9 -DDEBUG10 # -DBOOKTEST -DCACHETEST -DHASHTEST
+# Debug options for Dgnushogir             
+DEBUG= -DNONDSP -DDEBUG_EVAL -DDEBUG -DDEBUG4 -DHASHKEYTEST -DHASHTEST -DCACHETEST -DDEBUG41 -DDEBUG9 -DDEBUG10 # -DBOOKTEST
 
 # The hashfile is a record of positions seen. It is used by
 # GNU Shogi to avoid making the same mistakes, a form of learning.
@@ -178,7 +182,7 @@ LANG= -DLANGFILE=\"$(LIBDIR)/gnushogi.lang\"
 # patterns may be described in order to support the correct order of moves.
 PATTERN= -DPATTERNFILE=\"$(LIBDIR)/gnushogi.pattern\"
 
-all : gnushogi gnushogix gnushogir 
+all : gnushogi gnushogix # sizetest gnushogir gnuan gnupdisp 
 
 gnushogi: mainN.o bookN.o genmovesN.o patternN.o ataks.o utilN.o evalN.o initN.o searchN.o dspcomN.o uxdsp.o
 	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -o gnushogi mainN.o bookN.o genmovesN.o patternN.o ataks.o utilN.o evalN.o initN.o searchN.o dspcomN.o uxdsp.o $(LCURSES) $(LIBS)
@@ -186,26 +190,29 @@ gnushogi: mainN.o bookN.o genmovesN.o patternN.o ataks.o utilN.o evalN.o initN.o
 gnushogix: mainX.o bookX.o genmovesX.o patternX.o ataks.o utilX.o evalX.o initX.o searchX.o dspcomX.o nondspX.o
 	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -o gnushogix mainX.o bookX.o genmovesX.o patternX.o ataks.o utilX.o evalX.o initX.o searchX.o dspcomX.o nondspX.o $(LIBS)
 
-gnushogir: mainN.o bookN.o genmovesR.o patternR.o ataks.o utilN.o evalN.o initN.o searchR.o dspcomR.o nondspR.o
-	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -o gnushogir mainN.o bookN.o genmovesR.o patternR.o ataks.o utilN.o evalN.o initN.o searchR.o dspcomR.o nondspR.o $(LIBS)
+gnushogir: mainN.o bookN.o genmovesR.o patternR.o ataks.o utilR.o evalR.o initR.o searchR.o dspcomR.o nondspR.o
+	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -o gnushogir mainN.o bookN.o genmovesR.o patternR.o ataks.o utilR.o evalR.o initR.o searchR.o dspcomR.o nondspR.o $(LIBS)
 
 Dgnushogir: mainDR.o bookDR.o genmovesDR.o patternDR.o ataks.o utilDR.o evalDR.o initDR.o searchDR.o dspcomDR.o nondspDR.o
-	$(CC) $(DEBUG) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -o gnushogir mainDR.o bookDR.o genmovesDR.o patternDR.o ataks.o utilDR.o evalDR.o initDR.o searchDR.o dspcomDR.o nondspDR.o $(LIBS) $(LIBS)
+	$(CC) $(DEBUG) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -o Dgnushogir mainDR.o bookDR.o genmovesDR.o patternDR.o ataks.o utilDR.o evalDR.o initDR.o searchDR.o dspcomDR.o nondspDR.o $(LIBS) $(LIBS)
 
-gnuan: mainN.o bookN.o genmovesN.o patternN.o ataks.o utilN.o evalN.o initN.o searchN.o gnuan.o
-	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -o gnuan mainN.o bookN.o genmovesN.o pattern.o ataks.o utilN.o evalN.o initN.o searchN.o gnuan.o $(LIBS)
+gnuan: mainN.o bookX.o genmovesN.o patternN.o ataks.o utilN.o evalN.o initN.o searchN.o gnuan.o
+	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -o gnuan mainN.o bookX.o genmovesN.o patternN.o ataks.o utilN.o evalN.o initN.o searchN.o gnuan.o $(LIBS)
 
-gdxbkstats: gdxbkstats.o
-	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(BINBOOK) -o gdxbkstats gdxbkstats.o
+gdxstats: gdxstats.o
+	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(BINBOOK) -o gdxstats gdxstats.o
 
 gnupdisp: nondspDR.o dspcomDR.o bookN.o genmovesN.o patternDR.o ataks.o utilN.o evalN.o initN.o searchN.o gnupdisp.o
 	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -o gnupdisp patternDR.o bookN.o genmovesN.o ataks.o utilN.o evalN.o searchN.o initN.o nondspDR.o dspcomDR.o gnupdisp.o $(LIBS)
 
-size_test: nondspR.o dspcomR.o bookN.o genmovesN.o patternR.o ataks.o utilN.o evalN.o initN.o searchN.o pattern.o size_test.o
-	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -o size_test patternR.o bookN.o genmovesN.o ataks.o utilN.o evalN.o searchN.o initN.o nondspR.o dspcomR.o size_test.o $(LIBS)
+sizetest: sizetest.o
+	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -o sizetest sizetest.o $(LIBS)
 
 gnupdisp.o: gnupdisp.c pattern.h gnushogi.h 
 	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(BINBOOK) $(PATTERN) -c gnupdisp.c
+
+sizetest.o: sizetest.c gnushogi.h 
+	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(BINBOOK) -c sizetest.c
 
 mainN.o: main.c gnushogi.h version.h
 	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(BINBOOK) -c main.c
@@ -220,32 +227,32 @@ mainDR.o: main.c gnushogi.h version.h
 	mv main.o mainDR.o
 
 genmovesN.o: genmoves.c gnushogi.h version.h
-	$(CC) $(GENOPT) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c genmoves.c
+	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c genmoves.c
 	mv genmoves.o genmovesN.o
 
 genmovesR.o: genmoves.c gnushogi.h version.h
-	$(CC) -DNONDSP $(GENOPT) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c genmoves.c
+	$(CC) -DNONDSP -DDEBUG_EVAL $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c genmoves.c
 	mv genmoves.o genmovesR.o
 
 genmovesDR.o: genmoves.c gnushogi.h version.h
-	$(CC) $(DEBUG) $(GENOPT) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c genmoves.c
+	$(CC) $(DEBUG) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c genmoves.c
 	mv genmoves.o genmovesDR.o
 
 genmovesX.o: genmoves.c gnushogi.h version.h
-	$(CC) $(GENOPT) $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(XSHOGI) \
+	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(XSHOGI) \
 		-c genmoves.c
 	mv genmoves.o  genmovesX.o
 
-bookN.o: book.c gnushogi.h version.h ataks.h
+bookN.o: book.c gnushogi.h version.h 
 	$(CC) -DNONDSP $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(BINBOOK) -c book.c 
 	mv book.o bookN.o
 
-bookX.o: book.c gnushogi.h version.h ataks.h
+bookX.o: book.c gnushogi.h version.h 
 	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(XSHOGI) $(BINBOOK) \
 		-c book.c
 	mv book.o  bookX.o
 
-bookDR.o: book.c gnushogi.h version.h ataks.h
+bookDR.o: book.c gnushogi.h version.h 
 	$(CC) $(DEBUG) $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(BINBOOK) \
 		-c book.c
 	mv book.o  bookDR.o
@@ -266,7 +273,7 @@ patternDR.o: pattern.c gnushogi.h pattern.h
 	$(CC) $(CFLAGS) $(PATTERN) $(DEBUG) -c pattern.c
 	mv pattern.o  patternDR.o
 
-ataks.o: ataks.h ataks.c gnushogi.h version.h
+ataks.o: ataks.c gnushogi.h version.h
 	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c ataks.c
 
 utilN.o: util.c gnushogi.h version.h
@@ -276,6 +283,10 @@ utilN.o: util.c gnushogi.h version.h
 utilX.o: util.c gnushogi.h version.h
 	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(XSHOGI) -c util.c
 	mv util.o utilX.o
+
+utilR.o: util.c gnushogi.h version.h
+	$(CC) -DNONDSP -DDEBUG_EVAL $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(XSHOGI) -c util.c
+	mv util.o utilR.o
 
 utilDR.o: util.c gnushogi.h version.h
 	$(CC) $(DEBUG) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c util.c
@@ -289,36 +300,44 @@ evalX.o: eval.c gnushogi.h version.h pattern.h
 	$(CC) $(XSHOGI) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c eval.c
 	mv eval.o evalX.o
 
+evalR.o: eval.c gnushogi.h version.h pattern.h
+	$(CC) -DDEBUG_EVAL $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c eval.c
+	mv eval.o evalR.o
+
 evalDR.o: eval.c gnushogi.h version.h pattern.h
 	$(CC) $(DEBUG) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c eval.c
 	mv eval.o evalDR.o
 
 initN.o: init.c gnushogi.h version.h pattern.h
-	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -DNONDSP -c init.c
+	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c init.c
 	mv init.o initN.o
 
 initX.o: init.c gnushogi.h version.h pattern.h
 	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) $(XSHOGI) -c init.c
 	mv init.o  initX.o
 
+initR.o: init.c gnushogi.h version.h pattern.h
+	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -DNONDSP -c init.c
+	mv init.o initR.o
+
 initDR.o: init.c gnushogi.h version.h pattern.h
 	$(CC) $(DEBUG) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c init.c
 	mv init.o initDR.o
 
-searchN.o: search.c gnushogi.h version.h debug512.h debug10.h debug13.h debug16.h debug256.h debug4.h debug40.h debug41.h debug64.h debug8.h
+searchN.o: search.c gnushogi.h version.h 
 	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c search.c
 	mv search.o searchN.o
 
-searchX.o: search.c gnushogi.h version.h debug512.h debug10.h debug13.h debug16.h debug256.h debug4.h debug40.h debug41.h debug64.h debug8.h
+searchX.o: search.c gnushogi.h version.h 
 	$(CC) $(XSHOGI) $(CFLAGS) $(HASH) $(LANG) $(BOOK) \
 		-c search.c 
 	mv search.o searchX.o
 
-searchR.o: search.c gnushogi.h version.h debug512.h debug10.h debug13.h debug16.h debug256.h debug4.h debug40.h debug41.h debug64.h debug8.h
-	$(CC) -DNONDSP $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c search.c
+searchR.o: search.c gnushogi.h version.h
+	$(CC) -DNONDSP -DDEBUG_EVAL $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c search.c
 	mv search.o searchR.o
 
-searchDR.o: search.c gnushogi.h version.h debug512.h debug10.h debug13.h debug16.h debug256.h debug4.h debug40.h debug41.h debug64.h debug8.h
+searchDR.o: search.c gnushogi.h version.h
 	$(CC) $(DEBUG) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -c search.c
 	mv search.o searchDR.o
 
@@ -350,7 +369,7 @@ dspcomX.o: dspcom.c gnushogi.h version.h
 	mv dspcom.o dspcomX.o
 
 dspcomR.o: dspcom.c gnushogi.h version.h
-	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -DNONDSP -DNOFIONREAD \
+	$(CC) $(CFLAGS) $(HASH) $(LANG) $(BOOK) -DDEBUG_EVAL -DNONDSP -DNOFIONREAD \
 		-c dspcom.c 
 	mv dspcom.o dspcomR.o
 
@@ -359,15 +378,11 @@ dspcomDR.o: dspcom.c gnushogi.h version.h
 		-c dspcom.c 
 	mv dspcom.o dspcomDR.o
 
-gnushogi.book.data:
+gnushogi.book.data: gnushogir
 	-rm ./gnushogi.book.data
 	echo quit >test
-#	cat ../misc/new.games/game?? > /tmp/t
-	cat ../misc/SHOGI.book > /tmp/t
-	cat ../misc/basic.book >> /tmp/t
-	cat ../misc/some.openings/opening?? >> /tmp/t
-	cat ../misc/shogi-l.games/*match-?? ../misc/shogi-l.games/game?? >> /tmp/t
-	cat test| ./gnushogir -b /tmp/t -B ./gnushogi.book.data -S 8000 -P 40 3 0
+	cat ../misc/gnushogi.book > /tmp/t
+	cat test| ./gnushogir -b /tmp/t -B ./gnushogi.book.data -S 6000 -P 40 3 0
 	rm test /tmp/t
 
 
@@ -376,11 +391,11 @@ distribution:
 	echo "GNU patchlevel is $$patchlevel" ;\
 	cd $(DISTDIR) ;\
 	rm -f gnushogi.tar.$(VERS).$(Z)* ;\
-	tar cf - $(PROGS) | $(COMPRESS) > $(DISTDIR)/gnushogi-$(VERS).pl$$patchlevel.tar.$(Z) ;\
+	tar cf - $(PROGS) | $(COMPRESS) > $(DISTDIR)/gnushogi-$(VERS).tar.$(Z) ;\
 #	rm -f gnushogi.tar.$(VERS).$(Z).uu* ;\
-#	uuencode gnushogi-$(VERS).pl$$patchlevel.tar.$(Z) gnushogi-$(VERS).pl$$patchlevel.tar.$(Z) > gnushogi-$(VERS).pl$$patchlevel.tar.$(Z).uu ;\
+#	uuencode gnushogi-$(VERS).tar.$(Z) gnushogi-$(VERS).tar.$(Z) > gnushogi-$(VERS).tar.$(Z).uu ;\
 #	rm -f x?? ;\
-#	split -2500 gnushogi-$(VERS).pl$$patchlevel.tar.$(Z).uu ;\
+#	split -$(UULINES) gnushogi-$(VERS).tar.$(Z).uu ;\
 #	for i in x??; do \
 #	  mv $$i $(DISTDIR)/GNU_Shogi_$$i; \
 #	done
@@ -390,13 +405,13 @@ install:
 	-cp gnushogir $(BINDIR)/gnushogir
 	-cp gnushogi $(BINDIR)/gnushogi
 	-cp gnupdisp $(BINDIR)/gnupdisp
-#	-cp gnuan $(BINDIR)/gnuan
+	-cp gnuan $(BINDIR)/gnuan
 	-cp ./gnushogi.book.data $(LIBDIR)/gnushogi.book.data
 	-cp ../misc/gnushogi.lang $(LIBDIR)/gnushogi.lang
 	-cp ../misc/gnushogi.pattern $(LIBDIR)/gnushogi.pattern
 
 clean:
-	-rm -f gnushogix gnushogi gnushogir gnuan gnupdisp size_test 
+	-rm -f gnushogix gnushogi gnushogir Dgnushogir gnuan gnupdisp sizetest 
 	-echo $(DISTDIR)/gnushogi-$(VERS)
 	-rm -f $(DISTDIR)/gnushogi-$(VERS)/src/gnushogi.book.data
 	-find $(DISTDIR)/gnushogi-$(VERS) \( -name '*.o' -o -name '*~' -o -name 'CL*' -o -name 'PATCH*' -o -name '#*#' -o -name '%*%' -o -name '*orig' -o -name 'CL*' -o -name '*prt' -o -name '*bak' -o -name '*BAK' \) -exec rm -f {} \;

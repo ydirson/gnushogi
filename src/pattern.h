@@ -81,5 +81,7 @@ extern
   void
   ShowOpeningPatterns ();
 
+extern
+  void update_advance_bonus (short pside, OpeningPattern *p);
 
 

@@ -37,10 +37,23 @@
 #include <time.h>
 #endif
 
-#if !defined K32SEGMENTS
-#include "main_data1.c"
-#include "main_data2.c"
-#endif
+struct leaf *Tree, *root;
+
+short FROMsquare, TOsquare;
+
+small_short ChkFlag[MAXDEPTH], CptrFlag[MAXDEPTH], TesujiFlag[MAXDEPTH];
+short Pscore[MAXDEPTH], Tscore[MAXDEPTH];
+small_short Pindex[NO_SQUARES];
+
+short mtl[2], hung[2];
+small_short PieceCnt[2];
+
+struct GameRec *GameList;
+
+char *ColorStr[2];
+char *CP[CPSIZE];
+
+long znodes;
 
 
 #if defined HASGETTIMEOFDAY && defined THINK_C
@@ -79,7 +92,7 @@ gsrand (unsigned int seed)
 }
 
 #if ttblsz
-struct hashentry huge *ttable[2];
+struct hashentry *ttable[2];
 unsigned int ttblsize;
 #endif
 #ifdef BINBOOK
@@ -88,7 +101,8 @@ extern char *binbookfile;
 extern char *bookfile;
 
 unsigned long hashkey, hashbd;
-struct hashval hashcode[2][NO_PIECES][NO_SQUARES+(2*NO_PIECES)];
+struct hashval hashcode[2][NO_PIECES][NO_SQUARES];
+struct hashval drop_hashcode[2][NO_PIECES][MAX_CAPTURED];
 
 char savefile[128] = "";
 char listfile[128] = "";
@@ -103,11 +117,13 @@ small_short PieceList[2][NO_SQUARES];
 small_short PawnCnt[2][NO_COLS];
 small_short Captured[2][NO_PIECES];
 small_short Mvboard[NO_SQUARES];
+#if !defined SAVE_SVALUE
 short svalue[NO_SQUARES];
+#endif
 struct flags flag;
 
 short opponent, computer, WAwindow, WBwindow, BAwindow, BBwindow, dither,
-  BADscore;
+  INCscore;
 long ResponseTime, ExtraTime, MaxResponseTime, et, et0, time0, ft;
 long GenCnt, NodeCnt, ETnodes, EvalNodes, HashCnt, HashAdd, FHashCnt, FHashAdd,
   HashCol, THashCol, filesz, hashmask, hashbase;
@@ -132,9 +148,6 @@ unsigned short killr0[MAXDEPTH], killr1[MAXDEPTH];
 unsigned short killr2[MAXDEPTH], killr3[MAXDEPTH];
 unsigned short PV, SwagHt, Swag0, Swag1, Swag2, Swag3, Swag4, sidebit;
 
-const small_short sweep[NO_PIECES] =
-{false, false, true,  false, false, false, true, true,
-        false, false, false, false, true,  true,  false };
 small_short HasPiece[2][NO_PIECES]; 
 const short kingP[3] =
 {4, 76, 0};
@@ -170,7 +183,8 @@ TerminateChess (int sig)
 
 int timeopp[MINGAMEIN], timecomp[MINGAMEIN];
 int compptr, oppptr;
-inline void
+
+void
 TimeCalc ()
 {
 /* adjust number of moves remaining in gamein games */
@@ -224,7 +238,7 @@ main (int argc, char **argv)
 
   l = (long)sizeof(struct hashentry);
   n = (int)((l * (ttblsz + rehash) * 2) / 1000);
-  printf("ttable:\t\t%d\tkByte\t[hashentry:%ld * (ttblsz:%d + rehash:%d) * 2]\n",
+  printf("ttable:\t\t%4d\tkByte\t[hashentry:%ld * (ttblsz:%d + rehash:%d) * 2]\n",
      n,l,ttblsz,rehash);
 
 #if defined CACHE
@@ -233,40 +247,55 @@ main (int argc, char **argv)
 #else
   l = n = 0;
 #endif
-  printf("etab:\t\t%d\tkByte\t[etable:%ld ETABLE:%d]\n",n,l,ETABLE);
+  printf("etab:\t\t%4d\tkByte\t[etable:%ld ETABLE:%d]\n",n,l,ETABLE);
 
   l = (long)sizeof(struct leaf);
-  n = (int)(sizeof(Tree) / 1000);
-  printf("Tree:\t\t%d\tkByte\t[leaf:%ld * TREE:%d]\n",n,l,TREE);
+  n = (int)(l * TREE / 1000);
+  printf("Tree:\t\t%4d\tkByte\t[leaf:%ld * TREE:%d]\n",n,l,TREE);
 
 #if defined HISTORY
   n = (int)(sizeof_history / 1000);
 #else
   n = 0;
 #endif
-  printf("history:\t%d\tkByte\n",n);
+  printf("history:\t%4d\tkByte\t[unsigned short:%ld * HISTORY_SIZE:%ld]\n",
+    n,sizeof(unsigned short),(long)HISTORY_SIZE);
 
+#ifdef SAVE_NEXTPOS
+#else
   l = (long)sizeof(next_array);
   n = (int)((l * NO_PTYPE_PIECES) / 1000);
-  printf("nextpos:\t%d\tkByte\t[next_array:%ld * NO_PTYPE_PIECES:%d]\n",
+  printf("nextpos:\t%4d\tkByte\t[next_array:%ld * NO_PTYPE_PIECES:%d]\n",
     n,l,NO_PTYPE_PIECES);
 
   l = (long)sizeof(next_array);
   n = (int)((l * NO_PTYPE_PIECES) / 1000);
-  printf("nextdir:\t%d\tkByte\t[next_array:%ld * NO_PTYPE_PIECES:%d]\n",
+  printf("nextdir:\t%4d\tkByte\t[next_array:%ld * NO_PTYPE_PIECES:%d]\n",
     n,l,NO_PTYPE_PIECES);
+#endif
 
+#ifdef SAVE_DISTDATA
+#else
   n = (int)(sizeof(distdata) / 1000);
-  printf("distdata:\t%d\tkByte\n",n);
+  printf("distdata:\t%4d\tkByte\n",n);
+#endif
 
-  l = (long)sizeof(next_array);
+#ifdef SAVE_PTYPE_DISTDATA
+#else
+  l = (long)sizeof(distdata_array);
   n = (int)((l * NO_PTYPE_PIECES) / 1000);
-  printf("ptype_distdata:\t%d\tkByte\t[next_array:%ld * NO_PTYPE_PIECES:%d]\n",
+  printf("ptype_distdata:\t%4d\tkByte\t[distdata_array:%ld * NO_PTYPE_PIECES:%d]\n",
     n,l,NO_PTYPE_PIECES);
+#endif
 
   l = (long)sizeof(hashcode);
   n = (int)(l / 1000);
-  printf("hashcode:\t%d\tkByte\t[hashval:%ld]\n",
+  printf("hashcode:\t%4d\tkByte\t[hashval:%ld]\n",
+    n,(long)sizeof(struct hashval));
+
+  l = (long)sizeof(drop_hashcode);
+  n = (int)(l / 1000);
+  printf("drop_hashcode:\t%4d\tkByte\t[hashval:%ld]\n",
     n,(long)sizeof(struct hashval));
 
 }

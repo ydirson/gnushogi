@@ -2,10 +2,16 @@
    HOME or LIBDIR and BINDIR need to be changed. Setting CC
    and CFLAGS sets C compiler and compiler options.
 
-2. in src type 'make' and all programs will be make.
+2. in src type 'make' and all programs will be made.
      (in case of a undefined _pow symbol use the -DOLDTIME option 
       for compiling search.c)
 
-3. type 'make gnushogi.book.data' to build the binary book file.
+3. type 'make install' to install executables in BINDIR 
+     and language files in LIBDIR
 
-4. type 'make install' to install in BINDIR and LIBDIR
+4. type 'make gnushogi.book.data' to build the binary book file.
+     (the binary book file is created using gnushogir)
+
+5. type 'make install' again to install binary book file in LIBDIR.
+     (this installs the executables twice, never mind!)
+

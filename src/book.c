@@ -26,7 +26,6 @@
  */
 
 #include "gnushogi.h"
-#include "ataks.h"
 #ifdef MSDOS
 #include <io.h>
 #endif
@@ -45,8 +44,11 @@ unsigned booksize = BOOKSIZE;
 unsigned short bookmaxply = BOOKMAXPLY;
 unsigned bookcount = 0;
 
-
+#ifdef BOOK
+char *bookfile = BOOK;
+#else
 char *bookfile = NULL;
+#endif
 #ifdef BINBOOK
 char *binbookfile = BINBOOK;
 #else
@@ -92,8 +94,10 @@ Balgbr (short int f, short int t, short int flag)
     }
   if ( f == t && (f != 0 || t != 0) ) 
     { 
-#if !defined BAREBONES
-      printz("error in algbr: FROM=TO=%d, flag=0x%4x\n",t,flag);
+#if !defined XSHOGI
+      char buffer[80];
+      sprintf(buffer,"error in algbr: FROM=TO=%d, flag=0x%4x\n",t,flag);
+      ShowMessage(buffer);
 #endif
       bmvstr[0][0] = bmvstr[1][0] = bmvstr[2][0] = '\0';
     }
@@ -222,7 +226,7 @@ BVerifyMove (char *s, short unsigned int *mv, int moveno)
 
     *mv = 0;
     cnt = 0;
-    MoveList (opponent, 2);
+    MoveList (opponent, 2, -2);
     pnt = TrPnt[2];
     while (pnt < TrPnt[3])
       {
@@ -239,9 +243,9 @@ BVerifyMove (char *s, short unsigned int *mv, int moveno)
 	    }
       }
     if (cnt == 1)
-      {
+      {   short blockable;
 	  MakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst, &INCscore);
-	  if (SqAtakd (PieceList[opponent][0], computer))
+	  if (SqAtakd (PieceList[opponent][0], computer, &blockable))
 	    {
 		UnmakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
 		/* Illegal move in check */
@@ -286,7 +290,7 @@ RESET (void)
     flag.gamein = false;
     GenCnt = 0;
     GameCnt = 0;
-    CptrFlag[0] = false;
+    CptrFlag[0] = TesujiFlag[0] = false;
     opponent = black;
     computer = white;
     for (l = 0; l < NO_SQUARES; l++)
@@ -454,12 +458,7 @@ Vparse (FILE * fd, unsigned short *mv, short int side, char *opening, int moveno
 #ifdef GDX       
 
 
-struct gdxadmin
-{
-    unsigned int bookcount;
-    unsigned int booksize;
-    unsigned long maxoffset;
-} ADMIN, B;
+struct gdxadmin ADMIN, B;
 
 struct gdxdata
 {
@@ -550,7 +549,7 @@ GetOpenings (void)
 	    }
 	  else
 	    {
-#ifdef THINK_C
+#if defined THINK_C || defined MSDOS
                 gfd = open (binbookfile, O_RDWR | O_CREAT | O_BINARY);
 #else
                 gfd = open (binbookfile, O_RDWR | O_CREAT | O_BINARY, 0644);
@@ -664,8 +663,8 @@ GetOpenings (void)
 					if (!mustwrite)
 					  {
 					      B.bookcount++;
-#if !defined BAREBONES
-#ifdef THINK_C
+#if !defined XSHOGI
+#if defined THINK_C || defined MSDOS
 					      if (B.bookcount % 100 == 0)
 #else
 					      if (B.bookcount % 1000 == 0)
@@ -747,7 +746,7 @@ GetOpenings (void)
 
 	    }
 
-#if !defined BAREBONES 
+#if !defined XSHOGI
 	  sprintf (msg, CP[213], B.bookcount, B.booksize);
 	  ShowMessage (msg);
 #endif
@@ -758,7 +757,7 @@ GetOpenings (void)
     /* now get ready to play */
     if (!B.bookcount)
       {
-#if !defined BAREBONES
+#if !defined XSHOGI
 	  ShowMessage (CP[212]);
 #endif
 	  Book = 0;
@@ -987,7 +986,7 @@ GetOpenings (void)
 
     if (binbookfile != NULL)
       {
-#ifdef THINK_C
+#if defined THINK_C || defined MSDOS
 	  fd = fopen (binbookfile, RWA_ACC);
 #else
 	  fd = fopen (binbookfile, "r");
@@ -998,7 +997,7 @@ GetOpenings (void)
 		fscanf (fd, "%d\n", &bookcount);
 		fscanf (fd, "%d\n", &bookpocket);
 		bkalloc (booksize);
-#if !defined BAREBONES
+#if !defined XSHOGI
 		sprintf (msg, CP[213], bookcount, booksize);
 		ShowMessage (msg);
 #endif
@@ -1015,7 +1014,6 @@ GetOpenings (void)
 		      color[i] = Stcolor[i];
 		  }
        	  	ClearCaptured ();
-		/* InitializeStats (); Mutz, 2.2.93 */
 		fclose (fd);
 
 	    }
@@ -1110,7 +1108,7 @@ GetOpenings (void)
 					      printf ("booksize exceeded\n");
 					      exit (1);
 					  }
-#if !defined BAREBONES
+#if !defined XSHOGI
 					if (bookcount % 1000 == 0)
 					    printf ("%d processed\n", bookcount);
 #endif
@@ -1143,7 +1141,7 @@ GetOpenings (void)
 	  fclose (fd);
 	  if (binbookfile != NULL)
 	    {
-#ifdef THINK_C
+#if defined THINK_C || defined MSDOS
 		fd = fopen (binbookfile, WA_ACC);
 #else
 		fd = fopen (binbookfile, "w");
@@ -1157,7 +1155,7 @@ GetOpenings (void)
 		      binbookfile = NULL;
 		  }
 	    }
-#if !defined BAREBONES
+#if !defined XSHOGI
 	  sprintf (msg, CP[213], bookcount, booksize);
 	  ShowMessage (msg);
 #endif
@@ -1167,7 +1165,7 @@ GetOpenings (void)
       }
     else if (OpenBook == NULL)
       {
-#if !defined BAREBONES
+#if !defined XSHOGI
 	  if (!bookcount)
 	      ShowMessage (CP[212]);
 #endif

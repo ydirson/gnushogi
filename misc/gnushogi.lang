@@ -7,18 +7,18 @@
 007:eng:{0-0}
 008:eng:{0-0-0}
 009:eng:{bBwW}
-010:eng:{       score  depth   nodes  time         }
-011:eng:{       score  depth   nodes  time\n}
+010:eng:{         score  depth   nodes  time         }
+011:eng:{         score  depth   nodes  time\n}
 012:eng:{     }
 013:eng:{   }
 014:eng:{  %s\n}
 015:eng:{  9    8    7    6    5    4    3    2    1}
 016:eng:{  1    2    3    4    5    6    7    8    9}
 017:eng:{ -}
-018:eng:{ 1.   60 moves in   5 minutes}
-019:eng:{ 2.   60 moves in  15 minutes}
-020:eng:{ 3.   60 moves in  30 minutes}
-021:eng:{ 4.   40 moves in  30 minutes}
+018:eng:{ 1.   40 moves in   5 minutes}
+019:eng:{ 2.   40 moves in  15 minutes}
+020:eng:{ 3.   40 moves in  30 minutes}
+021:eng:{ 4.   40 moves in  45 minutes}
 022:eng:{ 5.   40 moves in  60 minutes}
 023:eng:{ 6.   40 moves in 120 minutes}
 024:eng:{ 7.   40 moves in 240 minutes}
@@ -29,7 +29,7 @@
 029:eng:{.   Exit to main\n}
 030:eng:{/home/staff/mutz/gnu/gnuchess-4.0/misc/gnushogi.book}
 031:eng:{Abort? }
-032:eng:{Ambiguous Move!}
+032:eng:{Ambiguous Move %s!}
 033:eng:{Awindow}
 034:eng:{BAwindow= }
 035:eng:{BBwindow= }
@@ -42,7 +42,7 @@
 042:eng:{Castled Black %s White %s\n}
 043:eng:{Shogi\n}
 044:eng:{Computer mates!}
-045:eng:{Computer will soon mate!}
+045:eng:{Comp. will soon mate!}
 046:eng:{Computer: %-12s Opponent:            %s\n}
 047:eng:{Computer: %s}
 048:eng:{Could not open file}
@@ -73,22 +73,22 @@
 073:eng:{Hit <RET> to return: }
 074:eng:{Human   }
 075:eng:{Illegal move (no matching move)%s\n}
-076:eng:{Illegal move (no matching move)}
-077:eng:{Illegal move..(in check)}
+076:eng:{Illegal move (no matching move)%s}
+077:eng:{Illegal move..(in check)%s}
 078:eng:{Illegal move\n}
 079:eng:{Level: %ld}
 080:eng:{Max Moves}
 081:eng:{Max Tree= %5d}
 082:eng:{MoveLimit= }
-083:eng:{My move is: %s\n}
-084:eng:{My move is: %s}
+083:eng:{My move is: %5s\n}
+084:eng:{My move is: %5s}
 085:eng:{Testing Eval Speed}
 086:eng:{S6h       move silver to 6h       beep      turn %s\n}
 087:eng:{No moves}
 088:eng:{No pieces}
 089:eng:{Gen %ld Node %ld Tree %d Eval %ld Rate %ld EC %d/%d RS hi %ld lo %ld \n}
-090:eng:{Nodes= %8ld, Nodes/Sec= %5ld}
-091:eng:{Nodes= %ld Nodes/sec= %ld\n}
+090:eng:{n=%8ld, n/s=%5ld}
+091:eng:{n=%ld n/s=%ld\n}
 092:eng:{OFF}
 093:eng:{ON}
 094:eng:{Operator time(hundredths)= }
@@ -123,7 +123,7 @@
 123:eng:{\nMove# %d    Target= %ld    Clock: %ld\n}
 124:eng:{\nYour move is? }
 125:eng:{\n\n}
-126:eng:{ move  score depth   nodes   time flags  capture color\n}
+126:eng:{  move   score depth   nodes   time flags                         capture\n}
 127:eng:{\n}
 128:eng:{2d2c+     move to 2c and promote  material  turn %s\n}
 129:eng:{alg}
@@ -158,7 +158,7 @@
 158:eng:{7g7f      move from 7g to 7f      quit      Exit Shogi\n}
 159:eng:{game file= }
 160:eng:{get}
-161:eng:{gnushogi 4p%s game\n}
+161:eng:{gnushogi %sp%s game\n}
 162:eng:{go}
 163:eng:{hashdepth= }
 164:eng:{hashdepth}
@@ -210,7 +210,7 @@
 210:eng:{yes}
 211:eng:{Illegal move in book %d %s %s}
 212:eng:{Warning can't find book.}
-213:eng:{Book used %d of %d entries.}
+213:eng:{Book %d(%d)}
 214:eng:{true}
 215:eng:{false}
 216:eng:{exit}

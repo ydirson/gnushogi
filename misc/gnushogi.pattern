@@ -11,7 +11,7 @@ CASTLE_S_S
 [8]          l9i n8i g7h p8g s7g p7f | P8e
 [9] 11       l9i n8i s7i b8h g7h p8g g6g p7f p6f
 [10] 9       l9i n8i s7i b8h g7h p8g p6g p7f p2e | P8e P3d
-[11] 1       s8h p8g b8g p7f | P8e
+[11]         s8h p8g b7g p7f | P8e
 ATTACK_S_S
 # going into the basic pattern
 [0] 1        l1i n2i r2h s4h p1g p2f p3g p4g
@@ -128,11 +128,11 @@ ATTACK_R_R
 CASTLE_U_U
 [0]          p1g p3g p4g p5g p6g p7f p8g p9g n8i s7i g6i k5i g4i s3i n2i
 CASTLE_U_R
-[0]          p1g p3g p4g p5g p6g p7f p8g p9g n8i s7i g6i k5i g4i s3i n2i
+[0]          p1g p2f p3g p4g p5g p6g p7f p8g p9g n8i s6h g6i k5i g4i s3i n2i
 CASTLE_U_S
-[0]          p1g p3g p4g p5g p6g p7f p8g p9g n8i s7i g6i k5i g4i s3i n2i
+[0]          p1g p2f p3g p4g p5g p6g p7f p8g p9g n8i s6h g6i k5i g4i s3i n2i
 CASTLE_S_U
-[0]          p1g p2e p3g p4g p5g p6g p7f p8g p9g n8i s7i g6i k5i g4i s3i n2i
+[0]          p1g p2e p3g p4g p5g p6g p7f p8g p9g n8i s6h g6i k5i g4i s3i n2i
 CASTLE_R_U
 [0]          p7f p6f p2g
 ATTACK_R_U

@@ -25,14 +25,13 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include "gnushogi.h"
-unsigned int TTadd = 0;
-short int recycle;
-extern char mvstr[4][6];
-
-#ifdef THINK_C
-#include <string.h>
-#define bcopy(src,dst,len) memcpy(dst,src,len)
+#ifdef DEBUG
+#include <assert.h>
 #endif
+unsigned int TTadd = 0;
+short int recycle; 
+short int ISZERO = 1;
+extern char mvstr[4][6];
 
 int
 parse (FILE * fd, short unsigned int *mv, short int side, char *opening)
@@ -96,11 +95,14 @@ parse (FILE * fd, short unsigned int *mv, short int side, char *opening)
 inline
 unsigned char
 CB (short sq)
-{ 
+{           
   register short i = sq;
   if ( i < NO_SQUARES ) {
     return ( (color[i] == white) ? (0x80 | board[i]) : board[i] );
   } else {
+#ifdef DEBUG
+    assert(i!=NO_SQUARES || (Captured[black][0]==0 && Captured[white][0]==0));
+#endif
     i -= NO_SQUARES;
     return ( (Captured[black][i] << 4) | Captured[white][i] );
   }
@@ -176,61 +178,61 @@ ProbeTTable (short int side,
 
 {
   register struct hashentry *ptbl;
-  register /*unsigned*/ short i;  /*to match new type of rehash --tpm*/
+  register /*unsigned*/ short i = 0;  /*to match new type of rehash --tpm*/
 
-  ptbl = &ttable[side][hashkey & (ttblsize - 1)];
+  ptbl = &ttable[side][hashkey % ttblsize];
+
+  while (true)
+    {
+      if ((ptbl->depth) == 0)
+        return false;
+      if (ptbl->hashbd == hashbd)
+        break;
+      if (++i > rehash)
+        return false;
+      ptbl++;
+    }
 
   /* rehash max rehash times */
-  for (i = 0; (ptbl->depth) && (ptbl->hashbd != hashbd) && (i < rehash); i++) ptbl++;
-  if ((ptbl->depth) && (ptbl->hashbd == hashbd))
-/*     ^^^^^^^^^^^^   we can use some informations of the entry even
-                      the depth is not large enough */
-    {  
-#if defined HASHTEST
+  if (((ptbl->depth) >= (short) depth))
+    {
+#ifdef HASHTEST
       for (i = 0; i < PTBLBDSIZE; i++)
-	{
-	  if (ptbl->bd[i] != CB (i))
-	    {
-	      HashCol++;
-#if defined DEBUG && !defined BAREBONES
-	      ShowMessage (CP[199]);	/*ttable collision detected*/
+        {
+          if (ptbl->bd[i] != CB (i))
+            {
+#ifndef BAREBONES
+              HashCol++;
+              ShowMessage (CP[199]);    /*ttable collision detected*/
+	      ShowBD(ptbl->bd);
+	      printf("hashkey = 0x%x, hashbd = 0x%x\n", hashkey, hashbd);
 #endif
-	      return(false);
-	    }
-	}
-#endif /* HASHTEST */ 
+              break;
+            }
+        }
+#endif /* HASHTEST */
 
 
       PV = SwagHt = ptbl->mv;
-      if ((short) ptbl->depth >= depth)
-	{
 #if !defined BAREBONES
-          HashCnt++;
+      HashCnt++;
 #endif
-	  if (ptbl->flags & truescore)
-	    {
-	      *score = ptbl->score;
-	      /* adjust *score so moves to mate is from root */
-	      if (*score > SCORE_LIMIT)
-		*score -= ply;
-	      else if (*score < -SCORE_LIMIT)
-		*score += ply;
-	      *beta = -((SCORE_LIMIT+1000)*2);
-	    }
-#ifdef notdef			/* Never happens! see search */
-	  else if (ptbl->flags & upperbound)
-	    {
-	      if (ptbl->score < *beta)
-		*beta = ptbl->score + 1;
-	    }
-#endif
-	  else if (ptbl->flags & lowerbound)
-	    {
-	      if (ptbl->score > *alpha)
-		*alpha = ptbl->score - 1;
-	    }
-	  return (true);
-	}
+      if (ptbl->flags & truescore)
+        {
+          *score = ptbl->score;
+          /* adjust *score so moves to mate is from root */
+          if (*score > SCORE_LIMIT)
+            *score -= ply;
+          else if (*score < -SCORE_LIMIT)
+            *score += ply;
+          *beta = -2*(SCORE_LIMIT+1000);
+        }
+      else if (ptbl->flags & lowerbound)
+        {
+          if (ptbl->score > *alpha)
+            *alpha = ptbl->score - 1;
+        }
+      return (true);
     }
   return (false);
 }
@@ -251,70 +253,73 @@ PutInTTable (short int side,
 
 {
   register struct hashentry *ptbl;
-  register /*unsigned*/ short i;  /*to match new type of rehash --tpm*/
+  register /*unsigned*/ short i = 0;  /*to match new type of rehash --tpm*/
 
-  ptbl = &ttable[side][hashkey & (ttblsize - 1)];
+  ptbl = &ttable[side][hashkey % ttblsize];
 
-  /* rehash max rehash times */
-  for (i = 0; ptbl->depth && ptbl->hashbd != hashbd && i < rehash; i++)
-    ptbl++;
-  if (i == rehash) {
-#if !defined BAREBONES
-	THashCol++;
-#endif
-	ptbl -= recycle;}
-  if (depth >= (short)ptbl->depth || ptbl->hashbd != hashbd)
+  while (true)
     {
-#if !defined BAREBONES
-      TTadd++;
-      HashAdd++; 
+      if ((ptbl->depth) == 0 || ptbl->hashbd == hashbd)
+        break;
+      if (++i > rehash)
+        {
+#ifndef BAREBONES
+          THashCol++;
 #endif
-      ptbl->hashbd = hashbd;
-      ptbl->depth = (unsigned char) depth;
-      /* adjust score so moves to mate is from this ply */
-      if (score > SCORE_LIMIT)
-	score += ply;
-      else if (score < -SCORE_LIMIT)
-	score -= ply;
-      ptbl->score = score;
-      ptbl->mv = mv;
+          ptbl += recycle;
+          break;
+        }
+      ptbl++;
+    }
+
+#ifndef BAREBONES
+  TTadd++;
+  HashAdd++;
+#endif
+  /* adjust score so moves to mate is from this ply */
+  if (score > SCORE_LIMIT)
+    score += ply;
+  else if (score < -SCORE_LIMIT)
+    score -= ply;
+  ptbl->hashbd = hashbd;
+  ptbl->depth = (unsigned char) depth;
+  ptbl->score = score;
+  ptbl->mv = mv;
+
 #ifdef DEBUG4
-      if (debuglevel & 32)
-	{
-	  algbr (mv >> 8, mv & 0xff, 0);
-	  printf ("-add-> d=%d s=%d p=%d a=%d b=%d %s\n", depth, score, ply, alpha, beta, mvstr);
-	}
+  if (debuglevel & 32)
+    {
+      algbr (mv >> 8, mv & 0xff, 0);
+      printf ("-add-> d=%d s=%d p=%d a=%d b=%d %s\n", depth, score, ply, alpha, beta, mvstr);
+    }
 #endif
-/*#ifdef notdef
-      if (score < alpha)
-	ptbl->flags = upperbound;
-      else
-/*#endif /* 0 */
-      if (score > beta)
-	{
-	  ptbl->flags = lowerbound;
-	  score = beta + 1;
-	}
-      else
-	ptbl->flags = truescore;
+  if (score > beta)
+    {
+      ptbl->flags = lowerbound;
+      ptbl->score = beta + 1;
+    }
+  else
+    ptbl->flags = truescore;
        
 #if defined HASHTEST
-      for (i = 0; i < PTBLBDSIZE; i++)
-	{
-	  ptbl->bd[i] = CB (i);
-	}
-#endif /* HASHTEST */
-      return true;
+  for (i = 0; i < PTBLBDSIZE; i++)
+    {
+      ptbl->bd[i] = CB (i);
     }
-  return false;
+#endif /* HASHTEST */
+
+  return true;
 }
 
-   
+                                  
+#if ttblsz
 static struct hashentry *ttageb, *ttagew;
+#endif
 
 void
 ZeroTTable (void)
 {
+#ifdef notdef
    register struct hashentry *w, *b;
    for ( b=ttable[black], w=ttable[white]; b < &ttable[black][ttblsize]; w++, b++)
      { 
@@ -323,19 +328,25 @@ ZeroTTable (void)
      }
    ttageb = ttable[black]; 
    ttagew = ttable[white];
+   register unsigned int a;
+   for (a = 0; a < ttblsize + (unsigned int)rehash; a++)
+     {
+       (ttable[black])[a].depth = 0;
+       (ttable[white])[a].depth = 0;
+     }
+#endif
+#if defined THINK_C || defined MSDOS
+   memset ((char *) ttable[black], 0, (size_t)(ttblsize+rehash));
+   memset ((char *) ttable[white], 0, (size_t)(ttblsize+rehash));
+#else
+   bzero(ttable[black],(unsigned)(ttblsize+rehash));
+   bzero(ttable[white],(unsigned)(ttblsize+rehash));
+#endif
 #ifdef CACHE
    memset ((char *) etab[0], 0, sizeof(struct etable)*(size_t)ETABLE);
    memset ((char *) etab[1], 0, sizeof(struct etable)*(size_t)ETABLE);
 #endif
-#ifdef notdef
-   register unsigned int a;
-   for (a = 0; a < ttblsize + (unsigned int)rehash; a++)
-     {
-       ttable[black][a].depth = 0;
-       ttable[white][a].depth = 0;
-     }
-#endif
-    TTadd = 0; 
+   TTadd = 0; 
 }
 
 #ifdef HASHFILE
@@ -363,7 +374,7 @@ ProbeFTable (short int side,
   register unsigned long hashix;
   struct fileentry new, t;
 
-  hashix = ((side == black) ? (hashkey & 0xFFFFFFFE) : (hashkey | 1)) & filesz;
+  hashix = ((side == black) ? (hashkey & 0xFFFFFFFE) : (hashkey | 1)) % filesz;
 
   for (i = 0; i < PTBLBDSIZE; i++)
     new.bd[i] = CB (i);
@@ -371,7 +382,7 @@ ProbeFTable (short int side,
   for (i = 0; i < frehash; i++)
     {
       fseek (hashfile,
-	     sizeof (struct fileentry) * ((hashix + 2 * i) & (filesz)),
+	     sizeof (struct fileentry) * ((hashix + 2 * i) % (filesz)),
 	     SEEK_SET);
       fread (&t, sizeof (struct fileentry), 1, hashfile);
       if (!t.depth) break;
@@ -428,7 +439,7 @@ PutInFTable (short int side,
   register unsigned long hashix;
   struct fileentry new, tmp;
 
-  hashix = ((side == black) ? (hashkey & 0xFFFFFFFE) : (hashkey | 1)) & filesz;
+  hashix = ((side == black) ? (hashkey & 0xFFFFFFFE) : (hashkey | 1)) % filesz;
   for (i = 0; i < PTBLBDSIZE; i++) 
     new.bd[i] = CB (i);
   new.f = (unsigned char) f;
@@ -451,7 +462,7 @@ PutInFTable (short int side,
   for (i = 0; i < frehash; i++)
     {
       fseek (hashfile,
-	     sizeof (struct fileentry) * ((hashix + 2 * i) & (filesz)),
+	     sizeof (struct fileentry) * ((hashix + 2 * i) % (filesz)),
 	     SEEK_SET);
       if ( !fread (&tmp, sizeof (struct fileentry), 1, hashfile) )
         {perror("hashfile");exit(1);}
@@ -460,7 +471,7 @@ PutInFTable (short int side,
       if (!tmp.depth || (short) tmp.depth < depth)
 	{
 	  fseek (hashfile,
-		 sizeof (struct fileentry) * ((hashix + 2 * i) & (filesz)),
+		 sizeof (struct fileentry) * ((hashix + 2 * i) % (filesz)),
 		 SEEK_SET);
 #ifdef DEBUG4
           if (debuglevel & 32)
@@ -488,8 +499,12 @@ ZeroRPT (void)
   for (side = black; side <= white; side++)
     for (i = 0; i < 256;)
       rpthash[side][i++] = 0;
-#else
-   memset ((char *) rpthash, 0, sizeof (rpthash));
+#else 
+  if ( ISZERO )
+    {
+      memset ((char *) rpthash, 0, sizeof (rpthash));
+      ISZERO = 0;
+    }
 #endif
 }
 
@@ -507,23 +522,16 @@ PutInEETable (short int side,int score)
 
 {
     register struct etable *ptbl;
-    ptbl = &(*etab[side])[hashkey & (ETABLE - 1)];
-    if (ptbl->ehashbd == hashbd) return;
-#if defined CACHETEST
-    { short i;
-      for (i = 0; i < PTBLBDSIZE; i++)
-	{
-	  ptbl->bd[i] = CB (i);
-	}
-    }
-#endif /* CACHETEST */
+    ptbl = &(*etab[side])[hashkey % (ETABLE)];
     ptbl->ehashbd = hashbd;
     ptbl->escore[black] = pscore[black];
     ptbl->escore[white] = pscore[white];
     ptbl->hung[black] = hung[black];
     ptbl->hung[white] = hung[white];
     ptbl->score = score;
+#if !defined SAVE_SSCORE
     bcopy (svalue, &(ptbl->sscore), sizeof (svalue));
+#endif
 #if !defined BAREBONES
     EADD++;
 #endif
@@ -537,7 +545,7 @@ CheckEETable (short int side)
 /* Get an evaluation from the transposition table */
 {
     register struct etable *ptbl;
-    ptbl = &(*etab[side])[hashkey & (ETABLE - 1)];
+    ptbl = &(*etab[side])[hashkey % (ETABLE)];
     if (hashbd == ptbl->ehashbd) 
       {
         return true;
@@ -552,28 +560,16 @@ ProbeEETable (short int side, short int *score)
 /* Get an evaluation from the transposition table */
 {
     register struct etable *ptbl;
-    ptbl = &(*etab[side])[hashkey & (ETABLE - 1)];
+    ptbl = &(*etab[side])[hashkey % (ETABLE)];
     if (hashbd == ptbl->ehashbd)
       {
-#if defined CACHETEST
-	short i;
-        for (i = 0; i < PTBLBDSIZE; i++)
-	  {
-	    if (ptbl->bd[i] != CB (i))
-	      {
-#if !defined BAREBONES
-	        ShowMessage ("eetable probe collision detected");
-#endif
-#if DEBUG            
-		ShowBD(ptbl->bd);
-#endif
-	        return false;
-	      }
-	  }
-#endif /* CACHETEST */ 
 	  pscore[black] = ptbl->escore[black];
 	  pscore[white] = ptbl->escore[white];
+#if defined SAVE_SSCORE
+   	  memset ((char *) svalue, 0, sizeof(svalue));
+#else
 	  bcopy (&(ptbl->sscore), svalue, sizeof (svalue));
+#endif
 	  *score = ptbl->score;
           hung[black] = ptbl->hung[black];
           hung[white] = ptbl->hung[white];
