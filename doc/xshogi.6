@@ -1,0 +1,616 @@
+.TH xshogi 6 "Jan 29, 1993" "X Version 11"
+.SH NAME
+xshogi \- Xt/Athena user interface for gnushogi
+.SH SYNOPSIS
+.B xshogi [ options ]
+.SH DESCRIPTION
+.IR xshogi
+provides an X11/Xt/Athena Widgets user interface for gnushogi.
+With
+.IR xshogi
+you can play gnushogi,
+set up arbitrary positions,
+force variations, or watch
+.IR xshogi
+manage a game between two shogi programs.
+Furthermore, it can be used as an interface between two players on
+different displays.
+.LP
+.IR xshogi
+can also be used as a shogi board to play out games.
+It will read through a game file or allow a player to play 
+through a variation manually (force mode).
+This is useful for keeping track of email postal games or browsing games
+off the net.
+.LP
+After starting
+.IR xshogi ,
+you can make moves by pressing mouse button 1
+while the cursor is over a square with your piece on it
+and dragging the mouse to another square.
+If the move is illegal, gnushogi will not allow it.
+.IR xshogi
+will then retract the move.
+
+.SH RULES
+Shogi is a Japanese board game played by two players.
+The object of the game is to capture the opponent's King.
+Shogi is played on a nine-by-nine board. The vertical rows are called files,
+the horizontal ones ranks or just rows. Each player has twenty pieces:
+one King, two Gold Generals, two Silver Generals, two kNights,
+two Lances, one Rook, one Bishop and nine Pawns.
+The player moving up the board and making the first move is referred to as
+black and his opponent white, although in Shogi sets all pieces have the
+same colour. They are differentiated only in direction: pieces pointing
+away from a player are his. The pieces lie flat on the board and have
+their Japanese name written on them.
+
+.SS Moves
+.TP 8
+.B King
+one step in any direction per move
+.TP 8
+.B "Gold General"
+one step per move any way except diagonally backward (as a king but not diagonally backward)
+.TP 8
+.B "Silver General"
+one step per move forwards or diagonally (as a king but not sideways or vertically backward)
+.TP 8
+.B Knight
+one step to left or right, and two steps forward (the only piece which may jump over other pieces)
+.TP 8
+.B Rook
+moves vertically or horizontally any distance
+.TP 8
+.B Bishop
+moves diagonally any distance
+.TP 8
+.B Lance
+moves forward any distance
+.TP 8
+.B Pawn
+one step forward
+
+.SS Promotion
+The three rows furthest away from a player are called the promotion zone. Apart
+from the King and the Gold, any piece can be promoted to a more powerful piece
+when it makes a move completely or partly in the promotion zone. So, when a
+piece moves into, out of or fully inside the promotion zone it may be promoted
+upon completion of its move. Promotion is optional, provided that the piece
+still can make a legal move in case it is not promoted: if a Pawn or a Lance
+move to the last row, or a Knight moves to either of the last two rows, it must
+be promoted. In Shogi sets promoting a piece is done by turning this piece
+upside down. Its promoted name is written on its other side.
+
+Apart from the King and the Gold General all pieces can promote.
+After promotion their moves are as follows:
+.TP 8
+.B +
+Promoted Silver, promoted kNight, promoted Lance and promoted Pawn all
+move as a Gold.
+.TP 8
+.B +
+The promoted Rook in addition to the moves of the unpromoted Rook can
+move one step in the diagonal directions. It either moves like a Rook
+or like a King.
+.TP 8
+.B +
+The promoted Bishop in addition to the moves of the unpromoted Bishop
+can move one step horizontally or vertically. It either moves like a
+Bishop or like a King.
+
+.SS Capturing and dropping pieces
+
+When one piece moves onto the same square as an opponent's piece, the
+opponent's piece is captured. All pieces capture in the same way that they
+move. Captured pieces become part of the capturer's force. In a later move,
+instead of moving a piece on the board, a player may put a piece that he
+has captured from his opponent back onto the board, in an empty square.
+This is called dropping a piece. Pieces are always dropped unpromoted: if
+a promoted piece is captured, it reverts to its unpromoted rank.
+Pieces may be dropped on any empty square on the board with only three
+restrictions:
+.TP 8
+.B 1)
+After dropping a piece it must be able to make a legal move. This applies
+to Pawns, Knights or Lances. They may not be dropped onto a square from
+which they will never be able to move.
+.TP 8
+.B 2)
+Attacking the King by dropping a Pawn on the square in front of him is not
+allowed if the King cannot prevent being captured on the following move.
+To use the Chess expression: checkmating the King with a Pawn drop is
+prohibited.
+.TP 8
+.B 3)
+A pawn may only be dropped on a file (vertical row) if there is no other
+unpromoted pawn of the same player on that file.
+
+.SS Draws
+
+The game of Shogi has very few draws (roughly 1 percent), mainly because of
+the possibility to drop pieces. Draws cannot be offered and can arise from
+two situations:
+.TP 8
+.B 1)
+A position (including the pieces in hand) occurs 4 times with the same
+player to move ("Sennichite"). However, if this is caused by consecutive
+checks (direct attacks on the King, threatening to capture it on the next
+move) by one side, the player giving these checks loses the game.
+.TP 8
+.B 2)
+Both players have moved their King into the the promotion zone (or they
+cannot be prevented to do so) and the Kings cannot be checkmated. In
+that case the players may decide to count their pieces where the King does
+not count, the Rook and Bishop count as 5 points, and all other pieces as
+one point. Promotion is disregarded. If both players have at least 24
+points the game is a draw ("Jishogi"). If a player has less, he loses the
+game.
+.PP
+Of course, a player can refuse to count pieces when he still has mating
+chances or chances to gain material which would affect the outcome of the
+counting. There is no strict rule about what to do if this is not the case,
+but nonetheless a player refuses to count up (e.g. because he does not have
+enough points for a draw). It has been generally accepted that in such a
+case the game ends and the pieces are counted after one player has managed
+to get all his pieces protected in the promotion zone.
+
+.SH OPTIONS
+The following command line options also correspond to X resources
+that you can set in your
+.IR \&.Xdefaults
+file.
+.TP 8
+.B standard Xt options
+.IR xshogi
+accepts standard Xt options like -display, -geometry, and -iconic.
+.TP 8
+.B -tc or -timeControl minutes[:seconds]
+Amount of time for a set of moves determined by
+.IR movesPerSession .
+If this number of moves is played within the time control period,
+.IR xshogi
+resets the time clocks.
+Default: 5 minutes.
+.TP 8
+.B -mps or -movesPerSession moves
+Number of moves in a time control period.
+Default: 40 moves.
+.TP 8
+.B -st or -searchTime minutes[:seconds]
+Tell gnushogi to spend at most the given amount of time searching
+for each of its moves.  Without this option, gnushogi chooses
+its search time based on the number of moves and amount of time
+remaining until the next time control.
+Setting this option also sets -clockMode to False.
+.TP 8
+.B -sd or -searchDepth number
+Tell gnushogi to look ahead at most the given number of moves when searching
+for a move to make.  Without this option, gnushogi chooses
+its search depth based on the number of moves and amount of time
+remaining until the next time control.
+Setting this option also sets -clockMode to False.
+.TP 8
+.B -clock or -clockMode "(True | False)"
+Determines whether or not to use the clock.
+If clockMode is False, the clock does not run, but the
+side that is to play next is still highlighted.
+.TP 8
+.B -td or -timeDelay seconds
+Time delay between moves during "Load Game".
+This doesn't have to be round numbers.
+Try -td 0.4.  Default: 1 second.
+.TP 8
+.B -nsp or -noShogiProgram "(True | False)"
+If this option is True,
+.IR xshogi
+acts as a passive shogiboard; it does not
+try to start a shogi program, not even to check whether
+moves made in Force mode are legal.
+It also sets -clockMode to False.
+Default: False.
+.TP 8
+.B -fsp or -firstShogiProgram program
+Name of first shogi program.
+In matches between two machines, this program plays white.
+Default: "gnushogi".
+.TP 8
+.B -ssp or -secondShogiProgram program
+Name of second shogi program, if needed.
+In matches between two machines, this program plays black; otherwise
+it is not started.
+Default: "gnushogi".
+.TP 8
+.B -fh or -firstHost host
+Name of host the first shogi program plays on.
+Default: "localhost".
+.TP 8
+.B -sh or -secondHost host
+Name of host the second shogi program plays on.
+Default: "localhost".
+.TP 8
+.B -rsh or -remoteShell shell_name
+Some systems do not use rsh as the remote shell.
+This option allows a user to name the remote shell command.
+This should be done in the resource file.
+.TP 8
+.B -mm or -matchMode "(False | Init | Position | Opening)"
+Automatically run a game between
+.IR firstShogiProgram
+and
+.IR secondShogiProgram .
+If
+.IR matchMode
+is set to
+.IR Init ,
+.IR xshogi
+will start the game with the initial shogi position.
+If
+.IR matchMode
+is set to
+.IR Position ,
+.IR xshogi
+will start the game with the position specified by the
+.IR loadPositionFile
+resource.
+If
+.IR matchMode
+is set to
+.IR Opening ,
+.IR xshogi
+will play out the opening moves specified by the
+.IR -loadGameFile
+resource.
+If the
+.IR -saveGameFile 
+resource is set, a move record for the match will
+be saved in the specified file.
+Default: "False".
+.TP 8
+.B -lgf or -loadGameFile file
+Name of file to read a game record from.
+Game files are found in the directory named by the SHOGIDIR environment
+variable.  If this variable is not set, the current directory is used
+unless the file name starts with a /.
+.TP 8
+.B -lpf or -loadPositionFile file
+Name of file to read a game position from.
+Position files are found in the directory named by the SHOGIDIR environment
+variable.  If this variable is not set, the current directory is used
+unless the file name starts with a /.
+.TP 8
+.B -sgf or -saveGameFile file
+Name of file to save a game record to.
+Game files are saved in the directory named by the SHOGIDIR environment
+variable.  If this variable is not set, the current directory is used
+unless the file name starts with a /.
+.TP 8
+.B -spf or -savePositionFile file
+Name of file to save a game position to.
+Position files are saved in the directory named by the SHOGIDIR environment
+variable.  If this variable is not set, the current directory is used
+unless the file name starts with a /.
+.TP 8
+.B -coords or -showCoords "(True | False)"
+If this option is True,
+.IR xshogi
+displays algebraic coordinates along the board's left and bottom edges.
+The default is False.  The
+.IR coordFont
+resource specifies what font to use.  
+.TP 8
+.B -mono or -monoMode "(True | False)"
+Determines whether
+.IR xshogi
+displays its pieces and squares with two colors or four.
+You shouldn't have to specify monochrome.
+.IR xshogi
+will determine if this is necessary.
+.TP 8
+.B -wpc or -blackPieceColor color
+Color specification for black pieces
+suitable for
+.IR XParseColor (3X11).
+Default: #FFFFCC.
+These colors look good on a DEC workstation.
+If you need different colors, try using the
+.IR xcolors
+application.  Source for
+.IR xcolors
+can be found in the X11/R4 contrib directory.
+.TP 8
+.B -bpc or -whitePieceColor color
+Same for white pieces.
+Default: #202020.
+.TP 8
+.B -lsc or -lightSquareColor color
+Same for light squares.
+Default: #C8C365.
+.TP 8
+.B -dsc or -darkSquareColor color
+Same for dark squares.
+Default: #77A26D.
+.TP 8
+.B -wps or -westernPieceSet (True | False)
+Choose the Western style piece set.
+.TP 8
+.B -npb or -normalPawnBitmap file
+.PD 0
+.TP 8
+.B -nnb or -normalKnightBitmap file
+.TP 8
+.B -nbb or -normalBishopBitmap file
+.TP 8
+.B -nrb or -normalRookBitmap file
+.TP 8
+.B -nkb or -normalKingBitmap file
+Names of the bitmap files for the bitmap piece icons.
+.PD
+
+.PD 0
+.TP 8
+.B -rpb or -reversePawnBitmap file
+.TP 8
+.B -rnb or -reverseKnightBitmap file
+.TP 8
+.B -rbb or -reverseBishopBitmap file
+.TP 8
+.B -rrb or -reverseRookBitmap file
+.TP 8
+.B -rkb or -reverseKingBitmap file
+Names of the bitmap files for the outline piece icons.
+.PD
+.TP 8
+.B -debug or -debugMode "(True | False)"
+Turns on debugging printout.
+.SH RESOURCES
+.TP 8
+.B initString
+The actual string that is sent to initialize the shogi program can be
+set from .Xdefaults.  It can't be set from the command line because of
+syntax problems.  The default value is "new\\nbeep\\nrandom\\neasy\\n".
+The "new" and "beep" commands are required.  
+You can remove the "random" command if you
+like; including it causes gnushogi to randomize its move selection slightly so
+that it doesn't play the same moves in every game.  
+Even without "random", gnushogi
+randomizes its choice of moves from its opening book.
+You can also remove "easy" if you like; including it toggles easy mode
+.IR off ,
+causing gnushogi to think on your time.
+That is, if "easy" is included in the initString, gnushogi thinks
+on your time; if not, it does not.  (Yes, this does seem backwards, doesn't
+it.)
+You can also try adding other commands to the initString; see the gnushogi
+documentation for details.
+.TP 8
+.B blackString and whiteString
+These resources control what is sent when the Machine Black and Machine White
+buttons are selected.  This is mostly for compatibility with obsolete versions
+of gnushogi.
+.LP
+Alternate bitmaps for piece icons can be specified
+either by choosing one of the built-in sets or with
+the file name resources described above.
+There are three built-in sets of piece bitmaps available,
+large (the default), medium, or small.
+It is easiest to select the set you prefer in the .Xdefaults file:
+.sp 1
+.br
+XShogi*boardSize:   Medium
+.LP
+The font used for button labels and comments can be changed in 
+the .Xdefaults file.  You may want to choose a smaller
+font if you are using the small pieces:
+.sp 1
+.br
+XShogi*font:    helvetica_oblique12
+.LP
+The font used for coordinates (when the
+.IR showCoords
+option is True) can be set similarly:
+.sp 1
+.br
+XShogi*coordFont:    helvetica_10
+.LP
+If you are using a grayscale monitor, try setting the colors to:
+.sp 1
+.br
+XShogi*blackPieceColor:     gray100
+.br
+XShogi*whitePieceColor:     gray0
+.br
+XShogi*lightSquareColor:    gray60
+.br
+XShogi*darkSquareColor:     gray40
+.SH COMMAND BUTTONS AND KEYS
+.TP 8
+.B Quit
+Quits
+.IR xshogi .
+Q or q is a keyboard equivalent.
+.TP 8
+.B Reset
+Resets
+.IR xshogi
+to the beginning of a shogi game.
+It also deselects any game or position files.
+.TP 8
+.B Flip View
+inverts the view of the shogi board.
+.TP 8
+.B Hint
+displays a move hint from gnushogi.
+.TP 8
+.B Load Game
+plays a game from a record file.
+If no file is specified a popup dialog asks for a filename.
+Game files are found in the directory named by the SHOGIDIR environment
+variable.  If this variable is not declared then the current directory is used
+unless the file name starts with a /.
+G or g is a keyboard equivalent.
+The game file parser will accept almost any file that contains 
+moves in algebraic notation.
+If the first line begins with `#', it
+is assumed to be a title and is displayed.
+Text enclosed in parentheses or square brackets is assumed to be
+commentary and is displayed in a pop-up window.
+Any other text in the file is ignored.
+.TP 8
+.B Load Position
+sets up a position from a position file.
+If no file is specified a popup dialog asks for a filename.
+Position files are found in the directory named by the SHOGIDIR environment
+variable.  If this variable is not declared then the current directory is used
+unless the file name starts with a /.
+Position files must be in the format that the Save Position command
+writes.
+.TP 8
+.B Save Game
+saves a game to a record file.
+If no file is specified a popup dialog asks for a filename.
+If the filename exists, the user is asked whether the current game record 
+is be appended to this file or if the file should be replaced.
+Game files are saved in the directory named by the SHOGIDIR environment
+variable.  If this variable is not declared then the current directory is used
+unless the file name starts with a /.
+Game files are human-readable, and can also be read back by
+the Load Game command. Furthermore, they are accepted as gnushogi text bookfiles.
+.TP 8
+.B Save Position
+saves a position to a position file.
+If no file is specified a popup dialog asks for a filename.
+Position files are saved in the directory named by the SHOGIDIR environment
+variable.  If this variable is not declared then the current directory is used
+unless the file name starts with a /.
+Position files are human-readable, and can also be read back by
+the Load Position command.
+.TP 8
+.B Machine White
+forces gnushogi to play white.
+.TP 8
+.B Machine Black
+forces gnushogi to play black.
+.TP 8
+.B Force Moves
+forces a series of moves.  That is, gnushogi stops playing
+and xshogi allows you to make moves for both white and black.
+.TP 8
+.B Two Machines
+plays a game between two computer programs.
+.TP 8
+.B Forward
+moves forward through a series of remembered moves.
+F or f is a keyboard equivalent.
+.TP 8
+.B Backward
+moves backward through a series of remembered moves.
+As a side effect, puts xshogi into Force Moves mode.
+B or b is a keyboard equivalent.
+.TP 8
+.B Pause
+pauses the clocks or (in Load Game mode) pauses the game being loaded.
+Press Pause again to continue.
+P or p is a keyboard equivalent.
+.TP 8
+.B Edit Position
+lets you set up an arbitrary board position.
+Use mouse button 1 to drag pieces to new squares, or to
+delete a piece by dragging it off the board or dragging an empty square
+on top of it.  To drop a new piece on a square, press mouse button 2 or 3
+over the square.  This brings up a menu of black pieces (button 2) or white
+pieces (button 3).  Additional menu choices let you empty the square or
+clear the board.  You can set the side to play next
+by clicking on the Black or White indicator at the top of the screen.
+.TP 8
+.B Challenge
+allows to make a two display game between two human players.
+Enter the display you want to connect to. If you are allowed to
+connect, a new board is displayed at the remote display.
+Challenge mode can only be stopped by pressing "quit".
+.TP 8
+.B Select Level
+allows to reset the clocks for both players.
+Enter the number of moves and the number of minutes in which the
+moves should be done.
+.TP 8
+.B Move NOW
+force computer to stop thinking and to make the current best move.
+.TP 8
+.B Iconify
+I, i, C or c iconifies
+.IR xshogi .
+.SH SEE ALSO
+.IR gnushogi (6)
+.SH LIMITATIONS
+If you press the Pause button during gnushogi's turn,
+.IR xshogi
+will stop the clocks,
+but gnushogi will still make a move.
+.LP
+After a mate or draw when playing against gnushogi, if you back up with
+the Backward button, the clocks are reset (because 
+gnushogi has exited and must
+be restarted).
+.LP
+Some
+.IR xshogi
+functions may not work with versions of gnushogi earlier 
+than 1.1, patchlevel 02. 
+.LP
+The game parser recognizes only algebraic notation.
+.SH AUTHORS
+Original authors of XBoard:  Chris Sears and Dan Sears.
+.LP
+Enhancements for XBoard (Version 2.0):  Tim Mann.
+.LP
+Conversion to XShogi (Version 1.1):  Matthias Mutz.
+.SH COPYRIGHT
+XShogi borrows its piece bitmaps from CRANES Shogi.
+.LP
+Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts.
+Enhancements Copyright 1992 Free Software Foundation, Inc.
+Enhancements Copyright 1993 Matthias Mutz
+.LP
+The following terms apply to Digital Equipment Corporation's copyright
+interest in XBoard:
+.LP
+.RS
+All Rights Reserved
+.LP
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation, and that the name of Digital not be
+used in advertising or publicity pertaining to distribution of the
+software without specific, written prior permission.
+.LP
+DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
+DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
+ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+SOFTWARE.
+.RE
+.LP
+The following terms apply to the enhanced version of XShogi distributed
+by the Free Software Foundation:
+.LP
+.RS
+This file is part of XSHOGI.
+.LP
+XSHOGI is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY.  No author or distributor accepts responsibility to anyone for
+the consequences of using it or for whether it serves any particular
+purpose or works at all, unless he says so in writing.  Refer to the XSHOGI
+General Public License for full details.
+.LP
+Everyone is granted permission to copy, modify and redistribute XSHOGI, but
+only under the conditions described in the XSHOGI General Public License. A
+copy of this license is supposed to have been given to you along with
+XSHOGI so you can know your rights and responsibilities.  It should be in a
+file named COPYING.  Among other things, the copyright notice and this
+notice must be preserved on all copies.
+.RE

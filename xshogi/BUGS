@@ -1,0 +1,7 @@
+KNOWN BUGS OR PROBLEMS
+----------------------
+
+We only have Western-style piece bitmaps for the small-size board, which is
+not very pleasant to use.  If you try to use the medium- or large-size
+board with Western bitmaps you get garbage bitmaps instead.
+

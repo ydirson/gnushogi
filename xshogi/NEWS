@@ -1,0 +1,117 @@
+Changes of XShogi will are recorded starting with XShogi 1.0 patchlevel 10.
+
+version 1.3 
+
+01.06.1999
+    o New maintainer: Mike Vanier (mvanier@bbb.caltech.edu).
+
+    o Merged xshogi into the gnushogi source tree.
+      Henceforth, further revisions of xshogi will be noted in the
+      top-level NEWS file; this file will not be added to.
+
+    o Cleaned up the source code and Makefile.
+
+    o Changed the code to refer to "gnushogi" instead
+      of "gnushogix" since gnushogi now is only
+      one executable, and the default input/output
+      format is the xshogi format.
+
+    o Removed support for Internet Shogi Server (ISS);
+      there are now better ways to play shogi over the internet
+      such as JavaShogi, so this support was redundant.
+
+
+version 1.2 patchlevel 2 -> version 1.2 patchlevel 3 
+
+23.5.1995
+   several changes concerning color and time control
+
+11.2.1994
+   going into force mode after pressing backward button
+
+version 1.2 patchlevel 1 -> version 1.2 patchlevel 2
+
+11.10.1993
+   correcting "Save/Load File/Position" bugs
+   correction for compilation without -DISS
+   adding "Save Game" to ISS mode
+
+version 1.1 patchlevel 3 -> version 1.2 patchlevel 1
+
+28.10.1993
+   Support if the Internet Shogi Server (ISS) according to XBoard 2.1 with -iss True.
+   Access Western piece set with -wps True
+   Display negative times (after fallen flag)
+
+version 1.1 patchlevel 2 -> version 1.1 patchlevel 3
+
+05.08.1993
+   Adding "Select Level" button: allows to reset thinking time for
+   black and white.
+   Adding "Move NOW" button: forces GNU Shogi to stop thinking and to
+   make the current best move.
+ 
+17.07.1993
+   checking file type when loading game or position from file
+
+02.07.1993
+   Adding a "Challenge" button: pressing this button tries to open
+   a new window on a remote display, which can be used in "force"
+   mode as interface for a remote player.
+
+11.05.1993
+   Detect draw by repetition
+
+05.04.1993
+   Adding alternative eastern bitmaps for promoted rook and 
+   promoted bishop
+
+04.29.1993
+   Correction of the Send Board routine: now promoted pieces are sent as
+   promoted (and not as unpromoted as in the previous version) to gnushogix.
+   After loading position from game file, side next to move is now set
+   correctly. 
+
+version 1.1 patchlevel 1 -> version 1.1 patchlevel 2
+
+04/28/1993
+   Change white colored symbols on some color monitors to black symbols.
+
+version 1.0 patchlevel 11 -> version 1.1 patchlevel 1
+
+04/27/1993
+   Allow different colors for board and pieces on board.
+
+04/12/1993
+   Flipping horizontally the reversed pieces. Thanx to Mr. R.Susukita,
+   who noticed the wrong images of reversed Chinese characters.
+
+   Blinking piece on the square the machine has moved to. The number of 
+   blinks is controlled by BLINK_COUNT in "xshogi.h".
+ 
+04/09/1993
+   Extenting the "save game" option. Text files created by this commond
+   can be used as GNU Shogi text book files. If the file name exists,
+   the user has the option to append the current game to the file or
+   to overwrite the existing file. 
+
+
+patchlevel 10 -> 11
+
+04/08/1993
+   Correction of the "save game" command. Now, games saved with this
+   command can be read in using the "load game" command.
+   "parser.l" has been replaced by "parser.bison" and "scanner.flex".
+   The creation of "parser.c" using GNU Bison and GNU Flex has been
+   included in "Makefile.custom".
+
+patchlevel 9 -> 10                                            
+
+04/01/1993
+   Some changes in the Makefile in order to make it more easier to
+   install on different machines.
+04/02/1993
+   Changing "bitmaps" to "eastern_bitmaps" and adding the more chess-like
+   pieces from Paul Reines as "western_bitmaps". This forces minor
+   changes in xshogi.c.
+
