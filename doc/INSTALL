@@ -1,0 +1,11 @@
+1. edit src/Makefile. For setting the paths, normally only
+   HOME or LIBDIR and BINDIR need to be changed. Setting CC
+   and CFLAGS sets C compiler and compiler options.
+
+2. in src type 'make' and all programs will be make.
+     (in case of a undefined _pow symbol use the -DOLDTIME option 
+      for compiling search.c)
+
+3. type 'make gnushogi.book.data' to build the binary book file.
+
+4. type 'make install' to install in BINDIR and LIBDIR

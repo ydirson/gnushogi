@@ -1,0 +1,41 @@
+# Shogi Game 4 (professional, some annotation by amateurs)
+# 
+# The following analysis is written by David Murphy (2-dan) and appeared in
+# "Shoten", the magazine of the British Shogi Federation, in January 1990. The
+# game is the 4-th of the five games final match of the 37-th Oza tournament.
+# It was played on 5-th October 1989 and time limits were 5 hours. The black
+# player was introduced in Shogi Game 3. Aono Teruichi, who has white, wrote
+# two very good bi-lingual books (in English and Japanese), which are still
+# available from The Shogi Association in England. After losing this game
+# Aono also lost the 5-th which signaled the end of his first title challenge.
+# 
+#    Pieter Stouten <stouten@embl.bitnet>
+#    21-th May 1990. Cosmetic correction 1-st July 1990.
+# 
+# -----------------------------------------------------------------------
+# 
+# Black: Nakahara Makoto; White: Aono Teruichi
+ 1.P2f P8d          2.P2e P8e         3.G7h G3b         4.P2d Px2d
+ 5.Rx2d P'2c        6.R2f S7b         7.P1f P1d         8.S3h P9d
+ 9.P9f P3d         10.P7f K4b        11.K6h P8f        12.Px8f Rx8f
+13.P'8g R8b        14.P3f P'8f       15.Px8f Rx8f      16.P3e Px3e
+17.N3g R8d         18.P1e Px1e       19.N4e P4d        20.P'3c Nx3c
+21.Nx3c+ Kx3c(A)   22.P4f K3d        23.P4e Px4e       24.Bx2b+ Sx2b
+25.N7g!(B) R8i+(C) 26.S8h N'8g       27.R5f(D) G5b     28.N'2f K3c
+29.Sx8g P'8f       30.B'6f K4c       31.G7i(E) +Rx8g   32.P'8h +Rx7f
+33.Bx2b+! +Rx5f    34.S'4d K4b       35.N3d K5a        36.+Bx3b  B'4f
+37.G'4g Resigns(F)
+# 
+# (A) According to Mr Ito (a strong 5-dan amateur, living in London), if
+#     21. ... Gx3c or Bx3c then 22.P'3d, 23.N'3c and 24 N2a+.
+# (B) Nakahara is famous for his skilful knight moves.
+# (C) After 93 minutes reflection!
+# (D) The start of a decisive attack on the 3d king!
+# (E) If 31. ... +Rx9i  32.N6e naturally.
+#     Then if 32. ... +R9g   33.P'4d K4b   34.N3d and 35.Nx5c+,
+#          or 32. ... +Rx7i  33.Kx7i Px8f  34.R'4d K3c  35.N'2e mates.
+#     This is my reading of it anyway, not "official" analysis!
+# (F) According to Steve Cain (2-dan), if 37. ... +R5d  38.+Bx5d Px5d
+#     39.R'3a decides. E.g. 39. ... S'4a  40.N'5c, or 39. ... K6b
+#     40.Gx4f and 41.B'7a mate.
+# 

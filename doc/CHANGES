@@ -1,0 +1,14 @@
+ChangeLog will start with GNU Shogi 1.0 patchlevel 11 (04/07/1993)
+
+version 1.0 patchlevel 11 -> version 1.1 patchlevel 1
+  04/22/1993
+	deep search cut in genmoves.c
+  04/20/1993
+	enable pattern related scoring in opening stage
+  04/15/1993
+	tuning "eval.c"
+  04/14/1993
+	correction for the "abs" function in "init.c"
+  04/10/1993
+	switches SAVE_PTYPE_DISTDATA and SAVE_DISTDATA for optional
+	space reductions.

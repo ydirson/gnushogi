@@ -1,0 +1,88 @@
+# Shogi Game 9 (professional, full professional comment).
+# 
+# Shogi Game 3 was annotated by Murooka Katsuhiko, 5-dan professional. Below
+# follows a game again with comment by Mr. Murooka. The game features the
+# famous young stars Habu and Tanigawa, the absolute Shogi top players of the
+# moment.
+# 
+#    Pieter Stouten <stouten@embl.bitnet>
+#    5-th June 1990. Corrected 5-th July 1990.
+# 
+# -----------------------------------------------------------------------
+# 
+# Habu and Tanigawa have met each other 4 times. Habu has won 3 games,
+# but they were all TV games with reduced thinking time. The following
+# game is from the Kisei Tournament Quarter Finals, April 18-th, 1989.
+# 
+# Black: Habu Yoshiharu (5-dan pro); White: Tanigawa Koji (Meijin).
+    1.P7f P8d   2.S6h P3d   3.S7g S6b   4.S4h S4b   5.P5f P5d   6.G7h
+[ The opening does not come as a surprise to both players. The "yagura"
+  opening is Habu's main weapon. 6.G4i-5h, followed by 7.P6f, 8.G6g and
+  9.B7i is a more active way of playing.]
+    6. ... G3b   7.K6i K4a   8.G5h G5b   9.P6f S3c   10.B7i B3a
+   11.P3f P4d   12.G5h-6g G5b-4c  13.S3g S5c
+[ 13. ... S5c is a very safe move against the quick attack of 14.P3e, but
+  this move causes problems for the development of the pieces.
+  13. ... P7d is too risky. 14.P3e Px3e  15.Bx3e P4e  16.B5g S5c  17.P4f
+  S5c-4d  18.R4h. The alternatives are 13. ... P8e and 13. ...B6d.]
+   14.S4f!?
+[ 14.B6h is a popular development, followed by 14. ... P7d  15.K7i N7c
+  16.P2f S6d  17.K8h P9d  18.P2e P9e  19.S8f. 14.S4f is an old-fashioned
+  move.]
+   14. ... P7d   15.P2f S6d   16.N3g N7c   17.P1f P1d   18.B5g!?
+[ 18.B5g is an unusual move. 18.B6h is the more agressive and normal
+  move.]
+   18. ... B5c   19.K7i S2d   20.S8f K3a   21.K8h P9d   22.P9f K2b
+   23.R3h
+[ I know some games with this position (except that black's bishop is on
+  square 6h) which were played several years ago, but this position is
+  very rare these days.]
+   23. ... P8e
+[ 23. ... R7b is not possible, because square 8c is too weak and will
+  allow for a good attack. 24.P3e Sx3e  25.Sx3e Px3e  26.N2e and 27.Bx3e
+  or 27.S'8c.]
+   24.S7g P4e   25.Nx4e Bx2f   26.B6h B7a
+[ 23. ... P8e and 24. ... P4e is the right order of moves. 23. ... P4e
+  24.Nx4e Bx2f  25.B6h P8e is not possible because of 26.S9g and 27.P6e.]
+   27.P3e P'4d   28.Px3d Px4e   29.Sx4e P5e
+[ Black has lost a knight, but has achieved a clear advantage and seized
+  the initiative.]
+   30.B4f Px5f   31.Sx5f P'3f   32.P'5c P8f   33.Px8f Gx3d
+   34.Rx3f P'3e
+[ Black controls the whole board.]
+   35.R3h S3c   36.R5h Bx5c   37.P6e P'5e   38.Px6d Px5f
+   39.Px6c+ Bx8f
+[ 35.R3i would have been the accurate move. After 35.R3h Tanigawa found a
+  brilliant attacking plan and regained the initiative.]
+   40.Sx8f S'6i   41.R2h
+[ The only move to keep the advantage: 41.Rx5f Rx8f   42.P'8g N'7e
+  43.Px8f P'8g etc.]
+   41. ... Rx8f   42.P'8g Sx7h+   43.Kx7h P'6f   44.Px8f Px6g+
+   45.Kx6g P5g+   46.Kx5g S'3g   47.Bx7c+
+[ Black's winning plan is aiming for entering king.]
+   47. ... Sx2h=   48.K6f G'5d   49.+Bx7d N'8b   50.+B8c R'6i
+   51.P'6g G'7d   52.+Bx7d Nx7d   53.K7e Rx6g+   54.Kx7d Sx1i+
+   55.R'5a P'8b
+[ White intends 56. ... L'7b and 57. ... B'4h:
+  1) 56.Rx5d+? fails because of 56. ... L'7a   57.S'7b B'2g
+  2) 56.S'7b? +Rx7f   57.P'7e B'4b.
+  3) 56.G'7e? B'4b   57.Rx9a+ L'7b   58.+Px7b Bx7e   59.+Rx8b G'8d
+  60.+Rx8d +R6d leads to mate soon.]
+   56.K7c!!
+[ A very strong move.]
+   56. ...B'8d
+[ Of course, but Habu had found a reply.]
+   57.Kx8d +Rx6c   58.Rx9a+ +R8c   59.K7e P'7d   60.K6f +Rx8f
+[ White has nothing better than the moves that were played.]
+   61.B'4c?
+[ Better is 61.S'4c. Maybe Habu overlooked the next move.]
+   61. ... G5e   62.Kx5e G4d   63.K6d G4dx4c   64.B'6a
+[ The only move to win. Habu kept calm, even after his mistake on the
+  61-st move.]
+   64. ... L'7a   65.N'6e B'2g   66.+Rx7a +R8d   67.S'6c S4d
+   68.L'8g Resigns
+[ 68. ... +Rx8g  69.N'2e followed by 70.Bx4c and white will be mated
+  soon.]
+# 
+#     Murooka Katsuhiko
+# 

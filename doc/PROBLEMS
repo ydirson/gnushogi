@@ -1,0 +1,12 @@
+The program may run into time problems, i.e. the program
+exceeds the remaining time.
+
+Sometimes, moves of the computer which mate are regarded as
+illegal moves, i.e. the program makes the move (winning the
+game) and then states this move as illegal (king in check).
+
+After creating the binary book file, the program 
+ends unexpectedly with stack frame overflow. 
+Therefore, you have to type "make install" twice.
+This happens on an apollo workstations, and I am not shure
+about it on other platforms.

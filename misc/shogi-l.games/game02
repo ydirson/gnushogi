@@ -1,0 +1,45 @@
+# Shogi Game 2 (amateur game, some amateur comment).
+# 
+# The game below was played at the sixth International Utrecht (the Netherlands)
+# tournament, October 1984 and features the strongest European player Mike
+# Sandeman, now already for more than a year living in Japan. His style is very
+# flamboyant and this time he played an old and speculative opening. He allows
+# his opponent to exchange rook pawns and, contrary to the proverb, keeps his
+# rook and king together. He hardly makes a localized castle for his king, but
+# instead puts up sort of an aerial (or area) defence. Jan Oosterwijk, one of
+# Holland's Shogi nestors, builds a standard three-generals castle known as
+# "yagura". Among other things "yagura" can mean: arsenal or scaffold. In
+# English literature it is sometimes translated as fortress, but normally the
+# Japanese term is used. The "yagura" is hard to break down with a frontal
+# attack, but is weak at the side. It is therefore almost solely employed in
+# double static rook games. The comment below the game was provided by Mike
+# Loftus, 3-dan and published in "Shoten" (=focal point), the quarterly
+# journal of the British Shogi Federation.
+# 
+#    Pieter Stouten, 16-th May 1990.
+#    bitnet: stouten@embl
+# 
+# -----------------------------------------------------------------------
+# 
+# Black: Jan Oosterwijk (1-dan); White: Mike Sandeman (3-dan)
+ 1.P2f P3d        2.P7f P4d        3.S4h S4b        4.G4i-5h S4c
+ 5.K6h P5d        6.P5f P8d        7.S7h S6b        8.P2e G3b
+ 9.P2d Px2d      10.Rx2d P'2c     11.R2h S5c       12.S7g P7d
+13.P6f P6d       14.K7h G5b       15.B7i G6c       16.G6g P8e
+17.K8h N7c       18.G7h K6b       19.P3f R8a       20.S3g K7b
+21.P9f P9d       22.S2f P5e       23.Px5e(A) P4e   24.S3g S4c-4d
+25.R4h(B) P8f    26.Px8f Sx5e     27.P'5f Sx6f(C)  28.Sx6f P'8e
+29.Px8e P6e      30.S7g S6d       31.B5g P7e       32.Px7e(D) Nx8e
+33.P'8g P'5h     34.P'6f Nx7g+    35.G7hx7g Px6f   36.Bx6f Bx6f
+37.G6gx6f P'8f   38.G6f-7f Px8g+  39.Gx8g B'7i     40.K9h P'8f
+41.G7fx8f Rx8f   42.Gx8f S'9g     43.Nx9g G'8h     0-1
+# 
+# (A) Rather than let white have his own way, black can try 23.P'2d Px2d
+#     (otherwise 24.Px2c+ Gx2c and 25.S3e or S1e looks fast) 24.S1e and
+#     black looks better to me.
+# (B) Presumably to attack up the 4th file, but it looks rather negative.
+# (C) White sacrifices a silver for a purely positional advantage.
+# (D) Perhaps K7i and early escape might have been expedient.
+#     Subsequently, Mike went on to win the tournament with 6 straight
+#     wins.
+# 

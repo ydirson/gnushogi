@@ -1,0 +1,69 @@
+# Shogi Game 23 (professional, full annotation).
+# 
+# Please find below Oi title game 5 (30 & 31 August 1990) between K. Tanigawa
+# and Y. Sato. This game is also available from the SHOGI-L archive as part of
+# the file OI MATCH-90. This version is stored separately because Murooka and
+# Sato provided us with a full analysis of the game. Their contribution is
+# gratefully acknowledged.
+# 
+#    Pieter Stouten <stouten@embl.bitnet>
+#    Archived 7-th February 1991.
+#    Cosmetic correction 12-th February 1991.
+# 
+# -----------------------------------------------------------------------
+# 
+# Black: K. Tanigawa, Oi; White: Y. Sato, 5-dan.
+   1.P7f P8d 2.P2f P8e 3.B7g P3d 4.S8h G3b 5.G7h Bx7g+ 6.Sx7g S4b
+   7.S3h S7b 8.P4f P6d 9.S4g S6c 10.G5h P1d 11.P1f P9d 12.P9f G5b
+   13.P3f K4a 14.S5f S5d 15.K6h P4d 16.P6f P7d 17.K7i K3a 18.N3g
+[ 18.P2e transposes to the old sixties main line: 18... S3c 19.N3g K2b
+  20.K8h G5b-4c and in general black did not gain anything after that.]
+   18... N7c 19.P2e P6e!?
+[ 19... S3c? allows a good attack with 20.P4e Px4e 21.P3e (or 21.P7e) S4d
+  22.P7e Px7e 23.P2d. This was one of the variations in the sixties and
+  black stands better.]
+   20.Px6e
+[ If 20.P2d?! then 20... Px2d 21.Rx2d P'2c 22.R2f P8f (Not: 22... Px6f?
+  23.Sx6f and black gets a slight edge) 23.Px8f P7e 24.Px7e Px6f 25.P7d
+  N6e 26.P7c+ Nx7g+ and now A) 27.+Px8b? B'4i 28.G4h +Nx7h 29.Kx7h P'7g!
+  and white will win or B) 27.Gx7g R8a 28.+P7b P'7f! 29.Gx7f R8d with a
+  more or less equal position.]
+   20... P7e 21.P2d Px2d 22.P'2e!
+[ This white opening system N7c, G5b, P6e without playing S3c appeared
+  for the first time in professional play and Sato had especially
+  prepared it for this game. However, in his preparation he had
+  overlooked the combination 21.P2d - 22.P'2e. After this game he said:
+  "22.P'2e is the best move and this opening system is not playable for
+  white."]
+   22... Px2e 23.Px7e Nx6e 24.Sx6e Sx6e 25.Rx2e B'4c 26.P'2b P'2d
+[ 26... Gx2b? 27.P'2c G3b 28.B'2b is good for black.]
+   27.Px2a+ Kx2a 28.Rx2d P'2c 29.R2h P'7f 30.S6h
+[ 30.S8h! is the best move resulting in a very good position for black
+  according to Sato, but it is very difficult to realize that making a
+  "wall silver" voluntarily could be the best move. However, 30.S8h
+  really is the best move: on 9-th November 1990 Tsukada played this move
+  against Takahashi for the A Class Junisen, gained a clear advantage and
+  won.]
+   30... S6f
+[ If 30... P8f then 31.B'5e! ]
+   31.N'5f P8f 32.Px8f P'8h 33.Nx4d
+[ 33.Gx8h? Rx8f 34.P'8g P7g+ 35.Sx7g Sx7g+ 36.Gx7g Bx8g+ 37.Gx8f S'7h
+  38.K6h S6i+ 39.K6g P'6f and mate follows. ]
+   33... Px8i+ 34.K6i S'7g 35.Nx3b+ Bx3b 36.N'4d Sx7h+ 37.K5i?
+[ Sato gives the following variant: 37.Kx7h! P7g+ 38.Sx7g +P7i 39.Kx7i
+  Sx7g+ 40.Nx3b+ Kx3b 41.G6h! and black will win. ]
+   37... N'2d! 38.Nx3b+ Kx3b 39.K4i N'4d?
+[ 39... +Sx6h 40.Gx6h +Px9i leads to an equal position. ]
+   40.S5i! N4dx3f 41.R2e +S6i 42.P'3c Sx3c 43.N4e N'4a 44.P'3g +Sx5i
+   45.Gx5i P'4d 46.Px3f Px4e 47.B'6e S'5d 48.Bx5d Px5d 49.B'6d B'4g
+   50.G4h Bx3f+ 51.G'3a K2b 52.Gx4a N'5c
+[ 52... G4b gives Sato some more chances, but he was in byoyomi of 1
+  minute since move 45. ]
+   53.S'3a K2a 54.P'2b K3b 55.Bx8b+ +Bx2e 56.N'4d Sx4d 57.R'4b K3c
+   58.Rx4d+ Kx4d 59.N'5f Resigns.
+[ 59... K3e 60.S'4d K2f 61.S'3g K2g 62.G3h is mate and so is 59... K3c
+  60.S'4b Gx4b 61.S'4d K3b 62.Gx4b. ]
+#    Time used: black 5:38, white 7:59.
+# 
+#    K. Murooka and Y. Sato
+# 

@@ -1,0 +1,17 @@
+GNU Shogi is the japanese version of chess. You can find the
+rules of Shogi in "shogi.rules". This file and many other
+shogi related stuff can be obtained from the SHOGI-L listserver (see
+"listserv.ref"). If you would like to learn Shogi, you may
+play some games following the game notations of the text book files.
+You can find them in "../misc/*.book" and "../misc/shogi-l.games/*".
+Especially "game01" and "game25" in "../misc/shogi-l.games" may serve
+as introductiory games.
+
+GNU Shogi is based on GNU Chess 4.0, i.e. the first
+version of GNU Shogi has been obtained by "simply" modifying
+the chess-specific parts of GNU Chess 4.0.
+
+I would like to thank all people who have made the
+sources of GNU Chess 4.0 available.
+
+  Matthias Mutz.

@@ -1,0 +1,156 @@
+# 39-th Oza Title Match 1991 (professional, no comment).
+# 
+# Below are given all six game scores of the 39-th Oza title match (1991)
+# between Tanigawa Koji (Oza) and Fukuzaki Bungo (challenger), played between
+# 3-rd September and 14-th October. Time limits in all games are 5 hours each
+# plus one minute byoyomi. Game 5 ended in sennichite (repetition of moves)
+# and was replayed with reversed colours. In a replay the players play with
+# the time left on their clock after the original game with a minimum of one
+# hour each. If at least one player has less than 1 hour left, both players
+# receive the amount of additional time necessary to provide both players
+# with at least one hour each. After game 5 Fukuzaki had 52 minutes left and
+# Tanigawa 57. Both players were given 8 minutes more so that each had at
+# least 1 hour. So, Fukuzaki started the replay of game 5 with 60 minutes and
+# Tanigawa with 65 minutes). Detailed results:
+# Game 1. Fukuzaki - Tanigawa 1-0   Game 2. Tanigawa - Fukuzaki 0-1
+# Game 3. Fukuzaki - Tanigawa 0-1   Game 4. Tanigawa - Fukuzaki 1-0
+# Game 5. Fukuzaki - Tanigawa sennichite
+# Game 5 (replay). Tanigawa - Fukuzaki 0-1
+# Final score: Tanigawa - Fukuzaki 2-3 (1 sennichite)
+# 
+#    Corrected and archived 22-nd December 1991:
+#    Pieter Stouten <stouten@embl-heidelberg.de>
+# 
+#    Game scores submitted 12-th November 1991:
+#    Reijer Grimbergen <grimbergen@psych.kun.nl>
+# 
+# ---------------------------------------------------------------------------
+# 
+# 39-th Oza Title Match, 1-st game, 3-rd September 1991.
+# 
+# Black: Fukuzaki Bungo, challenger; White: Tanigawa Koji, Oza
+# 
+1.P7f(1) P8d(1) 2.P5f(3) P8e(5) 3.B7g P5d 4.R8h(1) P3d(2) 5.S6h S6b 6.K4h
+P7d(20) 7.P6f(9) K4b(2) 8.K3h K3b 9.K2h G6a-5b 10.G6i-5h(6) S5c 11.S5g(13)
+B3c(5) 12.L1h(3) K2b 13.K1i S3b 14.S2h P1d(3) 15.G3i(1) P2d 16.G6g(24)
+S2c(5) 17.S4f(1) P4d(3) 18.P5e(8) Px5e(6) 19.Sx5e(3) P'5d 20.S4f G3b
+21.B6h(7) G5b-4c(4) 22.P3f(4) P6d(15) 23.N7g(3) P2e(1) 24.S4f-3g(10) P5e(26)
+25.P8f Px8f 26.P'8e P4e(1) 27.Rx8f P'8c 28.P9f(18) S4d(18) 29.R8i(1) B1e(9)
+30.R5i(1) P8d(2) 31.P1f Bx3g+(6) 32.Nx3g Px8e 33.P4f P8f(44) 34.Px4e S3c
+35.B'7a(57) R5b(10) 36.Nx2e(4) P8g+ 37.N8e +P8f(16) 38.Nx3c+(14) G4cx3c
+39.S'4a N'4g(7) 40.Sx5b=(4) Nx5i+ 41.Bx5i(1) R'6i 42.B7a-2f+(1) +Px8e(13)
+43.N'2e(24) N'4g 44.Nx3c+(1) Nx3c(1) 45.S4a=(4) Nx3i+(3) 46.Sx3b+ Sx3b
+47.Sx3i P'2e(4) 48.+B4h(7) Rx6g+(2) 49.G'2h(6) P2f(9) 50.P'5g(4) Px2g+(2)
+51.Gx2g P'4g 52.+Bx4g(20) S'5h(4) 53.+B4f(1) +Rx6f 54.P'2c(15) Resigns(1)
+# 
+# Time used black: 4.47; white: 4.10
+# 
+# ---------------------------------------------------------------------------
+# 
+# 39-th Oza Title Match, 2-nd game, 17-th September 1991.
+# 
+# Black: Tanigawa Koji, Oza; White: Fukuzaki Bungo, challenger
+# 
+1.P7f P3d(1) 2.P2f P4d 3.P2e B3c 4.S4h S4b(5) 5.P5f(1) R5b(1) 6.K6h K6b
+7.K7h K7b(1) 8.G4i-5h K8b(2) 9.P3f(10) S4c(5) 10.P4f(4) G3b(4) 11.S5g(2)
+L9b(2) 12.N3g(44) R5a(12) 13.P9f(7) P5d(5) 14.P9e(12) K9a 15.B6f(3) S8b(1)
+16.S8h(1) S5b(22) 17.R4h(36) G7a(5) 18.N7g S5c(7) 19.P4e (41) Px4e 20.Bx3c+
+Nx3c 21.Nx4e Nx4e 22.Rx4e B'2g(19) 23.B'4g(8) N'3e(1) 24.B2i(4) Bx3f+ 25.R8e
+P'4f(21) 26.P'4h(2) R4a 27.N'7e(41) G7b(11) 28.P5e(1) P4g+ 29.Gx4g Nx4g+
+30.Bx4g +Bx4g(7) 31.Px4g B'7d 32.S6h(8) G'7a(12) 33.G7i(7) Rx4g+(4) 34.P9d
+Px9d 35.N'8f Bx8e(6) 36.Nx8e +R5f 37.S8h-7g(4) S6d 38.Nx9d(14) P'9h(40)
+39.Lx9h(8) P'9g 40.Nx8b+ G7ax8b 41.P'9c Nx9c(2) 42.Nx9c+ Lx9c(6) 43.P'9d(11)
+Lx9d(6) 44.P'9b(5) Kx9b(11) 45.Nx6c+(1) N'8e(16) 46.+Nx7b Gx7b 47.S8f(5)
+N'6f(12) 48.Px6f P'6g 49.Sx8e(3) Px6h+ 50.Gx6h S'8i(27) 51.K7g R'7h(6)
+52.K8f(2) N'7d 53.Sx7d S7e 54.Kx7e Px7d 55.K6d +Rx5e 56.K5c S'6b 57.K5b(1)
+Rx6h+ 58.Resigns
+# 
+# Time used black: 4.45; white: 4.40
+# 
+# ---------------------------------------------------------------------------
+# 
+# 39-th Oza Title Match, 3-rd game, 24-th September 1991.
+# 
+# Black: Fukuzaki Bungo, challenger; White: Tanigawa Koji, Oza
+# 
+1.P7f(1) P8d(1) 2.S6h(6) P3d(1) 3.P6f S6b 4.G4i-5h S4b(1) 5.S4h P5d 6.G6g(1)
+G3b(1) 7.P5f(2) K4a 8.S7g P7d 9.G7h(2) G5b 10.B7i S3c 11.K6i(3) B3a
+12.P3f(6) P4d(10) 13.B6h(12) G5b-4c(13) 14.K7i B6d 15.N3g(5) K3a(1) 16.K8h
+K2b 17.P2f P8e(5) 18.R3h(2) S5c(4) 19.P1f(2) P1d(9) 20.P4f(15) P5e(16)
+21.S4g(1) S5d(3) 22.L1g(2) Px5f(20) 23.Sx5f N7c 24.R1h(18) P'5e(12) 25.S4g
+S2d 26.P2e(3) S3c(1) 27.P4e(20) Px4e(14) 28.P'4f P5f(83) 29.Gx5f(25)
+Px4f(2) 30.Sx4f(3) P'5e 31.G5g(25) P8f 32.Sx8f(1) P'4e  33.Nx4e(2) S4d
+34.R4h P7e 35.G5g-6g(19) Px7f(1) 36.P'7d(21) N8e 37.Gx7f(3) P'7g(23)
+38.Nx7g(2) Nx7g+ 39.Bx7g N'8d 40.S8e(23) Nx7f(4) 41.Sx7f N3c 42.P6e(7) G'7e
+43.P7c+ Gx7f(5) 44.+Px8b B7e 45.R2h(2) B3i+(1) 46.R2g +B4i(1) 47.R'7b
+Nx4e(3) 48.P2d(7) +Bx2g(9) 49.Px2c+ Kx2c 50.P'2d Kx2d(7) 51.Rx3b+(1) Gx7g
+52.Gx7g R'4h 53.Resigns
+# 
+# Time used black: 4.02; white: 4.11
+# 
+# ---------------------------------------------------------------------------
+# 
+# 39-th Oza Title Match, 4-th game, 1-st October 1991.
+# 
+# Black: Tanigawa Koji, Oza; White: Fukuzaki Bungo, challenger
+# 
+1.P7f P3d(1) 2.P2f P4d 3.S4h S4b(3) 4.P5f P5d 5.K6h(3) S6b(4) 6.K7h(2)
+P7d(1) 7.S6h(2) R7b(7) 8.G4i-5h(6) P7e(6) 9.Px7e(2) Rx7e 10.S7g N7c(5)
+11.P'7f(7) R7d 12.P6f N8e(4) 13.S8f(11) Rx7f(7) 14.K6g(8) R7b(1) 15.Sx8e
+P8d(1) 16.S9f(11) P4e(6) 17.P2e(53) B3c(11) 18.P2d(32) Px2d 19.S5g P6d(10)
+20.K6h S6c(2) 21.P3f(9) G3b(5) 22.N3g(6) S4c 23.G6g(3) S7d(1) 24.P8f(2)
+S7e(19) 25.Nx4e(9) B4d 26.P'7f(19) Sx7f(2) 27.Gx7f Rx7f 28.S8g R7c(25)
+29.S'5c(4) Bx5c(10) 30.Nx5c+ Rx5c 31.P6e P5e 32.Bx5e(2) Rx5e(22) 33.Px5e
+P'5f(5) 34.Sx5f G'6f(4) 35.N'5c(46) G5b(16) P5d(4) G3a(53) 37.P'2b(2) K4b(9)
+38.Px2a+(3) B'5g 39.K7h(1) Gx5f +Px3a(2) S'6g(3) 41.K8h N'7e 42.P'7g(13)
+Nx8g+(4) 43.Kx8g B6f+ 44.N'7i(2) +Bx6e(3) 45.K8h +Bx5d 46.N4a+ K5c(1)
+47.R'8c S'6c 48.N'7e P'7c(4) 49.Rx7c+(1) S'6b(4) 50.Nx6c+(1) +Bx6c
+51.+Rx6c(1) Sx6c(1) 52.B'7a N'6b 53.S'4b(1) Gx4b(1) 54.+Nx4b P'7f(1)
+55.+Nx4c(2) Kx4c 56.Bx6b+(1) Resigns
+# 
+# Time used black: 4.31; white: 4.23
+# 
+# ---------------------------------------------------------------------------
+# 
+# 39-th Oza Title Match, 5-th game, 14-th October 1991.
+# 
+# Black: Fukuzaki Bungo, challenger; White: Tanigawa Koji, Oza
+# 
+1.P7f P8d(1) 2.P5f(2) P3d(8) 3.P6f(2) S6b 4.S6h P5d 5.R5h(1) K4b(2) 6.K4h
+K3b 7.K3h G6a-5b(6) 8.K2h(1) S5c(2) 9.L1h(2) B3c 10.K1i K2b 11.S5g P4d(1)
+12.S4f(29) G4c(2) 13.P5e(1) P4e(14) 14.Sx4e(1) Px5e 15.S3f(6) S3b(6)
+16.G7h(1) P8e(2) 17.B7g S5d 18.G6g(1) P2d(7) 19.P4f(4) S2c(4) 20.S2h(1)
+G3b(2) 21.G3i P7d(10) 22.P9f(14) P1d(3) 23.P9e(4) P2e(7) 24.S4g(3) P3e(10)
+25.P3f(6) Px3f(1) 26.R3h(3) B4b(19) 27.G5g(10) P8f(15) 28.Px8f Bx8f
+29.R8h(1) P'8g(1) 30.Rx8g(12) P'8e 31.P'8h(11) B4b(18) 32.B5i(15) P8f(2)
+33.R6g P8g+ 34.Px8g P'8h 35.Sx3f(1) Px8i+(1) 36.P4e +Px9i(5) 37.G4f(1)
+B9g+(18) 38.B3g(9) R8e(2) 39.P'5f(1) +B7i(9) 40.Px5e(13) +Bx4f 41.Bx4f Sx5e
+42.B6h(2) G'4f(6) 43.P8f(7) R8b(10) 44.Bx4f(15) Sx4f 45.G'5f B'7c(7)
+46.P4d(7) G4c-3c(1) 47.Gx4f(43) Bx4f 48.P'3d Sx3d(2) 49.P'3e S2c 50.S'3d(5)
+B7c(9) 51.P'5e(6) P'4b(25) 52.Sx2c+(5) G3cx2c 53.S'3d S'3c(3) 54.Sx3c+(1)
+G2cx3c 55.S'3d(1) S'2c 56.Sx3c+ Gx3c 57.G'3d G'3b(2) 58.Gx3c Gx3c 59.G'3d
+G'3b 60.Gx3c Gx3c 61.G'3d G'3b 62.Gx3c Gx3c Sennichite
+# 
+# Time used black: 4.08; white: 4.03
+# 
+# ---------------------------------------------------------------------------
+# 
+# 39-th Oza Title Match, Replay 5-th game, 14-th October 1991.
+# 
+# Black: Tanigawa Koji, Oza; White: Fukuzaki Bungo, challenger
+# 
+1.P7f P3d 2.P2f P4d 3.S4h S4b(5) 4.P5f P5d 5.G4i-5h G6a-5b(3) 6.S6h(2) S6b
+7.S7g S3c 8.K6h K4b 9.K7h K3b 10.P6f B3a 11.G6g P7d 12.B7i S7c 13.S5g(1) G4c
+14.P3f K2b 15.K8h G3b 16.G7h P8d(1) 17.N3g(1) P8e 18.S4f(2) S2d(1) 19.B6h(3)
+S6d(2) 20.B5g(9) P9d(10) 21.P1f N7c 22.P1e(2) P7e 23.Px7e R8d 24.P3e(7)
+P8f(6) 25.Sx8f Sx7e 26.Sx7e(5) Bx7e 27.P'7f B4b(1) 28.S'7e R8a(8) 29.Px3d(7)
+P'3f(3) 30.N2e(2) K3a(2) 31.S7d(6) P4e(1) 32.Sx4e(3) P3g+ 33.R1h +Px4g(9)
+34.B6h(1) P'4d 35.S3f +P3g(3) 36.S3e S'2g(1) 37.Sx7c=(2) Sx3e 38.Bx3e
+Gx3d(2) 39.B6h(1) Sx1h= 40.P'4c Gx4c 41.S'8b(1) R4a(1) 42.Lx1h R'3h
+43.P'3c(1) Nx3c 44.Nx1c+ K3b 45.N'3e(4) Lx1c 46.P1d(2) Gx3e 47.Px1c+ P'8f
+48.Bx3e(1) N'9f 49.K7i B3a 50.S'2b(1) S'8h 51.K6i Bx2b 52.+Px2b Kx2b 53.L1c+
+K3b 54.Gx8h Nx8h+ 55.+Lx2c Kx2c 56.S'2d K3b 57.G'2c K4b 58.Sx3c+ Gx3c
+59.Gx3c Kx3c 60.G'2d K2b 61.N'3d K3b 62.P'3c K4c 63.Resigns
+# 
+# Time used black: 1.04; white: 0.59
+# 

@@ -1,0 +1,42 @@
+
+This is a note how to port gnushogi to machines with scarce memory:
+gnushogi minimal requirements are:
+ - approximately 200 kByte memory for the executable program.
+ - at least 300 kByte for data structures.
+You dont want to port gnushogi to a machine with less memory than that.
+
+gnushogi is optmized for speed and that means that memory has been used
+when there has been a tradeoff between memory usage and speed. If you intend
+to run gnushogi on a machine with less than 4 Mbyte memory the size of some
+data structures have to be reduced. Here is a list of the largest data
+structures in gnushogi, their sizes and a small comment on what can
+be done to reduce their size:
+
+ttable:		1.5	MByte	(#define vttblsz <something small>)
+etab:		1.4	MByte	(can be removed)
+Tree:		42 	kByte	(change f,t to unsigned char)
+history:	131	kByte   (can be removed, not recommended)
+nextpos:	98	kByte	(nothing save rewiting all move generation)
+nextdir:	98	kByte	(nothing save rewiting all move generation)
+distdata:	6	kByte	(can be changed to a macro)
+ptype_distdata:	98	kByte	(can be changed to a procedure)
+hashcode:	26	kByte   (no reduction possible)
+
+First of all, start by reducing the transposition table size, this
+is done by setting vttblsz in (gnushogi.h). If the transopsition table
+does not fit entierly in memory it will have a detrimental effect on
+performance. You can remove the transposition table by defining 
+compiler option NOTTABLE.
+You can remove the static evaluation cache by omitting the compiler
+option CACHE.
+You can remove the history table by omitting the compiler option HISTORY
+(NOT recommended).
+If this isn`nt enough, reconsider if you really want to do this port.
+There is`nt really that much to gain by changing the other
+data structures. 
+
+There are some switches in order to enable space reduction:
+
+#define SAVE_PTYPE_DISTDATA	(replace ptype_distdata by a procedure)
+#define SAVE_DISTDATA		(replace distdata by a macro)
+

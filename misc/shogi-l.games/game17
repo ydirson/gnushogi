@@ -1,0 +1,28 @@
+# Shogi Game 17 (professional, no comment).
+# 
+# This is a rather old game, played in 1947, between Kimura Yoshio
+# (at that time the Meijin) and his challenger Tsukada Masao.
+# It is given as an example of a fierce and short fight which might take
+# place in shogi: you almost see the sparks fly as the opponents get into
+# close contact. Neither player cared for the safety of his king.
+# That's a very difficult and dangerous line.
+# 
+#    Klaus Blumberg <i0060301@dbstu1>
+#    Submitted 3-rd July 1990.
+# 
+#    Pieter Stouten <stouten@embl.bitnet>
+#    Corrected and released 5-th July 1990.
+# 
+# ---------------------------------------------------------------------------
+# 
+# Black: Tsukada Masao; White: Kimura Yoshio (Meijin).
+# 
+ 1.P7f P3d         2.P2f P5d         3.P2e P5e        4.P2d Px2d
+ 5.Rx2d G3b        6.Rx3d R5b        7.R2d P5f        8.Px5f Bx8h+
+ 9.Sx8h B'3c      10.Rx2a+ Bx8h+    11.B'7g +Bx8i    12.Bx1a+ N'5g
+13.G6i-5h Rx5f    14.N'6h Nx4i+     15.Kx4i Rx5h+    16.Kx5h K6b
+17.P'5c K7b       18.+B5e P'5d      19.+Bx5d G'6d    20.+B3f P'5g
+21.Kx5g K8b       22.L'6f S'5i      23.Lx6d Px6d     24.N'7e S7b
+25.G'6c Sx6c      26.+Bx6c G'7b     27.P5b+ Gx6c     28.+Px6a B'3e
+29.P4f +B7i       30.+Rx3b Sx3b     31.Nx8c+ Kx8c    32.S'8d Resigns
+# 

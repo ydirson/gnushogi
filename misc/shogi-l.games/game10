@@ -1,0 +1,31 @@
+# Shogi Game 10 (amateur game, no comment).
+# 
+# This is a game between Hans Secelle, 1-dan (Gent, Belgium), and Mike
+# Sandeman, 3-dan (London, England) played at the 3-rd International Belgian
+# Shogi Tournament, Gent, March 1985. Hans lost. Five months later they
+# played each other at the first European Championship. Hans won, which
+# earned him the title of European Champion. Mike's turn came two years
+# later when he became the third European Champion.
+# 
+#    Pieter Stouten <stouten@embl.bitnet>
+#    11-th June 1990. Corrected 30-th June 1990.
+# 
+# -----------------------------------------------------------------------
+# 
+#  Black: Hans Secelle (1-dan); White: Mike Sandeman (3-dan)
+# 
+ 1.P2f P3d         2.P2e B3c         3.P7f P4d         4.S4h S4b
+ 5.P5f S4c         6.S5g P5d         7.B7g G3b         8.K6h S6b
+ 9.S7h S5c        10.P6f P7d        11.S6g K4a        12.G7h R5b
+13.P3f N7c        14.P1f S6d        15.G5h P5e        16.Px5e P4e
+17.S5g-5f Sx5e    18.P'5g S5e-4d    19.N3g S5d        20.P2d Px2d
+21.Sx4e S4dx4e    22.Nx4e Sx4e      23.B9e B5e        24.S'4f Sx4f
+25.Px4f Bx4f      26.R4h S'3g       27.Bx7c+ Sx4h+    28.+Bx4f R'4i
+29.N'4d +Sx5h     30.Sx5h Rx4f+     31.Nx5b+ Gx5b     32.R'8a P'5a
+33.Rx9a+ N'6e     34.Px6e N'6f      35.N'5c K3a       36.S'6i Nx7h+
+37.Kx7h B'5e      38.B'7g Bx9a      39.S'4a Gx5c      40.Sx3b+ Kx3b
+41.L'4g S'6g      42.Kx6g S'6f      43.K7h G'6g       44.Sx6g Sx7g+
+45.Nx7g +Rx4g     46.N'1e L'8d      47.S'2b B5e       48.S'2c K4b
+49.P'4c K5b       50.G'7b Lx8g+     51.Kx8g N'9e      52.K9f B'8g
+53.Kx9e Bx7g+     54.Resigns
+# 

@@ -1,0 +1,151 @@
+# 31-st Oi Title Match 1990 (professional, no comment).
+# 
+# The 31st Oi match will be a match to remember. For me personally because I met
+# Mr. Sato several times (both in Europe and Japan) and because I was present at
+# the 7th game in Hadano-city in Japan. But there was more to this match. It was a
+# high-level battle between a young star (Sato, only 21 years old) and an
+# established player (Tanigawa, top player for more than 7 years, although only 28
+# years old). Every game (except maybe the 7th) showed exciting top shogi and was
+# a credit to both players. In the end, Tanigawa just managed to decide the match
+# in his favour in the unfortunately rather one-sided 7th game. Interesting detail
+# that shows how strong Tanigawa was at that moment: none of the professionals
+# present in the analysis room managed to come up with Tanigawa's final move.
+# 
+# Below are given six out of seven game scores of the 31-st Oi title match
+# (1990) between Tanigawa Koji (Oi) and Sato (challenger), played
+# between 12-th July and 21-st September. Time limits in all games are 8
+# hours each plus one minute byoyomi. The results:
+# Game 1. Tanigawa - Sato 0-1       Game 2. Sato - Tanigawa 0-1
+# Game 3. Tanigawa - Sato 1-0       Game 4. Sato - Tanigawa 1-0
+# Game 5. Tanigawa - Sato 1-0       Game 6. Sato - Tanigawa 1-0
+# Game 7. Sato - Tanigawa 0-1
+# Final score: Tanigawa - Sato   4-3
+# 
+#    Reijer Grimbergen <grimbergen@kunpv1.psych.kun.nl>
+#    Submitted 12-th October 1990.
+# 
+#    Erwin Unruh. Corrected 12-th November 1990.
+# 
+#    Pieter Stouten <stouten@embl.bitnet>
+#    Corrected and archived 14-th November 1990.
+#    Updated (added game 5) 6-th January 1991.
+# 
+# ---------------------------------------------------------------------------
+# 
+# 31-st Oi Title Match, 1-st game, July 12-th and 13-th 1990.
+# Black: Tanigawa, Oi; White: Sato, 5-dan
+# 
+1.P2f P8d 2.P2e P8e 3.G7h G3b 4.P2d Px2d 5.Rx2d P'2c 6.R2f S7b 7.P1f P1d 8.S3h
+P6d 9.P7f P8f 10.Px8f Rx8f 11.P'8g R8b 12.P3f P3d 13.S3g S6c 14.P3e Px3e 15.S4f
+S5d 16.K5h Bx8h+ 17.Sx8h S2b 18.P'3d G5b 19.G3h P4d 20.P7e K4b 21.Sx3e S4c
+22.N7g P'3c 23.Px3c+ Sx3c 24.P7d Px7d 25.P'7b Rx7b 26.B'8c R7c 27.B6a+ G5a
+28.N8e Gx6a 29.Nx7c+ Nx7c 30.R'8a S5b 31.Rx9a+ N6e 32.G4h B'3i 33.G6h P'3d
+34.S4f N'7f 35.G6i Nx8h+ 36.L'6c +N7h 37.Gx7h S'6i 38.Kx6i Bx4h+ 39.R2h B'5h
+40.K7i +B5i 41.Lx6a+ +B6i 0-1
+# 
+# Time used = Black 6.19, White 7.22
+# 
+# ---------------------------------------------------------------------------
+# 
+# 31-st Oi Title Match, 2-nd game, July 23-rd and 24-th 1990.
+# Black: Sato, 5-dan; White: Tanigawa, Oi
+# 
+1.P7f P8d 2.S6h P3d 3.S7g S6b 4.P5f S4b 5.S4h P5d 6.G4i-5h G3b 7.P6f K4a 8.G6g
+G5b 9.B7i S3c 10.P3f B3a 11.K6h P4d 12.K7h G5b-4c 13.K8h B6d 14.S3g P8e 15.G7h
+P7d 16.S4f K3a 17.N3g S5c 18.P1f P1d 19.P2f K2b 20.R5h B7c 21.P5e Px5e 22.Sx5e
+P'5d 23.S4f S6d 24.R3h S2d 25.L1g S5e 26.S5g N3c 27.P4f P3e 28.P2e Nx2e 29.Nx2e
+Sx2e 30.Px3e S2f 31.P6e Sx1g+ 32.P'5f +S2g 33.R3i N'8f 34.Px5e Nx7h+ 35.Kx7h
+P'3f 36.Px5d P3g+ 37.R5i L'8c 38.S5g-6h +P4h 39.R5g P8f 40.Px8f Lx8f 41.Sx8f
+Rx8f 42.P'8g S'6i 43.K8h R8b 44.P5c+ G'4g 45.+Px4c Gx5g 46.+Px3b Kx3b 47.G'7g
++P5h 48.Sx5g R'3h 49.S6h +Px6h 50.Gx6h Bx4f 51.P'5h Sx5h+ 52.L'3d K4c 53.L3c+
+K5c 54.S'4g +Sx6h 55.Sx3h +Sx7i 56.R'5f S'5e 57.Rx4f Sx4f 58.B'7a K5d 59.Bx8b+
+G'7h 60.Gx7h +Sx7h 61.Kx7h B'5f 62.K7g B6g+   0-1
+# 
+# Time used = Black: 7.59, White: 7.02
+# 
+# ---------------------------------------------------------------------------
+# 
+# 31-st Oi Title Match, 3-rd game, August 9-th and 10-th 1990.
+# Black: Tanigawa, Oi; White: Sato, 5-dan
+# 
+1.P7f P8d 2.P2f P8e 3.B7g P3d 4.S8h G3b 5.G7h Bx7g+ 6.Sx7g S2b 7.S3h S7b 8.P4f
+S3c 9.S4g P6d 10.G5h S6c 11.P3f P1d 12.P1f P7d 13.K6h N7c 14.P6f G6b 15.P2e R8a
+16.N3g K4b 17.S5f K3a 18.K7i S5d 19.K8h P6e 20.P3e P4d 21.P4e B'6d 22.R2g Px6f
+23.P2d Px2d 24.Px3d Sx3d 25.Px4d P8f 26.Sx8f P'3f 27.Rx2d S2c 28.Rx2c+ Gx2c
+29.P4c+ Sx4c 30.B'4e R'2h 31.Bx8a+ Rx5h+ 32.+Bx3f +Rx5g 33.P'4d G'6h
+34.R'2h Gx7h 35.Kx7h +Rx5f 36.G'4b Kx4b 37.Px4c+ K5a 38.S'5b Gx5b 39.+Px5b Kx5b
+40.S'4c   1-0
+# 
+# Time used = Black: 6.30, White:7.40
+# 
+# ---------------------------------------------------------------------------
+# 
+# 31-st Oi Title Match, 4-th game, August 23-rd and 24-th 1990.
+# Black: Sato, 5-dan; White: Tanigawa, Oi
+# 
+1.P7f P8d 2.S6h P3d 3.S7g S6b 4.P5f S4b 5.S4h P5d 6.G4i-5h G3b 7.P6f K4a 8.G6g
+P6d 9.P2f S6c 10.P2e P5e 11.Px5e Bx5e 12.G7h P7d 13.K6i S5d 14.P2d Px2d 15.Rx2d
+P'2c 16.R2h B2b 17.S5g S5c 18.S7g-6h G5b 19.K7i G6c 20.P3f P8e 21.B7g N7c
+22.P'5f P1d 23.P9f P9d 24.S4f S4d 25.P1f P'5e 26.Px5e S4dx5e 27.P'5f Sx4f
+28.Px4f P8f 29.Px8f P'8e 30.Px8e Nx8e 31.B8f P6e 32.P'8c R9b 33.S5g Px6f
+34.Gx6f P'6e 35.P'6d G6b 36.G5e Sx5e 37.Px5e Bx5e 38.P8b+ Rx8b 39.S'7a S'7g
+40.Nx7g Nx7g+ 41.Bx7g Bx7g+ 42.Gx7g G'8i 43.K6i R8h+ 44.Rx8h Gx8h 45.K5h R'2h
+46.N'4h P'5f 47.Sx6b+ Px5g+ 48.Kx5g K3a 49.S'4a B'6h 50.K5f Bx7g+ 51.Sx3b+
+Kx3b 52.S'4a Kx4a 53.G'4b   1-0
+# 
+# Time used = Black: 6.06, White:7.56
+# 
+# ---------------------------------------------------------------------------
+# 
+# 31-st Oi Title Match, 5-th game, August 30-th and 31-st 1990.
+# Black: Tanigawa, Oi; White: Sato, 5-dan
+# 
+1.P7f P8d 2.P2f P8e 3.B7g P3d 4.S8h G3b 5.G7h Bx7g+ 6.Sx7g S4b 7.S3h S7b
+8.P4f P6d 9.S4g S6c 10.G5h P1d 11.P1f P9d 12.P9f G5b 13.P3f K4a 14.S5f S5d
+15.K6h P4d 16.P6f P7d 17.K7i K3a 18.N3g N7c 19.P2e P6e 20.Px6e P7e 21.P2d
+Px2d 22.P'2e Px2e 23.Px7e Nx6e 24.Sx6e Sx6e 25.Rx2e B'4c 26.P'2b P'2d
+27.Px2a+ Kx2a 28.Rx2d P'2c 29.R2h P'7f 30.S6h S6f 31.N'5f P8f 32.Px8f P'8h
+33.Nx4d Px8i+ 34.K6i S'7g 35.Nx3b+ Bx3b 36.N'4d Sx7h+ 37.K5i N'2d 38.Nx3b+
+Kx3b 39.K4i N'4d 40.S5i N4dx3f 41.R2e +S6i 42.P'3c Sx3c 43.N4e N'4a 44.P'3g
++Sx5i 45.Gx5i P'4d 46.Px3f Px4e 47.B'6e S'5d 48.Bx5d Px5d 49.B'6d B'4g
+50.G4h Bx3f+ 51.G'3a K2b 52.Gx4a N'5c 53.S'3a K2a 54.P'2b K3b 55.Bx8b+ +Bx2e
+56.N'4d Sx4d 57.R'4b K3c 58.Rx4d+ Kx4d 59.N'5f   1-0
+# 
+# Time used = Black: 5.38, White: 7.59
+# 
+# ---------------------------------------------------------------------------
+# 
+# 31-st Oi Title Match, 6-th game, September 10-th and 11-th 1990.
+# Black: Sato, 5-dan; White: Tanigawa, Oi
+# 
+1.P7f P8d 2.S6h P3d 3.S7g S6b 4.P5f S4b 5.S4h P5d 6.G4i-5h G3b 7.P6f K4a 8.G6g
+G5b 9.B7i S6b-5c 10.P2f P6d 11.P2e R6b 12.G7h P6e 13.Px6e Rx6e 14.P'6f R6a
+15.P3f S6d 16.P2d Px2d 17.Bx2d P'2c 18.B4f P4d 19.B3g P4e 20.K6i K3a 21.S5g S4c
+22.K7i P9d 23.P9f G5b-4b 24.P1f P5e 25.P4f Px5f 26.Sx5f Px4f 27.Bx4f P'5e 28.S4g
+P'4e 29.B6h P'6e 30.P'2d Px2d 31.P'2e Px2e 32.P'2d B4d 33.Px6e Sx6e 34.P'6f
+S6e-5d 35.Rx2e P'2b 36.N3g N9c 37.R2h N8e 38.P'4f Nx7g+ 39.G6gx7g Px4f 40.Sx4f
+S'5f 41.P'4e B5c 42.K8h P'6e 43.Px6e P'6f 44.Gx6f S5dx6e 45.Gx6e Rx6e 46.P'6f
+R6c 47.Sx5e G'6g 48.P'5d Gx7h 49.Kx7h G'6g 50.K8h Gx6h 51.Px5c+ Rx5c 52.P'5d
+Sx5d 53.S'4d Sx5e 54.Sx5c+ B'7i 55.K9h Gx5c 56.B'8f P'5b 57.R'6a P'4a 58.Bx6h
+Bx6h+ 59.Rx6h B'4f 60.G'5a K4b 61.Gx4a K3c 62.N'2e Kx2d 63.G'1e K2c 64.P'2d
+K1b 65.G4b Bx6h+ 66.Rx2a+   1-0
+# 
+# Time used = Black: 6.31, White:7.59
+# 
+# ---------------------------------------------------------------------------
+# 
+# 31-st Oi Title Match, 7-th game, September 20-th and 21-st 1990.
+# Black: Sato, 5-dan; White: Tanigawa, Oi
+# 
+1.P7f P8d 2.S6h P3d 3.S7g S6b 4.P5f G3b 5.S4h K4a 6.G4i-5h P6d 7.G7h B3c 8.K6i
+S2b 9.P6f S6c 10.G5h-6g B5a 11.P3f P7d 12.B7i B7c 13.S3g S3c 14.S4f P4d 15.N3g
+P8e 16.P2f S5d 17.P5e S4c 18.B6h G5b 19.K7i B8d 20.R3h S2d 21.P1f P1d 22.K8h N7c
+23.N2e P6e 24.Px6e Nx6e 25.S6f P'6d 26.P9f P9d 27.L1g G5b-4b 28.R1h K3a 29.P3e
+Px3e 30.P1e Px1e 31.P'1c Lx1c 32.Sx3e Sx2e 33.Px2e P'3d 34.S4f P9e 35.Px9e P'9g
+36.Lx9g P4e 37.Sx4e Bx6f 38.Gx6f S'5g 39.G6f-6g Sx6h+ 40.Rx6h P'9f 41.Lx9f N'8d
+42.K9h Nx9f 43.B'7c R9b 44.S'9g P7e 45.Sx9f Px7f 46.Bx6d+ P7g+ 47.Nx7g Nx7g+
+48.G6gx7g P'7f 49.Gx7f N'8d 50.+B7c Rx9e 51.R6a+ P'4a 52.Sx9e Lx9e 53.K8i Nx7f
+54.+Bx9e S'9g 55.S'7g B'5g 56.P'9h L'8h 57.Sx8h Sx8h+ 58.Gx8h S'9g   0-1
+# 
+# Time used = Black: 6.29, White:7.59
+# 
