@@ -6,5 +6,5 @@
  *
  */
 char version[] = "1.2";
-char patchlevel[] = "01";
+char patchlevel[] = "02";
 

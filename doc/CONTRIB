@@ -1,0 +1,6 @@
+
+Sep 12, 1994
+   Hiroshi Tsuda: some openings in contrib/tsuda.tbk
+      (you can add these openings by appending to gnushogi.tbk before
+       creating the binary book file)
+

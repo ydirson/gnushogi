@@ -243,8 +243,12 @@ VerifyMove (char *s, VerifyMove_mode iop, short unsigned int *mv)
 	  UnmakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
 #ifdef NONDSP
 /* Illegal move in check */
-	  printz (CP[77],mvstr[0]);
-	  printz ("\n");
+#ifdef XSHOGI
+	  printz ("Illegal move (in check) %s",mvstr[0]);
+#else
+	  printz (CP[77], mvstr[0]);
+#endif
+          printz ("\n");
 #else
 /* Illegal move in check */
 	  sprintf (buffer, CP[77], s);
@@ -285,7 +289,11 @@ VerifyMove (char *s, VerifyMove_mode iop, short unsigned int *mv)
     }
 #ifdef NONDSP
 /* Illegal move */
+#ifdef XSHOGI
+  printz ("Illegal move (no match) %s\n", s);
+#else
   printz (CP[75], s);
+#endif
 #ifdef DEBUG8
   if (1)
     {
@@ -1768,7 +1776,7 @@ Sdepth = 0;
 	}
 #if !defined XSHOGI
       else if (strcmp (s, CP[5]) == 0)	        /*moves*/
-	{
+	{ short temp;
 #ifdef DEBUG_EVAL
 	  debug_eval = ((debug_eval_file = fopen(EVALFILE,"w")) != NULL);
 #endif
@@ -1780,7 +1788,10 @@ Sdepth = 0;
 #endif
 	  SwagHt = 0;
 	  ShowMessage (CP[108]);  /*test movelist*/
+          temp = generate_move_flags;
+          generate_move_flags = true;
 	  TestSpeed (MoveList, 1);
+          generate_move_flags = temp;
 	  ShowMessage (CP[107]);  /*test capturelist*/
 	  TestSpeed (CaptureList, 1);
 	  ShowMessage (CP[85]);   /*test score position*/

@@ -29,8 +29,13 @@
 # sizetest   shows memory usage of main data structures
 #
 
+# change this if you need shorter filenames
+GNUSHOGI= gnushogi
+GNUSHOGIR= gnushogir
+GNUSHOGIX= gnushogix
+
 # The version number of this GNU Shogi and XShogi release
-VERS=	1.2p01
+VERS=	1.2p02
 
 # Relevant file areas.
 DIST=   ../README-$(VERS) ../doc ../misc ../src
@@ -46,6 +51,8 @@ PROGS=gnushogi-$(VERS)
 
 # For _pow external 
 LIBS= -lm
+# For _pow and _conio_kbhit external
+#LIBS= -lm -lpc
 
 # Change these to something less transitory, like /usr/games, and then
 # compile. Ask your system admin / unix guru to put gnushogi.{hsh,lng,tbk}
@@ -84,8 +91,13 @@ CC=	gcc -W -fsigned-char $(OPT) $(GENOPT)
 #CFLAGS= -g -finline-functions -fstrength-reduce -DOLDTIME -DNOFIONREAD # gnu cc 1.40 on sun4
 #CFLAGS= -O2 -funroll-loops -traditional-cpp -I/usr/local/include/ansi # gnu cc  2.00 on apollo (capella)
 #CFLAGS= -O2 -funroll-loops -traditional-cpp -DNO_STRING_INCLUDE -DNOFIONREAD # gnu cc  2.00 (hawk)
+#CFLAGS= -O2 -funroll-loops -DSEVENBIT # djgpp
 #CFLAGS= -g -funroll-loops -traditional-cpp # gnu cc 2.00 on SunOS with debug
 CFLAGS= -O2 -funroll-loops -traditional-cpp # gnu cc  2.00 on SunOS
+
+# flags for DJGPP package
+#COFF2EXE= coff2exe $(GNUSHOGI)
+#COFF2EXER= coff2exe $(GNUSHOGIR)
 
 # Compression program for building distribution files
 COMPRESS= gzip
@@ -146,7 +158,7 @@ OPT= -DVERYBUGGY -DQUIETBACKGROUND -DHARDTIMELIMIT -DHASGETTIMEOFDAY -DCACHE -DN
 #OPT= -DEASY_OPENINGS -DSMALL_MEMORY -DSLOW_CPU -DSAVE_PTYPE_DISTDATA -DSAVE_NEXTPOS -DVERYBUGGY -DQUIETBACKGROUND -DHARDTIMELIMIT -DHASGETTIMEOFDAY -DNULLMOVE -DCACHE -DHISTORY # -DSAVE_SSCORE -DEXACTHISTORY -DSEMIQUIETBOOKGEN 
 #OPT= -DSMALL_MEMORY -DVERY_SLOW_CPU -DSAVE_PTYPE_DISTDATA -DSAVE_NEXTPOS -DVERYBUGGY -DQUIETBACKGROUND -DHARDTIMELIMIT -DHASGETTIMEOFDAY -DNULLMOVE -DCACHE -DHISTORY # -DSAVE_SSCORE -DEXACTHISTORY -DSEMIQUIETBOOKGEN 
 
-# options for genmoves.c in order to support move ordering at cost of speed
+# options for genmove.c in order to support move ordering at cost of speed
 # -DTESUJIBONUS   add bonus to a move that semms to be a tesuji
 # -DFIELDBONUS    add bonus to regular moves
 # -DDROPBONUS     add bonus to drops
@@ -180,28 +192,30 @@ LANG= -DLANGFILE=\"../misc/gnushogi.lng\"
 # patterns may be described in order to support the correct order of moves.
 PATTERN= -DPATTERNFILE=\"../misc/gnushogi.pat\"
 
-all : gnushogi # gnushogix gnushogir sizetest pat2inc gnuan 
+all : $(GNUSHOGI) $(GNUSHOGIX) # $(GNUSHOGIR) sizetest pat2inc gnuan 
 
-gnushogi: mainN.o globals.o bookN.o genmovesN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrolN.o dspcomN.o uxdsp.o
-	$(CC) $(CFLAGS) -o gnushogi mainN.o globals.o bookN.o genmovesN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrolN.o dspcomN.o uxdsp.o $(LCURSES) $(LIBS)
+$(GNUSHOGI): mainN.o globals.o bookN.o genmoveN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrlN.o dspcomN.o uxdsp.o
+	$(CC) $(CFLAGS) -o $(GNUSHOGI) mainN.o globals.o bookN.o genmoveN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrlN.o dspcomN.o uxdsp.o $(LCURSES) $(LIBS)
+	$(COFF2EXE)
 
-gnushogix: mainX.o globals.o bookX.o genmovesX.o patternX.o ataksN.o utilX.o evalX.o initX.o searchX.o tcontrolN.o dspcomX.o nondspX.o
-	$(CC) $(CFLAGS) -o gnushogix mainX.o globals.o bookX.o genmovesX.o patternX.o ataksN.o utilX.o evalX.o initX.o searchX.o tcontrolN.o dspcomX.o nondspX.o $(LIBS)
+$(GNUSHOGIX): mainX.o globals.o bookX.o genmoveX.o patternX.o ataksN.o utilX.o evalX.o initX.o searchX.o tcontrlN.o dspcomX.o nondspX.o
+	$(CC) $(CFLAGS) -o $(GNUSHOGIX) mainX.o globals.o bookX.o genmoveX.o patternX.o ataksN.o utilX.o evalX.o initX.o searchX.o tcontrlN.o dspcomX.o nondspX.o $(LIBS)
 
-gnushogir: mainN.o globals.o bookN.o genmovesR.o patternR.o ataksR.o utilR.o evalR.o initR.o searchR.o tcontrolN.o dspcomR.o nondspR.o
-	$(CC) $(CFLAGS) -o gnushogir mainN.o globals.o bookN.o genmovesR.o patternR.o ataksR.o utilR.o evalR.o initR.o searchR.o tcontrolN.o dspcomR.o nondspR.o $(LIBS)
+$(GNUSHOGIR): mainN.o globals.o bookN.o genmoveR.o patternR.o ataksR.o utilR.o evalR.o initR.o searchR.o tcontrlN.o dspcomR.o nondspR.o
+	$(CC) $(CFLAGS) -o $(GNUSHOGIR) mainN.o globals.o bookN.o genmoveR.o patternR.o ataksR.o utilR.o evalR.o initR.o searchR.o tcontrlN.o dspcomR.o nondspR.o $(LIBS)
+	$(COFF2EXER)
 
-Dgnushogir: mainDR.o globals.o bookDR.o genmovesDR.o patternDR.o ataksDR.o utilDR.o evalDR.o initDR.o searchDR.o tcontrolDR.o dspcomDR.o nondspDR.o
-	$(CC) $(DEBUG) $(CFLAGS) -o Dgnushogir mainDR.o globals.o bookDR.o genmovesDR.o patternDR.o ataksDR.o utilDR.o evalDR.o initDR.o searchDR.o tcontrolDR.o dspcomDR.o nondspDR.o $(LIBS) $(LIBS)
+D$(GNUSHOGIR): mainDR.o globals.o bookDR.o genmoveDR.o patternDR.o ataksDR.o utilDR.o evalDR.o initDR.o searchDR.o tcontrlDR.o dspcomDR.o nondspDR.o
+	$(CC) $(DEBUG) $(CFLAGS) -o D$(GNUSHOGIR) mainDR.o globals.o bookDR.o genmoveDR.o patternDR.o ataksDR.o utilDR.o evalDR.o initDR.o searchDR.o tcontrlDR.o dspcomDR.o nondspDR.o $(LIBS) $(LIBS)
 
-gnuan: mainN.o globals.o bookX.o genmovesN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrolN.o gnuan.o
-	$(CC) $(CFLAGS) -o gnuan mainN.o globals.o bookX.o genmovesN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrolN.o gnuan.o $(LIBS)
+gnuan: mainN.o globals.o bookX.o genmoveN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrlN.o gnuan.o
+	$(CC) $(CFLAGS) -o gnuan mainN.o globals.o bookX.o genmoveN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrlN.o gnuan.o $(LIBS)
 
 gdxstats: gdxstats.o
 	$(CC) $(CFLAGS) -o gdxstats gdxstats.o
 
-pat2inc: nondspDR.o dspcomDR.o globals.o bookDR.o genmovesDR.o patternP.o ataksDR.o utilDR.o evalDR.o initDR.o searchDR.o tcontrolDR.o pat2inc.o
-	$(CC) $(CFLAGS) -o pat2inc patternP.o globals.o bookDR.o genmovesDR.o ataksDR.o utilDR.o evalDR.o searchDR.o tcontrolDR.o initDR.o nondspDR.o dspcomDR.o pat2inc.o $(LIBS)
+pat2inc: nondspDR.o dspcomDR.o globals.o bookDR.o genmoveDR.o patternP.o ataksDR.o utilDR.o evalDR.o initDR.o searchDR.o tcontrlDR.o pat2inc.o
+	$(CC) $(CFLAGS) -o pat2inc patternP.o globals.o bookDR.o genmoveDR.o ataksDR.o utilDR.o evalDR.o searchDR.o tcontrlDR.o initDR.o nondspDR.o dspcomDR.o pat2inc.o $(LIBS)
 
 sizetest: sizetest.o 
 	$(CC) $(CFLAGS) -o sizetest sizetest.o $(LIBS)
@@ -227,22 +241,22 @@ mainDR.o: main.c gnushogi.h version.h
 	$(CC) $(DEBUG) $(CFLAGS) $(BINBOOK) $(HASH) -c main.c
 	mv main.o mainDR.o
 
-genmovesN.o: genmoves.c gnushogi.h version.h
-	$(CC) $(CFLAGS) $(HASH) -c genmoves.c
-	mv genmoves.o genmovesN.o
+genmoveN.o: genmove.c gnushogi.h version.h
+	$(CC) $(CFLAGS) $(HASH) -c genmove.c
+	mv genmove.o genmoveN.o
 
-genmovesR.o: genmoves.c gnushogi.h version.h
-	$(CC) -DNONDSP -DDEBUG_EVAL $(CFLAGS) $(HASH) -c genmoves.c
-	mv genmoves.o genmovesR.o
+genmoveR.o: genmove.c gnushogi.h version.h
+	$(CC) -DNONDSP -DDEBUG_EVAL $(CFLAGS) $(HASH) -c genmove.c
+	mv genmove.o genmoveR.o
 
-genmovesDR.o: genmoves.c gnushogi.h version.h
-	$(CC) $(DEBUG) $(CFLAGS) $(HASH) -c genmoves.c
-	mv genmoves.o genmovesDR.o
+genmoveDR.o: genmove.c gnushogi.h version.h
+	$(CC) $(DEBUG) $(CFLAGS) $(HASH) -c genmove.c
+	mv genmove.o genmoveDR.o
 
-genmovesX.o: genmoves.c gnushogi.h version.h
+genmoveX.o: genmove.c gnushogi.h version.h
 	$(CC) $(CFLAGS) $(HASH) $(XSHOGI) \
-		-c genmoves.c
-	mv genmoves.o  genmovesX.o
+		-c genmove.c
+	mv genmove.o  genmoveX.o
 
 bookN.o: book.c gnushogi.h version.h 
 	$(CC) -DNONDSP $(CFLAGS) $(HASH) $(TEXTBOOK) $(BINBOOK) -c book.c 
@@ -358,13 +372,13 @@ searchDR.o: search.c gnushogi.h version.h
 	$(CC) $(DEBUG) $(CFLAGS) $(HASH) -c search.c
 	mv search.o searchDR.o
 
-tcontrolN.o: tcontrol.c gnushogi.h version.h 
-	$(CC) $(CFLAGS) -c tcontrol.c
-	mv tcontrol.o tcontrolN.o
+tcontrlN.o: tcontrl.c gnushogi.h version.h 
+	$(CC) $(CFLAGS) -c tcontrl.c
+	mv tcontrl.o tcontrlN.o
 
-tcontrolDR.o: tcontrol.c gnushogi.h version.h 
-	$(CC) $(DEBUG) $(CFLAGS) -c tcontrol.c
-	mv tcontrol.o tcontrolDR.o
+tcontrlDR.o: tcontrl.c gnushogi.h version.h 
+	$(CC) $(DEBUG) $(CFLAGS) -c tcontrl.c
+	mv tcontrl.o tcontrlDR.o
 
 uxdsp.o: uxdsp.c gnushogi.h version.h
 	$(CC) $(CFLAGS) $(HASH) -c uxdsp.c
@@ -403,12 +417,12 @@ dspcomDR.o: dspcom.c gnushogi.h version.h
 		-c dspcom.c 
 	mv dspcom.o dspcomDR.o
 
-gnushogi.bbk: gnushogir
+gnushogi.bbk: $(GNUSHOGIR)
 	-rm ./gnushogi.bbk
 	echo quit >test
-	cat ../misc/gnushogi.tbk > /tmp/t
-	cat test| ./gnushogir -b /tmp/t -B ./gnushogi.bbk -S 6000 -P 40 3 0
-	rm test /tmp/t
+	cat ../misc/gnushogi.tbk > _tmp_t
+	cat test| $(GNUSHOGIR) -b _tmp_t -B ./gnushogi.bbk -S 8000 -P 40 3 0
+	rm test _tmp_t
 
 
 distribution:

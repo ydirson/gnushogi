@@ -717,7 +717,7 @@ if ( debuglevel & (512 | 1024) ) {
   if (flag.mate)
     hint = 0;
   Sdepth = 0;
-                 
+  
 }
 
                  

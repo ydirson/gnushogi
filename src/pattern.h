@@ -53,7 +53,7 @@
   struct Pattern_rec {
     small_short visited;
     small_short distance[2];
-    small_short reachedGameCnt[2];
+    short reachedGameCnt[2];
     short first_link;
     short first_field;
     short next_pattern;

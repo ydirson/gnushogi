@@ -249,7 +249,11 @@ BVerifyMove (char *s, short unsigned int *mv, int moveno)
 		UnmakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
 		/* Illegal move in check */
 #if !defined QUIETBOOKGEN
+#ifdef XSHOGI
+		printf ("Illegal move (in check)");
+#else
 		printf (CP[77]);
+#endif
 		printf ("\n");
 		bkdisplay (s, cnt, moveno);
 #endif
@@ -267,7 +271,11 @@ BVerifyMove (char *s, short unsigned int *mv, int moveno)
       }
     /* Illegal move */
 #if !defined QUIETBOOKGEN
+#ifdef XSHOGI
+    printf ("Illegal move (no match) %s\n", s);
+#else
     printf (CP[75], s);
+#endif
     bkdisplay (s, cnt, moveno);
 #endif
     return (false);

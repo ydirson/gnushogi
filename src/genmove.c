@@ -1103,7 +1103,7 @@ MoveList (short int side, register short int ply,
   else
     InCheck = (board[sqking] == king) ? SqAtakd(sqking,xside, &blockable) : false;
 
-  GenerateAllMoves = (in_check == -2);
+  GenerateAllMoves = (in_check == -2) || generate_move_flags;
 
 #ifdef DEBUG_EVAL
   if ( debug_eval )

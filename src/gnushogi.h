@@ -25,6 +25,8 @@
  */
 
 
+
+
 #if defined THINK_C
 
 /* OPT */
@@ -77,7 +79,7 @@
 #define small_short char
 #define small_ushort unsigned char
 
-#elif defined MSDOS
+#elif defined(MSDOS) && !defined(__GO32__)
 
 /* OPT */
 /* #define XSHOGI */
@@ -134,8 +136,7 @@
 #endif
 
 
-
-#ifdef MSDOS
+#if defined(MSDOS) && !defined(__GO32__)
 #define HEAP_ALLOC(n) _fmalloc(n)        
 #define HEAP_FREE(p) _ffree(p)
 #else        
@@ -143,6 +144,7 @@
 #define HEAP_ALLOC(n) malloc(n)        
 #define HEAP_FREE(p) free(p)
 #endif  
+
 
 
 
@@ -211,7 +213,7 @@ extern char far *Lang;
 #ifdef THINK_C
 #define RWA_ACC "r+b"
 #define WA_ACC "w+b"
-#elif defined MSDOS
+#elif defined(MSDOS) && !defined(__GO32__)
 #include <time.h>
 #include <malloc.h>
 #define malloc(size) farmalloc(size)
@@ -443,7 +445,7 @@ extern char far *Lang;
 #define MINDEPTH 2              /* min search depth =1 (no hint), >1 hint */
 #define MAXMOVES 300            /* max number of half moves in a game */
 #define CPSIZE 235              /* size of lang file max */
-#if defined THINK_C || defined MSDOS || defined SMALL_MEMORY
+#if defined THINK_C || defined(MSDOS) && !defined(__GO32__) || defined SMALL_MEMORY
 #if defined SAVE_SSCORE
 #define ETABLE (1<<10)		/* static eval cache */
 #else
@@ -562,7 +564,7 @@ extern char far *Lang;
 #define MAXrehash (7)
 
 /************************* parameters for Opening Book *********************************/
-#define BOOKSIZE 6000          /* Number of unique position/move combinations allowed */
+#define BOOKSIZE 8000          /* Number of unique position/move combinations allowed */
 #define BOOKMAXPLY 40           /* Max plys to keep in book database */
 #define BOOKFAIL (BOOKMAXPLY/2) /* if no book move found for BOOKFAIL turns stop using book */
 #define BOOKPOCKET 64
@@ -928,8 +930,12 @@ typedef struct hashval drop_hashcode_array[2][NO_PIECES][NO_SQUARES];
   hashkey ^= (*drop_hashcode)[side][piece][count].key;\
 }
 
+
+
+
      extern short rpthash[2][256];
      extern char *DRAW;
+
 
 #define row(a) ((a) / 9)
 #define column(a) ((a) % 9)
@@ -939,6 +945,9 @@ typedef struct hashval drop_hashcode_array[2][NO_PIECES][NO_SQUARES];
 /* init external functions */
      extern void InitConst (char *lang); /* init.c */
      extern int Initialize_data (void); /* init.c */
+     extern void Free_data (void); /* init.c */
+     extern int Lock_data (void); /* init.c */
+     extern void Unlock_data (void); /* init.c */
      extern void Initialize_dist (void); /* init.c */
      extern void Initialize_eval (void); /* eval.c */
      extern void NewGame (void);

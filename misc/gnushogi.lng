@@ -27,7 +27,7 @@
 /* 027:eng: */ "10.    1 move  in  30 minutes",
 /* 028:eng: */ "#   Clear board\n",
 /* 029:eng: */ ".   Exit to main\n",
-/* 030:eng: */ "/home/staff/mutz/gnu/gnuchess-4.0/misc/gnushogi.book",
+/* 030:eng: */ "gnushogi.tbk",
 /* 031:eng: */ "Abort? ",
 /* 032:eng: */ "Ambiguous Move %s!",
 /* 033:eng: */ "Awindow",

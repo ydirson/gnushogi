@@ -49,7 +49,7 @@ unsigned int ttbllimit;
 #ifdef THINK_C                
 #define abs(a) (((a)<0)?-(a):(a))
 #endif
-#ifndef MSDOS
+#if !defined(MSDOS) || defined(__GO32__)
 #define max(a,b) (((a)<(b))?(b):(a))
 #endif
 #define odd(a) ((a) & 1)
@@ -647,7 +647,7 @@ Initialize_data (void)
 
   n = sizeof(struct leaf) * (size_t)TREE;
   Tree = HEAP_ALLOC(n);
-  if ( !Tree ) {
+  if ( ! Tree ) {
     sprintf(buffer,"Cannot allocate %ld bytes for search tree",n);
     ShowMessage (buffer);
     return(1);
@@ -702,6 +702,7 @@ Initialize_data (void)
         sprintf(buffer,"cannot allocate %ld space for nextdir %d",(long)(n),i);
         ShowMessage (buffer);
       }
+      nextdir[i] = NULL;
       use_nextpos = false;
     }
     nextpos[i] = use_nextpos ? HEAP_ALLOC(n) : NULL;
@@ -760,7 +761,7 @@ Initialize_data (void)
 #if defined CACHE
   n = sizeof(struct etable) * (size_t)ETABLE;
   for ( i=0; i<2; i++ ) {
-    etab[i] = use_etable ? HEAP_ALLOC(n) : NULL;
+    etab[i] = use_etable ? HEAP_ALLOC(n) : 0;
     if ( !etab[i] ) {
       sprintf(buffer,"Cannot allocate %ld bytes for cache table i",n,i);
       ShowMessage (buffer);
@@ -786,15 +787,15 @@ Initialize_data (void)
   while ( doit && ttblsize > MINTTABLE ) {
 #ifdef DEBUG
     printf("try to allocate %d bytes for transposition table\n",(long)2*n);
-#endif 
-    ttable[0] = HEAP_ALLOC(n); 
-    ttable[1] = ttable[0] ? HEAP_ALLOC(n) : NULL; 
+#endif
+    ttable[0] = HEAP_ALLOC(n);
+    ttable[1] = ttable[0] ? HEAP_ALLOC(n) : NULL;
     if ( !ttable[0] || !ttable[1] ) {
       if ( !ttable[0] ) {
-	HEAP_FREE(ttable[0]);
+        HEAP_FREE(ttable[0]);
       }
       if ( !ttable[1] ) {
-	HEAP_FREE(ttable[1]);
+        HEAP_FREE(ttable[1]);
       }
       ttblsize = ttblsize >> 1;
       n = sizeof(struct hashentry)*(ttblsize+rehash);
@@ -839,7 +840,7 @@ Initialize_data (void)
 #if !defined SAVE_PTYPE_DISTDATA
   n = sizeof(distdata_array);
   for ( i=0; i<NO_PTYPE_PIECES; i++ ) {
-    ptype_distdata[i] = use_ptype_distdata ? HEAP_ALLOC(n) : NULL;
+    ptype_distdata[i] = use_ptype_distdata ? HEAP_ALLOC(n) : 0;
     if ( !ptype_distdata[i] ) {
       sprintf(buffer,"cannot allocate %ld bytes for ptype_distdata %d...",(long)n,i);
       use_ptype_distdata = false;

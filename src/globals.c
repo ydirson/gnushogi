@@ -126,6 +126,7 @@ unsigned int starttime;
 int timeopp[MINGAMEIN], timecomp[MINGAMEIN];
 int compptr, oppptr;
 
+
 struct leaf far *Tree = NULL;
 
 hashcode_array far *hashcode = NULL;

@@ -1,5 +1,5 @@
 /*
- * gdxstats.c - C source for GNU SHOGI
+ * gdxstat.c - C source for GNU SHOGI
  *
  * Copyright (c) 1993, 1994 Matthias Mutz
  *
