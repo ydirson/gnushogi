@@ -1,7 +1,7 @@
 /*
  * util.c - C source for GNU SHOGI
  *
- * Copyright (c) 1993 Matthias Mutz
+ * Copyright (c) 1993, 1994 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -24,6 +24,7 @@
  * along with GNU Shogi; see the file COPYING.  If not, write to
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
+
 #include "gnushogi.h"
 #ifdef DEBUG
 #include <assert.h>
@@ -31,7 +32,7 @@
 unsigned int TTadd = 0;
 short int recycle; 
 short int ISZERO = 1;
-extern char mvstr[4][6];
+
 
 int
 parse (FILE * fd, short unsigned int *mv, short int side, char *opening)
@@ -110,7 +111,7 @@ CB (short sq)
 
       
 
-#if defined DEBUG && defined CACHE                
+#if defined DEBUG               
                           
 inline
 char
@@ -164,6 +165,18 @@ ShowBD(unsigned char bd[])
 
 
 
+#ifdef DEBUG_TTABLE
+
+void ShowPTBL (struct hashentry *ptbl)
+{
+  movealgbr(ptbl->mv,mvstr[0]);
+  printf("hk=%lx hb=%lx ptbl=%lx bd=%lx mv=%s d=%d f=%d s=%d\n",
+  		hashkey, hashbd, ptbl, 
+  		ptbl->hashbd, mvstr[0], ptbl->depth, ptbl->flags, ptbl->score);
+}
+#endif
+
+
 int
 ProbeTTable (short int side,
 	     short int depth,
@@ -177,8 +190,12 @@ ProbeTTable (short int side,
  */
 
 {
-  register struct hashentry *ptbl;
+  register struct hashentry far *ptbl;
   register /*unsigned*/ short i = 0;  /*to match new type of rehash --tpm*/
+
+#ifdef DEBUG_TTABLE
+      /* printf("FOR hk=%lx hb=%lx d=%d\n",hashkey,hashbd,depth); */
+#endif 
 
   ptbl = &ttable[side][hashkey % ttblsize];
 
@@ -194,7 +211,7 @@ ProbeTTable (short int side,
     }
 
   /* rehash max rehash times */
-  if (((ptbl->depth) >= (short) depth))
+  if (((short)(ptbl->depth) >= (short) depth))
     {
 #ifdef HASHTEST
       for (i = 0; i < PTBLBDSIZE; i++)
@@ -232,6 +249,9 @@ ProbeTTable (short int side,
           if (ptbl->score > *alpha)
             *alpha = ptbl->score - 1;
         }
+#ifdef DEBUG_TTABLE
+      /* printf("GET "); ShowPTBL(ptbl); */
+#endif
       return (true);
     }
   return (false);
@@ -252,7 +272,7 @@ PutInTTable (short int side,
  */
 
 {
-  register struct hashentry *ptbl;
+  register struct hashentry far *ptbl;
   register /*unsigned*/ short i = 0;  /*to match new type of rehash --tpm*/
 
   ptbl = &ttable[side][hashkey % ttblsize];
@@ -308,19 +328,23 @@ PutInTTable (short int side,
     }
 #endif /* HASHTEST */
 
+#ifdef DEBUG_TTABLE
+      /* printf("PUT "); ShowPTBL(ptbl); */
+#endif
+
   return true;
 }
 
                                   
 #if ttblsz
-static struct hashentry *ttageb, *ttagew;
+static struct hashentry far *ttageb, *ttagew;
 #endif
 
 void
 ZeroTTable (void)
 {
 #ifdef notdef
-   register struct hashentry *w, *b;
+   register struct hashentry far *w, *b;
    for ( b=ttable[black], w=ttable[white]; b < &ttable[black][ttblsize]; w++, b++)
      { 
         w->depth = 0; 
@@ -335,16 +359,14 @@ ZeroTTable (void)
        (ttable[white])[a].depth = 0;
      }
 #endif
-#if defined THINK_C || defined MSDOS
-   memset ((char *) ttable[black], 0, (size_t)(ttblsize+rehash));
-   memset ((char *) ttable[white], 0, (size_t)(ttblsize+rehash));
-#else
-   bzero(ttable[black],(unsigned)(ttblsize+rehash));
-   bzero(ttable[white],(unsigned)(ttblsize+rehash));
+   array_zero(ttable[black],(ttblsize+rehash));
+   array_zero(ttable[white],(ttblsize+rehash));
+#ifdef DEBUG_TTABLE
+   printf("TTable zeroed\n");
 #endif
 #ifdef CACHE
-   memset ((char *) etab[0], 0, sizeof(struct etable)*(size_t)ETABLE);
-   memset ((char *) etab[1], 0, sizeof(struct etable)*(size_t)ETABLE);
+   array_zero(etab[0],sizeof(struct etable)*(size_t)ETABLE);
+   array_zero(etab[1],sizeof(struct etable)*(size_t)ETABLE);
 #endif
    TTadd = 0; 
 }
@@ -494,18 +516,11 @@ PutInFTable (short int side,
 void
 ZeroRPT (void)
 {
-#ifdef NOMEMSET
-  register int side, i;
-  for (side = black; side <= white; side++)
-    for (i = 0; i < 256;)
-      rpthash[side][i++] = 0;
-#else 
   if ( ISZERO )
     {
-      memset ((char *) rpthash, 0, sizeof (rpthash));
+      array_zero (rpthash, sizeof (rpthash));
       ISZERO = 0;
     }
-#endif
 }
 
 
@@ -521,7 +536,7 @@ PutInEETable (short int side,int score)
  */
 
 {
-    register struct etable *ptbl;
+    register struct etable far *ptbl;
     ptbl = &(*etab[side])[hashkey % (ETABLE)];
     ptbl->ehashbd = hashbd;
     ptbl->escore[black] = pscore[black];
@@ -530,7 +545,7 @@ PutInEETable (short int side,int score)
     ptbl->hung[white] = hung[white];
     ptbl->score = score;
 #if !defined SAVE_SSCORE
-    bcopy (svalue, &(ptbl->sscore), sizeof (svalue));
+    array_copy (svalue, &(ptbl->sscore), sizeof (svalue));
 #endif
 #if !defined BAREBONES
     EADD++;
@@ -544,7 +559,7 @@ CheckEETable (short int side)
 
 /* Get an evaluation from the transposition table */
 {
-    register struct etable *ptbl;
+    register struct etable far *ptbl;
     ptbl = &(*etab[side])[hashkey % (ETABLE)];
     if (hashbd == ptbl->ehashbd) 
       {
@@ -559,16 +574,16 @@ ProbeEETable (short int side, short int *score)
 
 /* Get an evaluation from the transposition table */
 {
-    register struct etable *ptbl;
+    register struct etable far *ptbl;
     ptbl = &(*etab[side])[hashkey % (ETABLE)];
     if (hashbd == ptbl->ehashbd)
       {
 	  pscore[black] = ptbl->escore[black];
 	  pscore[white] = ptbl->escore[white];
 #if defined SAVE_SSCORE
-   	  memset ((char *) svalue, 0, sizeof(svalue));
+   	  array_zero (svalue, sizeof(svalue));
 #else
-	  bcopy (&(ptbl->sscore), svalue, sizeof (svalue));
+	  array_copy (&(ptbl->sscore), svalue, sizeof (svalue));
 #endif
 	  *score = ptbl->score;
           hung[black] = ptbl->hung[black];

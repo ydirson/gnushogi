@@ -1,7 +1,7 @@
 /*
  * uxdsp.c - ALPHA interface for GNU SHOGI
  *
- * Copyright (c) 1993 Matthias Mutz
+ * Copyright (c) 1993, 1994 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -24,7 +24,6 @@
  * along with GNU Shogi; see the file COPYING.  If not, write to
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
 
 #include <ctype.h>
 #include <signal.h>
@@ -58,11 +57,9 @@ static void param (short n);
 
 #endif /* MSDOS */
 
-int mycnt1, mycnt2;
-
 #include "gnushogi.h"
 
-extern short int pscore[2];
+int mycnt1, mycnt2;
 
 #define TAB (58)
 
@@ -72,7 +69,6 @@ extern short int pscore[2];
 unsigned short int MV[MAXDEPTH];
 int MSCORE;
 char *DRAW;
-extern char mvstr[4][6];
 
 void TerminateSearch (int), Die (int);
 
@@ -91,8 +87,10 @@ Initialize (void)
 
 void
 ExitChess (void)
-{
+{ 
+#ifndef NOLIST
   ListGame ();
+#endif
   gotoXY (1, 24);
 #if !defined MSDOS && !defined THINK_C
   refresh();
@@ -134,6 +132,7 @@ TerminateSearch (int Sig)
 #endif /* MSDOS */
   if (!flag.timeout)
     flag.musttimeout = true;
+  ShowMessage("Terminate Search");
   flag.bothsides = false;
   signal (SIGINT, Die);
 #if !defined MSDOS && !defined THINK_C
@@ -353,7 +352,16 @@ void
 ShowDepth (char ch)
 {
   gotoXY (TAB, 4);
-  printz (CP[53], Sdepth, ch);	/*Depth= %d%c*/
+  printz ("Depth= %2d%c", Sdepth, ch);	/*Depth= %d%c*/
+  ClrEoln ();
+}
+
+void
+ShowStage (void)
+{
+  gotoXY (TAB, 19);
+  printz("Stage= %2d%c B= %2d W= %2d",
+  	stage,flag.tsume?'T':' ',balance[black],balance[white]);
   ClrEoln ();
 }
 
@@ -392,7 +400,7 @@ void
 ShowHeader (void)
 {
   gotoXY (TAB, 2);
-  printz (CP[69]);
+  printz (CP[69], version, patchlevel);
 }
 
 void
@@ -406,16 +414,17 @@ ShowSidetoMove (void)
 void
 ShowPrompt (void)
 {
-  gotoXY (TAB, 19);
-  printz (CP[121]);		/*Your movwe is?*/
+  gotoXY (TAB, 17);
+  printz (CP[121]);		/*Your move is?*/
   ClrEoln ();
 }
 
 void
 ShowNodeCnt (long int NodeCnt)
 {
-  gotoXY (TAB, 21);
-  printz (CP[90], NodeCnt, (et > 100) ? NodeCnt / (et / 100) : 0);
+  gotoXY (TAB, 22);
+  /* printz (CP[90], NodeCnt, (et > 100) ? NodeCnt / (et / 100) : 0); */
+  printz ("n=%ld n/s=%ld", NodeCnt, (et > 100) ? NodeCnt / (et / 100) : 0);
   ClrEoln ();
 }
 
@@ -448,7 +457,6 @@ ShowResults (short int score, short unsigned int *bstline, char ch)
     }
 }
 
-#ifdef USE_PATTERN
 void
 ShowPatternCount (short side, short n)
 {
@@ -461,7 +469,6 @@ ShowPatternCount (short side, short n)
           printz("   ");
     }
 }
-#endif
 
 void
 ShowGameType (void)
@@ -470,6 +477,20 @@ ShowGameType (void)
     {
     	gotoXY(TAB,20);
         printz("%c vs. %c",GameType[black],GameType[white]);
+    }
+}
+
+void
+ShowResponseTime (void)
+{
+  if (flag.post)
+    {   short TCC=TCcount;
+    	gotoXY(TAB,21);
+        /* printz("RT=%ld TCC=%d TCL=%ld EX=%ld ET=%ld TO=%d",
+	  ResponseTime,TCC,TCleft,ExtraTime,et,flag.timeout); */
+        printz("%ld,%d,%ld,%ld,%ld,%d",
+	  ResponseTime,TCC,TCleft,ExtraTime,et,flag.timeout);
+	ClrEoln ();
     }
 }
 
@@ -496,14 +517,14 @@ OutputMove (void)
 {
 
   UpdateDisplay (root->f, root->t, 0, (short) root->flags);
-  gotoXY (TAB, 17);
+  gotoXY (TAB, 16);
   if(flag.illegal){printz(CP[225]);return;}
   printz (CP[84], mvstr[0]);	/*My move is %s*/
   if (flag.beep)
     putchar (7);
   ClrEoln ();
 
-  gotoXY (TAB, 23);
+  gotoXY (TAB, 18);
   if (root->flags & draw)
     printz (CP[58]);
   else if (root->score == -(SCORE_LIMIT+999))
@@ -512,9 +533,9 @@ OutputMove (void)
     printz (CP[44]);
 #ifdef VERYBUGGY
   else if (root->score < -SCORE_LIMIT)
-    printz (CP[96]);
+    printz (CP[96], SCORE_LIMIT+999 + root->score - 1);
   else if (root->score > SCORE_LIMIT)
-    printz (CP[45]);
+    printz (CP[45], SCORE_LIMIT+998 - root->score - 1);
 #endif /*VERYBUGGY*/
   ClrEoln ();
   if (flag.post)
@@ -534,8 +555,8 @@ OutputMove (void)
 	}
 
       ShowNodeCnt (NodeCnt);
-      gotoXY (TAB, 22);
-      printz (CP[81], t);	/*Max Tree=*/
+      gotoXY (TAB, 23);
+      printz (CP[81], t); /*Max Tree=*/
       ClrEoln ();
     }
   ShowSidetoMove ();
@@ -545,13 +566,17 @@ void
 UpdateClocks (void)
 {
   short m, s;
+  long dt;
 
-  m = (short) (et / 6000);
-  s = (short) (et - 6000 * (long) m) / 100;
   if (TCflag)
     {
-      m = (short) ((TimeControl.clock[player] - et) / 6000);
-      s = (short) ((TimeControl.clock[player] - et - 6000 * (long) m) / 100);
+      m = (short) ((dt = (TimeControl.clock[player] - et)) / 6000);
+      s = (short) ((dt - 6000 * (long) m) / 100);
+    }
+  else
+    {
+      m = (short) ((dt = et) / 6000);
+      s = (short) (et - 6000 * (long) m) / 100;
     }
   if (m < 0)
     m = 0;
@@ -561,7 +586,8 @@ UpdateClocks (void)
     gotoXY (20, (flag.reverse) ? 2 : 23);
   else
     gotoXY (20, (flag.reverse) ? 23 : 2);
-  printz ("%d:%02d   ", m, s);
+  /* printz ("%d:%02d %ld  ", m, s, dt); */
+  printz ("%d:%02d  ", m, s); 
   if (flag.post)
     ShowNodeCnt (NodeCnt);
   refresh ();
@@ -698,7 +724,7 @@ ShowPostnValues (void)
 {
   short sq, score;
 
-  ExaminePosition ();
+  ExaminePosition (opponent);
   for (sq = 0; sq < NO_SQUARES; sq++)
     ShowPostnValue (sq);
   score = ScorePosition (opponent);
@@ -806,20 +832,6 @@ UpdateDisplay (short int f, short int t, short int redraw, short int isspec)
 }
 
 extern char *InPtr;
-void
-skip ()
-{
-  while (*InPtr != ' ')
-    InPtr++;
-  while (*InPtr == ' ')
-    InPtr++;
-}
-void
-skipb ()
-{
-  while (*InPtr == ' ')
-    InPtr++;
-}
 
 void
 ChangeAlphaWindow (void)
@@ -938,32 +950,40 @@ SelectLevel (char *sx)
       TCminutes = 30;
       break;
     case 4:
-      TCmoves = 40;
-      TCminutes = 45;
+      TCmoves = 80;
+      TCminutes = 15;
+      flag.gamein = true;
       break;
     case 5:
-      TCmoves = 40;
-      TCminutes = 60;
+      TCmoves = 80;
+      TCminutes = 30;
+      flag.gamein = true;
       break;
     case 6:
-      TCmoves = 40;
-      TCminutes = 120;
+      TCmoves = 80;
+      TCminutes = 15;
+      TCadd = 3000;
+      flag.gamein = true;
       break;
     case 7:
-      TCmoves = 40;
-      TCminutes = 240;
+      TCmoves = 80;
+      TCminutes = 30;
+      TCadd = 3000;
       break;
     case 8:
       TCmoves = 1;
-      TCminutes = 15;
+      TCminutes = 1;
+      flag.onemove = true;
       break;
     case 9:
       TCmoves = 1;
-      TCminutes = 60;
+      TCminutes = 15;
+      flag.onemove = true;
       break;
     case 10:
       TCmoves = 1;
-      TCminutes = 600;
+      TCminutes = 30;
+      flag.onemove = true;
       break;
     }
 
@@ -982,7 +1002,7 @@ DoDebug (void)
   short c, p, sq, tp, tc, tsq, score;
   char s[40];
 
-  ExaminePosition ();
+  ExaminePosition (opponent);
   ShowMessage (CP[65]);
   scanz ("%s", s);
   c = neutral;
@@ -1019,7 +1039,7 @@ void
 DoTable (short table[NO_SQUARES])
 {
   short  sq;
-  ExaminePosition ();
+  ExaminePosition (opponent);
   for (sq=0;sq<NO_SQUARES;sq++) {
     gotoXY (4 + 5 * VIR_C (sq), 5 + 2 * (7 - VIR_R (sq)));
     printz ("%3d ", table[sq]);

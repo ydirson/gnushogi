@@ -1,9 +1,7 @@
 /*
- * main.c - C source for GNU SHOGI based on GNU CHESS
+ * sizetest.c - display memory usage of GNU SHOGI data
  *
- * Copyright (c) 1988,1989,1990 John Stanback (GNU Chess)
- * Copyright (c) 1992 Free Software Foundation 
- * Copyright (c) 1993 Matthias Mutz (GNU Shogi)
+ * Copyright (c) 1993, 1994 Matthias Mutz (GNU Shogi)
  *
  * This file is part of GNU SHOGI.
  *
@@ -23,12 +21,8 @@
  */
 
 
-#if !defined NO_MAIN
-
 #include "version.h"
 #include "gnushogi.h"
-
-#endif
 
 #include <signal.h>
 
@@ -37,7 +31,7 @@
 #include <time.h>
 #endif
 
-struct leaf *Tree, *root;
+struct leaf far *Tree, *root;
 
 short FROMsquare, TOsquare;
 
@@ -48,10 +42,9 @@ small_short Pindex[NO_SQUARES];
 short mtl[2], hung[2];
 small_short PieceCnt[2];
 
-struct GameRec *GameList;
+struct GameRec far *GameList;
 
-char *ColorStr[2];
-char *CP[CPSIZE];
+char ColorStr[2][10];
 
 long znodes;
 
@@ -100,15 +93,11 @@ extern char *binbookfile;
 #endif
 extern char *bookfile;
 
-unsigned long hashkey, hashbd;
-struct hashval hashcode[2][NO_PIECES][NO_SQUARES];
-struct hashval drop_hashcode[2][NO_PIECES][MAX_CAPTURED];
-
 char savefile[128] = "";
 char listfile[128] = "";
 
 #if defined HISTORY
-unsigned short *history;
+unsigned short far *history;
 #endif
 
 short rpthash[2][256];
@@ -150,13 +139,8 @@ unsigned short PV, SwagHt, Swag0, Swag1, Swag2, Swag3, Swag4, sidebit;
 
 small_short HasPiece[2][NO_PIECES]; 
 const short kingP[3] =
-{4, 76, 0};
-const short value[NO_PIECES] =
-{0, valueP,  valueL,  valueN,  valueS,  valueG,  valueB,  valueR,
-    valuePp, valueLp, valueNp, valueSp, valueBp, valueRp, valueK}; 
-const small_short relative_value[NO_PIECES] =
-{0, 1,       3,       4,       7,       9,       10,      12, 
-    2,       5,       6,       8,       11,      13,      14};
+{4, 76, 0}; 
+
 const long control[NO_PIECES] =
 {0, ctlP, ctlL, ctlN, ctlS, ctlG, ctlB, ctlR,
     ctlPp, ctlLp, ctlNp, ctlSp, ctlBp, ctlRp, ctlK };
@@ -221,10 +205,7 @@ TimeCalc ()
 
 
 
-#if !defined NO_MAIN
 
-
-/* hmm.... shouldn`t main be moved to the interface routines */
 int
 main (int argc, char **argv)
 {
@@ -236,10 +217,12 @@ main (int argc, char **argv)
   cshow(stdout);
 #endif
 
+#if ttblsz
   l = (long)sizeof(struct hashentry);
   n = (int)((l * (ttblsz + rehash) * 2) / 1000);
   printf("ttable:\t\t%4d\tkByte\t[hashentry:%ld * (ttblsz:%d + rehash:%d) * 2]\n",
      n,l,ttblsz,rehash);
+#endif
 
 #if defined CACHE
   l = (long)sizeof(struct etable);
@@ -248,7 +231,7 @@ main (int argc, char **argv)
   l = n = 0;
 #endif
   printf("etab:\t\t%4d\tkByte\t[etable:%ld ETABLE:%d]\n",n,l,ETABLE);
-
+             
   l = (long)sizeof(struct leaf);
   n = (int)(l * TREE / 1000);
   printf("Tree:\t\t%4d\tkByte\t[leaf:%ld * TREE:%d]\n",n,l,TREE);
@@ -276,7 +259,7 @@ main (int argc, char **argv)
 
 #ifdef SAVE_DISTDATA
 #else
-  n = (int)(sizeof(distdata) / 1000);
+  n = (int)(sizeof(distdata_array) / 1000);
   printf("distdata:\t%4d\tkByte\n",n);
 #endif
 
@@ -288,18 +271,23 @@ main (int argc, char **argv)
     n,l,NO_PTYPE_PIECES);
 #endif
 
-  l = (long)sizeof(hashcode);
+  l = (long)sizeof(hashcode_array);
   n = (int)(l / 1000);
   printf("hashcode:\t%4d\tkByte\t[hashval:%ld]\n",
     n,(long)sizeof(struct hashval));
 
-  l = (long)sizeof(drop_hashcode);
+  l = (long)sizeof(drop_hashcode_array);
   n = (int)(l / 1000);
   printf("drop_hashcode:\t%4d\tkByte\t[hashval:%ld]\n",
     n,(long)sizeof(struct hashval));
+               
+  l = (long)sizeof(value_array);
+  n = (int)(l / 1000);
+  printf("value:\t%4d\tkByte\n",n);
+
+  l = (long)sizeof(fscore_array);
+  n = (int)(l / 1000);
+  printf("fscore:\t%4d\tkByte\n",n);
 
 }
-
-
-#endif /* NO_MAIN */
 

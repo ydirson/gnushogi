@@ -1,5 +1,0 @@
-After creating the binary book file, the program 
-ends unexpectedly with stack frame overflow. 
-Therefore, you have to type "make install" twice.
-This happens on an apollo workstations, and I am not shure
-about it on other platforms.

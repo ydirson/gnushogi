@@ -3,7 +3,7 @@
  *
  * Copyright (c) 1988,1989,1990 John Stanback (GNU Chess)
  * Copyright (c) 1992 Free Software Foundation 
- * Copyright (c) 1993 Matthias Mutz (GNU Shogi)
+ * Copyright (c) 1993,1994 Matthias Mutz (GNU Shogi)
  *
  * This file is part of GNU SHOGI.
  *
@@ -23,193 +23,16 @@
  */
 
 
-#if !defined NO_MAIN
-
 #include "version.h"
 #include "gnushogi.h"
 
-#endif
-
 #include <signal.h>
+
 
 #if defined THINK_C
 #include <console.h>
 #include <time.h>
 #endif
-
-
-struct leaf *Tree, *root;
-
-short FROMsquare, TOsquare;
-
-small_short ChkFlag[MAXDEPTH], CptrFlag[MAXDEPTH], TesujiFlag[MAXDEPTH];
-short Pscore[MAXDEPTH], Tscore[MAXDEPTH];
-small_short Pindex[NO_SQUARES];
-
-short mtl[2], hung[2];
-small_short PieceCnt[2];
-
-struct GameRec *GameList;
-
-char *ColorStr[2];
-char *CP[CPSIZE];
-
-long znodes;
-
-
-
-/*
- * In a networked enviroment gnuchess might be compiled on different hosts
- * with different random number generators, that is not acceptable if they
- * are going to share the same transposition table.
- */
-unsigned long int next = 1;
-
-unsigned int
-urand (void)
-{
-  next *= 1103515245;
-  next += 12345;
-  return ((unsigned int) (next >> 16) & 0xFFFF);
-}
-
-void
-gsrand (unsigned int seed)
-{
-  next = seed;
-}
-
-#if ttblsz
-struct hashentry *ttable[2];
-unsigned int ttblsize;
-#endif
-#ifdef BINBOOK
-extern char *binbookfile;
-#endif
-extern char *bookfile;
-
-unsigned long hashkey, hashbd;
-struct hashval hashcode[2][NO_PIECES][NO_SQUARES];
-struct hashval drop_hashcode[2][NO_PIECES][MAX_CAPTURED];
-
-char savefile[128] = "";
-char listfile[128] = "";
-
-#if defined HISTORY
-unsigned short *history;
-#endif
-
-short rpthash[2][256];
-short TrPnt[MAXDEPTH];
-small_short PieceList[2][NO_SQUARES];
-small_short PawnCnt[2][NO_COLS];
-small_short Captured[2][NO_PIECES];
-small_short Mvboard[NO_SQUARES];
-#if !defined SAVE_SVALUE
-short svalue[NO_SQUARES];
-#endif
-struct flags flag;
-
-short opponent, computer, WAwindow, WBwindow, BAwindow, BBwindow, dither,
-  INCscore;
-long ResponseTime, ExtraTime, MaxResponseTime, et, et0, time0, ft;
-#ifdef INTERRUPT_TEST
-long it, itime0;
-#endif
-long GenCnt, NodeCnt, ETnodes, EvalNodes, HashCnt, HashAdd, FHashCnt, FHashAdd,
-  HashCol, THashCol, filesz, hashmask, hashbase;
-long replus, reminus;
-short HashDepth = HASHDEPTH, HashMoveLimit = HASHMOVELIMIT;
-short player, xwndw;
-/*unsigned*/ short rehash; /* -1 is used as a flag --tpm */
-short Sdepth, Game50, MaxSearchDepth;
-short GameCnt = 0;
-short contempt;
-int Book;
-struct TimeControlRec TimeControl;
-int TCadd = 0;
-short TCflag, TCmoves, TCminutes, TCseconds, OperatorTime;
-short XCmoves[3], XCminutes[3], XCseconds[3], XC, XCmore;
-const short otherside[3] =
-{white, black, neutral};
-unsigned short hint;
-short int TOflag;		/* force search re-init if we backup search */
-
-unsigned short killr0[MAXDEPTH], killr1[MAXDEPTH];
-unsigned short killr2[MAXDEPTH], killr3[MAXDEPTH];
-unsigned short PV, SwagHt, Swag0, Swag1, Swag2, Swag3, Swag4, sidebit;
-
-small_short HasPiece[2][NO_PIECES]; 
-const short kingP[3] =
-{4, 76, 0};
-const short value[NO_PIECES] =
-{0, valueP,  valueL,  valueN,  valueS,  valueG,  valueB,  valueR,
-    valuePp, valueLp, valueNp, valueSp, valueBp, valueRp, valueK}; 
-const small_short relative_value[NO_PIECES] =
-{0, 1,       3,       4,       7,       9,       10,      12, 
-    2,       5,       6,       8,       11,      13,      14};
-const long control[NO_PIECES] =
-{0, ctlP, ctlL, ctlN, ctlS, ctlG, ctlB, ctlR,
-    ctlPp, ctlLp, ctlNp, ctlSp, ctlBp, ctlRp, ctlK };
-
-short stage, stage2;
-
-FILE *hashfile;
-
-unsigned int starttime;
-short int ahead = true, hash = true;
-
-
-
-#if defined XSHOGI
-void
-TerminateChess (int sig)
-{
-  ExitChess ();
-}
-
-#endif
-
-
-
-int timeopp[MINGAMEIN], timecomp[MINGAMEIN];
-int compptr, oppptr;
-void
-TimeCalc ()
-{
-/* adjust number of moves remaining in gamein games */
-  int increment = 0;
-  int topsum = 0;
-  int tcompsum = 0;
-  int me,him;
-  int i;
-/* dont do anything til you have enough numbers */
-  if (GameCnt < (MINGAMEIN * 2)) return;
-/* calculate average time in sec for last MINGAMEIN moves */
-  for (i = 0; i < MINGAMEIN; i++)
-    {
-      tcompsum += timecomp[i];
-      topsum += timeopp[i];
-    }
-  topsum /= (100 * MINGAMEIN);
-  tcompsum /= (100 * MINGAMEIN);
-/* if I have less time than opponent add another move */
-	me = TimeControl.clock[computer]/100; 
-	him = TimeControl.clock[opponent]/100;
-	if(me < him) increment += 2;
-	if((him - me) > 60 || (me<him && me < 120))increment++;
-/* if I am losing more time with each move add another */
-  /*if ( !((me - him) > 60) && tcompsum > topsum) increment++;*/
-  if ( tcompsum > topsum) increment +=2;
-/* but dont let moves go below MINMOVES */
-  else if (TimeControl.moves[computer] < MINMOVES && !increment) increment++;
-/* if I am doing really well use more time per move */
-  else if (me > him && tcompsum < topsum) increment = -1;
-/* if not fischer clock be careful about time */
-  if(TCadd == 0 && increment >0)increment += 2;
-  if(me == 0 && increment >0)increment += 2;
-  TimeControl.moves[computer] += increment;
-}
 
 
 
@@ -230,7 +53,7 @@ void DebugInits ()
      for ( sq = 0; sq < NO_SQUARES; sq++ ) {
        printf("  from square %i to ",sq);
        ptyp = ptype[black][piece];
-       ppos = (*nextpos[ptyp])[sq];
+       ppos = (*nextpos)[ptyp][sq];
        u = ppos[sq]; 
        do {
           printf("%i",u);
@@ -239,7 +62,7 @@ void DebugInits ()
        } while (u != sq); 
        printf("\n");
      };
-     /* pdir = (*nextdir[ptyp])[sq]; */
+     /* pdir = (*nextdir)[ptyp][sq]; */
      printf("\n");
      scanf("%s",s);
      if ( strcmp(s,"exit") == 0 )
@@ -247,19 +70,13 @@ void DebugInits ()
    };
 }
 
-#endif          
+#endif  
 
 
-#if !defined NO_MAIN
 
-
-/* hmm.... shouldn`t main be moved to the interface routines */
 int
 main (int argc, char **argv)
 {
-  char *xwin = 0;
-  char *Lang = NULL;
-  size_t n;
 
 #ifdef THINK_C
   console_options.ncols = 100;
@@ -269,65 +86,6 @@ main (int argc, char **argv)
 #endif
 #endif    
 
-  {
-    small_short x = -1;
-    if ( x >= 0 ) {
-      ShowMessage("datatype 'small_short' is unsigned; check gnushogi.h\n");
-      exit(1);
-    }
-  }
-
-#if defined CACHE
-  n = sizeof(struct etable) * (size_t)ETABLE;
-  if ( !(etab[0] = (etable_field *)malloc(n)) ) {
-    ShowMessage ("cannot allocate cache table 0\n");
-  }
-  if ( !(etab[1] = (etable_field *)malloc(n)) ) {
-    ShowMessage ("cannot allocate cache table 1\n");
-  }
-#if !defined BAREBONES && defined NONDSP
-  { char s[80];
-    sprintf(s,"evaluation cache is %ld",(long)ETABLE);
-    ShowMessage(s);
-  }
-#endif
-#endif
-
-#if defined HISTORY
-  if ( !(history = (unsigned short *)malloc(sizeof_history)) ) {
-    ShowMessage ("cannot allocate history table\n");
-  } else {
-#if defined(NOMEMSET)
-    long i;
-    for (i = 0; i < HISTORY_SIZE; i++)
-      history[(unsigned short)i] = 0;
-#else
-    memset ((unsigned char *) history, 0, (size_t)sizeof_history);
-#endif /* NOMEMSET */
-  }
-#endif
-
-  n = sizeof(struct leaf) * (size_t)TREE;
-  if ( !(Tree = (struct leaf *)malloc(n)) ) {
-    ShowMessage ("cannot allocate search tree space\n");
-    exit(1);
-  }
-
-  n = sizeof(struct GameRec) * (size_t)(MAXMOVES + MAXDEPTH);
-  if ( !(GameList = (struct GameRec *)malloc(n)) ) {
-    ShowMessage ("cannot allocate game record space\n");
-    exit(1);
-  }
-
-#if defined THINK_C
-  gsrand (starttime = ((unsigned int) time ((time_t *) 0)));	/* init urand */
-#else
-  gsrand (starttime = ((unsigned int) time ((long *) 0)));	/* init urand */
-#endif
-#if ttblsz
-  ttblsize = ttblsz;
-  rehash = -1;
-#endif /* ttblsz */
   if (argc > 2)
     {
       if (argv[1][0] == '-' && argv[1][1] == 'L')
@@ -337,10 +95,7 @@ main (int argc, char **argv)
 	  argc -= 2;
 	}
     }
-  InitConst (Lang);
-  ColorStr[0] = CP[118];
-  ColorStr[1] = CP[119];
-  
+    
   while (argc > 1 && ((argv[1][0] == '-') || (argv[1][0] == '+')))
     {
       switch (argv[1][1])
@@ -457,6 +212,7 @@ if(n.depth >MAXDEPTH) {printf("ERROR\n");exit(1);}
 	    filesz = (1 << filesz) - 1 + MAXrehash;
 	  else
 	    filesz = filesz + MAXrehash;
+#ifdef HASHFILE
 	  if ((hashfile = fopen (HASHFILE, RWA_ACC)) == NULL)
 	    hashfile = fopen (HASHFILE, WA_ACC);
 	  if (hashfile != NULL)
@@ -475,6 +231,7 @@ if(n.depth >MAXDEPTH) {printf("ERROR\n");exit(1);}
 	    }
 	  else
 	    printf (CP[50], HASHFILE);
+#endif
 	  return (0);
 #endif /* HASHFILE */
 #endif /* ttblsz */
@@ -491,22 +248,7 @@ if(n.depth >MAXDEPTH) {printf("ERROR\n");exit(1);}
       argv++;
       argc--;
     }
-  XC = 0;
-  MaxResponseTime = 0;
-#if defined XSHOGI
-  signal (SIGTERM, TerminateChess);
-#endif
-#if defined XSHOGI
-  TCflag = true;
-  TCmoves = 40;
-  TCminutes = 5;
-  TCseconds = 0;
-  TCadd = 0;
-  OperatorTime = 0;
-#else
-  TCflag = false;
-  OperatorTime = 0;
-#endif
+    
   if (argc == 2)
     {
       char *p;
@@ -520,6 +262,7 @@ if(n.depth >MAXDEPTH) {printf("ERROR\n");exit(1);}
       TCminutes = 0;
       TCseconds = 0;
     }
+    
   if (argc >= 3)
     {
       char *p;
@@ -561,42 +304,14 @@ if(n.depth >MAXDEPTH) {printf("ERROR\n");exit(1);}
 	  exit (1);
 	}
     }
-  Initialize ();
-  Initialize_dist ();
-#if !defined SAVE_NEXTPOS
-  Initialize_moves ();
-#endif
+    
+  if ( InitMain() != 0 )
+    exit(1);
+  
 #ifdef DEBUG_INITS
   DebugInits ();
 #endif
-  NewGame ();
 
-  flag.easy = ahead;
-  flag.hash = hash;
-  if (xwin)
-    xwndw = atoi (xwin);
-
-  hashfile = NULL;
-#if ttblsz
-#ifdef HASHFILE
-  hashfile = fopen (HASHFILE, RWA_ACC);
-  if (hashfile)
-    {
-      fseek (hashfile, 0L, SEEK_END);
-      filesz = ftell (hashfile) / sizeof (struct fileentry) - 1 - MAXrehash;
-              hashmask = filesz>>1;
-	      hashbase = hashmask+1;
-    }               
-#else
-#ifndef BAREBONES
-#ifdef HASHFILE
-  else
-#endif
-    gotoXY (3, 0);
-    ShowMessage (CP[98]);
-#endif
-#endif /* HASHFILE */
-#endif /* ttblsz */
   while (!(flag.quit))
     {
       oppptr = (oppptr + 1) % MINGAMEIN;
@@ -648,17 +363,10 @@ if(n.depth >MAXDEPTH) {printf("ERROR\n");exit(1);}
 	      }
 	}
     }
-#if ttblsz
-#ifdef HASHFILE
-  if (hashfile)
-    fclose (hashfile);
-#endif /* HASHFILE */
-#endif /* ttblsz */
-
-  ExitChess ();
+    
+  ExitMain ();
+  
   return (0);
 }
 
-
-#endif /* NO_MAIN */
 

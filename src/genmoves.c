@@ -1,7 +1,7 @@
 /*
  * genmoves.c - C source for GNU SHOGI
  *
- * Copyright (c) 1993 Matthias Mutz
+ * Copyright (c) 1993, 1994 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -26,26 +26,27 @@
  */
 
 #include "gnushogi.h"
+
+/* #define DONTUSE_HEURISTIC */
       
 #ifdef DEBUG
 #include <assert.h>
 #endif
 
-#ifdef DEBUG_EVAL
-extern short debug_eval;
-extern FILE *debug_eval_file;
-extern short debug_moves;
-#endif
-
 short *TrP;
 
-static struct leaf *node;
+static struct leaf far *node;
 static short sqking, sqxking;
 static short InCheck = false, GenerateAllMoves = false;     
+static short check_determined = false;
 
 static short INCscore = 0;
 
 short deepsearchcut = true;
+short tas = false, taxs = false, ssa = false;
+
+short generate_move_flags = false;
+
 
 /*
  * Ply limits for deep search cut.
@@ -59,17 +60,32 @@ short deepsearchcut = true;
                        
 #if defined THINK_C || defined MSDOS
 #define BEYOND_STUPID 0
+#define BEYOND_TIMEOUT 2
 #define BEYOND_KINGATTACK 4
 #define BEYOND_QUESTIONABLE 6
 #define BEYOND_TESUJI 6
 #define BEYOND_DROP 8
 #else
 #define BEYOND_STUPID 0
+#define BEYOND_TIMEOUT 2
 #define BEYOND_KINGATTACK 6
 #define BEYOND_QUESTIONABLE 8
 #define BEYOND_TESUJI 8
 #define BEYOND_DROP 10
+#endif 
+
+static short MaxNum[MAXDEPTH] =
+  {-1,40,80,20,40,10, 5, 5, 5, 5,
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+    5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
+  };
+
+#ifdef HASHKEYTEST
+    extern int CheckHashKey ();
+    extern char mvstr[4][6];
 #endif
+
 
 inline
 static
@@ -79,7 +95,7 @@ GenMakeMove (short int side,
 	     short t,
 	     short int *tempb,	/* piece at to square */
 	     short int *tempc,	/* color of to square */
-	     short int checkp)
+	     short int promote_piece)
 
 /*
  * Update Arrays board[] and color[] to reflect the new board
@@ -87,7 +103,7 @@ GenMakeMove (short int side,
  */
 
 {
-  register short int piece;
+  register short int piece, upiece, n;
 
   t = t & 0x7f;
       
@@ -101,25 +117,45 @@ GenMakeMove (short int side,
       if ( piece > NO_PIECES ) piece -= NO_PIECES;
       board[t] = piece;
       color[t] = side;
-      Captured[side][piece]--;
+      n = Captured[side][piece]--;
+      UpdateDropHashbd (side, piece, n);
+      UpdateHashbd (side, piece, -1, t);
+      UpdatePieceList (side, t, ADD_PIECE);
     }
   else
     {
       *tempb = board[t];
       *tempc = color[t];
-      if ( *tempb != no_piece )
-	Captured[side][unpromoted[*tempb]]++;
+      if ( *tempb != no_piece ) {
+	n = ++Captured[side][upiece = unpromoted[*tempb]];
+	UpdateDropHashbd (side, upiece, n);
+	UpdateHashbd (*tempc, *tempb, -1, t);
+	UpdatePieceList (*tempc, t, REMOVE_PIECE);
+      }
       piece = board[f];
+      Pindex[t] = Pindex[f];
+      PieceList[side][Pindex[t]] = t;
       color[f] = neutral;
       board[f] = no_piece;
       color[t] = side;
-      if ( checkp )
-        board[t] = (node->flags & promote) ? promoted[piece] : piece;
-      else
+      if ( promote_piece ) {
+	UpdateHashbd(side,piece,f,-1);
+        board[t] = promoted[piece];   
+	UpdateHashbd(side,board[t],-1,t);
+      } else {
         board[t] = piece;
+	UpdateHashbd(side,piece,f,t);
+      }
     } 
 #ifdef DEBUG
     assert(Captured[black][0]==0 && Captured[white][0]==0);
+#endif 
+#ifdef HASHKEYTEST
+    if ( CheckHashKey () ) {
+      algbr(f,t,0);
+      printf("error in GenMakeMove: %s\n",mvstr[0]);
+      exit(1);
+    }
 #endif
 }
 
@@ -130,14 +166,14 @@ GenUnmakeMove (short int side,
 	       short t,
 	       short int tempb,
 	       short int tempc,
-	       short int checkp)
+	       short int promote_piece)
 
 /*
  * Take back a move.
  */
 
 {
-  register short piece;
+  register short piece, upiece, n;
 
   t = t & 0x7f;
 
@@ -151,24 +187,57 @@ GenUnmakeMove (short int side,
       if ( piece > NO_PIECES ) piece -= NO_PIECES;
       board[t] = no_piece;
       color[t] = neutral;
-      Captured[side][piece]++;
+      n = ++Captured[side][piece];
+      UpdateDropHashbd (side, piece, n);
+      UpdateHashbd (side, piece, -1, t);
+      UpdatePieceList (side, t, REMOVE_PIECE);
     }
   else
     { 
       piece = board[t];
       color[t] = tempc;
       board[t] = tempb;
-      if ( tempb != no_piece )
-        Captured[side][unpromoted[tempb]]--;
-      color[f] = side; 
-      if ( checkp )
-        board[f] = (node->flags & promote) ? unpromoted[piece] : piece;
-      else
+      Pindex[f] = Pindex[t];
+      PieceList[side][Pindex[f]] = f;
+      if ( tempb != no_piece ) {
+        n = Captured[side][upiece=unpromoted[tempb]]--;
+	UpdateDropHashbd (side, upiece, n);
+	UpdateHashbd (tempc, tempb, -1, t);
+	UpdatePieceList (tempc, t, ADD_PIECE);
+      }
+      color[f] = side;
+      if ( promote_piece ) {
+	UpdateHashbd(side,piece,-1,t);
+        board[f] = unpromoted[piece]; 
+	UpdateHashbd(side,board[f],f,-1);
+      } else {
         board[f] = piece;
+	UpdateHashbd(side,piece,f,t);
+      } 
     }
 #ifdef DEBUG
     assert(Captured[black][0]==0 && Captured[white][0]==0);
 #endif
+#ifdef HASHKEYTEST
+    if ( CheckHashKey () ) {
+      algbr(f,t,0);
+      printf("error in GenUnmakeMove: %s\n",mvstr[0]);
+      exit(1);
+    }
+#endif
+}                 
+
+
+
+static void
+gives_check_flag (unsigned short *flags, short side, short f, short t)
+{
+  short tempb, tempc, blockable, promote_piece;
+  promote_piece = (*flags & promote) != 0;
+  GenMakeMove (side, f, t, &tempb, &tempc, promote_piece);
+  if ( SqAtakd(sqxking, side, &blockable) )
+     *flags |= check;
+  GenUnmakeMove (side, f, t, tempb, tempc, promote_piece);
 }
 
 
@@ -176,7 +245,7 @@ inline
 static
 void
 Link (short side, short piece,
-      short from, short to, short local_flag, short s) 
+      short from, short to, unsigned short local_flag, short s) 
 {        
 #ifdef notdef
     if (debug_eval ) {
@@ -202,35 +271,26 @@ Link (short side, short piece,
         {
 	  (*TrP)++, node++;
         }
-      else if ( InCheck || (flag.tsume && !(local_flag & capture)) )
-        {
-          if ( InCheck )
-            {
-              short tempb, tempc, sq, threat, blockable;
-              GenMakeMove (side, node->f, node->t, &tempb, &tempc, true);
-              sq = (from == sqking) ? to : sqking;
-	      threat = SqAtakd(sq,side ^ 1, &blockable);
-#ifdef DEBUG_EVAL
-  	      if (debug_eval ) {
-    		fprintf ( debug_eval_file, "from %d to %d threat %d\n",
-		  node->f, node->t, threat );
-	      }
-#endif
-              GenUnmakeMove (side, node->f, node->t, tempb, tempc, true);
-              if ( !threat ) 
-	        (*TrP)++, node++;
-            }
-          else if ( !(local_flag & check) && (sqxking != to ) && (board[sqxking] == king) )
-            {                               
-              short tempb, tempc, sq, threat, blockable;
-              GenMakeMove (side, node->f, node->t, &tempb, &tempc, true);
-	      if ( threat = SqAtakd(sqxking,side, &blockable) )
-	        node->flags |= check;
-              GenUnmakeMove (side, node->f, node->t, tempb, tempc, true);
-	      if ( threat ) 
-	        (*TrP)++, node++;
-            }
-          else
+      else if ( InCheck )
+        { 
+	  /* only moves out of check */
+          short tempb, tempc, sq, threat, blockable, promote_piece;
+	  promote_piece = (node->flags & promote) != 0;
+          GenMakeMove (side, node->f, node->t, &tempb, &tempc, promote_piece);
+          sq = (from == sqking) ? to : sqking;
+	  threat = SqAtakd(sq, side ^ 1, &blockable);
+          GenUnmakeMove (side, node->f, node->t, tempb, tempc, promote_piece);
+          if ( !threat ) 
+	    (*TrP)++, node++;
+        }
+      else if ( flag.tsume )
+        { 
+	  /* only moves that give check */          
+	  if ( !(node->flags & check) && !check_determined ) {
+	    /* determine check flag */          
+	    gives_check_flag(&node->flags,side,node->f,node->t);
+	  }
+	  if ( node->flags & check )
 	    (*TrP)++, node++;
         }
       else
@@ -269,19 +329,19 @@ NonPromotionPossible (short int color, short int f, short int t, short int p)
   switch ( p ) {
     case pawn : 
            if ( color == black )
-             return ( t < 72 );
+             return ((t < 72) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
            else
-             return ( t > 8 );
+             return ((t > 8) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
     case lance: 
            if ( color == black )
-             return ( t < 72 );
+             return ((t < 72) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
            else
-             return ( t > 8 );
+             return ((t > 8) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
     case knight:
            if ( color == black )
-             return ( t < 63 );
+             return ((t < 63) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
            else
-             return ( t > 17 );
+             return ((t > 17) ? true : (generate_move_flags ? ILLEGAL_TRAPPED : false));
   };
 
   return(true);
@@ -294,7 +354,7 @@ inline
 static 
 short
 field_bonus (short int ply, short int side, short int piece, short int f, short int t, 
-	     short int *local_flag)
+	     unsigned short *local_flag)
 
 /* bonus for possible next moves */
 
@@ -311,8 +371,10 @@ field_bonus (short int ply, short int side, short int piece, short int f, short 
 
   s = 0;
 
-  ptyp = ptype[side][piece];
+  check_determined = true;
 
+  ptyp = ptype[side][piece];
+          
 #ifdef SAVE_NEXTPOS
   u = first_direction(ptyp,&d,t); 
 #else
@@ -431,8 +493,9 @@ field_bonus (short int ply, short int side, short int piece, short int f, short 
 /* inline */ void
 LinkMove (short int ply, short int f,
 	  register short int t,
-	  short int local_flag,
-	  short int xside)
+	  unsigned short local_flag,
+	  short int xside,
+	  short int score_if_impossible)
 
 /*
  * Add a move to the tree.  Assign a bonus to order the moves as follows:
@@ -446,10 +509,19 @@ LinkMove (short int ply, short int f,
   register short s = 0;
   register short side, piece, mv;
   short flag_tsume, try_link = true;
-  short c1, c2;
+  short c1, c2, ds, is_drop = f > NO_SQUARES;
+  unsigned long as = 0;
+
+  flag_tsume = flag.tsume;
 
   c1 = side = xside ^ 1;
   c2 = xside;
+                                                
+  /*
+   * Is it determined whether the move gives check ?
+   */
+
+  check_determined = ((local_flag & check) != 0);
 
   mv = (f << 8) | ((local_flag & promote) ? (t | 0x80) : t);
 
@@ -460,25 +532,29 @@ LinkMove (short int ply, short int f,
     piece = board[f];
   }
 
+  if ( score_if_impossible < 0 ) {
+    /* The move is flagged as illegal. */
+    Link (side, piece, 
+        f, t, local_flag, score_if_impossible);
+    return;
+  }
+
   INCscore = 0;
        
 #ifdef HISTORY
+#ifdef DEBUG
+  if ( use_history ) {
+    unsigned short hi;
+    short ds;
+    s += (ds = history[hi = hindex(side,mv)]);
+  }
+#else
   s += history[hindex(side,mv)];
-#ifdef DEBUG_EVAL
-  if ( debug_eval && (ply == 1 || debug_moves) )
-    {
-      char buf[8];
-      movealgbr(mv,buf);
-      fprintf(debug_eval_file, "mv=%s history=%d\n", 
-        buf,history[hindex(side,mv)]); 
-    }
 #endif
 #endif
          
-  flag_tsume = flag.tsume;
-
   /* If we're running short of tree node, go into tsume mode. */
-
+  
   if ( !(local_flag & capture) )
     if ( *TrP > TREE - 300 ) {
       /* too close to tree table limit */
@@ -487,7 +563,7 @@ LinkMove (short int ply, short int f,
 
   /* Guess strength of move and set flags. */                
 
-  if ( piece != king && GameCnt > 40 ) {
+  if ( piece != king && !in_opening_stage ) {
     if ( distance(t,EnemyKing) <= 1 ) {
       /* bonus for square near enemy king */
       s += 15; INCscore += 2;
@@ -498,15 +574,51 @@ LinkMove (short int ply, short int f,
       local_flag |= kingattack; 
     }                                   
   }
+  
+  if ( tas /* own attack array available */ ) {
+    /* square t defended by own piece (don't count piece to move) ? */
+    if ( is_drop ? (as = atak[side][t]) : (as = ((atak[side][t] & CNT_MASK) > 1)) )
+      s += (ds = in_endgame_stage ? 100 : 10);
+  }
+  if ( taxs /* opponents attack array available */ ) {
+    /* square t not threatened by opponent or
+     * defended and only threatened by opponents king ? 
+     */
+    unsigned long axs;
+    if ( !(axs = atak[xside][t]) ||
+         (tas && as && (axs & control[king]) && (axs & CNT_MASK) == 1) )
+      s += (ds = in_endgame_stage ? 200 : 
+      			(is_drop ? (InPromotionZone(side,t) ? 40 + relative_value[piece]: 10) : 20));
+  }     
 
+  /* target square near area of action */
+ 
+  if ( TOsquare >= 0 )
+    s += (9-distance(TOsquare,t));
+  if ( FROMsquare >= 0 )
+    s += (9-distance(FROMsquare,t)) / 2;
+
+  /* target square near own or enemy king */
+  
+  if ( !in_opening_stage && piece != king ) {
+    if ( balance[c1] < 50 )
+      s += (9-distance(EnemyKing,t)) * (50 - balance[c1]) / 20;
+    else
+      s += (9-distance(OwnKing,t)) * (balance[c1] - 50) / 20;
+  }
+  
   if ( f > NO_SQUARES )
     {
-     /* bonus for drops, in order to place drops before questionable moves */
-      s += 10; INCscore++;
+      /* bonus for drops, in order to place drops before questionable moves */
+      s += in_endgame_stage ? 25 : 10;
       if (t == FROMsquare) {
         /* drop to the square the opponent has just left */
-        s++; INCscore++;
+        s += 5;
       };
+      if ( piece == gold )
+        s -= 32 / Captured[side][gold];
+      else if ( piece == silver )
+        s -= 16 / Captured[side][silver];
 #if defined DROPBONUS
       s += field_bonus(ply,side,piece,f,t,&local_flag);
       if ( s == 10 && piece != pawn )
@@ -517,23 +629,30 @@ LinkMove (short int ply, short int f,
     {
       /* bonus for moves (non-drops) */
       int consider_last = false;
+      if ( in_endgame_stage && Captured[side][gold] )
+        s += 10;
       s += 20; 
       if (t == FROMsquare) {
         /* move to the square the opponent has just left */
-        s++; INCscore++;
+        s += in_endgame_stage ? 10 : 1;
       }
       if (color[t] != neutral)
         {
           /* Captures */  
-          s += value[board[t]] - relative_value[piece];
+	  if ( in_endgame_stage ) {
+	    s += relative_value[board[t]] - relative_value[piece];
+	  } else {
+	    s += (*value)[stage][board[t]] - relative_value[piece];
+          }
           if (t == TOsquare)
             /* Capture of last moved piece */ 
-            s += 500; INCscore += 5;
+            s += in_endgame_stage ? 5 : 50;
         }  
       if ( local_flag & promote )
         {
           /* bonus for promotions */
-          s++; INCscore++;
+          s++; 
+          INCscore += value[stage][promoted[piece]] - value[stage][piece];
         }
       else
         {
@@ -568,30 +687,45 @@ LinkMove (short int ply, short int f,
 	}
       else 
       	{
+      	  short blockable;
 #if defined FIELDBONUS
           s += field_bonus(ply,side,piece,f,t,&local_flag);
-#else
-	  /* determine check flag */
 #endif
         }  
     }
 
-    /* check conditions for deep search cut (flag.tsume = true) */
+#if defined CHECKBONUS
+  /* determine check flag */
+  if ( !(local_flag & check) && !check_determined ) 
+    { 
+      gives_check_flag(&local_flag, side, f, t);
+      if ( local_flag & check )
+	  s += 20;
+    }
+#endif
+
+  /* check conditions for deep search cut (flag.tsume = true) */
 
 #ifdef DEEPSEARCHCUT
   if ( !flag.tsume && deepsearchcut ) 
-    {
+    { 
       if ( ply > BEYOND_STUPID && (local_flag & stupid) ) {
 	  try_link = flag.force || (ply == 1 && side != computer);
+#ifdef HARDTIMELIMIT
+      } else if ( ply > BEYOND_TIMEOUT && flag.timeout ) {
+	  flag.tsume = true;
+#endif
       } else if ( ply > BEYOND_KINGATTACK && !(local_flag & kingattack) ) {
           flag.tsume = true;
       } else if ( ply > BEYOND_QUESTIONABLE && (local_flag & questionable) ) {
           flag.tsume = true; 
+#ifdef TESUJIBONUS
       } else if ( ply > BEYOND_TESUJI && !(local_flag & tesuji) ) {
           flag.tsume = true;
+#endif
       } else if ( ply > BEYOND_DROP && (f > NO_SQUARES) ) {
           flag.tsume = true;
-      }
+      } 
     }
 #endif
 
@@ -614,12 +748,13 @@ DropPossible (short int piece, short int side, short int sq)
         possible = false; 
   else if ( piece == pawn )
         { 
-          if ( side == black && r == 8 )
-            possible = false;
-          else if ( side == white && r == 0 )
-            possible = false;
-          else if ( PawnCnt[side][column(sq)] )
-            possible = false;
+          if ( side == black && r == 8 ) {
+            possible = (generate_move_flags ? ILLEGAL_TRAPPED : false);
+          } else if ( side == white && r == 0 ) {
+            possible = (generate_move_flags ? ILLEGAL_TRAPPED : false);
+          } else if ( PawnCnt[side][column(sq)] ) {
+            possible = (generate_move_flags ? ILLEGAL_DOUBLED : false);
+	  }
 	  /* pawn drops are invalid, if they mate the opponent */
 	  if ( possible )
 	    {   short f, tempb, tempc;
@@ -627,23 +762,23 @@ DropPossible (short int piece, short int side, short int sq)
 		if ( side == white ) f += NO_PIECES;
 		GenMakeMove (side, f, sq, &tempb, &tempc, false); 
 	        if ( IsCheckmate(side^1,-1,-1) )
-		  possible = false;
+            	  possible = (generate_move_flags ? ILLEGAL_MATE : false);
                 GenUnmakeMove (side, f, sq, tempb, tempc, false);
 	    }
         }
   else if ( piece == lance )
         {
           if ( side == black && r == 8 )
-            possible = false;
+            possible = (generate_move_flags ? ILLEGAL_TRAPPED : false);
           else if ( side == white && r == 0 )
-            possible = false;          
+            possible = (generate_move_flags ? ILLEGAL_TRAPPED : false);
         }
   else if ( piece == knight )
         {
           if ( side == black && r >= 7 )
-            possible = false;
+            possible = (generate_move_flags ? ILLEGAL_TRAPPED : false);
           else if ( side == white && r <= 1 )
-            possible = false;
+            possible = (generate_move_flags ? ILLEGAL_TRAPPED : false);
         }           
 
   return possible;
@@ -661,6 +796,46 @@ SortMoves(short int ply)
 }
 
 
+#ifdef DONTUSE_HEURISTIC
+
+static void
+DontUseMoves(short int ply, short int n)
+{
+  register struct leaf far *p;
+  short int i,k;
+#ifdef DEBUG
+  short j = 0;
+#endif 
+  /* k = number of check moves + number of captures */
+  for (i = TrPnt[ply], k=0; i < TrPnt[ply+1]; i++) {
+     p = &Tree[i];
+     if ( (p->flags & check) || (p->flags & capture) ) 
+	if (++k >= n) return;
+  }
+  /* use n moves */
+  for (i = TrPnt[ply]; i < TrPnt[ply+1]; i++) {
+     p = &Tree[i];
+     if ( !((p->flags & check) || (p->flags & capture)) ) {
+       if ( k < n )
+	 k++;
+       else {
+	 p->score = DONTUSE;
+#ifdef DEBUG
+	 j++;
+#endif
+       }
+     } 
+  }
+#ifdef notdef
+  if ( j )
+    printf("skipping %d moves at ply %d with allowed %d moves\n",j,ply,n);
+#endif
+}            
+
+
+#endif
+
+
 inline
 void
 GenMoves (register short int ply, register short int sq, short int side, 
@@ -674,7 +849,7 @@ GenMoves (register short int ply, register short int sq, short int side,
 
 {
   register short u, piece, col;
-  short ptyp;
+  short ptyp, possible;
 #ifdef SAVE_NEXTPOS
   short d;
 #else
@@ -693,18 +868,19 @@ GenMoves (register short int ply, register short int sq, short int side,
 #endif
 
   do
-    { short int local_flag, c;
+    { unsigned short int local_flag;
+      short  c;
       if ( (c = color[u]) == xside )
         local_flag = capture;
       else
         local_flag = 0;
       if ( c != side && board[u] != king ) {
         if ( PromotionPossible(color[sq],sq,u,piece) ) {
-          LinkMove (ply, sq, u, local_flag | promote, xside);
-          if ( NonPromotionPossible(color[sq],sq,u,piece) )
-            LinkMove (ply, sq, u, local_flag, xside);
+          LinkMove (ply, sq, u, local_flag | promote, xside, true);
+          if ( possible = NonPromotionPossible(color[sq],sq,u,piece) )
+            LinkMove (ply, sq, u, local_flag, xside, possible);
         } else {
-          LinkMove (ply, sq, u, local_flag, xside);
+          LinkMove (ply, sq, u, local_flag, xside, true);
         }
       }
       if (c == neutral)
@@ -718,12 +894,184 @@ GenMoves (register short int ply, register short int sq, short int side,
         u = pdir[u];
 #endif
   } while (u != sq);
+}             
+
+
+
+static void
+DropToSquare (short side, short xside, short ply, short u)
+
+/*
+ * Drop each piece in hand of "side" to square "u" (if allowed).
+ */
+
+{
+  short i, possible; 
+
+  for (i = pawn; i < king; i++)
+    if ( Captured[side][i] )
+      if ( possible = DropPossible(i,side,u) )
+  	{ short f;
+	  f = NO_SQUARES + i;
+	  if ( side == white ) f += NO_PIECES;
+	  LinkMove (ply, f, u, (dropmask | i), xside, possible);
+	}
 }
 
 
+static void
+LinkPreventCheckDrops (short side, short xside, short ply)
+
+/*
+ * Add drops of side that prevent own king from being in check
+ * from xside's sweeping pieces. 
+ */
+
+{
+#ifdef SAVE_NEXTPOS
+  short d, dd;
+#else
+  register unsigned char *ppos, *pdir;
+#endif
+  register short piece, u, xu, square, ptyp;      
+  short i, n, drop_square[9];
+
+  if ( board[square = PieceList[side][0]] != king )
+    return;
+  
+  for (piece = lance; piece <= rook; piece++ ) 
+  if ( piece == lance || piece == bishop || piece == rook ) {
+    /* check for threat of xside piece */                   
+    ptyp = ptype[side][piece];
+    n = 0;
+#ifdef SAVE_NEXTPOS
+    u = first_direction(ptyp,&d,square);
+#else
+    ppos = (*nextpos[ptyp])[square];
+    pdir = (*nextdir[ptyp])[square];
+    u = ppos[square];
+#endif
+
+    do
+      {
+        if (color[u] == neutral) 
+	  {                
+#ifdef SAVE_NEXTPOS
+	    dd = d;
+	    xu = next_position(ptyp,&d,square,u);
+	    if ( xu == next_direction(ptyp,&dd,square) )
+		n = 0;	/* oops new direction */
+	    else {
+#ifdef DEBUG
+	   	assert(n<9);
+#endif	    
+		drop_square[n++] = u;
+	    }
+#else
+	    if ((xu = ppos[u]) == pdir[u])
+		n = 0;	/* oops new direction */
+	    else {
+#ifdef DEBUG
+	   	assert(n<9);
+#endif	    
+		drop_square[n++] = u;
+	    }
+#endif
+	    u = xu;
+	  }
+        else
+	  {
+	    if (color[u] == xside && (unpromoted[board[u]] == piece))
+	      {
+	        /* king is threatened by opponents piece */
+	        while ( n > 0 ) {
+	          DropToSquare(side,xside,ply,drop_square[--n]);
+	        }
+	      }  
+	    else
+	      n = 0;
+#ifdef SAVE_NEXTPOS
+	    u = next_direction(ptyp,&d,square);
+#else
+	    u = pdir[u];
+#endif
+	  }
+    } while (u != square);
+
+  }
+
+}
+
+
+static void
+LinkCheckDrops (short side, short xside, short ply)
+
+/*
+ * Add drops that check enemy king.
+ */
+
+{       
+#ifdef SAVE_NEXTPOS
+  short d;
+#else
+  register unsigned char *ppos, *pdir;
+#endif
+  register short u, ptyp;
+  short square, piece;
+
+  if ( board[square = PieceList[xside][0]] != king )
+    return;
+  
+  for (piece = pawn; piece < king; piece++)
+    if ( Captured[side][piece] ) {
+      /* 
+       * "side" has "piece" in hand. Try to make a piece move from
+       * opponents king square and drop this piece to each
+       * reachable empty square. This definitely gives check!
+       * For a pawn drop it must not double pawns and
+       * it must not be checkmate!
+       */
+      ptyp = ptype[xside][piece];
+#ifdef SAVE_NEXTPOS
+      u = first_direction(ptyp,&d,square);
+#else
+      ppos = (*nextpos[ptyp])[square];
+      pdir = (*nextdir[ptyp])[square];
+      u = ppos[square];
+#endif
+      do
+        {
+          if (color[u] == neutral)
+	    {                    
+	      if ( piece != pawn || DropPossible(pawn,side,u) ) {
+	        short f;
+	        f = NO_SQUARES + piece;
+	        if ( side == white ) f += NO_PIECES;
+	        LinkMove (ply, f, u, (dropmask | piece | check), xside, true);
+	      }
+#ifdef SAVE_NEXTPOS
+	      u = next_position(ptyp,&d,square,u);
+#else
+	      u = ppos[u];
+#endif
+	    }
+          else
+	    {
+#ifdef SAVE_NEXTPOS
+	      u = next_direction(ptyp,&d,square);
+#else
+	      u = pdir[u];
+#endif
+	    }
+      } while (u != square);
+    }
+
+}
+
 
 void
-MoveList (short int side, register short int ply, short int in_check)
+MoveList (short int side, register short int ply, 
+          short int in_check, short int blockable)
 
 /*
  * Fill the array Tree[] with all available moves for side to play. Array
@@ -736,13 +1084,17 @@ MoveList (short int side, register short int ply, short int in_check)
 
 {
   register short i, xside, f, u;
-  struct leaf *firstnode;
-  short flag_tsume, blockable;
+  struct leaf far *firstnode;
+  short flag_tsume, num;
 
-  xside = side ^ 1;
+#ifdef HISTORY
+  unsigned short hiHt=0, hi0=0, hi1=0, hi2=0, hi3=0, hi4=0;
+#endif
 
   flag_tsume = flag.tsume;
 
+  xside = side ^ 1;
+    
   sqking  = PieceList[side][0];
   sqxking = PieceList[xside][0];
 
@@ -763,7 +1115,7 @@ MoveList (short int side, register short int ply, short int in_check)
     {
 	/* Own king in check */
 	flag.tsume = true;
-    }
+    }   
 
   TrP = &TrPnt[ply + 1];
   *TrP = TrPnt[ply];
@@ -789,43 +1141,66 @@ MoveList (short int side, register short int ply, short int in_check)
     movealgbr(Swag2,buf2);
     movealgbr(Swag3,buf3);
     movealgbr(Swag4,buf4);
-    fprintf(debug_eval_file, "SwagHt=%s 0=%s 1=%s 2=%s 3=%s 4=%s\n", 
-      bufHt, buf0, buf1, buf2, buf3, buf4); 
+    fprintf(debug_eval_file, "SwagHt=%x %s 0=%x %s 1=%x %s 2=%x %s 3=%x %s 4=%x %s\n", 
+      SwagHt, bufHt, Swag0, buf0, Swag1, buf1, Swag2, buf2, Swag3, buf3, Swag4, buf4); 
   }
 #endif
 
 #ifdef HISTORY
-  history[hindex(side,SwagHt)] += 5000;
-  history[hindex(side,Swag0)] += 2000;
-  history[hindex(side,Swag1)] += 60;
-  history[hindex(side,Swag2)] += 50;
-  history[hindex(side,Swag3)] += 40;
-  history[hindex(side,Swag4)] += 30;
+  if ( use_history ) {
+    history[hiHt = hindex(side,SwagHt)] += 5000;
+    history[hi0  = hindex(side,Swag0)] += 2000;
+    history[hi1  = hindex(side,Swag1)] += 60;
+    history[hi2  = hindex(side,Swag2)] += 50;
+    history[hi3  = hindex(side,Swag3)] += 40;
+    history[hi4  = hindex(side,Swag4)] += 30;
+  }
 #endif
 
+  if ( tas = MatchSignature(threats_signature[side]) ) {
+#if defined notdef && defined DEBUG_EVAL && defined NONDSP 
+    printf("threats available at ply %d for side=%s\n",ply,ColorStr[side]);    
+#endif
+  }
+  if ( taxs = MatchSignature(threats_signature[xside]) ) {
+#if defined notdef && defined DEBUG_EVAL && defined NONDSP 
+    printf("threats available at ply %d for xside=%s\n",ply,ColorStr[xside]);
+#endif
+  }
+  if ( ssa = MatchSignature(squares_signature) ) {
+#if defined notdef && defined DEBUG_EVAL && defined NONDSP 
+    printf("square statistics available at ply %d\n",ply);
+#endif
+  }
+  
   for (i = PieceCnt[side]; i >= 0; i--)
     GenMoves (ply, PieceList[side][i], side, xside);
-  for (i = pawn; i < king; i++)
-    if ( Captured[side][i] )
-      for (u = 0; u < NO_SQUARES; u++)
-        if ( DropPossible(i,side,u) )
-          { short f;
-            f = NO_SQUARES + i;
-            if ( side == white ) f += NO_PIECES;
-            LinkMove (ply, f, u, (dropmask | i), xside);
-          }
 
-#ifdef DEBUG_EVAL
-  SortMoves(ply);
-#endif
+  if ( !InCheck || blockable ) 
+    if ( flag.tsume )
+      { /* special drop routine for tsume problems */
+	if ( InCheck ) {
+	  LinkPreventCheckDrops (side, xside, ply);
+	} else {
+	  LinkCheckDrops (side, xside, ply);
+	}
+
+      }
+    else
+      {
+	for ( u = 0; u < NO_SQUARES; u++ )
+	  DropToSquare(side,xside,ply,u);
+      } 
 
 #ifdef HISTORY
-  history[hindex(side,SwagHt)] -= 5000;
-  history[hindex(side,Swag0)] -= 2000;
-  history[hindex(side,Swag1)] -= 60;
-  history[hindex(side,Swag2)] -= 50;
-  history[hindex(side,Swag3)] -= 40;
-  history[hindex(side,Swag4)] -= 30;
+  if ( use_history ) {
+    history[hiHt] -= 5000;
+    history[hi0] -= 2000;
+    history[hi1] -= 60;
+    history[hi2] -= 50;
+    history[hi3] -= 40;
+    history[hi4] -= 30;
+  }
 #endif
 
   SwagHt = 0;			/* SwagHt is only used once */
@@ -833,14 +1208,31 @@ MoveList (short int side, register short int ply, short int in_check)
   if ( flag.tsume && node == firstnode )
     (*TrP)++;
 
-  GenCnt += (TrPnt[ply+1] - TrPnt[ply]);
+  GenCnt += (num = (TrPnt[ply+1] - TrPnt[ply]));
+
+#ifdef DEBUG_EVAL
+  SortMoves(ply);
+#endif
+              
+#ifdef DONTUSE_HEURISTIC
+   /* remove some nodes in case of wide spread in depth */
+   if ( !flag.tsume && (i = MaxNum[ply]) > 0 && num > i) {
+     SortMoves(ply);
+     DontUseMoves(ply,i);
+   }
+#endif       
+
+#ifdef notdef
+  printf("%d moves at ply %d\n",num,ply);
+#endif  
 
   flag.tsume = flag_tsume;
 
 }
 
 void
-CaptureList (register short int side, short int ply, short int in_check)
+CaptureList (register short int side, short int ply, 
+	     short int in_check, short int blockable)
 
 /*
  * Fill the array Tree[] with all available captures for side to play.
@@ -861,7 +1253,7 @@ CaptureList (register short int side, short int ply, short int in_check)
 #else
   register unsigned char *ppos, *pdir;
 #endif
-  short i, piece, flag_tsume, blockable;
+  short i, piece, flag_tsume;
   small_short *PL;
 
   xside = side ^ 1;
@@ -893,6 +1285,8 @@ CaptureList (register short int side, short int ply, short int in_check)
       /* Own king is in check */
       flag.tsume = true;
     }
+
+  check_determined = false;
 
   PL = PieceList[side];
 
@@ -926,19 +1320,19 @@ CaptureList (register short int side, short int ply, short int in_check)
 		  if ( PP = PromotionPossible(color[sq],sq,u,piece) ) {
                     Link (side, piece, 
 			  sq, u, capture | promote,
-                          value[board[u]]
+                          (*value)[stage][board[u]]
 #if !defined SAVE_SVALUE 
 			    + svalue[board[u]]
-#endif 
+#endif                    
                             - relative_value[piece]);
                   } 
 		  if ( !PP || flag.tsume ) {
                     Link (side, piece, 
 			  sq, u, capture,
-                          value[board[u]]
+                          (*value)[stage][board[u]]
 #if !defined SAVE_SVALUE 
 			    + svalue[board[u]]
-#endif 
+#endif                         
                             - relative_value[piece]);
                   }  
 	   	}
@@ -986,7 +1380,7 @@ IsCheckmate (short int side, short int in_check, short int blockable)
 #endif
   short i, piece, flag_tsume;
   small_short *PL;
-  struct leaf *firstnode;
+  struct leaf far *firstnode;
   short tempb, tempc, ksq, threat, dummy, sqking;
   short InCheck;
 

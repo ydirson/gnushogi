@@ -1,14 +1,34 @@
-
+/*
+ * pat2inc.c - convert GNU SHOGI pattern textfile to include file
+ *
+ * Copyright (c) 1993, 1994 Matthias Mutz
+ *
+ * GNU SHOGI is based on GNU CHESS
+ *
+ * Copyright (c) 1988,1989,1990 John Stanback
+ * Copyright (c) 1992 Free Software Foundation
+ *
+ * This file is part of GNU SHOGI.
+ *
+ * GNU Shogi is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 1, or (at your option)
+ * any later version.
+ *
+ * GNU Shogi is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GNU Shogi; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+ 
+#include "version.h"
 #include "gnushogi.h"
 
 #include "pattern.h"
-
-
-#define NO_MAIN
-
-#include "version.h"
-
-#include "main.c"
 
 
 /*
@@ -52,8 +72,7 @@ main (int argc, char **argv)
 
 {
 
-  short d, sq, side; 
-  PatternFields pattern;
+  short d, sq, side, max_opening_sequence, max_pattern_data; 
   char s[80], *Lang = NULL; 
   
 #ifdef THINK_C
@@ -61,8 +80,11 @@ main (int argc, char **argv)
   ccommand(&argv);
 #endif
 
+#if defined EXTLANGFILE
   InitConst (Lang);
-  Initialize_dist ();
+#endif
+
+  Initialize_data();
 
   for (sq = 0; sq < NO_SQUARES; sq++ ) {
     board[sq] = no_piece;
@@ -88,26 +110,19 @@ main (int argc, char **argv)
       UpdateDisplay (0, 0, 1, 0);
     }
 
-  strcpy(s,"k8h g7h g6g p9f p8g p7f S5h");
-
-  if ( string_to_patternfields (s, &pattern) )
-    {
-      printf("ERROR IN string_to_patternfields");
-      exit(1);
-    }
-  else
-    {
-      DisplayPattern (&pattern);
-    }
-
   d = pattern_distance (black, &pattern);
 
   printf("distance = %d\n", d);
 
 #endif
 
-  GetOpeningPatterns ();
-  ShowOpeningPatterns ();
+  ReadOpeningSequences (&max_pattern_data);
+  WriteOpeningSequences (max_pattern_data);
+
+#ifdef DEBUG 
+  GetOpeningPatterns (&max_opening_sequence);
+  ShowOpeningPatterns (max_opening_sequence);
+#endif
      
 }
 

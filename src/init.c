@@ -1,7 +1,7 @@
 /*
  * init.c - C source for GNU SHOGI
  *
- * Copyright (c) 1993 Matthias Mutz
+ * Copyright (c) 1993, 1994 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -27,31 +27,32 @@
  
 #include "gnushogi.h"
 
+
+
 #if defined HASGETTIMEOFDAY && !defined THINK_C
 #include <sys/time.h>
 #endif
 
-extern unsigned int TTadd;
+#if defined THINK_C
+#include <time.h>
+#endif
+
+
+#include "pattern.h"
+
+
 unsigned int ttbllimit;
 
 /* .... MOVE GENERATION VARIABLES AND INITIALIZATIONS .... */
 
 
-#ifdef USE_PATTERN
-#include "pattern.h"
-#endif
-
-
 #ifdef THINK_C                
 #define abs(a) (((a)<0)?-(a):(a))
 #endif
+#ifndef MSDOS
 #define max(a,b) (((a)<(b))?(b):(a))
-#define odd(a) ((a) & 1)
-
-
-#ifdef MSDOS
-#define malloc(size) farmalloc(size)
 #endif
+#define odd(a) ((a) & 1)
 
 
 const small_short piece_of_ptype[NO_PTYPE_PIECES] =
@@ -64,9 +65,33 @@ const small_short side_of_ptype[NO_PTYPE_PIECES] =
     white, white, white, white, white };
 
 #ifdef SAVE_NEXTPOS
-static const sweep[NO_PTYPE_PIECES] =
+const small_short psweep[NO_PTYPE_PIECES] =
 { false, true, false, false, false, true, true, true, true, false,
     false, true, false, false, false };
+#endif
+
+const small_short sweep[NO_PIECES] =
+{ false, false, true, false, false, false, true, true,  
+  false, false, false, false, true, true, false };
+
+
+#if !defined EXTLANGFILE
+
+char far *CP[CPSIZE] = 
+
+{             
+/* 000:eng: */ "",
+#ifdef LANGFILE
+#include LANGFILE
+#else
+#include "gnushogi.lng"
+#endif
+};
+
+#else
+
+char far *CP[CPSIZE];
+
 #endif
 
 
@@ -99,16 +124,16 @@ ptype_distance (short ptyp, short f, short t)
   switch ( piece ) {
 
     case pawn:
-	if ( (dcol != 0) || (drow != 1) )
+	if ( (dcol != 0) || (drow < 1) )
 	  return (CANNOT_REACH);
 	else
-	  return (1);
+	  return (drow);
 
     case lance:
 	if ( (dcol != 0) || (drow < 1) )
 	  return (CANNOT_REACH);
 	else
-	  return (drow);
+	  return (1);
 
     case knight:
 	if ( odd(drow) || (odd(drow / 2) != odd(dcol)) )
@@ -119,17 +144,20 @@ ptype_distance (short ptyp, short f, short t)
 	  return (drow / 2);
 
     case silver:
-	if ( odd(drow) == odd(dcol) )
-	  return max(abs(drow),abs(dcol));
-	else if ( drow > 0 )
-	  if ( abs(dcol) <= drow )
-	    return (drow);
+	if ( drow > 0 ) {
+	  if ( odd(drow) == odd(dcol) )
+	    return max(abs(drow),abs(dcol));
 	  else
-	    return (max(abs(drow),abs(dcol))+1);
-	else if ( dcol == 0 )
-	  return (2-drow);
-	else
-	  return (max(abs(drow),abs(dcol))+1);
+	    if ( abs(dcol) <= drow )
+	      return (drow);
+	    else
+	      return (max(abs(drow),abs(dcol))+1);
+	} else {
+	  if ( odd(drow) == odd(dcol) )
+	    return (max(abs(drow),abs(dcol)));
+	  else
+	    return (max(abs(drow)+1,abs(dcol))+1);
+	};
 
     case gold:
     case ppawn:
@@ -186,43 +214,50 @@ ptype_distance (short ptyp, short f, short t)
 }
 
 
-#ifndef SAVE_DISTDATA
-distdata_array *distdata;
-#endif
+#ifdef SAVE_DISTDATA 
+short distance (short a, short b) 
+{ 
+  return (short)computed_distance(a,b);
+}
+#else                
+short distance (short a, short b)
+{
+  return (use_distdata ? (short)(*distdata)[(int)a][(int)b] : (short)computed_distance(a,b));
+}
+#endif                         
 
-#ifndef SAVE_PTYPE_DISTDATA
-distdata_array *ptype_distdata[NO_PTYPE_PIECES];
-#endif
+
+#ifdef SAVE_PTYPE_DISTDATA
+short piece_distance(short side,short piece,short f,short t)
+{
+  return ((f > NO_SQUARES) ? (short)1 : (short)ptype_distance(ptype[side][piece],f,t));
+}
+#else
+short piece_distance(short side,short piece,short f,short t)
+{
+  return ((f > NO_SQUARES) ? (short)1 : 
+                 (use_ptype_distdata ? (short)(*ptype_distdata[ptype[side][piece]])[f][t] :
+     			               (short)ptype_distance(ptype[side][piece],f,t)));
+}
+#endif                      
 
 
 void
 Initialize_dist (void)
 {
   register short a, b, d, di, ptyp;
-#ifndef SAVE_DISTDATA
-  if ( (distdata = (distdata_array *) malloc (sizeof(distdata_array))) == NULL )
-    {
-      ShowMessage("cannot allocate distdata space...");
-      exit(1);
-    }
+#ifndef SAVE_DISTDATA  
   for (a = 0; a < NO_SQUARES; a++)
     for (b = 0; b < NO_SQUARES; b++)
       {
-	d = abs (column (a) - column (b));
+        d = abs (column (a) - column (b));
 	di = abs (row (a) - row (b));
 	(*distdata)[a][b] = (small_short)((d > di) ? d : di);
-      }
+      } 
 #endif
 #ifndef SAVE_PTYPE_DISTDATA
   for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++)
     {
-      size_t space = sizeof(distdata_array);
-      ptype_distdata[ptyp] = (distdata_array *) malloc (space);
-      if ( ptype_distdata[ptyp] == NULL )
-        {
-          ShowMessage("cannot allocate ptype_distdata space...");
-          exit(1);
-        }
       for (a = 0; a < NO_SQUARES; a++)
         for (b = 0; b < NO_SQUARES; b++)
           (*ptype_distdata[ptyp])[a][b] = ptype_distance(ptyp,a,b);
@@ -242,11 +277,6 @@ Initialize_dist (void)
  * If the path is blocked u = pdir[sq] will generate the continuation of the
  * sequence in other directions.
  */
-
-
-#if !defined SAVE_NEXTPOS
-next_array *nextdir[NO_PTYPE_PIECES], *nextpos[NO_PTYPE_PIECES]; 
-#endif
 
 
 /*                                           
@@ -308,9 +338,6 @@ small_short diagonal(short d)
 static const small_short max_steps[NO_PTYPE_PIECES] = 
 {1, 8, 1, 1, 1, 8, 8, 8, 8, 1, 1, 8, 1, 1, 1 };
 
-#if !defined SAVE_NEXTPOS
-static
-#endif 
 const small_short nunmap[(NO_COLS+2)*(NO_ROWS+4)] =
 {
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -328,7 +355,6 @@ const small_short nunmap[(NO_COLS+2)*(NO_ROWS+4)] =
   -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
 
-#ifdef SAVE_NEXTPOS
 const small_short inunmap[NO_SQUARES] =
 {
   23, 24, 25, 26, 27, 28, 29, 30, 31, 
@@ -340,7 +366,6 @@ const small_short inunmap[NO_SQUARES] =
   89, 90, 91, 92, 93, 94, 95, 96, 97,
  100,101,102,103,104,105,106,107,108,
  111,112,113,114,115,116,117,118,119 }; 
-#endif
 
 int InitFlag = false;
 
@@ -362,7 +387,7 @@ short next_direction(short ptyp, short *d, short sq)
 
 short next_position(short ptyp, short *d, short sq, short u)
 {
-  if ( *d < 4 && sweep[ptyp] ) {
+  if ( *d < 4 && psweep[ptyp] ) {
     short to = nunmap[inunmap[u]+direc[ptyp][*d]];
     if ( to < 0 )
 	return next_direction(ptyp,d,sq);
@@ -391,8 +416,8 @@ Initialize_moves (void)
  */
 
 {
-  short ptyp, po, p0, d, di, s, delta;
-  unsigned char *ppos, *pdir;       
+  short ptyp, po, p0, d, di, s, delta, i;
+  unsigned char far *ppos, *pdir;       
   short dest[8][9];
   short sorted[9];              
   short steps[8];
@@ -400,16 +425,6 @@ Initialize_moves (void)
 
   for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++)
     {
-      if ( !(nextdir[ptyp] = (next_array *) malloc ((size_t)sizeof(next_array))) )
-	{
-          ShowMessage ("cannot allocate nextdir space\n"); 
-	  exit(1);
-	}
-      if ( !(nextpos[ptyp] = (next_array *) malloc ((size_t)sizeof(next_array))) )
-	{
-          ShowMessage ("cannot allocate nextpos space\n"); 
-	  exit(1);
-	}
       for (po = 0; po < NO_SQUARES; po++)
         for (p0 = 0; p0 < NO_SQUARES; p0++)
 	  { 
@@ -484,6 +499,7 @@ Initialize_moves (void)
 		     */
 		  }
 	}
+
 }
 
 #endif
@@ -497,12 +513,12 @@ NewGame (void)
  */
 
 {
-  short l, c, p;
+  short l, c, p, max_opening_sequence;
 #ifdef HASGETTIMEOFDAY
   struct timeval tv;
 #endif
   compptr = oppptr = 0;
-  stage = stage2 = -1;		/* the game is not yet started */
+  stage = 0; stage2 = -1;	/* the game is not yet started */
   flag.illegal = flag.mate = flag.post = flag.quit = flag.reverse = flag.bothsides = flag.onemove = flag.force = false;
   flag.material = flag.coords = flag.hash = flag.easy = flag.beep = flag.rcptr = true;
   flag.stars = flag.shade = flag.back = flag.musttimeout = false;
@@ -536,35 +552,35 @@ NewGame (void)
     Tree[l].f = Tree[l].t = 0;
   gsrand ((unsigned int) 1);
   if (!InitFlag)
-    {
+    {            
       for (c = black; c <= white; c++)
 	for (p = pawn; p <= king; p++)
 	  for (l = 0; l < NO_SQUARES; l++)
 	    {
-	      hashcode[c][p][l].key = (((unsigned long) urand ()));
-	      hashcode[c][p][l].key += (((unsigned long) urand ()) << 16);
-	      hashcode[c][p][l].bd = (((unsigned long) urand ()));
-	      hashcode[c][p][l].bd += (((unsigned long) urand ()) << 16);
+	      (*hashcode)[c][p][l].key = (((unsigned long) urand ()));
+	      (*hashcode)[c][p][l].key += (((unsigned long) urand ()) << 16);
+	      (*hashcode)[c][p][l].bd = (((unsigned long) urand ()));
+	      (*hashcode)[c][p][l].bd += (((unsigned long) urand ()) << 16);
 #ifdef LONG64
-	      hashcode[c][p][l].key += (((unsigned long) urand ()) << 32);
-	      hashcode[c][p][l].key += (((unsigned long) urand ()) << 48);
-	      hashcode[c][p][l].bd += (((unsigned long) urand ()) << 32);
-	      hashcode[c][p][l].bd += (((unsigned long) urand ()) << 48);
+	      (*hashcode)[c][p][l].key += (((unsigned long) urand ()) << 32);
+	      (*hashcode)[c][p][l].key += (((unsigned long) urand ()) << 48);
+	      (*hashcode)[c][p][l].bd += (((unsigned long) urand ()) << 32);
+	      (*hashcode)[c][p][l].bd += (((unsigned long) urand ()) << 48);
 #endif
-	    }
+	    }           
       for (c = black; c <= white; c++)
 	for (p = pawn; p <= king; p++)
 	  for (l = 0; l < MAX_CAPTURED; l++)
 	    {
-	      drop_hashcode[c][p][l].key = (((unsigned long) urand ()));
-	      drop_hashcode[c][p][l].key += (((unsigned long) urand ()) << 16);
-	      drop_hashcode[c][p][l].bd = (((unsigned long) urand ()));
-	      drop_hashcode[c][p][l].bd += (((unsigned long) urand ()) << 16);
+	      (*drop_hashcode)[c][p][l].key = (((unsigned long) urand ()));
+	      (*drop_hashcode)[c][p][l].key += (((unsigned long) urand ()) << 16);
+	      (*drop_hashcode)[c][p][l].bd = (((unsigned long) urand ()));
+	      (*drop_hashcode)[c][p][l].bd += (((unsigned long) urand ()) << 16);
 #ifdef LONG64
-	      drop_hashcode[c][p][l].key += (((unsigned long) urand ()) << 32);
-	      drop_hashcode[c][p][l].key += (((unsigned long) urand ()) << 48);
-	      drop_hashcode[c][p][l].bd += (((unsigned long) urand ()) << 32);
-	      drop_hashcode[c][p][l].bd += (((unsigned long) urand ()) << 48);
+	      (*drop_hashcode)[c][p][l].key += (((unsigned long) urand ()) << 32);
+	      (*drop_hashcode)[c][p][l].key += (((unsigned long) urand ()) << 48);
+	      (*drop_hashcode)[c][p][l].bd += (((unsigned long) urand ()) << 32);
+	      (*drop_hashcode)[c][p][l].bd += (((unsigned long) urand ()) << 48);
 #endif
 	    }
     }
@@ -580,6 +596,8 @@ NewGame (void)
 #ifdef HASGETTIMEOFDAY
   gettimeofday(&tv, NULL);
   time0 = tv.tv_sec*100+tv.tv_usec/10000;
+#elif defined THINK_C
+  time0 = time (0);
 #else
   time0 = time ((long *) 0);
 #endif
@@ -597,12 +615,9 @@ NewGame (void)
 	SelectLevel (sx);
       UpdateDisplay (0, 0, 1, 0);
       GetOpenings ();
-#ifdef USE_PATTERN
-      GetOpeningPatterns ();
-      /* ShowOpeningPatterns (); */
-#endif
-#if ttblsz
-      Initialize_ttable();
+      GetOpeningPatterns (&max_opening_sequence);
+#ifdef DEBUG
+      /* ShowOpeningPatterns (max_opening_sequence); */
 #endif
       InitFlag = true;
     }
@@ -611,11 +626,241 @@ NewGame (void)
 #endif /* ttblsz */
   hashbd = hashkey = 0;
   return;
-}     
+}              
 
 
-#if !defined GDISPLAY
+int
+Initialize_data (void)
+{
+  size_t n;
+  int i;   
+  char buffer[60],buf2[60];
+  int doit = true;
 
+  {
+    small_short x = -1;
+    if ( x >= 0 ) {
+      ShowMessage("datatype 'small_short' is unsigned; check gnushogi.h\n");
+      return(1);
+    }
+  }
+
+  n = sizeof(struct leaf) * (size_t)TREE;
+  Tree = HEAP_ALLOC(n);
+  if ( !Tree ) {
+    sprintf(buffer,"Cannot allocate %ld bytes for search tree",n);
+    ShowMessage (buffer);
+    return(1);
+  } else {
+#if defined NONDSP
+    printf("Tree memory: %ld\n",(long)n); 
+#endif
+  }          
+
+  n = sizeof(hashcode_array);
+  hashcode = HEAP_ALLOC(n);
+  if ( !hashcode ) {
+    sprintf(buffer,"Cannot allocate %ld bytes for hashcode",n);
+    ShowMessage(buffer);
+    return(1);
+  } else {
+#if defined NONDPS
+    printf("hashcode memory: %ld\n",(long)n); 
+#endif
+  }       
+
+  n = sizeof(drop_hashcode_array);
+  drop_hashcode = HEAP_ALLOC(n);
+  if ( !drop_hashcode ) {
+    sprintf(buffer,"Cannot allocate %ld bytes for drop_hashcode",n);
+    ShowMessage(buffer);
+    return(1);
+  } else { 
+#if defined NONDSP
+    printf("drop_hashcode memory: %ld\n",(long)n); 
+#endif                                             
+  }
+
+  n = sizeof(struct GameRec) * (size_t)(MAXMOVES + MAXDEPTH);
+  GameList = HEAP_ALLOC(n);
+  if ( !GameList ) {
+    sprintf(buffer,"Cannot allocate %ld bytes for game record",n);
+    ShowMessage(buffer);
+    return(1);
+  } else {
+#ifdef NONDSP
+    printf("GameList memory: %ld\n",(long)n); 
+#endif
+  }
+
+#if !defined SAVE_NEXTPOS
+  n = sizeof(next_array);
+  for ( i=0; i<NO_PTYPE_PIECES; i++ ) {
+    nextdir[i] = use_nextpos ? HEAP_ALLOC(n) : NULL;
+    if ( !nextdir[i] ) {
+      if ( use_nextpos ) {
+        sprintf(buffer,"cannot allocate %ld space for nextdir %d",(long)(n),i);
+        ShowMessage (buffer);
+      }
+      use_nextpos = false;
+    }
+    nextpos[i] = use_nextpos ? HEAP_ALLOC(n) : NULL;
+    if ( !nextpos[i] ) {
+      if ( use_nextpos ) {
+        sprintf(buffer,"cannot allocate %ld space for nextpos %d",(long)(n),i);
+        ShowMessage (buffer);
+      }
+      use_nextpos = false;
+    }
+  } 
+  if ( !use_nextpos ) {
+    return(1);
+  } else {
+#if defined NONDSP
+    printf("nextdir+nextpos memory: %ld\n",(long)(n*2*NO_PTYPE_PIECES)); 
+#endif 
+  }
+#endif
+
+  n = sizeof(value_array);
+  value = HEAP_ALLOC(n);
+  if ( !value ) {
+    ShowMessage("cannot allocate value space");
+    return(1);
+  } else {
+#if defined NONDSP
+    printf("value memory: %ld\n",(long)n); 
+#endif
+  }
+  n = sizeof(fscore_array);
+  fscore = HEAP_ALLOC(n);
+  if ( !fscore ) {
+    ShowMessage("cannot allocate fscore space");
+    return(1);
+  } else {
+#if defined NONDSP
+    printf("fscore memory: %ld\n",(long)n); 
+#endif
+  }
+
+#if defined HISTORY
+  n = sizeof_history;
+  history = HEAP_ALLOC(n);
+  if ( !history ) {
+    sprintf(buffer,"Cannot allocate %ld bytes for history table",sizeof_history);
+    ShowMessage(buffer);
+    use_history = false;
+  } else {
+#if defined NONDSP
+    printf("history memory: %ld\n",(long)n);
+#endif      
+  }
+#endif
+
+#if defined CACHE
+  n = sizeof(struct etable) * (size_t)ETABLE;
+  for ( i=0; i<2; i++ ) {
+    etab[i] = use_etable ? HEAP_ALLOC(n) : NULL;
+    if ( !etab[i] ) {
+      sprintf(buffer,"Cannot allocate %ld bytes for cache table i",n,i);
+      ShowMessage (buffer);
+      use_etable = false;
+    }
+  }
+#if defined NONDSP
+  if ( use_etable )
+    printf("etab memory: %ld (etable=%ld ETABLE=%ld)\n",
+      (long)(n*2),(long)sizeof(struct etable),(long)ETABLE); 
+#endif
+#endif
+
+#if ttblsz
+
+  if (rehash < 0)
+    rehash = MAXrehash;
+    
+   n = sizeof(struct hashentry)*(ttblsize+rehash);
+#ifdef DEBUG 
+   printf("ttblsize = %ld rehash = %ld n = %ld\n",(long)ttblsize,(long)rehash,(long)n);
+#endif
+  while ( doit && ttblsize > MINTTABLE ) {
+#ifdef DEBUG
+    printf("try to allocate %d bytes for transposition table\n",(long)2*n);
+#endif 
+    ttable[0] = HEAP_ALLOC(n); 
+    ttable[1] = ttable[0] ? HEAP_ALLOC(n) : NULL; 
+    if ( !ttable[0] || !ttable[1] ) {
+      if ( !ttable[0] ) {
+	HEAP_FREE(ttable[0]);
+      }
+      if ( !ttable[1] ) {
+	HEAP_FREE(ttable[1]);
+      }
+      ttblsize = ttblsize >> 1;
+      n = sizeof(struct hashentry)*(ttblsize+rehash);
+    } else doit = false; 
+  }
+  if ( ttblsize <= MINTTABLE ) {
+    use_ttable = false;        
+  }
+  if ( use_ttable ) {
+#if defined NONDSP && !defined XSHOGI
+    sprintf(buffer,"ttable's memory: %ld, ttblsize=%ld rehash=%ld",
+		(long)2*n,(long)ttblsize,(long)rehash);
+    ShowMessage(buffer);
+#endif
+    ttbllimit = ttblsize<<1 - ttblsize>>2;
+#ifdef DEBUG_TTABLE
+    printf("ttbllimit = %ld\n",(long)ttbllimit);
+#endif
+  } else {
+    sprintf(buffer,"Cannot allocate %ld bytes for transposition table",(long)(2*n));
+    ShowMessage (buffer);
+    ttable[0] = ttable[1] = NULL;
+  }
+#endif /* ttblsz */
+
+#if !defined SAVE_DISTDATA
+  n = sizeof(distdata_array);
+  distdata = HEAP_ALLOC(n);
+  if ( !distdata )
+    {
+      ShowMessage("cannot allocate distdata space...");
+      use_distdata = false;
+    }
+  else
+    {
+#if defined NONDSP
+      printf("distdata memory: %ld\n",(long)n);
+#endif
+    }
+#endif
+
+#if !defined SAVE_PTYPE_DISTDATA
+  n = sizeof(distdata_array);
+  for ( i=0; i<NO_PTYPE_PIECES; i++ ) {
+    ptype_distdata[i] = use_ptype_distdata ? HEAP_ALLOC(n) : NULL;
+    if ( !ptype_distdata[i] ) {
+      sprintf(buffer,"cannot allocate %ld bytes for ptype_distdata %d...",(long)n,i);
+      use_ptype_distdata = false;
+    }
+  }
+#ifdef NONDSP
+  if ( use_ptype_distdata ) {
+    printf("ptype_distdata memory: %ld\n",(long)(n*NO_PTYPE_PIECES));
+  }
+#endif          
+#endif
+
+return(0);
+}
+
+
+#if defined EXTLANGFILE
+
+                    
+
+#ifdef OLDLANGFILE
 
 void
 InitConst (char *lang)
@@ -685,11 +930,11 @@ InitConst (char *lang)
           ShowMessage(buffer);
 	  exit (0);
 	}
-      CP[entry] = (char *) malloc ((unsigned) strlen (&s[9]) + 1);
+      CP[entry] = (char far *) HEAP_ALLOC ((unsigned) strlen (&s[9]) + 1);
       if (CP[entry] == NULL)
 	{
 	  char buffer[80];
-	  sprintf(buffer,"CP malloc, entry %d",entry);
+	  sprintf(buffer,"CP MALLOC, entry %d",entry);
 	  perror (buffer);
 	  exit (0);
 	}
@@ -699,51 +944,199 @@ InitConst (char *lang)
   fclose (constfile);
 }                    
 
+#else
+
+void
+InitConst (char *lang)
+{
+  FILE *constfile;
+  char s[256];
+  char sl[5];
+  char buffer[120];
+  int len, entry;
+  char *p, *q;
+  constfile = fopen (LANGFILE, "r");
+  if (!constfile)
+    {
+      ShowMessage ("NO LANGFILE");
+      exit (1);
+    }
+  while (fgets (s, sizeof (s), constfile))
+    {
+      if (s[0] == '!')
+	continue;
+      len = strlen (s);
+      if (len > 3 && s[3] == ':' || len > 7 && s[7] == ':' ) 
+	{
+	  ShowMessage("old Langfile error"); 
+	  exit (1);
+	}
+      if (len <= 15)
+	{
+	  ShowMessage("length error in Langfile");
+	  exit (1);
+	}
+      for (q = &s[len]; q > &s[15]; q--)
+	if (*q == '"')
+	  break;
+      if (q == &s[15])
+	{
+	  ShowMessage("\" error in Langfile");
+	  exit (1);
+	}
+      *q = '\0';
+      if (s[6] != ':' || s[10] != ':' || s[15] != '"')
+	{
+	  sprintf (buffer,"Langfile format error %s", s);
+	  ShowMessage(buffer);
+	  exit (1);
+	}
+      s[6] = s[10] = '\0';
+      if (lang == NULL)
+	{
+	  lang = sl;
+	  strcpy (sl, &s[7]);
+	}     
+      if (strcmp (&s[7], lang))
+	continue;
+      entry = atoi (&s[3]);
+      if (entry < 0 || entry >= CPSIZE)
+	{
+	  ShowMessage("Langfile number error");
+	  exit (1);
+	} 
+      for (q = p = &s[16]; *p; p++)
+	{
+	  if (*p != '\\')
+	    {
+	      *q++ = *p;
+	    }
+	  else if (*(p + 1) == 'n')
+	    {
+	      *q++ = '\n';
+	      p++;
+	    }
+	}
+      *q = '\0';
+      if (entry < 0 || entry > 255)
+	{
+	  sprintf (buffer,"Langfile error %d\n", entry);
+          ShowMessage(buffer);
+	  exit (0);
+	}
+      CP[entry] = (char far *) HEAP_ALLOC ((unsigned) strlen (&s[16]) + 1);
+      if (CP[entry] == NULL)
+	{
+	  char buffer[80];
+	  sprintf(buffer,"CP MALLOC, entry %d",entry);
+	  perror (buffer);
+	  exit (0);
+	}
+      strcpy (CP[entry], &s[16]);
+
+    }
+  fclose (constfile);
+}                    
+
 #endif
 
+#endif
+
+
+int
+InitMain (void)
+{
+#if defined THINK_C
+  gsrand (starttime = ((unsigned int) time ((time_t *) 0)));	/* init urand */
+#else
+  gsrand (starttime = ((unsigned int) time ((long *) 0)));	/* init urand */
+#endif
 
 #if ttblsz
-void
+  ttblsize = ttblsz;
+  rehash = -1;
+#endif /* ttblsz */      
 
-Initialize_ttable ()
-{
-  int doit = true;
+  if ( Initialize_data() != 0 )
+    return(1);
 
-  if (rehash < 0)
-    rehash = MAXrehash;
-
-#if !defined BAREBONES && defined NONDSP
-  { char s[80];
-    sprintf(s,"expected ttable is %ld",(long)ttblsize);
-    ShowMessage(s);
-  }
+#if defined EXTLANGFILE
+  InitConst (Lang);    
 #endif
 
-  while ( doit && ttblsize > MINTTABLE ) {
-    ttable[0] = (struct hashentry *)malloc((unsigned)(sizeof(struct hashentry))*(ttblsize+rehash));
-    ttable[1] = (struct hashentry *)malloc((unsigned)(sizeof(struct hashentry))*(ttblsize+rehash));
-    if (ttable[0] == NULL || ttable[1] == NULL) {
-      if (ttable[0] != NULL) free(ttable[0]);
-      if (ttable[1] != NULL) free(ttable[1]);
-      ttblsize = ttblsize >> 1;
-    } else doit = false;
-  }
+  strcpy(ColorStr[0],CP[118]);
+  strcpy(ColorStr[1],CP[119]);
 
-  if (ttable[0] == NULL || ttable[1] == NULL) {
-    perror("ttable memory alloc");
-    exit(1);
-  }
+  XC = 0;
+  MaxResponseTime = 0;
 
-#if defined NONDSP && !defined XSHOGI
-  { char s[80];
-    sprintf(s,"ttable is %ld",(long)ttblsize);
-    ShowMessage(s);
-  }
+#if defined XSHOGI
+  signal (SIGTERM, TerminateSearch);
 #endif
 
-  ttbllimit = ttblsize<<1 - ttblsize>>2;
+#if defined XSHOGI
+  TCflag = true;
+  TCmoves = 40;
+  TCminutes = 5;
+  TCseconds = 0;
+  TCadd = 0;
+  OperatorTime = 0;
+#else
+  TCflag = false;
+  OperatorTime = 0;
+#endif
+  
+  Initialize ();
+  Initialize_dist ();
+  Initialize_eval ();
+#if !defined SAVE_NEXTPOS
+  Initialize_moves ();
+#endif
+
+  NewGame ();
+
+  flag.easy = ahead;
+  flag.hash = hash;
+  if (xwin)
+    xwndw = atoi (xwin);
+
+#ifdef HASHFILE
+  hashfile = NULL;
+#endif
+
+#if ttblsz
+#ifdef HASHFILE
+  hashfile = fopen (HASHFILE, RWA_ACC);
+  if (hashfile)
+    {
+      fseek (hashfile, 0L, SEEK_END);
+      filesz = ftell (hashfile) / sizeof (struct fileentry) - 1 - MAXrehash;
+              hashmask = filesz>>1;
+	      hashbase = hashmask+1;
+    }               
+#endif /* HASHFILE */
+#endif /* ttblsz */
+
+  savefile[0] = '\0';
+  listfile[0] = '\0';
+
+  return(0);
+
 }
 
+
+void
+ExitMain (void)
+{
+#if ttblsz
+#ifdef HASHFILE
+  if (hashfile)
+    fclose (hashfile);
+#endif /* HASHFILE */
 #endif /* ttblsz */
+
+  ExitChess ();
+
+}
 
 

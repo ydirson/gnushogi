@@ -1,87 +1,120 @@
+/*
+ * pattern.h - C source for GNU SHOGI
+ *
+ * Copyright (c) 1993, 1994 Matthias Mutz
+ *
+ * GNU SHOGI is based on GNU CHESS
+ *
+ * Copyright (c) 1988,1989,1990 John Stanback
+ * Copyright (c) 1992 Free Software Foundation
+ *
+ * This file is part of GNU SHOGI.
+ *
+ * GNU Shogi is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 1, or (at your option)
+ * any later version.
+ *
+ * GNU Shogi is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with GNU Shogi; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+ 
 /* #define TEST_PATTERN  */
 /* #define DEBUG_PATTERN */
 
 
-#define MAX_PATTERN 20 /* maximum number of pieces in pattern */
-#define MAX_NEXT 6     /* maximum number of links */
-#define MAX_NAME 20    /* maximum length of opening name */
+#define MAX_NAME 16    /* maximum length of opening name */
+#define MAX_SEQUENCE 4 /* maximum number of sequences for an opening type */
 
 
-typedef
-  struct PatternField_rec {
-    small_short side, piece, square;
-  } PatternField;
+#define CANNOT_REACH (-1)
+#define NOT_TO_REACH (-2)
+#define IS_REACHED   (-3)
+#define IS_SUCCESSOR (-4)
 
-typedef
+#define END_OF_SEQUENCES (-1)
+#define END_OF_PATTERNS (-2)
+#define END_OF_LINKS (-3)
+#define END_OF_FIELDS (-4)
+
+  struct PatternField {
+    short side;
+    short piece;
+    short square;
+  }; 
+
+
   struct Pattern_rec {
-    short n;
-    PatternField field[MAX_PATTERN];
-  } PatternFields;
-
-typedef
-  struct PatternSequence_rec { 
-    small_short n;
-    small_short next[MAX_NEXT];
+    small_short visited;
     small_short distance[2];
     small_short reachedGameCnt[2];
-    small_short visited;
-    PatternFields patternfields;
-    struct PatternSequence_rec *next_pattern;
-  } PatternSequence;
+    short first_link;
+    short first_field;
+    short next_pattern;
+  };
                
 
-typedef
-  struct OpeningPattern_rec {
-    char name[MAX_NAME];
-    short n;
-    PatternSequence *sequence;
-    struct OpeningPattern_rec *next;
-  } OpeningPattern;
+  struct OpeningSequence_rec {
+    short opening_type;
+    short first_pattern[MAX_SEQUENCE];
+  };
 
 
-extern OpeningPattern *Patterns;
-    
+extern struct OpeningSequence_rec OpeningSequence[];
+extern struct Pattern_rec Pattern[];
 
-extern
-  short
-  string_to_board_color
-    (char *s);
 
-extern
-  short
-  string_to_patternfields
-    (char *s, PatternFields *pattern);
 
 extern 
   short
   piece_to_pattern_distance 
-    (short side, short piece, short pside, PatternFields *pattern);
+    (short side, short piece, short pside, short pattern);
 
 extern
   short
-  pattern_distance (short pside, PatternFields *pattern);
+  pattern_distance (short pside, short pattern);
 
 extern
   short
   board_to_pattern_distance 
-    (short pside, OpeningPattern *opattern, short pmplty, short GameCnt);
+    (short pside, short osequence, short pmplty, short GameCnt);
  
 extern
-  OpeningPattern *locate_opening_pattern(short pside, char *s, short GameCnt);
+  short locate_opening_sequence(short pside, char *s, short GameCnt);
 
 extern
   void
-  DisplayPattern (PatternFields *pattern);
+  DisplayPattern (FILE *fd, short first_field);
+
+extern
+  void update_advance_bonus (short pside, short os);
 
 extern
   void
-  GetOpeningPatterns ();
+  GetOpeningPatterns (short *max_opening_sequence);
 
 extern
   void
-  ShowOpeningPatterns ();
+  ShowOpeningPatterns (short max_opening_sequence);
+  
+  
+extern short ValueOfOpeningName (char *name);
 
-extern
-  void update_advance_bonus (short pside, OpeningPattern *p);
+extern void NameOfOpeningValue (short i, char *name);
+
+
+#ifdef EXTPATTERNFILE
+
+extern void ReadOpeningSequences (short *pindex);
+
+extern void WriteOpeningSequences (short pindex);
+  
+#endif
 
 

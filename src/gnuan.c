@@ -1,7 +1,7 @@
 /*
  * gnuan.c - Analysis interface for gnushogi.
  *
- * Copyright (c) 1993 Matthias Mutz
+ * Copyright (c) 1993, 1994 Matthias Mutz
  *
  * gnuan was originally the analysis interface for gnuchess
  *
@@ -97,7 +97,7 @@ void TerminateSearch (int), Die (int);
 #define printz printf
 
 char mvstr[4][6];
-extern char *ColorStr[2];
+extern char ColorStr[2][10];
 int mycnt1, mycnt2;
 
 static FILE *fpin;
@@ -267,7 +267,7 @@ VerifyMove (char *s, VerifyMove_mode iop, unsigned short int *mv)
       return (false);
     }
   cnt = 0;
-  MoveList (opponent, 2, -1);
+  MoveList (opponent, 2, -1, true);
   pnt = TrPnt[2];
   while (pnt < TrPnt[3])
     {
@@ -362,12 +362,19 @@ ShowDepth (char ch)
 #endif /* MSDOS */
 }
 
-#ifdef USE_PATTERN
+ShowStage (void)
+{
+}
+
 void
 ShowPatternCount (short side, short n)
 {
 }
-#endif
+
+void
+ShowResponseTime (void)
+{
+}
 
 void
 ShowResults (short int score, unsigned short int *bstline, char ch)

@@ -1,9 +1,10 @@
 /*
  * This is GNU Shogi.
- * Copyright (c) 1993 Matthias Mutz.
+ * Copyright (c) 1993,1994 Matthias Mutz.
  * GNU Shogi is based on GNU Chess
  * Copyright (c) 1986-1992 Free Software Foundation.
  *
  */
-char *version = "1.1";
-char *patchlevel = "02";
+char version[] = "1.2";
+char patchlevel[] = "01";
+

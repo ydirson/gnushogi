@@ -1,7 +1,7 @@
 /*
  * nondsp.c - UNIX & MSDOS AND NON-DISPLAY interface for GNU SHOGI
  *
- * Copyright (c) 1990 Matthias Mutz
+ * Copyright (c) 1993, 1994 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -59,7 +59,6 @@ short int xshogi = 1;
 short int xshogi = 0;
 
 #endif /* XSHOGI */
-extern char mvstr[4][6];
 int mycnt1, mycnt2;
 char *DRAW;
 extern char *InPtr;
@@ -87,10 +86,9 @@ void
 ExitChess (void)
 {
   signal (SIGTERM, SIG_IGN);
-#if !defined XSHOGI && !defined GDISPLAY
+#ifndef NOLIST
   ListGame ();
 #endif
-  exit (0);
 }
 
 #ifndef MSDOS			/* never called!!! */
@@ -119,6 +117,9 @@ TerminateSearch (int sig)
   if (!flag.timeout)
     flag.back = true; /* previous: flag.timeout = true; */
   flag.bothsides = false;
+#ifdef DEBUG
+  printf("Terminate Search\n");
+#endif
 }
 
  
@@ -159,6 +160,7 @@ help (void)
   printz (CP[177]);
   /*printz ("save      game to file            get       game from file\n");*/
   printz (CP[188]);
+    printz ("xsave     pos. to xshogi file     xget      pos. from xshogi file\n");
   /*printz ("random    randomize play          new       start new game\n");*/
   printz (CP[181]);
   printz ("----------------------------------------------------------------\n");
@@ -174,9 +176,9 @@ help (void)
   /*printz ("Beep:     %-12s Transposition file: %s\n",*/
   printz (CP[36],
 	  (flag.beep) ? CP[93] : CP[92], (flag.hash) ? CP[93] : CP[92]);
-  /*printz ("Tsume:    %-12s\n")*/
+  /*printz ("Tsume:    %-12s Force:               %s\n")*/
   printz (CP[232], 
-	  (flag.tsume) ? CP[93] : CP[92]);
+	  (flag.tsume) ? CP[93] : CP[92], (flag.force) ? CP[93] : CP[92]);
   /*printz ("Time Control %s %d moves %d seconds %d opr %d depth\n", (TCflag) ? "ON" : "OFF",*/
   printz (CP[110], (TCflag) ? CP[93] : CP[92],
 	  TimeControl.moves[black], TimeControl.clock[black] / 100, TCadd/100, MaxSearchDepth);
@@ -338,6 +340,14 @@ ShowDepth (char ch)
 
 
 void
+ShowStage (void)
+{
+  printz("stage = %d\n",stage);
+  printz("balance[black] = %d balance[white] = %d\n",balance[black],balance[white]);
+}
+
+
+void
 ShowLine (short unsigned int *bstline)
 {
   register int i;
@@ -363,8 +373,6 @@ ShowResults (short int score, short unsigned int *bstline, char ch)
     }
 }
 
-
-#ifdef USE_PATTERN
 void
 ShowPatternCount (short side, short n)
 {
@@ -373,7 +381,18 @@ ShowPatternCount (short side, short n)
         printz("%s matches %d pattern(s)\n",ColorStr[side],n);
     }
 }
+
+void
+ShowResponseTime (void)
+{
+#ifdef DEBUG
+  if (flag.post)
+    {
+        printz("RT=%ld TCC=%d TCL=%ld EX=%ld ET=%ld TO=%d\n",
+          ResponseTime,TCcount,TCleft,ExtraTime,et,flag.timeout);
+    }
 #endif
+}
 
 void
 ShowGameType (void)
@@ -417,23 +436,7 @@ OutputMove (void)
 	  fprintf (D, "%5s ", mvstr[0]);
 	}
       fprintf (D, "\n");
-
-      fprintf (D, "\n current board is\n");
-      for (r = (NO_ROWS-1); r >= 0; r--)
-	{
-	  for (c = 0; c <= (NO_COLS-1); c++)
-	    {
-	      l = locn (r, c);
-	      if (color[l] == neutral)
-		fprintf (D, " -");
-	      else if (color[l] == black)
-		fprintf (D, " %c", qxx[board[l]]);
-	      else
-		fprintf (D, " %c", pxx[board[l]]);
-	    }
-	  fprintf (D, "\n");
-	}
-      fprintf (D, "\n");
+      fprintf_current_board (D);
       fclose (D);
       strcpy (mvstr[0], d);
     }
@@ -503,9 +506,11 @@ nomove:
 #if !defined BAREBONES
 #ifdef VERYBUGGY
   else if (root->score < -SCORE_LIMIT)
-    printf("%s has a forced mate!\n",ColorStr[opponent]);
+    printf("%s has a forced mate in %d moves!\n",
+    	ColorStr[opponent], SCORE_LIMIT+999 + root->score - 1);
   else if (root->score > SCORE_LIMIT)
-    printf("%s has a forced mate!\n",ColorStr[computer]);
+    printf("%s has a forced mate in %d moves!\n",
+    	ColorStr[computer], SCORE_LIMIT+998 - root->score - 1);
 #endif /*VERYBUGGY*/
 #endif /* BAREBONES */
 }
@@ -562,21 +567,6 @@ UpdateDisplay (short int f, short int t, short int redraw, short int isspec)
           };
       }
     }
-}
-
-void
-skip ()
-{
-  while (*InPtr != ' ')
-    InPtr++;
-  while (*InPtr == ' ')
-    InPtr++;
-}
-void
-skipb ()
-{
-  while (*InPtr == ' ')
-    InPtr++;
 }
 
 void
@@ -760,7 +750,7 @@ DoDebug (void)
   short c, p, sq, tp, tc, tsq, score,j,k;
   char s[40];
 
-  ExaminePosition ();
+  ExaminePosition (opponent);
   ShowMessage (CP[65]);
   scanz ("%s", s);
   c = neutral;
@@ -810,7 +800,7 @@ void
 DoTable (short table[NO_SQUARES])
 {
   short  sq,j,k;
-  ExaminePosition ();
+  ExaminePosition (opponent);
   for(j=(NO_ROWS-1);j>=0;j--){
   for(k=0;k<NO_COLS;k++){
     sq=j*(NO_ROWS)+k;
@@ -824,7 +814,7 @@ void
 ShowPostnValues (void)
 {
   short sq, score,j,k;
-  ExaminePosition ();
+  ExaminePosition (opponent);
   for(j=(NO_ROWS-1);j>=0;j--){
   for(k=0;k<NO_COLS;k++){
   sq=j*NO_COLS+k;

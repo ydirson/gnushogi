@@ -1,7 +1,7 @@
 /*
  * book.c - C source for GNU SHOGI
  *
- * Copyright (c) 1993 Matthias Mutz
+ * Copyright (c) 1993, 1994 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -37,7 +37,6 @@
 #include <unix.h>
 /* #define BOOKTEST */
 #endif
-
 
 
 unsigned booksize = BOOKSIZE;
@@ -159,7 +158,7 @@ bkdisplay (s, cnt, moveno)
      int moveno;
 {
     static short pnt;
-    struct leaf *node;
+    struct leaf far *node;
     int r, c, l;
 
     pnt = TrPnt[2];
@@ -222,11 +221,11 @@ BVerifyMove (char *s, short unsigned int *mv, int moveno)
 {
     static short pnt, tempb, tempc, tempsf, tempst, cnt;
     static struct leaf xnode;
-    struct leaf *node;
+    struct leaf far *node;
 
     *mv = 0;
     cnt = 0;
-    MoveList (opponent, 2, -2);
+    MoveList (opponent, 2, -2, true);
     pnt = TrPnt[2];
     while (pnt < TrPnt[3])
       {
@@ -249,7 +248,7 @@ BVerifyMove (char *s, short unsigned int *mv, int moveno)
 	    {
 		UnmakeMove (opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
 		/* Illegal move in check */
-#ifndef QUIETBOOKGEN
+#if !defined QUIETBOOKGEN
 		printf (CP[77]);
 		printf ("\n");
 		bkdisplay (s, cnt, moveno);
@@ -267,7 +266,7 @@ BVerifyMove (char *s, short unsigned int *mv, int moveno)
 	    }
       }
     /* Illegal move */
-#ifndef QUIETBOOKGEN
+#if !defined QUIETBOOKGEN
     printf (CP[75], s);
     bkdisplay (s, cnt, moveno);
 #endif
@@ -425,7 +424,14 @@ Vparse (FILE * fd, unsigned short *mv, short int side, char *opening, int moveno
 	    {			/* Bad move, not for the program to play */
 		*mv |= BADMOVE;	/* Flag it ! */
 		while ((c = getc (fd)) == '?' || c == '!' || c == '/');
-	    }
+	    }                      
+#ifdef EASY_OPENINGS
+	  else if (c == '~')
+	    {			/* Do not use by computer */
+		*mv |= BADMOVE;	/* Flag it ! */
+		while ((c = getc (fd)) == '?' || c == '!' || c == '/');
+	    }            
+#endif
 	  else if (c == '!')
 	    {			/* Good move */
 		while ((c = getc (fd)) == '?' || c == '!' || c == '/');
@@ -453,9 +459,6 @@ Vparse (FILE * fd, unsigned short *mv, short int side, char *opening, int moveno
 	  return (i);
       }
 }
-
-
-#ifdef GDX       
 
 
 struct gdxadmin ADMIN, B;
@@ -519,7 +522,7 @@ GetOpenings (void)
     FILE *fd;
 
     if ((fd = fopen (bookfile, "r")) == NULL)
-	fd = fopen ("gnushogi.book", "r");
+	fd = fopen ("gnushogi.tbk", "r");
     if (fd != NULL)
       {
 	  /* yes add to book */
@@ -907,401 +910,3 @@ OpeningBook (unsigned short *hint, short int side)
 
 
 
-#else /* memory based */
-
-
-unsigned int BKTBLSIZE;
-unsigned long BOOKMASK;
-unsigned bookpocket = BOOKPOCKET;
-
-static struct bookentry
-{
-    unsigned long bookkey;
-    unsigned long bookbd;
-    unsigned short bmove;
-    unsigned short hint;
-    unsigned short count;
-    unsigned short flags;
-} *OBEND;
-
-struct bookentry *OpenBook = NULL;
-static struct bookentry **BookTable;
-
-
-static void
-bkalloc (unsigned bksize)
-{
-    register int i, f;
-    /* allocate space for the book */
-    f = (bksize + bookpocket - 1) / bookpocket;
-    bksize = booksize = f * bookpocket;
-#ifdef MSDOS
-    OpenBook = (struct bookentry *) _halloc (bksize * sizeof (struct bookentry));
-#else
-    OpenBook = (struct bookentry *) malloc (bksize * sizeof (struct bookentry));
-#endif
-    if (OpenBook == NULL)
-      {
-	  perror ("memory alloc");
-	  exit (1);
-      }
-    for (BKTBLSIZE = 1, BOOKMASK = 1; BKTBLSIZE < f; BKTBLSIZE *= 2, BOOKMASK = (BOOKMASK << 1));
-    BOOKMASK -= 1;
-    BookTable = (struct bookentry **) malloc (BKTBLSIZE * sizeof (struct bookentry *));
-    if (BookTable == NULL)
-      {
-	  perror ("memory alloc");
-	  exit (1);
-      }
-    for (i = 0; i < BKTBLSIZE; i++)
-      {
-	  BookTable[i] = &OpenBook[bksize / BKTBLSIZE * i];
-      }
-    OBEND = (OpenBook + ((bksize) * sizeof (struct bookentry)));
-}
-
-void
-GetOpenings (void)
-
-/*
- * Read in the Opening Book file and parse the algebraic notation for a move
- * into an unsigned integer format indicating the from and to square. Create
- * a linked list of opening lines of play, with entry->next pointing to the
- * next line and entry->move pointing to a chunk of memory containing the
- * moves. More Opening lines of up to 100 half moves may be added to
- * gnuchess.book. But now its a hashed table by position which yields a move
- * or moves for each position. It no longer knows about openings per say only
- * positions and recommended moves in those positions.
- */
-{
-    FILE *fd;
-    register struct bookentry *OB = NULL;
-    register struct bookentry *OC = NULL;
-    register short int i;
-    char opening[80];
-    char msg[80];
-    unsigned short xside, doit, side;
-    short int c;
-    unsigned short mv;
-
-    if (binbookfile != NULL)
-      {
-#if defined THINK_C || defined MSDOS
-	  fd = fopen (binbookfile, RWA_ACC);
-#else
-	  fd = fopen (binbookfile, "r");
-#endif
-	  if (fd != NULL)
-	    {
-		fscanf (fd, "%d\n", &booksize);
-		fscanf (fd, "%d\n", &bookcount);
-		fscanf (fd, "%d\n", &bookpocket);
-		bkalloc (booksize);
-#if !defined XSHOGI
-		sprintf (msg, CP[213], bookcount, booksize);
-		ShowMessage (msg);
-#endif
-		if (0 > fread (OpenBook, sizeof (struct bookentry), booksize, fd))
-		  {
-		      perror ("fread");
-		      exit (1);
-		  }
-		/* set every thing back to start game */
-		Book = BOOKFAIL;
-		for (i = 0; i < NO_SQUARES; i++)
-		  {
-		      board[i] = Stboard[i];
-		      color[i] = Stcolor[i];
-		  }
-       	  	ClearCaptured ();
-		fclose (fd);
-
-	    }
-      }
-    if ((fd = fopen (bookfile, "r")) == NULL)
-	fd = fopen ("gnushogi.book", "r");
-    if (fd != NULL)
-      {
-
-	  if (OpenBook == NULL)
-	    {
-		bkalloc (booksize);
-		for (OB = OpenBook; OB < &OpenBook[booksize]; OB++)
-		    OB->count = 0;
-	    }
-	  OC = NULL;
-	  /* setvbuf(fd,buffr,_IOFBF,2048); */
-	  side = black;
-	  xside = white;
-	  hashbd = hashkey = 0;
-	  i = 0;
-
-	  while ((c = Vparse (fd, &mv, side, opening, i)) >= 0)
-	    {
-		if (c == 1)
-		  {
-
-		      /*
-		       * if not first move of an opening and first
-		       * time we have seen it save next move as
-		       * hint
-		       */
-		      i++;
-		      if (i < bookmaxply + 2)
-			{
-			    if (i > 1 && OB->count == 1)
-				OB->hint = mv & 0x7fff;
-			    OC = OB;	/* save for end marking */
-			    if (i < bookmaxply + 1)
-			      {
-				  doit = true;
-
-				  /*
-			           * see if this position and
-			           * move already exist from
-			           * some other opening
-			           */
-
-				  /*
-			           * is this ethical, to offer
-			           * the bad move as a
-			           * hint?????
-			           */
-				  OB = BookTable[bhashkey & BOOKMASK];
-				  while (OB->count)
-				    {
-					if (OB->bookkey == (unsigned long)bhashkey
-					    && OB->bookbd == (unsigned long)bhashbd
-					    && (OB->flags & SIDEMASK) == side
-					    && OB->bmove == mv)
-					  {
-
-					      /*
-					       * yes so * just bump * count - * count is * used to
-					       * choose * opening * move in * proportion * to its
-					       * presence * in the * book
-					       */
-					      doit = false;
-					      OB->count++;
-					      break;
-					  }
-
-					/*
-				         * Book is hashed
-				         * into BKTBLSIZE
-				         * chunks based on
-				         * hashkey
-				         */
-					if (++OB == OBEND)
-					    OB = OpenBook;
-				    }
-
-				  /*
-			           * doesn`t exist so add it to
-			           * the book
-			           */
-				  if (doit)
-				    {
-					bookcount++;
-					if (bookcount > (booksize - 2 * BKTBLSIZE))
-					  {
-					      printf ("booksize exceeded\n");
-					      exit (1);
-					  }
-#if !defined XSHOGI
-					if (bookcount % 1000 == 0)
-					    printf ("%d processed\n", bookcount);
-#endif
-					OB->bookkey = (unsigned long)bhashkey;
-					OB->bookbd = (unsigned long)bhashbd;
-					OB->bmove = mv;
-					OB->hint = 0;
-					OB->count = 1;
-					OB->flags = side;
-				    }
-			      }
-			}
-		      computer = opponent;
-		      opponent = computer ^ 1;
-
-		      xside = side;
-		      side = side ^ 1;
-		  }
-		else if (i > 0)
-		  {
-		      /* reset for next opening */
-		      RESET ();
-		      i = 0;
-		      side = black;
-		      xside = white;
-		      hashbd = hashkey = 0;
-
-		  }
-	    }
-	  fclose (fd);
-	  if (binbookfile != NULL)
-	    {
-#if defined THINK_C || defined MSDOS
-		fd = fopen (binbookfile, WA_ACC);
-#else
-		fd = fopen (binbookfile, "w");
-#endif
-		if (fd != NULL)
-		  {
-		      fprintf (fd, "%d\n%d\n%d\n", booksize, bookcount, bookpocket);
-		      if (0 > fwrite (OpenBook, sizeof (struct bookentry), booksize, fd))
-			    perror ("fwrite");
-		      fclose (fd);
-		      binbookfile = NULL;
-		  }
-	    }
-#if !defined XSHOGI
-	  sprintf (msg, CP[213], bookcount, booksize);
-	  ShowMessage (msg);
-#endif
-	  /* set every thing back to start game */
-	  Book = BOOKFAIL;
-	  RESET ();
-      }
-    else if (OpenBook == NULL)
-      {
-#if !defined XSHOGI
-	  if (!bookcount)
-	      ShowMessage (CP[212]);
-#endif
-	  Book = 0;
-      }
-}
-
-
-int
-OpeningBook (unsigned short *	hint, short int side)
-
-/*
- * Go thru each of the opening lines of play and check for a match with the
- * current game listing. If a match occurs, generate a random number. If this
- * number is the largest generated so far then the next move in this line
- * becomes the current "candidate". After all lines are checked, the
- * candidate move is put at the top of the Tree[] array and will be played by
- * the program. Note that the program does not handle book transpositions.
- */
-
-{
-    short pnt;
-    unsigned short m;
-    unsigned r, cnt, tcnt, ccnt;
-    register struct bookentry *OB, *OC;
-    int possibles = TrPnt[2] - TrPnt[1];
-
-    gsrand ((unsigned int) time ((long *) 0));
-    m = 0;
-    cnt = 0;
-    tcnt = 0;
-    ccnt = 0;
-    OC = NULL;
-
-
-    /*
-     * find all the moves for this position  - count them and get their
-     * total count
-     */
-    OB = BookTable[hashkey & BOOKMASK];
-    while (OB->count)
-      {
-	  if (OB->bookkey == (unsigned long)hashkey
-	      && OB->bookbd == (unsigned long)hashbd
-	      && ((OB->flags) & SIDEMASK) == side)
-	    {
-		if (OB->bmove & BADMOVE)
-		  {
-		      m = OB->bmove ^ BADMOVE;
-		      /* is the move is in the MoveList */
-		      for (pnt = TrPnt[1]; pnt < TrPnt[2]; pnt++)
-			{
-			    if (((Tree[pnt].f << 8) | Tree[pnt].t) == m)
-			      {
-				  if (--possibles)
-				    {
-					Tree[pnt].score = DONTUSE;
-					break;
-				    }
-			      }
-			}
-
-		  }
-		else
-		  {
-		      OC = OB;
-		      cnt++;
-		      tcnt += OB->count;
-		  }
-	    }
-	  if (++OB == OBEND)
-	      OB = OpenBook;
-      }
-    /* if only one just do it */
-    if (cnt == 1)
-      {
-	  m = OC->bmove;
-      }
-    else
-	/* more than one must choose one at random */
-    if (cnt > 1)
-      {
-	  /* pick a number */
-	  r = urand () % 1000;
-
-	  OC = BookTable[hashkey & BOOKMASK];
-	  while (OC->count)
-	    {
-		if (OC == OBEND)
-		    OC = OpenBook;
-		if (OC->bookkey == (unsigned long)hashkey
-		    && OC->bookbd == (unsigned long)hashbd
-		    && ((OC->flags) & SIDEMASK) == side
-		    && !(OC->bmove & BADMOVE))
-		  {
-		      ccnt += OC->count;
-		      if (((unsigned long) (ccnt * BOOKRAND) / tcnt) >= r)
-			{
-			    m = OC->bmove;
-			    break;
-			}
-		  }
-		if (++OC == OBEND)
-		    OC = OpenBook;
-	    }
-      }
-    else
-      {
-	  /* none decrement count of no finds */
-	  Book--;
-	  return false;
-      }
-    /* make sure the move is in the MoveList */
-    for (pnt = TrPnt[1]; pnt < TrPnt[2]; pnt++)
-      {
-	  if (((Tree[pnt].f << 8) | Tree[pnt].t) == m)
-	    {
-		Tree[pnt].flags |= book;
-		Tree[pnt].score = 0;
-		break;
-	    }
-      }
-    /* Make sure its the best */
-
-    pick (TrPnt[1], TrPnt[2] - 1);
-    if (Tree[TrPnt[1]].score)
-      {
-	  /* no! */
-	  Book--;
-	  return false;
-      }
-    /* ok pick up the hint and go */
-    *hint = OC->hint;
-    return true;
-}
-
-
-
-#endif

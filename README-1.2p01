@@ -1,6 +1,6 @@
 Hello,
 
-this is GNU Shogi 1.1 patchlevel 2.
+this is GNU Shogi 1.2 patchlevel 1.
 
 You cannot use the binary book file from version 1.0
 or version 1.1 patchlevel 1. You have to rebuild it. 
@@ -11,5 +11,5 @@ Have fun,
 
   Matthias Mutz.  
 
-email: mutz@kirk.fmi.uni-passau.de
+email: mutz@fmi.uni-passau.de
 

@@ -1,7 +1,7 @@
 /*
  * ataks.c - C source for GNU SHOGI
  *
- * Copyright (c) 1993 Matthias Mutz
+ * Copyright (c) 1993, 1994 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -24,6 +24,14 @@
  * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 #include "gnushogi.h"
+
+#ifdef DEBUG
+#include <assert.h>
+#endif
+
+
+#if defined DEBUG
+
 void 
 ataks (short int side, long int *a)
 /*
@@ -43,11 +51,8 @@ ataks (short int side, long int *a)
   short i, piece; 
   small_short *PL;
 
-#ifdef NOMEMSET
-  for (u = NO_SQUARES; u; a[--u] = 0) ;
-#else
-  memset ((char *) a, 0, NO_SQUARES * sizeof (a[0]));
-#endif /* NOMEMSET */
+  array_zero (a, NO_SQUARES * sizeof (a[0]));
+
   PL = PieceList[side];
   for (i = PieceCnt[side]; i >= 0; i--)
     { short ptyp;
@@ -74,6 +79,49 @@ ataks (short int side, long int *a)
    }
 }
 
+#endif
+
+
+#if defined DEBUG || defined DEBUG_EVAL
+
+void
+debug_ataks (FILE *D, long *atk)
+{              
+	short l,c,i;         
+	fprintf(D, "\n");
+	for (l = NO_ROWS-1; l >= 0; l--) {
+	  for (c = 0; c < NO_COLS; c++) {
+	    short sq = (l * NO_COLS) + c;
+	    long  v = atk[sq];
+	    short n = (short)(v & CNT_MASK);
+	    char s[20];
+	    fprintf(D,"%2d",n);
+	    strcpy(s,"");
+	    if ( v & ctlP  ) strcat(s,"P"); 
+	    if ( v & ctlPp ) strcat(s,"+P");
+	    if ( v & ctlL  ) strcat(s,"L"); 
+	    if ( v & ctlLp ) strcat(s,"+L"); 
+	    if ( v & ctlN  ) strcat(s,"N"); 
+	    if ( v & ctlNp ) strcat(s,"+N"); 
+	    if ( v & ctlS  ) strcat(s,"S"); 
+	    if ( v & ctlSp ) strcat(s,"+S"); 
+	    if ( v & ctlG  ) strcat(s,"G"); 
+	    if ( v & ctlB  ) strcat(s,"B"); 
+	    if ( v & ctlBp ) strcat(s,"+B"); 
+	    if ( v & ctlR  ) strcat(s,"R"); 
+	    if ( v & ctlRp ) strcat(s,"+R"); 
+	    if ( v & ctlK  ) strcat(s,"K");
+	    fprintf(D,s);
+	    for (i = strlen(s); i < 5; i++)
+		fprintf(D," ");
+	    fprintf(D," "); 
+	  }	                          
+	  fprintf(D,"\n");
+	}
+	fprintf(D, "\n");
+}
+
+#endif
 
 
 #define CHECK_DISTANCE
@@ -94,6 +142,37 @@ SqAtakd (short int square, short int side, short int *blockable)
   register unsigned char *ppos, *pdir;
 #endif
   register short u, ptyp;
+
+  if ( MatchSignature(threats_signature[side]) ) {
+#ifdef DEBUG  
+    short i,n, sq;
+    long int a[NO_SQUARES];
+    ataks(side,a);
+    for ( i = 0, n = -1; i < NO_SQUARES; i++ ) 
+      if (a[i] != atak[side][i]) {
+    	n = i; printf("atak #check error on square %d\n",i);
+      }
+    if ( n >= 0 ) {
+      debug_ataks (stdout, a);
+      debug_ataks (stdout, atak[side]);
+      debug_position (stdout);
+      printf("%d pieces\n",PieceCnt[side]);
+      for ( i = PieceCnt[side]; i>= 0; i-- ) {
+        short sq, piece;
+        sq = PieceList[side][i];
+        piece = board[sq];
+        printf("square %d is %d with piece %d\n", i, sq, piece);
+      }
+      printf("hashkey = %ld hashbd = %ld\n",hashkey,hashbd);
+      assert(a[n] == atak[side][n]);
+    }
+#endif  
+#ifdef notdef
+    printf("atak array for %s available for SqAtakd!\n",ColorStr[side]);
+#endif
+    *blockable = true; /* don't know */
+    return(Anyatak(side,square));
+  }
 
  /*
   * First check neigboured squares,
