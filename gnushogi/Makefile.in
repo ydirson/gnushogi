@@ -142,6 +142,8 @@ pat2inc:
 sizetest:
 	$(CC) $(CFLAGS) -o sizetest sizetest.o $(LIBS)
 
+profile:
+	$(MAKE) -f Makefile.profile gnushogi
 
 #
 # Object files.

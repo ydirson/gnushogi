@@ -57,7 +57,7 @@ char *DRAW;
 /* Forward declarations. */
 /* FIXME: change this name, puh-leeze! */
 
-static void UpdateCatched();
+static void UpdateCatched(void);
 
 
 /****************************************

@@ -1,72 +1,77 @@
 <HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on July, 7  2004 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
 <HEAD>
-<!-- Created by texi2html 1.57 from gnushogi.texinfo on June 29,  1999 -->
+<TITLE>GNU Shogi manual: Notes for chess players</TITLE>
 
-<TITLE>GNU Shogi manual - Mating problems</TITLE>
+<META NAME="description" CONTENT="GNU Shogi manual: Notes for chess players">
+<META NAME="keywords" CONTENT="GNU Shogi manual: Notes for chess players">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
 </HEAD>
-<BODY >
- [<A HREF="gnushogi_toc.html">Contents</A>] &#160; [<A HREF="gnushogi_13.html">Back</A>] &#160; [<A HREF="gnushogi_13.html">Prev</A>] &#160; [<A HREF="gnushogi_3.html">Up</A>] &#160; [<A HREF="gnushogi_15.html">Next</A>] &#160; [<A HREF="gnushogi_15.html">Forward</A>] &#160;<BR><HR><BR>
 
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
 
-<H2><A NAME="SEC17">Mating problems</A></H2>
-
+<A NAME="SEC14"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_13.html#SEC13"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_15.html#SEC15"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_5.html#SEC5"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_6.html#SEC6"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_15.html#SEC15"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_24.html#SEC24">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<HR SIZE=1>
+<H3> 2.1.8 Notes for chess players </H3>
+<!--docid::SEC14::-->
 <P>
-One good way to improve at shogi is to solve mating problems.  There are
-several types of these problems, but the most common is called a
-"tsume-shogi" problem, or "tsume" problem for short.  In a tsume
-problem, all pieces that are not on the board are assumed to be in the
-opponent's hand (except for your King, which is usually not shown).
-Every move you make must be check until the final checkmate.  Your
-opponent may play any piece on the board or drop any of his pieces in
-hand in order to prevent the mate.  In a properly constructed tsume
-problem, all of your pieces on the board and in hand must be essential
-to the solution.  One consequence of this is that all of your pieces in
-hand must be played during the solution.  There should only be one
-correct solution for the given number of moves.  Tsume problems use
-Japanese-style move numbering; thus, a problem where you move (and give
-check), your opponent moves, and you move to give checkmate is called a
 
-three-mover.  Here is a really trivial three-mover:
+Here are a few miscellaneous things that may confuse chess players.
+Some of these have been mentioned elsewhere, but they bear repeating.
+</P><P>
+
+<OL>
+<LI>There is no queen.
 <P>
-<PRE>
 
-   3    2    1            
-----------------+         
- |    |    |    |  a         
-----------------+           
- |    |    | wK |  b         
-----------------+           
- |    |    |    |  c       
-----------------+         
- | bN |    |    |  d       
-----------------+         
- |    |    |    |  e       
-----------------+         
- |    | bN |    |  f       
-----------------+
-
-Black in hand: S, G
-
-</PRE>
-
-
+<LI>Pawns capture the same way they move.  There is no initial
+two-space pawn move and no <EM>en-passant</EM> move.
 <P>
-Here, Black plays G*2b, White plays K1c, and Black plays S*1d mate.
-More typical tsume problems range from 5 moves to arbitrarily high
-numbers of moves, and they can be quite brain-busting.  Tsume problems
-may seem artificial, but in the closing stages of the game where both
-players have a lot of pieces in hand, it is often necessary to give
-check at every move, or else your opponent will start a counterattack
-and will mate you before you mate him.  A tsume problem is a worst-case
-scenario for the attacker: you have to mate your opponent even though he
-has every piece not on the board in hand, which means you have to
-develop sharp attacking skills.  Many more tsume problems can be found
-on the internet; I particularly recommend Patrick Davin's "Shogi
-Nexus" (see section <A HREF="gnushogi_19.html#SEC22">References and links</A>).
 
+<LI>There is no special castling move.  There <EM>are</EM> a large
+number of possible defensive formations referred to as "castles"
+(see section <A HREF="gnushogi_15.html#SEC15">2.2 Sample game</A>) but there is no need for special moves to create
+them.
+<P>
 
-<P></P><HR>
- [<A HREF="gnushogi_toc.html">Contents</A>] &#160; [<A HREF="gnushogi_13.html">Back</A>] &#160; [<A HREF="gnushogi_13.html">Prev</A>] &#160; [<A HREF="gnushogi_3.html">Up</A>] &#160; [<A HREF="gnushogi_15.html">Next</A>] &#160; [<A HREF="gnushogi_15.html">Forward</A>] &#160;
+<LI>A given piece can only promote to <EM>one</EM> other kind of piece.
+<P>
+
+</OL>
+<P>
+
+<A NAME="Sample game"></A>
+<HR SIZE=1>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Michael C. Vanier</I> on <I>July, 7  2004</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
 
 </BODY>
 </HTML>

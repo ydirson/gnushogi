@@ -1,121 +1,558 @@
 <HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on July, 7  2004 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
 <HEAD>
-<!-- Created by texi2html 1.57 from gnushogi.texinfo on June 29,  1999 -->
+<TITLE>GNU Shogi manual: gnushogi</TITLE>
 
-<TITLE>GNU Shogi manual - References and links</TITLE>
+<META NAME="description" CONTENT="GNU Shogi manual: gnushogi">
+<META NAME="keywords" CONTENT="GNU Shogi manual: gnushogi">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
 </HEAD>
-<BODY >
- [<A HREF="gnushogi_toc.html">Contents</A>] &#160; [<A HREF="gnushogi_18.html">Back</A>] &#160; [<A HREF="gnushogi_18.html">Prev</A>] &#160; [<A>Up</A>] &#160; [<A HREF="gnushogi_20.html">Next</A>] &#160; [<A HREF="gnushogi_20.html">Forward</A>] &#160;<BR><HR><BR>
 
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
 
-<H1><A NAME="SEC22">References and links</A></H1>
+<A NAME="SEC19"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_18.html#SEC18"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_20.html#SEC20"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_5.html#SEC5"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_20.html#SEC20"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_24.html#SEC24">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<HR SIZE=1>
+<H1> 3. gnushogi </H1>
+<!--docid::SEC19::-->
 <P>
-<A NAME="IDX27"></A>
-<A NAME="IDX28"></A>
-<A NAME="IDX29"></A>
-<A NAME="IDX30"></A>
 
+This section describes how to run the "gnushogi" program.
+</P><P>
 
-<P>
-There are very few English-language books for people learning shogi.
-The two I recommend are:
+SYNOPSIS
+     
+</P><P>
 
+gnushogi [ [[-]a] [-b bookfile] [-B binbookfile] [-C] [-h langfile] 
+[-L langfile] [-r length] [-R] [-s pathname] [-l pathname] [-S binbooksize]
+[-t] [-c size] [-T size] [-v] [-x] [-X] arg1 arg2 ]
+</P><P>
 
+DESCRIPTION
+</P><P>
 
-<OL>
+GNU shogi (gnushogi) plays a game of japanese chess (shogi) against the
+user or it plays against itself.
+</P><P>
 
-<LI>
+At startup gnushogi reads the binbook file if it is present.  It then
+looks for a book file.  If it is present it adds its contents to the
+binbook data.  If the binbook file is writable a new combined binbook
+file is written.
+</P><P>
 
-<CITE>Shogi for Beginners, 2nd. Edition</CITE>, by John Fairbairn.  This is a
-superb beginner's book in every way, covering all phases of the game.
-It was out of print for a long time, but has now been reprinted and is
-available either from Kiseido (<A HREF="http://www.labnet.or.jp/~kiseido">http://www.labnet.or.jp/~kiseido</A>)
-or from George Hodges (see below).
-
-<LI>
-
-<CITE>The Art of Shogi</CITE>, by Tony Hoskings.  This is one step up from the
-Fairbairn book.  It covers a lot of ground, and is especially noteworthy
-for its detailed treatment of opening lines.  You can order this book
-from Amazon.com's UK branch (<A HREF="http://www.amazon.co.uk">http://www.amazon.co.uk</A>).
-
-</OL>
-
-<P>
-Another book you may find is <CITE>Shogi: Japan's Game of Strategy</CITE> by
-Trevor Leggett.  This book is very elementary and is somewhat outdated,
-having been published first in 1966.  However, it does feature a paper
-shogi board and punch-out pieces, so if you want a really cheap shogi
-set you might pick this book up.  It is still in print.
-
-
-<P>
-Two books that are no longer in print but are definitely worth getting
-if you find them are <CITE>Guide to Shogi Openings</CITE> and <CITE>Better
-Moves for Better Shogi</CITE>, both by Aono Teriuchi.  They are published in a
-bilingual edition (English/Japanese) and are the only books on shogi in
-English written by a Japanese professional shogi player.  John Fairbairn
-did the translation from Japanese to English.
-
-
-<P>
-Shogi sets are available from:
-
-
-
-<BLOCKQUOTE>
-<P>
-George F. Hodges <BR>
-P.O. Box 77 <BR>
-Bromley, Kent <BR>
-United Kingdom BR1 2WT
-</BLOCKQUOTE>
-
-<P>
-George also sells equipment for all the historical shogi variants
-(see section <A HREF="gnushogi_15.html#SEC18">Shogi variants</A>) (except for Kyoku tai shogi) and also sells
-back issues of the magazine "Shogi" which he published for 70 issues
-in the late 70's to late 80's.  This magazine is STRONGLY recommended;
-it contains more information about shogi in English than you will ever
-find anywhere else.
-
-
-<P>
-Here are some useful URLs:
-
+Gnushogi is a modified version of the gnuchess program.  It has a simple
+alphanumeric board display, or it can be used with the xshogi program
+under X windows.  The program gets its opening moves from the file
+gnushogi.bbk which is located in a directory specified in the Makefile.
+To invoke the program type:
+</P><P>
 
 <DL COMPACT>
 
-<DT>Pieter Stouten's shogi page: <A HREF="http://www.halcyon.com/stouten/shogi.html">http://www.halcyon.com/stouten/shogi.html</A>
-<DD>
-This is the main shogi-related site on the internet, with links to
-almost all the other sites.
+<DT><SAMP>`gnushogi -C'</SAMP>
+<DD>simple curses based version
+<P>
 
-<DT>Roger Hare's shogi page: <A HREF="http://www.ed.ac.uk/~rjhare/shogi">http://www.ed.ac.uk/~rjhare/shogi</A>
-<DD>
-This has lots of information, including full rules to most of the shogi
-variants.
+<DT><SAMP>`gnushogi -X (or just gnushogi)'</SAMP>
+<DD>xshogi compatible version
+<P>
 
-<DT>Patrick Davin's Shogi Nexus: <A HREF="http://www.vega.or.jp/~patrick/shogi/">http://www.vega.or.jp/~patrick/shogi/</A>
-<DD>
-There's lots of cool stuff on this site; my favorite is the extensive
-collection of Tsume-shogi (mating) problems, both for beginners and
-more advanced players.
+<DT><SAMP>`gnushogi -R'</SAMP>
+<DD>raw test display version
+</DL>
+<P>
 
-<DT>Steve Evans' shogi page: <A HREF="http://www.netspace.net.au/~trout/index.html">http://www.netspace.net.au/~trout/index.html</A>
-<DD>
-Steve has written a program that plays almost all of the shogi variants,
-unfortunately it only runs on Windows :-(
+TIME CONTROLS
+</P><P>
 
-<DT>Hans Bodlaender's chess variant pages: <A HREF="http://www.cs.ruu.nl/~hansb/d.chessvar">http://www.cs.ruu.nl/~hansb/d.chessvar</A>
-<DD>
-This page has an almost unimaginable variety of rules for different
-chess variants, including many shogi variants (historical and non-historical).
+If one argument is given, it is the search time per move in
+[minutes:]seconds.  So gnushogi 30 will generate one move every 30
+seconds, while gnushogi 5:00 will generate one move every 5 minutes.
+</P><P>
+
+If two or more arguments are given, they will be used to set tournament
+time controls with the first argument of each pair being the number of
+moves and the second being the total clock time in minutes[:seconds].
+Thus, entering gnushogi 60 5 will set the clocks for 5 minutes (300
+seconds) for the first 60 moves, and gnushogi 30 3:30 will allow 3
+minutes and 30 seconds for 30 moves.
+</P><P>
+
+gnushogi 30 5 1 :30 will allow 5 minutes for the first 30 moves and 30
+seconds for each move after that.  Up to 4 pairs of controls may be
+specified.
+</P><P>
+
+If no argument is given the program will prompt the user for level of
+play.
+</P><P>
+
+For use with xshogi see the documentation on that program.
+See section <A HREF="gnushogi_20.html#SEC20">4. xshogi</A>.
+</P><P>
+
+BOOK
+</P><P>
+
+The book gnushogi.tbk consists of a sequence of openings.  An opening
+begins with a line starting with a # (the rest of the line is a comment).
+Following this is a series of moves in algebraic notation alternating
+between black and white separated by whitespace.  A move may have a ?
+after it indicating this move should never be made in this position.  Moves
+are stored as position:move so transpositions between openings can take
+place.
+</P><P>
+
+HASHFILE
+</P><P>
+
+The hashfile if created should be on the order of 4 megabytes; you can
+create such a hashfile by typing "gnushogi -c 22" (see below).  This
+file contains positions and moves learned from previous games.  If a
+hashfile is used the computer makes use of the experience it gained in
+past games.  Tests run so far show that it plays no worse with the
+hashfile than without, but it is not clear yet whether it provides a
+real advantage.
+</P><P>
+
+LEGAL MOVES
+</P><P>
+
+Note: Piece letters are determined by the language file.  What is
+specified here is the default (English).
+</P><P>
+
+Once gnushogi is invoked, the program will display the board and prompt
+the user for a move.  To enter a move, use the notation 7g7f where the
+first letter-number pair indicates the origin square and the second
+letter-number pair indicates the destination square.  An alternative is
+to use the notation P7f where the first letter indicates the piece type
+(P,L,N,S,G,B,R,K).  To promote append a + the type of the new piece to
+the move, as in 2d2c+ or P2c+. Note that you must use capital letters
+for the pieces by default.
+</P><P>
+
+COMMAND-LINE OPTIONS
+</P><P>
+
+<DL COMPACT>
+
+<DT><SAMP>`-a'</SAMP>
+<DD>Do not search on opponent's time.
+<P>
+
+<DT><SAMP>`a'</SAMP>
+<DD>Do search on opponent's time.
+<P>
+
+<DT><SAMP>`-b <VAR>bookfile</VAR>'</SAMP>
+<DD>Use bookfile for opening book.
+<P>
+
+<DT><SAMP>`-B <VAR>binbookfile</VAR>'</SAMP>
+<DD>Use binbookfile for binary opening book.
+<P>
+
+<DT><SAMP>`-c <VAR>size</VAR>'</SAMP>
+<DD>Create a new HASHFILE.  File size is 2^size entries of approximately 65+?
+bytes.
+<P>
+
+<DT><SAMP>`-C'</SAMP>
+<DD>Use curses-based display mode.
+<P>
+
+<DT><SAMP>`-h'</SAMP>
+<DD>Do not use hashfile.
+<P>
+
+<DT><SAMP>`h'</SAMP>
+<DD>Do use hashfile.
+<P>
+
+<DT><SAMP>`-l <VAR>pathname</VAR>'</SAMP>
+<DD>Pathname of the loadfile used with get or xget.
+<P>
+
+<DT><SAMP>`-L <VAR>lang</VAR>'</SAMP>
+<DD>Use language lang from the file gnushogi.lang.  If -L is not specified
+it uses the first language in the file.
+<P>
+
+<DT><SAMP>`-P <VAR>plylevels</VAR>'</SAMP>
+<DD>Number of plys to include in the binbookfile.  For generating a
+binbookfile.
+<P>
+
+<DT><SAMP>`-r <VAR>length</VAR>'</SAMP>
+<DD>Rehash <EM>length</EM> times in searching entries for position in
+transposition table.
+<P>
+
+<DT><SAMP>`-R'</SAMP>
+<DD>Use raw text display mode.  This can be used for dumb terminals or for
+systems that don't have curses.
+<P>
+
+<DT><SAMP>`-s <VAR>pathname</VAR>'</SAMP>
+<DD>Pathname of the save file to use with the save command.
+<P>
+
+<DT><SAMP>`-S <VAR>size</VAR>'</SAMP>
+<DD>Size of binbookfile for memory based books.  For creating a binbookfile.
+<P>
+
+<DT><SAMP>`-t'</SAMP>
+<DD>Show statistics for HASHFILE.
+<P>
+
+<DT><SAMP>`-T <VAR>size</VAR>'</SAMP>
+<DD>Set the transposition table size to 2^size entries.
+<P>
+
+<DT><SAMP>`-v'</SAMP>
+<DD>Show version and patchlevel.
+<P>
+
+<DT><SAMP>`-x <VAR>value</VAR>'</SAMP>
+<DD>Use value as the evaluation window xwndw.
+<P>
+
+<DT><SAMP>`-X'</SAMP>
+<DD>Use xshogi display mode (the default).
+<P>
 
 </DL>
+<P>
 
-<P></P><HR>
- [<A HREF="gnushogi_toc.html">Contents</A>] &#160; [<A HREF="gnushogi_18.html">Back</A>] &#160; [<A HREF="gnushogi_18.html">Prev</A>] &#160; [<A>Up</A>] &#160; [<A HREF="gnushogi_20.html">Next</A>] &#160; [<A HREF="gnushogi_20.html">Forward</A>] &#160;
+COMMANDS
+</P><P>
+
+In addition to legal moves, the following commands can be entered at the
+gnushogi prompt.  Note: command names are determined by the language
+file and may vary with the implementation.  The default language is
+English.
+</P><P>
+
+<DL COMPACT>
+
+<DT><SAMP>`alg'</SAMP>
+<DD>allow algebraic input (not implemented).
+<P>
+
+<DT><SAMP>`Awindow'</SAMP>
+<DD>change Alpha window (default score + 90).
+<P>
+
+<DT><SAMP>`Bwindow'</SAMP>
+<DD>change Beta window (default score - 90).
+<P>
+
+<DT><SAMP>`beep'</SAMP>
+<DD>toggles beeping after each move (default: on).
+<P>
+
+<DT><SAMP>`bd'</SAMP>
+<DD>updates the current board position on the display.
+<P>
+
+<DT><SAMP>`book'</SAMP>
+<DD>turns off use of the opening library.
+<P>
+
+<DT><SAMP>`both'</SAMP>
+<DD>causes the computer to play both sides of a shogi game.
+<P>
+
+<DT><SAMP>`black'</SAMP>
+<DD>causes the computer to play as White, if the computer was to move
+first.
+<P>
+
+<DT><SAMP>`bsave'</SAMP>
+<DD>saves a game to disk as a book textfile.  The program will prompt the
+user for a file name.
+<P>
+
+<DT><SAMP>`gamein'</SAMP>
+<DD>toggles game mode time control.  Assumes the time specified for time
+control is the time for a complete game.  Input with the level command
+should be the game time and the expected number of moves in a game.  go
+command must be given.
+<P>
+
+<DT><SAMP>`coords'</SAMP>
+<DD>show coordinates on the display (visual only).
+<P>
+
+<DT><SAMP>`contempt'</SAMP>
+<DD>allows the value of <EM>contempt</EM> to be modified.
+<P>
+
+<DT><SAMP>`debug'</SAMP>
+<DD>asks for a piece as color piece, as wb or bn, and shows its calculated
+value on each square.
+<P>
+
+<DT><SAMP>`debuglevel'</SAMP>
+<DD>sets level of debugging output if compiled with debug options.
+<P>
+
+<DT><SAMP>`depth'</SAMP>
+<DD>allows the user to change the search depth of the program.  The maximum
+depth is 29 ply.  Normally the depth is set to 29 and the computer
+terminates its search based on elapsed time rather than depth.  If depth
+is set to (say) 4 ply, the program will search until all moves have been
+examined to a depth of 4 ply (with extensions up to 11 additional ply
+for sequences of checks and captures).  If you set a maximum time per
+move and also use the depth command, the search will stop at the
+specified time or the specified depth, whichever comes first.
+<P>
+
+<DT><SAMP>`easy'</SAMP>
+<DD>toggles easy mode (thinking on opponents time) on and off. The default
+is easy mode ON.  If easy mode is disabled, the keyboard is polled for
+input every so often and when input is seen the search is terminated. It
+may also be terminated with a sigint.
+<P>
+
+<DT><SAMP>`edit'</SAMP>
+<DD>allows the user to set up a board position.
+<UL>
+
+<LI>#
+clear the board.
+<P>
+
+<LI>c
+toggle piece color.
+<P>
+
+<LI>.
+command will exit setup mode.
+<P>
+
+<LI>p3b
+place a pawn on 3b
+<P>
+
+<LI>p3b+
+place a promoted pawn on 3b
+<P>
+
+<LI>p*
+place a pawn in hand (among the captured pieces)
+<P>
+
+</UL>
+<P>
+
+Pieces are entered by typing a letter (p,l,n,s,g,b,r,k)  for
+the piece followed by the coordinate.  Here, letter case is ignored.
+</P><P>
+
+The usual warning about the language file applies.
+</P><P>
+
+<DT><SAMP>`exit'</SAMP>
+<DD>exits gnushogi.
+<P>
+
+<DT><SAMP>`first'</SAMP>
+<DD>tells the computer to move first.  Computer begins searching for a move.
+(same as "go").
+<P>
+
+<DT><SAMP>`force'</SAMP>
+<DD>allows the user to enter moves for both sides.  To get the program to
+play after a sequence of moves has been entered use the "black" or
+"white" commands.
+<P>
+
+<DT><SAMP>`get'</SAMP>
+<DD>retrieves a game from disk.  The program will prompt the user for a file
+name.
+<P>
+
+<DT><SAMP>`go'</SAMP>
+<DD>tells the computer to move first.  Computer begins searching for a move.
+(same as "first").
+<P>
+
+<DT><SAMP>`hash'</SAMP>
+<DD>use/don't use hashfile.
+<P>
+
+<DT><SAMP>`hashdepth'</SAMP>
+<DD>allows the user to change the minimum depth for using the hashfile and
+the number of moves from the beginning of the game to use it.
+<P>
+
+<DT><SAMP>`help'</SAMP>
+<DD>displays a short description of the commands and the current status of
+options.
+<P>
+
+<DT><SAMP>`hint'</SAMP>
+<DD>causes the program to supply the user with its predicted move.
+<P>
+
+<DT><SAMP>`level'</SAMP>
+<DD>allows the user to set time controls such as 60 moves in 5 minutes etc.
+In tournament mode, the program will vary the time it takes for each
+move depending on the situation.  If easy mode is disabled (using the
+"easy" command), the program will often respond with its move
+immediately, saving time on its clock for use later on.
+<P>
+
+<DT><SAMP>`list'</SAMP>
+<DD>writes the game moves and some statistics on search depth, nodes, and
+time to the file "shogi.lst".
+<P>
+
+<DT><SAMP>`material'</SAMP>
+<DD>toggle material flag - draws on no pawns and both sides &#60; rook.
+<P>
+
+<DT><SAMP>`new'</SAMP>
+<DD>starts a new game.
+<P>
+
+<DT><SAMP>`p'</SAMP>
+<DD>evaluates the board and shows the point score for each piece.  The total
+score for a position is the sum of these individual piece scores.
+<P>
+
+<DT><SAMP>`post'</SAMP>
+<DD>causes the program to display the principal variation and the score
+during the search.  A score of 100 is equivalent to a 1 pawn advantage
+for the computer.
+<P>
+
+<DT><SAMP>`quit'</SAMP>
+<DD>exits the game.
+<P>
+
+<DT><SAMP>`random'</SAMP>
+<DD>causes the program to randomize its move selection slightly.
+<P>
+
+<DT><SAMP>`rcptr'</SAMP>
+<DD>set recapture mode.
+<P>
+
+<DT><SAMP>`remove'</SAMP>
+<DD>backout the last level for both sides.  Equal to 2 undo's.
+<P>
+
+<DT><SAMP>`reverse'</SAMP>
+<DD>causes the board display to be reversed.  That is, the Black's pieces will
+now appear at the top of the board.
+<P>
+
+<DT><SAMP>`rv'</SAMP>
+<DD>reverse board display.
+<P>
+
+<DT><SAMP>`save'</SAMP>
+<DD>saves a game to disk.  The program will prompt the user for a file name.
+<P>
+
+<DT><SAMP>`switch'</SAMP>
+<DD>causes the program to switch places with the opponent and begin
+searching.
+<P>
+
+<DT><SAMP>`test'</SAMP>
+<DD>performs some speed tests for MoveList and CaptureList generation, and
+ScorePosition position scoring for the current board.
+<P>
+
+<DT><SAMP>`time'</SAMP>
+<DD>set computer's time remaining, intended for synchronizing clocks among
+multiple players.
+<P>
+
+<DT><SAMP>`tsume'</SAMP>
+<DD>toggle tsume mode. In tsume mode, not all possible moves will be
+generated. If a king is in check, only moves that get the king out of
+check are generated.  If the king is not in check, only moves that give
+check to the opponent's king are generated.
+<P>
+
+<DT><SAMP>`undo'</SAMP>
+<DD>undoes the last move whether it was the computer's or the human's.  You
+may also type "remove".  This is equivalent to two "undo"'s
+(e.g. retract one move for each side).
+<P>
+
+<DT><SAMP>`white'</SAMP>
+<DD>causes the computer to play as Black; if the computer is to move
+first the go command must be given.
+<P>
+
+<DT><SAMP>`xget'</SAMP>
+<DD>read an xshogi position file.
+<P>
+
+<DT><SAMP>`xsave'</SAMP>
+<DD>save as an xshogi position file.
+<P>
+
+<DT><SAMP>`xwndw'</SAMP>
+<DD>change X window. The window around alpha/beta used to determine whether
+the position should be scored or just estimated.  Note: this has
+<EM>nothing</EM> to do with xshogi or X windows; the terms are completely
+separate.
+<P>
+
+</DL>
+<P>
+
+<A NAME="xshogi"></A>
+<HR SIZE=1>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_18.html#SEC18"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_20.html#SEC20"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_5.html#SEC5"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_20.html#SEC20"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_24.html#SEC24">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Michael C. Vanier</I> on <I>July, 7  2004</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
 
 </BODY>
 </HTML>

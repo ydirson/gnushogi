@@ -1,4 +1,4 @@
-This is gnushogi.info, produced by Makeinfo version 3.12h from
+This is gnushogi.info, produced by makeinfo version 4.3 from
 gnushogi.texinfo.
 
    This file describes how to use GNU shogi, a program which plays
@@ -50,9 +50,9 @@ chess, against a human (or computer) opponent.  This file describes how
 to use GNU shogi and also gives background information about the game
 of shogi.
 
-   This file describes GNU shogi version 1.3.  It was written by me,
+   This file describes GNU shogi version 1.3.2.  It was written by me,
 Mike Vanier, the current maintainer of GNU shogi.  My email address is
-<mvanier@bbb.caltech.edu>.
+<mvanier@cs.caltech.edu>.
 
    GNU shogi is actually two programs:
 
@@ -81,7 +81,6 @@ GNU GENERAL PUBLIC LICENSE
 **************************
 
                          Version 2, June 1991
-
      Copyright (C) 1989, 1991 Free Software Foundation, Inc.
      675 Mass Ave, Cambridge, MA 02139, USA
      
@@ -140,7 +139,6 @@ patent must be licensed for everyone's free use or not licensed at all.
 modification follow.
 
     TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
-
   0. This License applies to any program or other work which contains a
      notice placed by the copyright holder saying it may be distributed
      under the terms of this General Public License.  The "Program",
@@ -524,8 +522,8 @@ Kanji characters on each piece.  In fact, only the top character is
 needed to identify the piece and thus only the top character is used in
 shogi diagrams.  I will use alphabetical equivalents in the diagrams
 here; to see what the Kanji characters look like, start up xshogi
-(*note xshogi::.) and compare the starting setup there with the
-starting setup in this file (*note The opening setup::.).
+(*note xshogi::) and compare the starting setup there with the starting
+setup in this file (*note The opening setup::).
 
    The object of the game is to capture the opponent's King.  The board
 is a grid of 9x9 uncolored squares, and pieces are placed on the
@@ -650,7 +648,7 @@ Promotion of pieces
    In sharp contrast to international chess, where only pawns can
 promote to higher-ranked pieces, most of the pieces in shogi can
 promote.  The promoted ranks are discussed in the section on piece
-moves (*note The moves of the pieces::.) but are repeated here for
+moves (*note The moves of the pieces::) but are repeated here for
 reference:
 
 Pawn
@@ -701,7 +699,7 @@ promotion zone.  Promotion is mandatory in these cases:
    These forced promotions ensure that a piece cannot be moved to a
 square from which it would have no further move.
 
-   Pieces "dropped" onto the board (*note Drops::.) always drop in the
+   Pieces "dropped" onto the board (*note Drops::) always drop in the
 unpromoted state, even if they drop into the promotion zone.
 
 
@@ -856,7 +854,7 @@ strongest.  The degree of the handicap, represented by the position in
 the list, represents the difference in rank between the two players for
 which the handicap is appropriate.  These rules are taken from the books
 "Shogi for Beginners" by John Fairbairn and "The Art of Shogi" by Tony
-Hoskings (*note References and links::.) and, I believe, represent
+Hoskings (*note References and links::) and, I believe, represent
 current Japanese practice.
 
 
@@ -921,7 +919,7 @@ Some of these have been mentioned elsewhere, but they bear repeating.
 
   3. There is no special castling move.  There _are_ a large number of
      possible defensive formations referred to as "castles" (*note
-     Sample game::.) but there is no need for special moves to create
+     Sample game::) but there is no need for special moves to create
      them.
 
   4. A given piece can only promote to _one_ other kind of piece.
@@ -935,7 +933,7 @@ Sample game
 ===========
 
    This game was annotated by Pieter Stouten (*note References and
-links::.).  I have made some minor corrections.  Note that captures are
+links::).  I have made some minor corrections.  Note that captures are
 denoted by the "x" symbol e.g. Rx3f and drops are denoted by the "*"
 symbol e.g. R*3f.  Check is indicated by a "+" after the move, e.g.
 R3f+.  I recommend you use gnushogi/xshogi to play along with this

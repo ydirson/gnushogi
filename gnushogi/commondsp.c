@@ -31,16 +31,9 @@
  *
  */
 
-#include "gnushogi.h"
-
 #if defined HAVE_GETTIMEOFDAY
 #include <sys/time.h>
 #endif
-
-char mvstr[4][6];
-char *InPtr;
-int InBackground = false;
-
 
 #include <ctype.h>
 #include <signal.h>
@@ -50,6 +43,11 @@ int InBackground = false;
 #include <sys/file.h>
 
 #include <curses.h>
+#include "gnushogi.h"
+
+char mvstr[4][6];
+char *InPtr;
+int InBackground = false;
 
 
 #if defined(BOOKTEST)

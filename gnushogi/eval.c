@@ -1206,7 +1206,7 @@ AttackedPieceValue(short sq, short side)
 
     s = 0;
 
-    ds += (ds = -fv1[HUNGP]);
+	ds = -fv1[HUNGP] * 2;
     hung[c1]++;
     shung[sq]++;
 

@@ -1,94 +1,140 @@
 <HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on July, 7  2004 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
 <HEAD>
-<!-- Created by texi2html 1.57 from gnushogi.texinfo on June 29,  1999 -->
+<TITLE>GNU Shogi manual: The moves of the pieces</TITLE>
 
-<TITLE>GNU Shogi manual - Promotion of pieces</TITLE>
+<META NAME="description" CONTENT="GNU Shogi manual: The moves of the pieces">
+<META NAME="keywords" CONTENT="GNU Shogi manual: The moves of the pieces">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
 </HEAD>
-<BODY >
- [<A HREF="gnushogi_toc.html">Contents</A>] &#160; [<A HREF="gnushogi_6.html">Back</A>] &#160; [<A HREF="gnushogi_6.html">Prev</A>] &#160; [<A HREF="gnushogi_4.html">Up</A>] &#160; [<A HREF="gnushogi_8.html">Next</A>] &#160; [<A HREF="gnushogi_8.html">Forward</A>] &#160;<BR><HR><BR>
 
+<BODY LANG="" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
 
-<H3><A NAME="SEC10">Promotion of pieces</A></H3>
+<A NAME="SEC7"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_6.html#SEC6"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_8.html#SEC8"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_5.html#SEC5"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_6.html#SEC6"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_15.html#SEC15"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_24.html#SEC24">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<HR SIZE=1>
+<H3> 2.1.1 The moves of the pieces </H3>
+<!--docid::SEC7::-->
 <P>
-<A NAME="IDX7"></A>
 
-
-<P>
-In sharp contrast to international chess, where only pawns can promote
-to higher-ranked pieces, most of the pieces in shogi can promote.  The
-promoted ranks are discussed in the section on piece moves (see section <A HREF="gnushogi_5.html#SEC8">The moves of the pieces</A>) but are repeated here for reference:
-
-
-<DL COMPACT>
-
-<DT>Pawn
-<DD>
-promotes to gold general (called a `tokin' in this case only).
-
-<DT>Lance
-<DD>
-promotes to gold general.
-
-<DT>Knight
-<DD>
-promotes to gold general.
-
-<DT>Silver general
-<DD>
-promotes to gold general.
-
-<DT>Gold general
-<DD>
-does not promote.
-
-<DT>Bishop
-<DD>
-promotes to "dragon horse" or just "horse" for short.  The horse can
-move as a bishop or can move one square in any orthogonal direction.
-
-<DT>Rook
-<DD>
-promotes to "dragon king" or just "dragon" for short.  The dragon
-can move as a rook or can move one square in any diagonal direction.
-
-<DT>King
-<DD>
-does not promote.
-
-</DL>
-
-<P>
-The three ranks furthest away from each player constitute his/her
-"promotion zone".  A player may, but is not required to, promote a
-piece after making a move in which the piece begins and/or ends in the
-promotion zone.  Thus you can promote a piece when moving the piece into
-the promotion zone, out of the promotion zone, or entirely within the
-promotion zone.  Promotion is mandatory in these cases:
-
-
+Each player at the beginning of a shogi game has a total of 20 pieces of
+eight different types.  The moves of the shogi pieces can be divided
+into three classes: "stepping" pieces, that only move one square at a
+time; "ranging" pieces that move any number of unobstructed squares in
+a line, and "jumping" pieces that can jump over obstructing pieces to
+reach their destination squares.  Most pieces can also promote to
+different (usually stronger) pieces under certain circumstances (see the
+next section).  All pieces capture the same way that they move (even
+pawns).  The piece moves and promotions are as follows; each piece name
+is followed by the standard piece abbreviation:
+</P><P>
 
 <OL>
 
-<LI>You must promote a pawn or a lance after moving it to the last rank.
+<LI>
+The king (K).  The king can move one square in any horizontal, vertical,
+or diagonal direction, just like the king in international chess.  The
+king does not promote.
+<P>
 
-<LI>You must promote a knight after moving it to either of the last
+<LI>
+The rook (R).  The rook can move any number of squares in a horizontal
+or vertical direction.  The rook is the same as the rook in
+international chess (except that it can promote).  A rook promotes to a
+"dragon king" or "dragon" for short (often just referred to as a
+"promoted rook"), which can move as a rook or can move one square in
+any diagonal direction.
+<P>
 
-two ranks.
+<LI>
+The bishop (B).  The bishop can move any number of squares in a diagonal
+direction.  The bishop is the same as the bishop in international chess
+(except that it can promote).  A bishop promotes to a "dragon horse"
+or "horse" for short (often just referred to as a "promoted
+bishop"), which can move as a bishop or can move one square in any
+horizontal or vertical direction.  Note: the horse should not be
+confused with a knight (see below), as they are two completely different
+pieces.
+<P>
+
+<LI>
+The gold general (G).  A gold general can move one square in any
+horizontal or vertical direction, or one square in a forward diagonal
+direction.  Gold generals do not promote.
+<P>
+
+<LI>
+The silver general (S).  A silver general can move one square in any
+diagonal direction, or one square straight forward.  A silver general
+promotes to a gold general.
+<P>
+
+<LI>
+The knight (N).  A knight can move one square straight forward followed
+by one square to either forward diagonal, jumping over intervening
+pieces if any.  In other words, a knight moves like its international
+chess counterpart, but forward only.  A knight promotes to a gold
+general.  The knight is the only jumping piece, as in chess.
+<P>
+
+<LI>
+The lance (L).  A lance can move any number of squares straight forward.
+A lance promotes to a gold general.
+<P>
+
+<LI>
+The pawn (P).  A pawn can move one square straight forward.  The pawn
+captures the same way that it moves, in contrast to international chess.
+There is also no initial two-space move for pawns and no
+<EM>en-passant</EM> capture.  A pawn promotes to a gold general; a
+promoted pawn is usually known as a "Tokin".
+<P>
 
 </OL>
-
 <P>
-These forced promotions ensure that a piece cannot be moved to a square
-from which it would have no further move.
 
-
-<P>
-Pieces "dropped" onto the board (see section <A HREF="gnushogi_8.html#SEC11">Drops</A>) always drop in the
-unpromoted state, even if they drop into the promotion zone.
-
-
-<P></P><HR>
- [<A HREF="gnushogi_toc.html">Contents</A>] &#160; [<A HREF="gnushogi_6.html">Back</A>] &#160; [<A HREF="gnushogi_6.html">Prev</A>] &#160; [<A HREF="gnushogi_4.html">Up</A>] &#160; [<A HREF="gnushogi_8.html">Next</A>] &#160; [<A HREF="gnushogi_8.html">Forward</A>] &#160;
+<A NAME="The opening setup"></A>
+<HR SIZE=1>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_6.html#SEC6"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_8.html#SEC8"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_5.html#SEC5"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_6.html#SEC6"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_15.html#SEC15"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_24.html#SEC24">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="gnushogi_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Michael C. Vanier</I> on <I>July, 7  2004</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
 
 </BODY>
 </HTML>

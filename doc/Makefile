@@ -31,7 +31,7 @@ ps2:
 
 spell:
 	tr '[A-Z]' '[a-z]' < gnushogi.texinfo | tr -cd '[A-Za-z0-9_ \012]' | \
-	tr -s '[ ]' '\012' | sort | uniq -c | sort -nr | spell
+	tr -s '[ ]' '\012' | sort | uniq -c | sort -nr | spell | sort | uniq
 
 clean:
 	@for file in $(CLEANFILES); \

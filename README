@@ -1,7 +1,7 @@
-GNU Shogi, release 1.3
-----------------------
+GNU Shogi, release 1.3.1
+------------------------
 
-This is release 1.3 of GNU shogi, a program which plays shogi (Japanese
+This is release 1.3.1 of GNU shogi, a program which plays shogi (Japanese
 chess), as well as xshogi, the graphical interface to GNU shogi.  GNU shogi
 and xshogi were originally written by Matthias Mutz (mutz@fmi.uni-passau.de),
 but are now maintained by me, Mike Vanier (mvanier@bbb.caltech.edu).  GNU

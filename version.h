@@ -34,7 +34,7 @@
 #ifndef _VERSION_H_
 #define _VERSION_H_
 
-char version[]    = "1.3";
+char version[]    = "1.3.2";
 char patchlevel[] = "0";
 
 #endif /* _VERSION_H_ */

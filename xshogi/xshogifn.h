@@ -13,7 +13,7 @@
  * Modified implementation of ISS mode for XShogi:  Matthias Mutz
  * Current maintainer:                              Michael C. Vanier
  *
- * XShogi borrows its piece bitmaps from CRANES Shogi.
+ * XShogi borrows some of its piece bitmaps from CRANES Shogi.
  *
  * Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts.
  * Enhancements Copyright 1992 Free Software Foundation, Inc.
@@ -72,19 +72,19 @@ void CreatePieceMenus(void);
 char *FindFont(char *pattern, int targetPxlSize);
 void PieceMenuPopup(Widget w, XEvent *event, String *params,
                     Cardinal *num_params);
-static void PieceMenuSelect(Widget w, ShogiSquare piece, caddr_t junk);
+static void PieceMenuSelect(Widget w, ShogiSquare piece, char *junk);
 static void SetBlackToPlay(void);
 static void SetWhiteToPlay(void);
 void ReadBitmap(String name, Pixmap *pm, Pixmap *qm,
-                char small_bits[], char medium_bits[],
-                char large_bits[]);
+                unsigned char small_bits[], unsigned char medium_bits[],
+                unsigned char large_bits[]);
 void CreateGrid(void);
 int  EventToSquare(int x);
 int  EventToXSquare(int x);
 ShogiSquare CharToPiece(int c, int p);
 void DrawSquare(int row, int column, ShogiSquare piece);
 void BlinkSquare(int row, int column, ShogiSquare piece);
-void EventProc(Widget widget, caddr_t unused, XEvent *event);
+void EventProc(Widget widget, XtPointer client_data, XEvent *event);
 void DrawPosition(Widget w, XEvent *event, String *prms, Cardinal *nprms);
 void InitPosition(int redraw);
 void CopyBoard(Board to, Board from);

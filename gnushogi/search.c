@@ -32,7 +32,7 @@
 #include "gnushogi.h"
 
 #if !defined OLDTIME && defined HAVE_GETTIMEOFDAY
-double pow();
+double pow(double x, double y);
 #endif
 
 short background = 0;

@@ -77,7 +77,7 @@ short svalue[NO_SQUARES];
 struct flags flag;
 
 short opponent, computer, WAwindow, WBwindow, BAwindow, BBwindow, dither,
-    INCscore;
+    INCscore = 0;
 long ResponseTime = 0, ExtraTime = 0, MaxResponseTime = 0,
     et = 0, et0 = 0, time0 = 0, ft = 0;
 
