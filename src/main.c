@@ -3,7 +3,7 @@
  *
  * Copyright (c) 1988,1989,1990 John Stanback (GNU Chess)
  * Copyright (c) 1992 Free Software Foundation 
- * Copyright (c) 1993,1994 Matthias Mutz (GNU Shogi)
+ * Copyright (c) 1993,1994,1995 Matthias Mutz (GNU Shogi)
  *
  * This file is part of GNU SHOGI.
  *

@@ -1,7 +1,7 @@
 /*
  * dspcom.c - C source for GNU SHOGI
  *
- * Copyright (c) 1993, 1994 Matthias Mutz
+ * Copyright (c) 1993, 1994, 1995 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -390,7 +390,6 @@ skipb ()
 }
 
 
-
 void
 GetGame (void)
 {
@@ -585,6 +584,125 @@ GetGame (void)
 }
 
 
+void
+SaveGame (void)
+{
+  FILE *fd;
+  char fname[256];
+  short sq, i, c, f, t;
+  char p;
+  short side, piece;
+  char empty[2] = "\n";
+
+  if (savefile[0])
+    strcpy (fname, savefile);
+  else
+    {
+/* Enter file name*/
+      ShowMessage (CP[63]);
+      scanz ("%s", fname);
+    }
+  if (fname[0] == '\0')
+/* shogi.000 */
+    strcpy (fname, CP[137]);
+  if ((fd = fopen (fname, "w")) != NULL)
+    {
+      char *b, *w;
+      b = w = CP[74];
+      if (computer == white)
+	w = CP[141];
+      if (computer == black)
+	b = CP[141];
+      fprintf (fd, CP[37], w, b, Game50,
+               flag.force ? "force" : "");
+      fprintf (fd, empty);
+      fprintf (fd, CP[111], TCflag, OperatorTime);
+      fprintf (fd, CP[117],
+	       TimeControl.clock[black], TimeControl.moves[black],
+	       TimeControl.clock[white], TimeControl.moves[white]);
+      fprintf (fd, empty);
+      for (i = NO_ROWS-1; i > -1; i--)
+	{
+	  fprintf (fd, "%c ", 'i' - i);
+	  for (c = 0; c < NO_COLS; c++)
+	    { 
+	      sq = i * NO_COLS + c;
+	      piece = board[sq];
+	      p = is_promoted[piece] ? '+' : ' ';
+   	      fprintf (fd, "%c", p);
+	      switch (color[sq])
+		{
+		case white:
+		  p = pxx[piece];
+		  break;
+		case black:
+		  p = qxx[piece];
+		  break;
+		default:
+		  p = '-';
+		}
+	      fprintf (fd, "%c", p);
+	    }
+	  fprintf (fd, "  ");
+	  for (f = i * NO_COLS; f < i * NO_COLS + NO_ROWS; f++)
+	    fprintf (fd, " %d", Mvboard[f]);
+	  fprintf (fd, "\n");
+	}
+      fprintf (fd, empty);
+      fprintf (fd, "   9 8 7 6 5 4 3 2 1\n");
+      fprintf (fd, empty);
+      fprintf (fd, "   p  l  n  s  g  b  r  k\n");
+      for ( side = 0; side <= 1; side++ ) {
+	fprintf (fd, "%c", (side == black) ? 'B' : 'W');
+        fprintf (fd, " %2d", Captured[side][pawn]); 
+        fprintf (fd, " %2d", Captured[side][lance]); 
+        fprintf (fd, " %2d", Captured[side][knight]); 
+        fprintf (fd, " %2d", Captured[side][silver]); 
+        fprintf (fd, " %2d", Captured[side][gold]); 
+        fprintf (fd, " %2d", Captured[side][bishop]); 
+        fprintf (fd, " %2d", Captured[side][rook]); 
+        fprintf (fd, " %2d", Captured[side][king]); 
+        fprintf (fd, "\n");
+      }
+      fprintf (fd, empty);
+      fprintf (fd, CP[126]);
+      for (i = 1; i <= GameCnt; i++)
+	{
+	  struct GameRec far *g = &GameList[i];
+
+	  f = g->gmove >> 8;
+	  t = (g->gmove & 0xFF);
+	  algbr (f, t, g->flags);
+#ifdef THINK_C
+	  fprintf (fd, "%c%c%-5s %6d %5d %7ld %6ld %5d  0x%08lx 0x%08lx",
+#else
+	  fprintf (fd, "%c%c%-5s %6d %5d %7ld %6ld %5d  0x%08x 0x%08x",
+#endif
+		   (f>NO_SQUARES ? ' ' : (is_promoted[g->fpiece] ? '+' : ' ')), 
+		   pxx[g->fpiece], 
+		   (f>NO_SQUARES ? &mvstr[0][1] : mvstr[0]), 
+		   g->score, g->depth,
+		   g->nodes, g->time, g->flags,
+		   g->hashkey, g->hashbd);
+	  if ( g->piece != no_piece )
+	    fprintf (fd, "  %c %s %c\n",
+		   pxx[g->piece], ColorStr[g->color],
+           	   (is_promoted[g->piece] ? '+' : ' '));
+          else
+            fprintf (fd, "\n");
+	}
+      fclose (fd);
+/* Game saved */
+      ShowMessage (CP[70]);
+    }
+  else
+    /*ShowMessage ("Could not open file");*/
+    ShowMessage (CP[48]);
+}
+
+
+
+
 #if !defined XSHOGI
 
 
@@ -767,122 +885,6 @@ SaveXGame (void)
 
 #endif /* !XSHOGI */
 
-
-void
-SaveGame (void)
-{
-  FILE *fd;
-  char fname[256];
-  short sq, i, c, f, t;
-  char p;
-  short side, piece;
-  char empty[2] = "\n";
-
-  if (savefile[0])
-    strcpy (fname, savefile);
-  else
-    {
-/* Enter file name*/
-      ShowMessage (CP[63]);
-      scanz ("%s", fname);
-    }
-  if (fname[0] == '\0')
-/* shogi.000 */
-    strcpy (fname, CP[137]);
-  if ((fd = fopen (fname, "w")) != NULL)
-    {
-      char *b, *w;
-      b = w = CP[74];
-      if (computer == white)
-	w = CP[141];
-      if (computer == black)
-	b = CP[141];
-      fprintf (fd, CP[37], w, b, Game50,
-               flag.force ? "force" : "");
-      fprintf (fd, empty);
-      fprintf (fd, CP[111], TCflag, OperatorTime);
-      fprintf (fd, CP[117],
-	       TimeControl.clock[black], TimeControl.moves[black],
-	       TimeControl.clock[white], TimeControl.moves[white]);
-      fprintf (fd, empty);
-      for (i = NO_ROWS-1; i > -1; i--)
-	{
-	  fprintf (fd, "%c ", 'i' - i);
-	  for (c = 0; c < NO_COLS; c++)
-	    { 
-	      sq = i * NO_COLS + c;
-	      piece = board[sq];
-	      p = is_promoted[piece] ? '+' : ' ';
-   	      fprintf (fd, "%c", p);
-	      switch (color[sq])
-		{
-		case white:
-		  p = pxx[piece];
-		  break;
-		case black:
-		  p = qxx[piece];
-		  break;
-		default:
-		  p = '-';
-		}
-	      fprintf (fd, "%c", p);
-	    }
-	  fprintf (fd, "  ");
-	  for (f = i * NO_COLS; f < i * NO_COLS + NO_ROWS; f++)
-	    fprintf (fd, " %d", Mvboard[f]);
-	  fprintf (fd, "\n");
-	}
-      fprintf (fd, empty);
-      fprintf (fd, "   9 8 7 6 5 4 3 2 1\n");
-      fprintf (fd, empty);
-      fprintf (fd, "   p  l  n  s  g  b  r  k\n");
-      for ( side = 0; side <= 1; side++ ) {
-	fprintf (fd, "%c", (side == black) ? 'B' : 'W');
-        fprintf (fd, " %2d", Captured[side][pawn]); 
-        fprintf (fd, " %2d", Captured[side][lance]); 
-        fprintf (fd, " %2d", Captured[side][knight]); 
-        fprintf (fd, " %2d", Captured[side][silver]); 
-        fprintf (fd, " %2d", Captured[side][gold]); 
-        fprintf (fd, " %2d", Captured[side][bishop]); 
-        fprintf (fd, " %2d", Captured[side][rook]); 
-        fprintf (fd, " %2d", Captured[side][king]); 
-        fprintf (fd, "\n");
-      }
-      fprintf (fd, empty);
-      fprintf (fd, CP[126]);
-      for (i = 1; i <= GameCnt; i++)
-	{
-	  struct GameRec far *g = &GameList[i];
-
-	  f = g->gmove >> 8;
-	  t = (g->gmove & 0xFF);
-	  algbr (f, t, g->flags);
-#ifdef THINK_C
-	  fprintf (fd, "%c%c%-5s %6d %5d %7ld %6ld %5d  0x%08lx 0x%08lx",
-#else
-	  fprintf (fd, "%c%c%-5s %6d %5d %7ld %6ld %5d  0x%08x 0x%08x",
-#endif
-		   (f>NO_SQUARES ? ' ' : (is_promoted[g->fpiece] ? '+' : ' ')), 
-		   pxx[g->fpiece], 
-		   (f>NO_SQUARES ? &mvstr[0][1] : mvstr[0]), 
-		   g->score, g->depth,
-		   g->nodes, g->time, g->flags,
-		   g->hashkey, g->hashbd);
-	  if ( g->piece != no_piece )
-	    fprintf (fd, "  %c %s %c\n",
-		   pxx[g->piece], ColorStr[g->color],
-           	   (is_promoted[g->piece] ? '+' : ' '));
-          else
-            fprintf (fd, "\n");
-	}
-      fclose (fd);
-/* Game saved */
-      ShowMessage (CP[70]);
-    }
-  else
-    /*ShowMessage ("Could not open file");*/
-    ShowMessage (CP[48]);
-}
 
 
 
@@ -1374,7 +1376,7 @@ SetOppTime (char *s)
   register tmp = 0;
   int m, t,sec;
   sec = 0;
-  time = &s[strlen (CP[197])];
+  time = &s[strlen (CP[228])];
   t = (int)strtol (time, &time, 10);
   if(*time == ':'){time++; sec=(int)strtol(time, &time,10);}
   m = (int)strtol (time, &time, 10);
@@ -1382,8 +1384,10 @@ SetOppTime (char *s)
     TimeControl.clock[opponent] = t;
   if (m)
     TimeControl.moves[opponent] = m;
-#if defined XSHOGI 
-  printz (CP[222], m, t);
+  ElapsedTime (COMPUTE_AND_INIT_MODE);
+#if defined XSHOGI
+  /* just to inform xshogi about availability of otime command */
+  printz ("otime %d %d\n", t, m);
 #endif
 }
 
@@ -1404,8 +1408,10 @@ SetMachineTime (char *s)
     TimeControl.clock[computer] = t;
   if (m)
     TimeControl.moves[computer] = m;
-#if defined XSHOGI 
-  printz (CP[222], m, t);
+  ElapsedTime (COMPUTE_AND_INIT_MODE);
+#if defined XSHOGI
+  /* just to inform xshogi about availability of time command */
+  printz ("time %d %d\n", t, m);
 #endif
 }
 
@@ -1465,7 +1471,7 @@ InputCommand (char *command)
 {
   int eof = 0;
   short have_shown_prompt = false;
-  short ok, done;
+  short ok, done, is_move = false;
   unsigned short mv;
   char s[80], sx[80];
 
@@ -1634,7 +1640,11 @@ Sdepth = 0;
       else if (strcmp (s, CP[221]) == 0)	/*material*/
 	flag.material = !flag.material;
       else if (strcmp (s, CP[157]) == 0)	/*force*/
+#ifdef XSHOGI
+	{flag.force = true; flag.bothsides = false;}
+#else
 	{flag.force = !flag.force; flag.bothsides = false;}
+#endif
       else if (strcmp (s, CP[134]) == 0)	/*book*/
 	Book = Book ? 0 : BOOKFAIL;
       else if (strcmp (s, CP[172]) == 0)	/*new*/
@@ -1883,7 +1893,9 @@ Sdepth = 0;
 		  ShowMessage(DRAW);
 		  GameList[GameCnt].flags |= draw;
 		  flag.mate = true;
-	        } 
+	        }
+	      else
+		is_move = true;
 	    }
 	  Sdepth = 0;
 	}
@@ -1897,8 +1909,9 @@ Sdepth = 0;
       opponent = computer ^ 1;
     }
 #if defined XSHOGI
-  /* add remaining time in milliseconds for xshogi */ 
-  printz ("%d. %s %ld\n", ++mycnt2, s, TimeControl.clock[player]*10);
+  /* add remaining time in milliseconds for xshogi */
+  if ( is_move )
+    printz ("%d. %s %ld\n", ++mycnt2, s, TimeControl.clock[player]*10);
 #ifdef notdef /* optional pass best line to frontend with move */
 #if !defined NOPOST
   if (flag.post && !flag.mate)

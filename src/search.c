@@ -1,7 +1,7 @@
 /*
  * search.c - C source for GNU SHOGI
  *
- * Copyright (c) 1993, 1994 Matthias Mutz
+ * Copyright (c) 1993, 1994, 1995 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *

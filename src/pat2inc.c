@@ -1,7 +1,7 @@
 /*
  * pat2inc.c - convert GNU SHOGI pattern textfile to include file
  *
- * Copyright (c) 1993, 1994 Matthias Mutz
+ * Copyright (c) 1993, 1994, 1995 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *

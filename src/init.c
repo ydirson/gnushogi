@@ -1,7 +1,7 @@
 /*
  * init.c - C source for GNU SHOGI
  *
- * Copyright (c) 1993, 1994 Matthias Mutz
+ * Copyright (c) 1993, 1994, 1995 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -37,6 +37,9 @@
 #include <time.h>
 #endif
 
+#if !defined SIGTERM
+#include <signal.h>
+#endif
 
 #include "pattern.h"
 
@@ -629,6 +632,7 @@ NewGame (void)
 }              
 
 
+
 int
 Initialize_data (void)
 {
@@ -652,7 +656,7 @@ Initialize_data (void)
     ShowMessage (buffer);
     return(1);
   } else {
-#if defined NONDSP
+#if defined DEBUG
     printf("Tree memory: %ld\n",(long)n); 
 #endif
   }          
@@ -664,7 +668,7 @@ Initialize_data (void)
     ShowMessage(buffer);
     return(1);
   } else {
-#if defined NONDPS
+#if defined DEBUG
     printf("hashcode memory: %ld\n",(long)n); 
 #endif
   }       
@@ -676,7 +680,7 @@ Initialize_data (void)
     ShowMessage(buffer);
     return(1);
   } else { 
-#if defined NONDSP
+#if defined DEBUG
     printf("drop_hashcode memory: %ld\n",(long)n); 
 #endif                                             
   }
@@ -688,7 +692,7 @@ Initialize_data (void)
     ShowMessage(buffer);
     return(1);
   } else {
-#ifdef NONDSP
+#ifdef DEBUG
     printf("GameList memory: %ld\n",(long)n); 
 #endif
   }
@@ -717,7 +721,7 @@ Initialize_data (void)
   if ( !use_nextpos ) {
     return(1);
   } else {
-#if defined NONDSP
+#if defined DEBUG
     printf("nextdir+nextpos memory: %ld\n",(long)(n*2*NO_PTYPE_PIECES)); 
 #endif 
   }
@@ -729,7 +733,7 @@ Initialize_data (void)
     ShowMessage("cannot allocate value space");
     return(1);
   } else {
-#if defined NONDSP
+#if defined DEBUG
     printf("value memory: %ld\n",(long)n); 
 #endif
   }
@@ -739,7 +743,7 @@ Initialize_data (void)
     ShowMessage("cannot allocate fscore space");
     return(1);
   } else {
-#if defined NONDSP
+#if defined DEBUG
     printf("fscore memory: %ld\n",(long)n); 
 #endif
   }
@@ -752,7 +756,7 @@ Initialize_data (void)
     ShowMessage(buffer);
     use_history = false;
   } else {
-#if defined NONDSP
+#if defined DEBUG
     printf("history memory: %ld\n",(long)n);
 #endif      
   }
@@ -768,7 +772,7 @@ Initialize_data (void)
       use_etable = false;
     }
   }
-#if defined NONDSP
+#if defined DEBUG
   if ( use_etable )
     printf("etab memory: %ld (etable=%ld ETABLE=%ld)\n",
       (long)(n*2),(long)sizeof(struct etable),(long)ETABLE); 
@@ -805,7 +809,7 @@ Initialize_data (void)
     use_ttable = false;        
   }
   if ( use_ttable ) {
-#if defined NONDSP && !defined XSHOGI
+#if defined DEBUG
     sprintf(buffer,"ttable's memory: %ld, ttblsize=%ld rehash=%ld",
 		(long)2*n,(long)ttblsize,(long)rehash);
     ShowMessage(buffer);
@@ -831,7 +835,7 @@ Initialize_data (void)
     }
   else
     {
-#if defined NONDSP
+#if defined DEBUG
       printf("distdata memory: %ld\n",(long)n);
 #endif
     }
@@ -846,7 +850,7 @@ Initialize_data (void)
       use_ptype_distdata = false;
     }
   }
-#ifdef NONDSP
+#ifdef DEBUG
   if ( use_ptype_distdata ) {
     printf("ptype_distdata memory: %ld\n",(long)(n*NO_PTYPE_PIECES));
   }
@@ -931,7 +935,7 @@ InitConst (char *lang)
           ShowMessage(buffer);
 	  exit (0);
 	}
-      CP[entry] = (char far *) HEAP_ALLOC ((unsigned) strlen (&s[9]) + 1);
+      CP[entry] = (char far *) GLOBAL_ALLOC ((unsigned) strlen (&s[9]) + 1);
       if (CP[entry] == NULL)
 	{
 	  char buffer[80];
@@ -1025,7 +1029,7 @@ InitConst (char *lang)
           ShowMessage(buffer);
 	  exit (0);
 	}
-      CP[entry] = (char far *) HEAP_ALLOC ((unsigned) strlen (&s[16]) + 1);
+      CP[entry] = (char far *) GLOBAL_ALLOC ((unsigned) strlen (&s[16]) + 1);
       if (CP[entry] == NULL)
 	{
 	  char buffer[80];
@@ -1137,7 +1141,6 @@ ExitMain (void)
 #endif /* ttblsz */
 
   ExitChess ();
-
 }
 
 

@@ -1,7 +1,7 @@
 /*
  * sizetest.c - display memory usage of GNU SHOGI data
  *
- * Copyright (c) 1993, 1994 Matthias Mutz (GNU Shogi)
+ * Copyright (c) 1993, 1994, 1995 Matthias Mutz (GNU Shogi)
  *
  * This file is part of GNU SHOGI.
  *
@@ -283,11 +283,11 @@ main (int argc, char **argv)
                
   l = (long)sizeof(value_array);
   n = (int)(l / 1000);
-  printf("value:\t%4d\tkByte\n",n);
+  printf("value:\t\t%4d\tkByte\n",n);
 
   l = (long)sizeof(fscore_array);
   n = (int)(l / 1000);
-  printf("fscore:\t%4d\tkByte\n",n);
+  printf("fscore:\t\t%4d\tkByte\n",n);
 
 }
 

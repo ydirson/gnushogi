@@ -1,7 +1,7 @@
 /*
  * nondsp.c - UNIX & MSDOS AND NON-DISPLAY interface for GNU SHOGI
  *
- * Copyright (c) 1993, 1994 Matthias Mutz
+ * Copyright (c) 1993, 1994, 1995 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -74,7 +74,7 @@ Initialize (void)
 #else
   setvbuf (stdout, NULL, _IOLBF, BUFSIZ);
 #endif
-  printf (CP[43]);		/* Shogi */
+  printf ("GNU Shogi %sp%s\n", version, patchlevel);
 #endif XSHOGI
 #ifdef HARDTIMELIMIT
   if (!TCflag && (MaxResponseTime == 0))
@@ -445,7 +445,7 @@ OutputMove (void)
   if (mvstr[0][0] == '\0') goto nomove;
 #ifdef XSHOGI
   /* add remaining time in milliseconds to xshogi */
-  printz ("%d. ... %s %ld\n", ++mycnt1, mvstr[0], TimeControl.clock[player]*10);
+  printz ("%d. ... %s %ld\n", ++mycnt1, mvstr[0], (TimeControl.clock[player]-et)*10);
 #else
   printz ("%d. ... %s\n", ++mycnt1, mvstr[0]);
 #endif

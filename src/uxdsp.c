@@ -1,7 +1,7 @@
 /*
  * uxdsp.c - ALPHA interface for GNU SHOGI
  *
- * Copyright (c) 1993, 1994 Matthias Mutz
+ * Copyright (c) 1993, 1994, 1995 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -148,8 +148,8 @@ void
 help (void)
 {
   ClrScreen ();
-  /*printz ("CHESS command summary\n");*/
-  printz (CP[40]);
+  /*printz ("GNU Shogi ??p? command summary\n");*/
+  printz (CP[40], version, patchlevel);
   printz ("----------------------------------------------------------------\n");
   /*printz ("7g7f      move from 7g to 7f      quit      Exit Chess\n");*/
   printz (CP[158]);
@@ -904,7 +904,7 @@ SelectLevel (char *sx)
 
   ClrScreen ();
   gotoXY (32, 2);
-  printz (CP[41]);
+  printz (CP[41], version, patchlevel);
   gotoXY (20, 4);
   printz (CP[18]);
   gotoXY (20, 5);

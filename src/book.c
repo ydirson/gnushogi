@@ -1,7 +1,7 @@
 /*
  * book.c - C source for GNU SHOGI
  *
- * Copyright (c) 1993, 1994 Matthias Mutz
+ * Copyright (c) 1993, 1994, 1995 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -39,6 +39,10 @@
 #endif
 
 
+#include "book.h"
+
+
+
 unsigned booksize = BOOKSIZE;
 unsigned short bookmaxply = BOOKMAXPLY;
 unsigned bookcount = 0;
@@ -56,9 +60,10 @@ char *binbookfile = NULL;
 
 
 
-int GotBook = false;
 static char bmvstr[3][7];
-long bhashbd, bhashkey;
+
+static ULONG bhashbd;
+static ULONG bhashkey;
 
 
 void
@@ -70,7 +75,6 @@ Balgbr (short int f, short int t, short int flag)
       */
 
 {
-  int m3p;
   short promoted = false;
 
   if ( (f & 0x80) != 0)
@@ -311,12 +315,14 @@ RESET (void)
     hashbd = hashkey = 0; 
 }
 
+static
 int
-Vparse (FILE * fd, unsigned short *mv, short int side, char *opening, int moveno)
+Vparse (FILE * fd, USHORT *mv, USHORT *flags, USHORT side, int moveno)
 {
-    register int c, i;
-    char s[128];
-    char *p;
+    int c, i;
+    char s[255];
+
+    *flags = 0;
 
     while (true)
       {
@@ -342,17 +348,14 @@ Vparse (FILE * fd, unsigned short *mv, short int side, char *opening, int moveno
 
 	  if (c == '#')
 	    {	/* comment */
-		p = opening;
 		do
 		  {
-		      *p++ = c;
 		      c = getc (fd);
 		      if (c == '\r')
 			  continue;
 		      /* goes to end of line */
 		      if (c == '\n')
 			{
-			    *p = '\0';
 			    return 0;
 		        } 
 		      if (c == EOF)
@@ -423,25 +426,26 @@ Vparse (FILE * fd, unsigned short *mv, short int side, char *opening, int moveno
 	  else if (strcmp (s, "Jishogi.") == 0)
 	      continue;
 
-	  bhashkey = hashkey;
-	  bhashbd = hashbd;
+          bhashkey = hashkey;
+	  bhashbd  = hashbd;
 
 	  i = BVerifyMove (s, mv, moveno);
 
 	  if (c == '?')
 	    {			/* Bad move, not for the program to play */
-		*mv |= BADMOVE;	/* Flag it ! */
+		*flags |= BADMOVE;	/* Flag it ! */
 		while ((c = getc (fd)) == '?' || c == '!' || c == '/');
 	    }                      
 #ifdef EASY_OPENINGS
 	  else if (c == '~')
 	    {			/* Do not use by computer */
-		*mv |= BADMOVE;	/* Flag it ! */
+		*flags |= BADMOVE;	/* Flag it ! */
 		while ((c = getc (fd)) == '?' || c == '!' || c == '/');
 	    }            
 #endif
 	  else if (c == '!')
 	    {			/* Good move */
+		*flags |= GOODMOVE;	/* Flag it ! */
 		while ((c = getc (fd)) == '?' || c == '!' || c == '/');
 	    }
 	  else if (c == '\r')
@@ -452,7 +456,6 @@ Vparse (FILE * fd, unsigned short *mv, short int side, char *opening, int moveno
 
 	  if (!i)
 	    {
-		printf ("%s \n", opening);
 		/* flush to start of next */
 		while ((c = getc (fd)) != '#' && c != EOF);
 		if (c == EOF)
@@ -469,38 +472,82 @@ Vparse (FILE * fd, unsigned short *mv, short int side, char *opening, int moveno
 }
 
 
-struct gdxadmin ADMIN, B;
+static struct gdxadmin ADMIN;
+struct gdxadmin B;
 
-struct gdxdata
-{
-    unsigned long hashbd;
-    unsigned short hashkey;
-    unsigned short bmove;
-    unsigned short flags; /* flag LASTMOVE */
-    unsigned short hint;
-    unsigned short count;
-} DATA;
+static struct gdxdata DATA;
+
+
+
+/* lts(l) returns most significant 16 bits of l */
 
 #ifdef LONG64
-#define lts(x) (((x>>48)&0xfffe)|side)
+#define lts(x) (USHORT)(((x>>48)&0xfffe)|side)
 #else
 #if defined THINK_C || defined USE_LTSIMP
-
-static unsigned short ltsimp (long x)
-{ unsigned short n;
+static USHORT ltsimp (long x)
+{ USHORT n;
   n = (((x>>16)&0xfffe));
 #if 0
   printf("x=0x%lx lts(x)=0x%x\n",x,n);
 #endif
   return(n);
 }
-#define lts(x) (ltsimp(x) | side)
+#define lts(x) (USHORT)(ltsimp(x) | side)
 #else
-#define lts(x) (((x>>16)&0xfffe)|side)
+#define lts(x) (USHORT)(((x>>16)&0xfffe) | side)
 #endif
 #endif
-unsigned long currentoffset;
-int gfd;
+
+
+/* #define HashValue(l) lts(l) */
+#define HashValue(l) (USHORT)(l & 0xffff)
+
+
+static int gfd;
+
+
+static ULONG currentoffset;
+
+
+#define MAXOFFSET(B) ((B.booksize-1)*sizeof_gdxdata + sizeof_gdxadmin)
+
+#define HashOffset(hashkey,B) { \
+  currentoffset = ((ULONG)hashkey % B.booksize)*sizeof_gdxdata + sizeof_gdxadmin; \
+}
+
+#define NextOffset(B) { \
+  currentoffset += sizeof_gdxdata; \
+  if (currentoffset > B.maxoffset) \
+    currentoffset = sizeof_gdxadmin; \
+}
+
+
+
+
+#define WriteAdmin() { \
+  lseek (gfd, 0, 0); \
+  write (gfd, (char *)&ADMIN, sizeof_gdxadmin); \
+}
+
+#define WriteData() { \
+  if ( mustwrite ) { \
+    lseek (gfd, currentoffset, 0); \
+    write (gfd, (char *)&DATA, sizeof_gdxdata); \
+    mustwrite = false; \
+  } \
+}
+
+static int ReadAdmin(void) {
+  lseek (gfd, 0, 0); 
+  return (sizeof_gdxadmin == read (gfd, (char *)&ADMIN, sizeof_gdxadmin));
+}
+
+static int ReadData(struct gdxdata *DATA) {
+  lseek (gfd, currentoffset, 0); 
+  return (sizeof_gdxdata == read (gfd, (char *)DATA, sizeof_gdxdata));
+}
+
 
 void
 GetOpenings (void)
@@ -511,21 +558,20 @@ GetOpenings (void)
       * a linked list of opening lines of play, with entry->next pointing to the
       * next line and entry->move pointing to a chunk of memory containing the
       * moves. More Opening lines of up to 100 half moves may be added to
-      * gnuchess.book. But now its a hashed table by position which yields a move
+      gnuchess.book. But now its a hashed table by position which yields a move
       * or moves for each position. It no longer knows about openings per say only
       * positions and recommended moves in those positions.
       */
 {
-    register short int i;
+    short int i;
     char opening[80];
     char msg[80];
-    int mustwrite = false;
-    unsigned short xside, doit, side;
+    int mustwrite = false, first;
+    unsigned short xside, side;
     short int c;
-    unsigned short mv;
-    unsigned short ix;
-    unsigned int x;
+    USHORT mv, flags; unsigned int x;
     unsigned int games = 0;
+    LONG collisions = 0;
 
     FILE *fd;
 
@@ -538,12 +584,12 @@ GetOpenings (void)
 	  gfd = open (binbookfile, O_RDONLY | O_BINARY);
 	  if (gfd >= 0)
 	    {
-		if (sizeof(struct gdxadmin) == read (gfd, (char *)&ADMIN, sizeof (struct gdxadmin)))
+		if ( ReadAdmin() ) 
 		  {
 		      B.bookcount = ADMIN.bookcount;
 		      B.booksize = ADMIN.booksize;
 		      B.maxoffset = ADMIN.maxoffset;
-		      if (B.booksize && !(B.maxoffset == ((unsigned long)(B.booksize - 1) * sizeof (struct gdxdata) + sizeof (struct gdxadmin))))
+		      if (B.booksize && !(B.maxoffset == MAXOFFSET(B)))
 			{
 			    printf ("bad format %s\n", binbookfile);
 			    exit (1);
@@ -567,18 +613,18 @@ GetOpenings (void)
 #endif
 		ADMIN.bookcount = B.bookcount = 0;
 		ADMIN.booksize = B.booksize = booksize;
-                B.maxoffset = ADMIN.maxoffset = (unsigned long) (booksize - 1) * sizeof (struct gdxdata) + sizeof (struct gdxadmin);
+                B.maxoffset = ADMIN.maxoffset = MAXOFFSET(B);
 		DATA.hashbd = 0;
 		DATA.hashkey = 0;
 		DATA.bmove = 0;
 		DATA.flags = 0;
 		DATA.hint = 0;
 		DATA.count = 0;
-		write (gfd, (char *)&ADMIN, sizeof (struct gdxadmin));
+		write (gfd, (char *)&ADMIN, sizeof_gdxadmin);
 		printf ("creating bookfile %s  %ld %d\n", binbookfile, B.maxoffset, B.booksize);
 		for (x = 0; x < B.booksize; x++)
 		  {
-		      write (gfd, (char *)&DATA, sizeof (struct gdxdata));
+		      write (gfd, (char *)&DATA, sizeof_gdxdata);
 		  }
 
 
@@ -593,7 +639,7 @@ GetOpenings (void)
 		hashbd = hashkey = 0;
 		i = 0;
 
-		while ((c = Vparse (fd, &mv, side, opening, i)) >= 0)
+		while ((c = Vparse (fd, &mv, &flags, side, i)) >= 0)
 		  {
 		      if (c == 1)
                         {
@@ -606,66 +652,46 @@ GetOpenings (void)
 			    i++;
 			    if (i < bookmaxply + 2)
 			      {
-				  if (i > 1)
-				    {
-					DATA.hint = mv & 0x7fff;
-				    }
+				  if (i > 1 && !(flags & BADMOVE)) {
+				    DATA.hint = mv;
+				  }
 				  if (i < bookmaxply + 1)
 				    {
-					doit = true;
-
 					/*
 		                         * see if this position and
 		                         * move already exist from
 		                         * some other opening
 		                         */
 
-					/*
-		                         * is this ethical, to offer
-		                         * the bad move as a
-		                         * hint?????
-		                         */
-					ix = 0;
-					if (mustwrite)
-					  {
-					      lseek (gfd, currentoffset, SEEK_SET);
-					      write (gfd, (char *)&DATA, sizeof (struct gdxdata));
-					      mustwrite = false;
+					WriteData();
+                                        HashOffset(bhashkey,B);
+					first = true;
+					while (true) {
+					  if (!ReadData(&DATA)) break; /* corrupted binbook file */
+					  if (DATA.bmove == 0) break;  /* free entry */
+					  if (DATA.hashkey == HashValue(bhashkey) && DATA.hashbd == bhashbd) {
+					    if (DATA.bmove == mv) {
+                                              /*
+				               * yes so just bump count - count is
+				               * used to choose opening move in
+				               * proportion to its presence in the book
+				               */
+					      DATA.count++;
+					      DATA.flags |= flags;
+					      mustwrite = true;
+					      break;   
+					    } else {
+					      if ( first ) collisions++;
+					      if (DATA.flags & LASTMOVE) {
+					        DATA.flags &= (~LASTMOVE);
+					        mustwrite = true;
+					        WriteData();
+					      }
+					    }
 					  }
-					doit = true;
-                                        currentoffset = (unsigned long) ((unsigned long)bhashkey % B.booksize) * sizeof (struct gdxdata) + sizeof (struct gdxadmin);
-					while (true)
-					  {
-
-					      lseek (gfd, currentoffset, SEEK_SET);
-					      if ((read (gfd, (char *)&DATA, sizeof (struct gdxdata)) == 0))
-						    break;
-
-					      if (DATA.bmove == 0) break;
-					      if (DATA.hashkey == (unsigned short)(lts(bhashkey)) && 
-					          DATA.hashbd == (unsigned long)bhashbd)
-						{                                 
-						    if (DATA.bmove == mv)
-						      {
-							  DATA.count++;
-                                                          /*
-				                           * yes so just bump count - count is
-				                           * used to choose opening move in
-				                           * proportion to its presence in the book
-				                           */
-							  doit = false;
-							  mustwrite = true;
-							  break;   
-						      } else if(DATA.flags & LASTMOVE){
-							DATA.flags &= (~LASTMOVE);	
-					      		lseek (gfd, currentoffset, SEEK_SET);
-					      		write (gfd, (char *)&DATA, sizeof (struct gdxdata));
-							}
-						}
-					      currentoffset += (unsigned long)sizeof (struct gdxdata);
-					      if (currentoffset > B.maxoffset)
-						  currentoffset = (unsigned long)sizeof (struct gdxadmin);
-					  }
+                                          NextOffset(B);
+					  first = false;
+					}
 
 					/*
 		                         * doesn`t exist so add it to
@@ -680,13 +706,13 @@ GetOpenings (void)
 #else
 					      if (B.bookcount % 1000 == 0)
 #endif
-						  printf ("%d rec %d openings processed\n", B.bookcount,games);
+						  printf ("%d rec %d openings processed\n", B.bookcount, games);
 #endif
 					      /* initialize a record */
-					      DATA.hashbd = (unsigned long)bhashbd;
-					      DATA.hashkey = (unsigned short)(lts(bhashkey));
+					      DATA.hashbd = bhashbd;
+					      DATA.hashkey = HashValue(bhashkey);
 					      DATA.bmove = mv;
-					      DATA.flags = LASTMOVE;
+					      DATA.flags = flags | LASTMOVE;
 					      DATA.count = 1;
 					      DATA.hint = 0;
 					      mustwrite = true;
@@ -703,50 +729,39 @@ GetOpenings (void)
 			{
 			    /* reset for next opening */
 			    games++;
-			    if (mustwrite)
-			      {
-				  lseek (gfd, currentoffset, SEEK_SET);
-				  write (gfd, (char *)&DATA, sizeof (struct gdxdata));
-				  mustwrite = false;
-			      }
+			    WriteData();
 			    RESET ();
 			    i = 0;
 			    side = black;
 			    xside = white;
-			    hashbd = hashkey = 0;
 
 			}
 		  }
-		if (mustwrite)
-		  {
-		      lseek (gfd, currentoffset, SEEK_SET);
-		      write (gfd, (char *)&DATA, sizeof (struct gdxdata));
-		      mustwrite = false;
-		  }
+		WriteData();
 		fclose (fd);
 		/* write admin rec with counts */
 		ADMIN.bookcount = B.bookcount;
-		currentoffset = 0;
-		lseek (gfd, currentoffset, 0);
-		write (gfd, (char *)&ADMIN, sizeof (struct gdxadmin));
+		WriteAdmin();
 
 		close (gfd);
 	    }
       }
     if (binbookfile != NULL)
       {
-	  /* open book as writer */
+	  /* open book as reader */
 	  gfd = open (binbookfile, O_RDONLY | O_BINARY);
 	  if (gfd >= 0)
 	    {
-		read (gfd, (char *)&ADMIN, sizeof (struct gdxadmin));
-		B.bookcount = ADMIN.bookcount;
-		B.booksize = ADMIN.booksize;
-		B.maxoffset = ADMIN.maxoffset;
-                if (B.booksize && !(B.maxoffset == ((unsigned long) (B.booksize - 1) * sizeof (struct gdxdata) + sizeof (struct gdxadmin))))
+		if ( ReadAdmin() && (!ADMIN.booksize || ADMIN.maxoffset == MAXOFFSET(ADMIN)) ) 
 		  {
-		      printf ("bad format %s\n", binbookfile);
-		      exit (1);
+		    B.bookcount = ADMIN.bookcount;
+		    B.booksize = ADMIN.booksize;
+		    B.maxoffset = ADMIN.maxoffset;
+		  }
+                else
+		  {
+		    printf ("bad format %s\n", binbookfile);
+		    exit (1);
 		  }
 
 	    }
@@ -760,6 +775,7 @@ GetOpenings (void)
 #if !defined XSHOGI
 	  sprintf (msg, CP[213], B.bookcount, B.booksize);
 	  ShowMessage (msg);
+	  /* printf("%ld collisions\n", collisions); */
 #endif
       }
     /* set every thing back to start game */
@@ -800,39 +816,34 @@ OpeningBook (unsigned short *hint, short int side)
      * total count
      */
     {
-	register unsigned short i, x;
-	register unsigned short rec = 0;
-	register unsigned short summ = 0;
-	register unsigned short h = 0, b = 0;
+	USHORT i, x;
+	USHORT rec = 0;
+	USHORT summ = 0;
+	USHORT h = 0, b = 0;
 	struct gdxdata OBB[128];
-#ifdef BOOKTEST
-        printf("looking for book move, hashbd = 0x%lx lts(hashkey) = 0x%x\n",
-                  (unsigned long)hashbd,(unsigned short)lts(hashkey));
-#endif
 	if (B.bookcount == 0)
 	  {
 	      Book--;
 	      return false;
 	  }
-        currentoffset = (unsigned long) ((unsigned long)hashkey % B.booksize) * sizeof (struct gdxdata) + sizeof (struct gdxadmin);
 	x = 0;
-	lseek (gfd, currentoffset, 0);
+        HashOffset(hashkey,B);
+#ifdef BOOKTEST
+        printf("looking for book move, bhashbd = 0x%lx bhashkey = 0x%x\n", (ULONG)hashbd, HashValue(hashkey));
+#endif
 	while (true)
 	  {
-	      if (read (gfd, (char *)&OBB[x], sizeof (struct gdxdata)) == 0)
-		    break;
+	      if (!ReadData(&OBB[x])) break;
 	      if (OBB[x].bmove == 0) break;
-	      if (OBB[x].hashkey == (unsigned short)(lts(hashkey)) && 
-	          OBB[x].hashbd == (unsigned long)hashbd)
+#ifdef BOOKTEST
+              printf("compare with bhashbd = 0x%lx bhashkey = 0x%x\n", OBB[x].hashbd, OBB[x].hashkey);
+#endif
+	      if (OBB[x].hashkey == HashValue(hashkey) && OBB[x].hashbd == (ULONG)hashbd)
 		{
-		    x++;if(OBB[x-1].flags & LASTMOVE) break;
+		    x++;
+		    if (OBB[x-1].flags & LASTMOVE) break;
 		}
-		currentoffset += sizeof (struct gdxdata); 
-	      if (currentoffset > B.maxoffset){
-		  lseek (gfd, sizeof (struct gdxadmin), 0);
-		  currentoffset += sizeof (struct gdxadmin); 
-		}
-
+              NextOffset(B);
 	  }
 #ifdef BOOKTEST
         printf("%d book move(s) found.\n",x);
@@ -844,9 +855,9 @@ OpeningBook (unsigned short *hint, short int side)
 	  }
 	for (i = 0; i < x; i++)
 	  {
-	      if ((m = OBB[i].bmove) & BADMOVE)
+	      if (OBB[i].flags & BADMOVE)
 		{
-		    m ^= BADMOVE;
+		    m = OBB[i].bmove;
 		    /* is the move is in the MoveList */
 		    for (b = TrPnt[1]; b < (unsigned) TrPnt[2]; b++)
 		      {
@@ -861,7 +872,7 @@ OpeningBook (unsigned short *hint, short int side)
 		}
 	      else 
 		{
-#if defined DEBUG || defined BOOKTEST
+#if defined BOOKTEST
  		  char s[20];
 		  movealgbr(m = OBB[i].bmove,s); 
 		  printf("finding book move: %s\n",s);
@@ -877,7 +888,7 @@ OpeningBook (unsigned short *hint, short int side)
 
 	r = (urand () % summ);
 	for (i = 0; i < x; i++)
-	    if (!(OBB[i].bmove & BADMOVE) ){
+	    if (!(OBB[i].flags & BADMOVE) ){
 	        if( r < OBB[i].count)
 	            {
 		        rec = i;
@@ -887,8 +898,8 @@ OpeningBook (unsigned short *hint, short int side)
 		      r -= OBB[i].count;
 	    } 
 
-	h = ((OBB[rec].hint) & 0x7fff);
-	m = ((OBB[rec].bmove) & 0x7fff);
+	h = OBB[rec].hint;
+	m = OBB[rec].bmove;
 	/* make sure the move is in the MoveList */
 	for (b = TrPnt[1]; b < (unsigned) TrPnt[2]; b++)
 	  {

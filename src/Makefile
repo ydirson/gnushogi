@@ -35,13 +35,25 @@ GNUSHOGIR= gnushogir
 GNUSHOGIX= gnushogix
 
 # The version number of this GNU Shogi and XShogi release
-VERS=	1.2p02
+VERS=	1.2p03
 
 # Relevant file areas.
 DIST=   ../README-$(VERS) ../doc ../misc ../src
 
 # Installation directory
-INSTALLDIR=/public/projects/shogi
+prefix=/usr/local
+#prefix=/public/projects/shogi
+
+# Change these to something less transitory, like /usr/games, and then
+# compile. Ask your system admin / unix guru to put gnushogi.{hsh,lng,tbk}
+# in $(LIBDIR).
+# Where the binaries live.
+BINDIR= $(prefix)/games
+#BINDIR=/public/projects/shogi/bin
+
+# Where language description, our book, and the persistent hash live.
+LIBDIR= $(prefix)/games/lib/gnushogi
+#LIBDIR=/public/projects/shogi/lib
 
 # Distribution directory
 DISTDIR=/public/projects/shogi
@@ -53,15 +65,6 @@ PROGS=gnushogi-$(VERS)
 LIBS= -lm
 # For _pow and _conio_kbhit external
 #LIBS= -lm -lpc
-
-# Change these to something less transitory, like /usr/games, and then
-# compile. Ask your system admin / unix guru to put gnushogi.{hsh,lng,tbk}
-# in $(LIBDIR).
-# Where the binaries live.
-BINDIR= $(INSTALLDIR)/bin
-
-# Where language description, our book, and the persistent hash live.
-LIBDIR= $(INSTALLDIR)/lib
 
 # Display routines.
 LCURSES=-lcurses -ltermcap
@@ -92,8 +95,8 @@ CC=	gcc -W -fsigned-char $(OPT) $(GENOPT)
 #CFLAGS= -O2 -funroll-loops -traditional-cpp -I/usr/local/include/ansi # gnu cc  2.00 on apollo (capella)
 #CFLAGS= -O2 -funroll-loops -traditional-cpp -DNO_STRING_INCLUDE -DNOFIONREAD # gnu cc  2.00 (hawk)
 #CFLAGS= -O2 -funroll-loops -DSEVENBIT # djgpp
-#CFLAGS= -g -funroll-loops -traditional-cpp # gnu cc 2.00 on SunOS with debug
-CFLAGS= -O2 -funroll-loops -traditional-cpp # gnu cc  2.00 on SunOS
+#CFLAGS= -g -funroll-loops # gnu cc 2.00 on SunOS with debug
+CFLAGS= -O2 -funroll-loops # gnu cc 2.00 on SunOS
 
 # flags for DJGPP package
 #COFF2EXE= coff2exe $(GNUSHOGI)
@@ -162,9 +165,11 @@ OPT= -DVERYBUGGY -DQUIETBACKGROUND -DHARDTIMELIMIT -DHASGETTIMEOFDAY -DCACHE -DN
 # -DTESUJIBONUS   add bonus to a move that semms to be a tesuji
 # -DFIELDBONUS    add bonus to regular moves
 # -DDROPBONUS     add bonus to drops
-# -DDEEPSEARCHCUT check for moves not to consider at deep plys 
-#GENOPT= -DCHECKBONUS -DTESUJIBONUS -DDROPBONUS -DFIELDBONUS -DDEEPSEARCHCUT 
-GENOPT= -DCHECKBONUS -DDEEPSEARCHCUT -DTESUJIBONUS # -DDROPBONUS -DFIELDBONUS
+# -DDEEPSEARCHCUT check for moves not to consider at deep plys
+# slow CPU
+#GENOPT= -DCHECKBONUS -DDEEPSEARCHCUT -DTESUJIBONUS
+# fast CPU
+GENOPT= -DCHECKBONUS -DDEEPSEARCHCUT -DTESUJIBONUS -DDROPBONUS -DFIELDBONUS
 
 # Special options for gnushogix
 XSHOGI= -DXSHOGI -DBAREBONES -DHARDTIMELIMIT
@@ -192,14 +197,14 @@ LANG= -DLANGFILE=\"../misc/gnushogi.lng\"
 # patterns may be described in order to support the correct order of moves.
 PATTERN= -DPATTERNFILE=\"../misc/gnushogi.pat\"
 
-all : $(GNUSHOGI) $(GNUSHOGIX) # $(GNUSHOGIR) sizetest pat2inc gnuan 
+all : $(GNUSHOGI) $(GNUSHOGIX) gnushogi.bbk # sizetest pat2inc 
 
 $(GNUSHOGI): mainN.o globals.o bookN.o genmoveN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrlN.o dspcomN.o uxdsp.o
 	$(CC) $(CFLAGS) -o $(GNUSHOGI) mainN.o globals.o bookN.o genmoveN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrlN.o dspcomN.o uxdsp.o $(LCURSES) $(LIBS)
 	$(COFF2EXE)
 
-$(GNUSHOGIX): mainX.o globals.o bookX.o genmoveX.o patternX.o ataksN.o utilX.o evalX.o initX.o searchX.o tcontrlN.o dspcomX.o nondspX.o
-	$(CC) $(CFLAGS) -o $(GNUSHOGIX) mainX.o globals.o bookX.o genmoveX.o patternX.o ataksN.o utilX.o evalX.o initX.o searchX.o tcontrlN.o dspcomX.o nondspX.o $(LIBS)
+$(GNUSHOGIX): mainX.o globals.o bookX.o genmoveX.o patternX.o ataksN.o utilX.o evalX.o initX.o searchX.o tcontrlX.o dspcomX.o nondspX.o
+	$(CC) $(CFLAGS) -o $(GNUSHOGIX) mainX.o globals.o bookX.o genmoveX.o patternX.o ataksN.o utilX.o evalX.o initX.o searchX.o tcontrlX.o dspcomX.o nondspX.o $(LIBS)
 
 $(GNUSHOGIR): mainN.o globals.o bookN.o genmoveR.o patternR.o ataksR.o utilR.o evalR.o initR.o searchR.o tcontrlN.o dspcomR.o nondspR.o
 	$(CC) $(CFLAGS) -o $(GNUSHOGIR) mainN.o globals.o bookN.o genmoveR.o patternR.o ataksR.o utilR.o evalR.o initR.o searchR.o tcontrlN.o dspcomR.o nondspR.o $(LIBS)
@@ -207,12 +212,6 @@ $(GNUSHOGIR): mainN.o globals.o bookN.o genmoveR.o patternR.o ataksR.o utilR.o e
 
 D$(GNUSHOGIR): mainDR.o globals.o bookDR.o genmoveDR.o patternDR.o ataksDR.o utilDR.o evalDR.o initDR.o searchDR.o tcontrlDR.o dspcomDR.o nondspDR.o
 	$(CC) $(DEBUG) $(CFLAGS) -o D$(GNUSHOGIR) mainDR.o globals.o bookDR.o genmoveDR.o patternDR.o ataksDR.o utilDR.o evalDR.o initDR.o searchDR.o tcontrlDR.o dspcomDR.o nondspDR.o $(LIBS) $(LIBS)
-
-gnuan: mainN.o globals.o bookX.o genmoveN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrlN.o gnuan.o
-	$(CC) $(CFLAGS) -o gnuan mainN.o globals.o bookX.o genmoveN.o patternN.o ataksN.o utilN.o evalN.o initN.o searchN.o tcontrlN.o gnuan.o $(LIBS)
-
-gdxstats: gdxstats.o
-	$(CC) $(CFLAGS) -o gdxstats gdxstats.o
 
 pat2inc: nondspDR.o dspcomDR.o globals.o bookDR.o genmoveDR.o patternP.o ataksDR.o utilDR.o evalDR.o initDR.o searchDR.o tcontrlDR.o pat2inc.o
 	$(CC) $(CFLAGS) -o pat2inc patternP.o globals.o bookDR.o genmoveDR.o ataksDR.o utilDR.o evalDR.o searchDR.o tcontrlDR.o initDR.o nondspDR.o dspcomDR.o pat2inc.o $(LIBS)
@@ -376,6 +375,10 @@ tcontrlN.o: tcontrl.c gnushogi.h version.h
 	$(CC) $(CFLAGS) -c tcontrl.c
 	mv tcontrl.o tcontrlN.o
 
+tcontrlX.o: tcontrl.c gnushogi.h version.h 
+	$(CC) $(XSHOGI) $(CFLAGS) -c tcontrl.c
+	mv tcontrl.o tcontrlX.o
+
 tcontrlDR.o: tcontrl.c gnushogi.h version.h 
 	$(CC) $(DEBUG) $(CFLAGS) -c tcontrl.c
 	mv tcontrl.o tcontrlDR.o
@@ -421,7 +424,7 @@ gnushogi.bbk: $(GNUSHOGIR)
 	-rm ./gnushogi.bbk
 	echo quit >test
 	cat ../misc/gnushogi.tbk > _tmp_t
-	cat test| $(GNUSHOGIR) -b _tmp_t -B ./gnushogi.bbk -S 8000 -P 40 3 0
+	cat test| ./$(GNUSHOGIR) -b _tmp_t -B ./gnushogi.bbk -S 8000 -P 40 3 0
 	rm test _tmp_t
 
 
@@ -443,11 +446,10 @@ install:
 	-cp gnushogi $(BINDIR)/gnushogi
 	-cp gnushogix $(BINDIR)/gnushogix
 	-cp gnushogir $(BINDIR)/gnushogir
-#	-cp gnuan $(BINDIR)/gnuan
 	-cp ./gnushogi.bbk $(LIBDIR)/gnushogi.bbk
 
 clean:
-	-rm -f gnushogix gnushogi gnushogir Dgnushogir gnuan sizetest pat2inc
+	-rm -f gnushogix gnushogi gnushogir Dgnushogir sizetest pat2inc
 	-echo $(DISTDIR)/gnushogi-$(VERS)
 	-rm -f $(DISTDIR)/gnushogi-$(VERS)/src/gnushogi.bbk
 	-find $(DISTDIR)/gnushogi-$(VERS) \( -name '*.o' -o -name '*~' -o -name 'CL*' -o -name 'PATCH*' -o -name '#*#' -o -name '%*%' -o -name '*orig' -o -name 'CL*' -o -name '*prt' -o -name '*bak' -o -name '*BAK' \) -exec rm -f {} \;

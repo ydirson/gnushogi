@@ -1,5 +1,12 @@
 ChangeLog will start with GNU Shogi 1.0 patchlevel 11 (04/07/1993)
 
+version 1.2 patchlevel 2 -> version 1.2 patchlevel 3
+  ../05/1995
+	correct connection to xshogi
+	correct creation of binary book file
+	better support of unsigned characters
+
+version 1.1 patchlevel 2 -> version 1.2 patchlevel 1
 version 1.2 patchlevel 1 -> version 1.2 patchlevel 2
   13/09/1994
 	change 'reachedGameCnt' from small_short to short in "pattern.h"

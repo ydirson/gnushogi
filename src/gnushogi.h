@@ -1,7 +1,7 @@
 /*
  * gnushogi.h - Header file for GNU SHOGI
  *
- * Copyright (c) 1993, 1994 Matthias Mutz
+ * Copyright (c) 1993, 1994, 1995 Matthias Mutz
  *
  * GNU SHOGI is based on GNU CHESS
  *
@@ -124,16 +124,34 @@
 #define small_ushort unsigned char
 
 #else
+
+#ifdef __STDC__
+#define small_short signed char
+#else
 /*
  * type small_short must cover -128..127. In case of trouble,
  * try to uncommend "signed". If this doesn't help, use short. 
  */
-#define signed /* signed */
+#ifdef CHAR_IS_SIGNED
+#define small_short char
+#else
+#define small_short short
+#endif
+#endif
 
-#define small_short signed char
 #define small_ushort unsigned char
 
 #endif
+
+
+typedef small_short BYTE;      
+typedef small_ushort UBYTE;
+typedef short SHORT;
+typedef unsigned short USHORT;
+typedef int INT;
+typedef unsigned int UINT;
+typedef long LONG;
+typedef unsigned long ULONG;
 
 
 #if defined(MSDOS) && !defined(__GO32__)
@@ -574,10 +592,6 @@ extern char far *Lang;
 #define ILLEGAL_TRAPPED -32761  /* flag move as illegal: no move from this square */
 #define ILLEGAL_DOUBLED -32762  /* flag move as illegal: two pawns on one column */
 #define ILLEGAL_MATE -32763     /* flag move as illegal: pawn drop with mate */
-/*************************** Book access defines ****************************************/
-#define SIDEMASK 0x1
-#define LASTMOVE 0x4000         /* means this is the last move of an opening */
-#define BADMOVE 0x8000          /* means this is a bad move in this position */
 /****************************************************************************************/
      struct hashval
      {
@@ -1139,11 +1153,3 @@ typedef enum { VERIFY_AND_MAKE_MODE, VERIFY_AND_TRY_MODE, UNMAKE_MODE } VerifyMo
      extern void AgeTT();
      extern unsigned short TTage;
 
-  struct gdxadmin
-  {
-    unsigned int bookcount;
-    unsigned int booksize;
-    unsigned long maxoffset;
-  };
-
-     extern struct gdxadmin B;
