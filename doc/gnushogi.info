@@ -1,4 +1,4 @@
-This is gnushogi.info, produced by Makeinfo version 3.12h from
+This is gnushogi.info, produced by makeinfo version 4.3 from
 gnushogi.texinfo.
 
    This file describes how to use GNU shogi, a program which plays
@@ -23,33 +23,33 @@ translation approved by the Free Software Foundation.
 
 
 Indirect:
-gnushogi.info-1: 928
-gnushogi.info-2: 49347
+gnushogi.info-1: 926
+gnushogi.info-2: 49337
 
 Tag Table:
 (Indirect)
-Node: Top928
-Node: Introduction1486
-Node: License2566
-Node: About shogi21727
-Node: The rules of shogi24322
-Node: The moves of the pieces25984
-Node: The opening setup29150
-Node: Promotion of pieces30682
-Node: Drops32525
-Node: Winning the game34777
-Node: Draws35491
-Node: Handicaps37896
-Node: Notes for chess players41323
-Node: Sample game42042
-Node: Mating problems49347
-Node: Shogi variants51596
-Node: Differences between shogi and chess55956
-Node: gnushogi60365
-Node: xshogi71847
-Node: References and links88414
-Node: Acknowledgements91580
-Node: Bugs93108
-Node: Index93592
+Node: Top926
+Node: Introduction1484
+Node: License2565
+Node: About shogi21724
+Node: The rules of shogi24319
+Node: The moves of the pieces25979
+Node: The opening setup29145
+Node: Promotion of pieces30677
+Node: Drops32518
+Node: Winning the game34770
+Node: Draws35484
+Node: Handicaps37889
+Node: Notes for chess players41315
+Node: Sample game42033
+Node: Mating problems49337
+Node: Shogi variants51585
+Node: Differences between shogi and chess55943
+Node: gnushogi60351
+Node: xshogi71829
+Node: References and links87937
+Node: Acknowledgements91081
+Node: Bugs92590
+Node: Index93073
 
 End Tag Table

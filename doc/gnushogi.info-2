@@ -1,4 +1,4 @@
-This is gnushogi.info, produced by Makeinfo version 3.12h from
+This is gnushogi.info, produced by makeinfo version 4.3 from
 gnushogi.texinfo.
 
    This file describes how to use GNU shogi, a program which plays
@@ -62,7 +62,7 @@ three-mover.  Here is a really trivial three-mover:
 Black in hand: S, G
 
 
-   Here, Black plays G*2b, White plays K1c, and Black plays S*1d mate.
+   Here, Black plays G*2b, White plays K1c, and Black plays G*1d mate.
 More typical tsume problems range from 5 moves to arbitrarily high
 numbers of moves, and they can be quite brain-busting.  Tsume problems
 may seem artificial, but in the closing stages of the game where both
@@ -73,7 +73,7 @@ scenario for the attacker: you have to mate your opponent even though he
 has every piece not on the board in hand, which means you have to
 develop sharp attacking skills.  Many more tsume problems can be found
 on the internet; I particularly recommend Patrick Davin's "Shogi Nexus"
-(*note References and links::.).
+(*note References and links::).
 
 
 File: gnushogi.info,  Node: Shogi variants,  Next: Differences between shogi and chess,  Prev: Mating problems,  Up: About shogi
@@ -90,11 +90,11 @@ Chu (middle) shogi, which is still played a little bit.  Thanks to the
 efforts of George Hodges and John Fairbairn of the Shogi Association
 (two British shogi enthusiasts), these games were resurrected and rules
 and sets for them can still be purchased from George Hodges (*note
-References and links::.).  I hope to eventually extend GNU shogi so
-that it can play at least some of these games.  There are also several
+References and links::).  I hope to eventually extend GNU shogi so that
+it can play at least some of these games.  There are also several
 non-historical variants of shogi; I don't know much about them but you
 can find information about them on the internet (*note References and
-links::.).
+links::).
 
    The historical variants include:
 
@@ -143,7 +143,7 @@ links::.).
      with 192 pieces.  For those for whom Dai-dai shogi is just too
      small :-)
 
-  8. Tai (grand) shogi, played on a 25x25 board with 377 pieces!  Until
+  8. Tai (grand) shogi, played on a 25x25 board with 354 pieces!  Until
      recently, this was thought to be the biggest chess game ever
      devised, but now there is...
 
@@ -175,7 +175,7 @@ thorny question of which game is "better" although my bias may have
 already come through :-) In fact, the drop rule makes the two games so
 different in character that arguing over which game is better is like
 comparing apples to oranges (you'd be better off comparing chess to Chu
-shogi (*note Shogi variants::.).  However, I believe that if you are a
+shogi (*note Shogi variants::).  However, I believe that if you are a
 chess fan you'll really like shogi as well, and shogi is also popular
 with many people who don't particularly like chess.
 
@@ -334,10 +334,10 @@ xshogi::.
    The book gnushogi.tbk consists of a sequence of openings.  An opening
 begins with a line starting with a # (the rest of the line is a
 comment).  Following this is a series of moves in algebraic notation
-alternating black and white separated by white space.  A move may have a
-? after it indicating this move should never be made in this position.
-Moves are stored as position:move so transpositions between openings can
-take place.
+alternating between black and white separated by whitespace.  A move
+may have a ?  after it indicating this move should never be made in
+this position.  Moves are stored as position:move so transpositions
+between openings can take place.
 
 
    HASHFILE
@@ -468,8 +468,8 @@ English.
      causes the computer to play both sides of a shogi game.
 
 `black'
-     causes the computer to take the white pieces, if the computer is
-     to move first.
+     causes the computer to play as White, if the computer was to move
+     first.
 
 `bsave'
      saves a game to disk as a book textfile.  The program will prompt
@@ -606,7 +606,7 @@ English.
      backout the last level for both sides.  Equal to 2 undo's.
 
 `reverse'
-     causes the board display to be reversed.  That is, the black
+     causes the board display to be reversed.  That is, the Black's
      pieces will now appear at the top of the board.
 
 `rv'
@@ -640,8 +640,8 @@ English.
      (e.g. retract one move for each side).
 
 `white'
-     causes the computer to take the black pieces, if the computer is
-     to move first the go command must be given.
+     causes the computer to play as Black; if the computer is to move
+     first the go command must be given.
 
 `xget'
      read an xshogi position file.
@@ -806,21 +806,12 @@ that you can set in your .Xdefaults file.
      colors or four.  You shouldn't have to specify monochrome.  xshogi
      will determine if this is necessary.
 
-`-wpc or -blackPieceColor color'
-     Color specification for black pieces suitable for
-     XParseColor(3X11).  Default: #FFFFCC.  These colors look good on a
-     DEC workstation.  If you need different colors, try using the
-     xcolors application.  Source for xcolors can be found in the X11
-     contrib directory.
+`-pc or -pieceColor color'
+     Color specification for pieces suitable for XParseColor().
+     Default: #FFFFD7.
 
-`-bpc or -whitePieceColor color'
-     Same for white pieces.  Default: #202020.
-
-`-lsc or -lightSquareColor color'
-     Same for light squares.  Default: #C8C365.
-
-`-dsc or -darkSquareColor color'
-     Same for dark squares.  Default: #77A26D.
+`-sc or -squareColor color'
+     Same for squares.  Default: #EBDFB0.
 
 `-wps or -westernPieceSet (True | False)'
      Choose the Western style piece set.
@@ -869,7 +860,7 @@ that you can set in your .Xdefaults file.
      Shogi thinks on your time; if not, it does not.  (Yes, this does
      seem backwards, doesn't it.)  You can also try adding other
      commands to the initString; see the gnushogi documentation (*note
-     gnushogi::.) for details.
+     gnushogi::) for details.
 
 `blackString and whiteString'
      These resources control what is sent when the Machine Black and
@@ -897,11 +888,8 @@ that you can set in your .Xdefaults file.
 
      If you are using a grayscale monitor, try setting the colors to:
 
-     XShogi*blackPieceColor:     gray100
-     XShogi*whitePieceColor:     gray0
-     XShogi*lightSquareColor:    gray60
-     XShogi*darkSquareColor:     gray40
-
+     XShogi*pieceColor:     gray100
+     XShogi*squareColor:    gray60
 
    COMMAND BUTTONS AND KEYS
 
@@ -997,14 +985,15 @@ that you can set in your .Xdefaults file.
      the Black or White indicator at the top of the screen.
 
 `Challenge'
-     allows to make a two display game between two human players.
+     allows you to make a two display game between two human players.
      Enter the display you want to connect to.  If you are allowed to
      connect, a new board is displayed at the remote display.
      Challenge mode can only be stopped by pressing "quit".
 
 `Select Level'
-     allows to reset the clocks for both players.  Enter the number of
-     moves and the number of minutes in which the moves should be done.
+     allows you to reset the clocks for both players.  Enter the number
+     of moves and the number of minutes in which the moves should be
+     done.
 
 `Move NOW'
      force computer to stop thinking and to make the current best move.
@@ -1136,7 +1125,7 @@ did the translation from Japanese to English.
 
 
    George also sells equipment for all the historical shogi variants
-(*note Shogi variants::.) (except for Kyoku tai shogi) and also sells
+(*note Shogi variants::) (except for Kyoku tai shogi) and also sells
 back issues of the magazine "Shogi" which he published for 70 issues in
 the late 70's to late 80's.  This magazine is STRONGLY recommended; it
 contains more information about shogi in English than you will ever
@@ -1145,7 +1134,7 @@ find anywhere else.
    Here are some useful URLs:
 
 
-Pieter Stouten's shogi page: `http://www.halcyon.com/stouten/shogi.html'
+Pieter Stouten's shogi page: `http://www.shogi.net'
      This is the main shogi-related site on the internet, with links to
      almost all the other sites.
 
@@ -1195,10 +1184,10 @@ Acknowledgements
      West.
 
    * Pieter Stouten, for having the most comprehensive shogi site on the
-     World Wide Web `http://www.halcyon.com/stouten/shogi.html', and for
-     maintaining the shogi-l mailing list.  Go to Pieter's web site for
-     more information on subscribing to the list.  Also thanks to
-     everyone who contributes and has contributed to that list.
+     World Wide Web (`http://www.shogi.net'), and for maintaining the
+     shogi-l mailing list.  Go to Pieter's web site for more
+     information on subscribing to the list.  Also thanks to everyone
+     who contributes and has contributed to that list.
 
    * Matt Casters, for testing GNU shogi.  Matt and I will be working
      together on improving the solution engine in future versions of
@@ -1214,7 +1203,7 @@ Bugs
 
    The motto of GNU shogi is "100% bug-free or you don't pay!" :-)  In
 the extremely unlikely case (*ahem*) that you do find a bug, please
-send me (Mike Vanier) an email at <mvanier@bbb.caltech.edu>.  Also, feel
+send me (Mike Vanier) an email at <mvanier@cs.caltech.edu>.  Also, feel
 free to send me comments, complaints, out-and-out raves, suggestions,
 plane tickets to Hawaii, and/or large suitcases filled with unmarked,
 untraceable hundred-dollar bills.
@@ -1234,6 +1223,7 @@ Index
 * Dai-dai Shogi:                         Shogi variants.
 * Draws:                                 Draws.
 * Drops:                                 Drops.
+* gnushogi:                              gnushogi.
 * GPL:                                   License.
 * Handicaps:                             Handicaps.
 * Introduction:                          Introduction.
@@ -1256,7 +1246,6 @@ Index
 * Wa Shogi:                              Shogi variants.
 * Web sites:                             References and links.
 * Winning the game:                      Winning the game.
-* gnushogi:                              gnushogi.
 * xshogi:                                xshogi.
 
 
