@@ -1,0 +1,1262 @@
+This is gnushogi.info, produced by Makeinfo version 3.12h from
+gnushogi.texinfo.
+
+   This file describes how to use GNU shogi, a program which plays
+Shogi (Japanese chess).
+
+   Copyright (C) 1999 Michael C. Vanier and the Free Software
+Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+
+
+File: gnushogi.info,  Node: Mating problems,  Next: Shogi variants,  Prev: Sample game,  Up: About shogi
+
+Mating problems
+===============
+
+   One good way to improve at shogi is to solve mating problems.  There
+are several types of these problems, but the most common is called a
+"tsume-shogi" problem, or "tsume" problem for short.  In a tsume
+problem, all pieces that are not on the board are assumed to be in the
+opponent's hand (except for your King, which is usually not shown).
+Every move you make must be check until the final checkmate.  Your
+opponent may play any piece on the board or drop any of his pieces in
+hand in order to prevent the mate.  In a properly constructed tsume
+problem, all of your pieces on the board and in hand must be essential
+to the solution.  One consequence of this is that all of your pieces in
+hand must be played during the solution.  There should only be one
+correct solution for the given number of moves.  Tsume problems use
+Japanese-style move numbering; thus, a problem where you move (and give
+check), your opponent moves, and you move to give checkmate is called a
+three-mover.  Here is a really trivial three-mover:
+
+
+   3    2    1
+---------------+
+|    |    |    |  a
+---------------+
+|    |    | wK |  b
+---------------+
+|    |    |    |  c
+---------------+
+| bN |    |    |  d
+---------------+
+|    |    |    |  e
+---------------+
+|    | bN |    |  f
+---------------+
+
+Black in hand: S, G
+
+
+   Here, Black plays G*2b, White plays K1c, and Black plays S*1d mate.
+More typical tsume problems range from 5 moves to arbitrarily high
+numbers of moves, and they can be quite brain-busting.  Tsume problems
+may seem artificial, but in the closing stages of the game where both
+players have a lot of pieces in hand, it is often necessary to give
+check at every move, or else your opponent will start a counterattack
+and will mate you before you mate him.  A tsume problem is a worst-case
+scenario for the attacker: you have to mate your opponent even though he
+has every piece not on the board in hand, which means you have to
+develop sharp attacking skills.  Many more tsume problems can be found
+on the internet; I particularly recommend Patrick Davin's "Shogi Nexus"
+(*note References and links::.).
+
+
+File: gnushogi.info,  Node: Shogi variants,  Next: Differences between shogi and chess,  Prev: Mating problems,  Up: About shogi
+
+Shogi variants
+==============
+
+   Several historical variants of shogi exist.  Most of these were
+invented before modern shogi (in some cases hundreds of years before),
+are much larger than modern shogi and are not played with drops.  Thus,
+in many ways they are really more like giant chess games than like
+modern shogi.  The only one of these games to have survived in Japan is
+Chu (middle) shogi, which is still played a little bit.  Thanks to the
+efforts of George Hodges and John Fairbairn of the Shogi Association
+(two British shogi enthusiasts), these games were resurrected and rules
+and sets for them can still be purchased from George Hodges (*note
+References and links::.).  I hope to eventually extend GNU shogi so
+that it can play at least some of these games.  There are also several
+non-historical variants of shogi; I don't know much about them but you
+can find information about them on the internet (*note References and
+links::.).
+
+   The historical variants include:
+
+
+  1. Tori (bird) shogi, played on a 7x7 board with 32 pieces in all;
+     this is the only variant that is known to have been played with
+     drops.
+
+  2. Wa shogi, played on an 11x11 board with 54 pieces.  This game can
+     be played with or without drops but the historical evidence favors
+     the view that it was played without drops.  However, most people
+     who have tried it claim it is a much better game with drops, being
+     even more intricate than standard shogi.
+
+  3. Chu (middle) shogi, played on a 12x12 board with 92 pieces.  This
+     was (and is) by far the most popular of the variants, and has 21
+     different kinds of pieces in the starting line-up alone (along
+     with several others that appear upon promotion).  Unlike modern
+     shogi, there are a tremendous number of ranging pieces and the
+     game is definitely not played with drops.  There is also an
+     amazing piece called the Lion which has a double king move and can
+     capture two pieces at once!  Chu shogi has a small but fanatical
+     following, some of whom consider it better than modern shogi.
+
+  4. Dai (great) shogi, played on a 15x15 board with 130 pieces.  Other
+     than the larger board, this game is very similar to Chu shogi.
+
+  5. Tenjiku (exotic) shogi, played on a 16x16 board with 176 pieces.
+     This game is possibly the most complex tactical game in existence.
+     There are many astoundingly powerful pieces, including one (the
+     Fire Demon) that can capture up to eight opposing pieces in a
+     single move!  Despite the size of the game, checkmates can occur
+     very suddenly (and often very early on) if one player makes a
+     wrong move.  Tenjiku also has a small but fanatical following, one
+     of whom (Colin Adams) has written a book on the game which is
+     available for download at
+     `http://www.colina.demon.co.uk/tenjiku.html'.
+
+  6. Dai-dai (great-great) shogi, played on a 17x17 board with 192
+     pieces.  The opening setup alone has 64 different kinds of pieces!
+     This game and the larger ones that follow sound pretty
+     outlandish, but they have actually been played; a game of Dai-dai
+     can supposedly be played in about 12 hours.
+
+  7. Maka-dai-dai (great-great-great) shogi, played on a 19x19 board
+     with 192 pieces.  For those for whom Dai-dai shogi is just too
+     small :-)
+
+  8. Tai (grand) shogi, played on a 25x25 board with 377 pieces!  Until
+     recently, this was thought to be the biggest chess game ever
+     devised, but now there is...
+
+  9. Kyoku tai (extremely grand?) shogi, played on a 36x36 board with
+     402 pieces.  The rules for this have just been unearthed in an old
+     Japanese book.  Hopefully someone will soon organize a postal
+     Kyoku tai shogi championship; maybe their distant ancestors could
+     finish it :-)
+
+     It is thought that the really huge games (Dai-dai and up) were
+     never really played to any significant extent (gee, wonder why?)
+     and were devised merely so that the creators could have the fun of
+     inventing enormous games, amazing their friends and confounding
+     their enemies.  However, the games up to Tenjiku shogi at least
+     appear to be quite playable, assuming one has the time.
+
+
+
+
+File: gnushogi.info,  Node: Differences between shogi and chess,  Prev: Shogi variants,  Up: About shogi
+
+Differences between shogi and chess
+===================================
+
+   Some differences between shogi and international chess have been
+mentioned elsewhere in this document; I summarize them here for people
+who are interested in game comparisons.  I won't try to deal with the
+thorny question of which game is "better" although my bias may have
+already come through :-) In fact, the drop rule makes the two games so
+different in character that arguing over which game is better is like
+comparing apples to oranges (you'd be better off comparing chess to Chu
+shogi (*note Shogi variants::.).  However, I believe that if you are a
+chess fan you'll really like shogi as well, and shogi is also popular
+with many people who don't particularly like chess.
+
+   Here are the significant differences between chess and shogi:
+
+
+  1. In shogi, captured pieces become the property of the capturer and
+     can re-enter play by being dropped onto almost any vacant square.
+     In chess, captured pieces are out of the game.  Thus, in shogi,
+     piece exchanges complicate the play significantly while in chess
+     they simplify it.
+
+  2. The shogi board is 9x9; the chess board is 8x8.
+
+  3. Shogi has five pieces with no counterpart in chess: the gold and
+     silver generals, the lance, the promoted rook and the promoted
+     bishop.  Chess has one piece with no counterpart in shogi: the
+     queen.  The knight's move in shogi is much more restrictive than
+     in chess.  Pieces in shogi generally have a much smaller range of
+     movement than in chess (unless they are in hand).
+
+  4. In shogi, all pieces except the gold general and the king can
+     promote, but only to one kind of piece.  Promotion is easier in
+     shogi because the promotion zone is closer to the starting
+     position of the pieces (especially pawns).  In chess, only the
+     pawn can promote, but it can promote to any other piece except the
+     king.
+
+  5. In shogi, pawns capture the same way they move.  There is no
+     initial two-space pawn move and hence no _en-passant_ captures.
+     In chess, pawns capture diagonally which means that opposing pawns
+     can block each other.
+
+  6. In shogi, you only have one rook and one bishop.  Note that the
+     bishop is not restricted to only one "color" square (squares in
+     shogi aren't colored, but never mind) because promoted bishops can
+     also move one square orthogonally.
+
+  7. There is no special castling move in shogi.  The term "castle" is
+     used in shogi to denote a defensive formation consisting of
+     (usually) three generals which protect the king.  There are many
+     such castles (about 40 or so have names).  *Note Sample game::.
+
+  8. Draws are much rarer in shogi than in chess.  Perpetual check is
+     not allowed.  Stalemate is a virtual impossibility, and is a loss
+     for the stalematee.
+
+  9. Since pieces are never out of play in shogi, chess-type endgames
+     involving only a few pieces do not occur.
+
+ 10. Shogi games are generally longer than chess games (about 60-70
+     moves is typical).
+
+ 11. Shogi has a well-developed handicap system which is in general use;
+     chess does not.
+
+
+
+   The effects of all these differences on play include (in my opinion):
+
+
+  1. Piece/pawn structures in chess are more rigid than in shogi.  Pawns
+     block each other and pawns, once advanced, cannot ever retreat.  In
+     shogi, you can repair the hole caused by a pawn advance by
+     exchanging the pawn and dropping it back where you want it.  Thus
+     shogi is more fluid than chess and less "structural".
+
+  2. Counterattack is MUCH more common in shogi than in chess.  Games
+     typically end in mutual mating attacks, where each player is
+     trying to checkmate the other player before being checkmated
+     himself.  This makes tempo incredibly important and also makes
+     sacrificial play quite common.
+
+  3. Attacks involving only ranging pieces are more a feature of chess
+     than of shogi.  A shogi attack typically uses a ranging piece or
+     pieces to support an attack by short-range pieces (especially
+     generals).  It is very rare to mate a king with a non-adjacent
+     ranging piece in shogi since the player whose king is threatened
+     can almost always interpose by dropping a piece.
+
+
+
+
+File: gnushogi.info,  Node: gnushogi,  Next: xshogi,  Prev: About shogi,  Up: Top
+
+gnushogi
+********
+
+   This section describes how to run the "gnushogi" program.
+
+
+   SYNOPSIS
+
+
+   gnushogi [ [[-]a] [-b bookfile] [-B binbookfile] [-C] [-h langfile]
+[-L langfile] [-r length] [-R] [-s pathname] [-l pathname] [-S
+binbooksize] [-t] [-c size] [-T size] [-v] [-x] [-X] arg1 arg2 ]
+
+
+   DESCRIPTION
+
+
+   GNU shogi (gnushogi) plays a game of japanese chess (shogi) against
+the user or it plays against itself.
+
+   At startup gnushogi reads the binbook file if it is present.  It then
+looks for a book file.  If it is present it adds its contents to the
+binbook data.  If the binbook file is writable a new combined binbook
+file is written.
+
+   Gnushogi is a modified version of the gnuchess program.  It has a
+simple alphanumeric board display, or it can be used with the xshogi
+program under X windows.  The program gets its opening moves from the
+file gnushogi.bbk which is located in a directory specified in the
+Makefile.  To invoke the program type:
+
+
+`gnushogi -C'
+     simple curses based version
+
+`gnushogi -X (or just gnushogi)'
+     xshogi compatible version
+
+`gnushogi -R'
+     raw test display version
+
+
+   TIME CONTROLS
+
+
+   If one argument is given, it is the search time per move in
+[minutes:]seconds.  So gnushogi 30 will generate one move every 30
+seconds, while gnushogi 5:00 will generate one move every 5 minutes.
+
+   If two or more arguments are given, they will be used to set
+tournament time controls with the first argument of each pair being the
+number of moves and the second being the total clock time in
+minutes[:seconds].  Thus, entering gnushogi 60 5 will set the clocks
+for 5 minutes (300 seconds) for the first 60 moves, and gnushogi 30
+3:30 will allow 3 minutes and 30 seconds for 30 moves.
+
+   gnushogi 30 5 1 :30 will allow 5 minutes for the first 30 moves and
+30 seconds for each move after that.  Up to 4 pairs of controls may be
+specified.
+
+   If no argument is given the program will prompt the user for level of
+play.
+
+   For use with xshogi see the documentation on that program.  *Note
+xshogi::.
+
+
+   BOOK
+
+
+   The book gnushogi.tbk consists of a sequence of openings.  An opening
+begins with a line starting with a # (the rest of the line is a
+comment).  Following this is a series of moves in algebraic notation
+alternating black and white separated by white space.  A move may have a
+? after it indicating this move should never be made in this position.
+Moves are stored as position:move so transpositions between openings can
+take place.
+
+
+   HASHFILE
+
+
+   The hashfile if created should be on the order of 4 megabytes; you
+can create such a hashfile by typing "gnushogi -c 22" (see below).  This
+file contains positions and moves learned from previous games.  If a
+hashfile is used the computer makes use of the experience it gained in
+past games.  Tests run so far show that it plays no worse with the
+hashfile than without, but it is not clear yet whether it provides a
+real advantage.
+
+
+   LEGAL MOVES
+
+
+   Note: Piece letters are determined by the language file.  What is
+specified here is the default (English).
+
+   Once gnushogi is invoked, the program will display the board and
+prompt the user for a move.  To enter a move, use the notation 7g7f
+where the first letter-number pair indicates the origin square and the
+second letter-number pair indicates the destination square.  An
+alternative is to use the notation P7f where the first letter indicates
+the piece type (P,L,N,S,G,B,R,K).  To promote append a + the type of
+the new piece to the move, as in 2d2c+ or P2c+. Note that you must use
+capital letters for the pieces by default.
+
+
+   COMMAND-LINE OPTIONS
+
+
+`-a'
+     Do not search on opponent's time.
+
+`a'
+     Do search on opponent's time.
+
+`-b BOOKFILE'
+     Use bookfile for opening book.
+
+`-B BINBOOKFILE'
+     Use binbookfile for binary opening book.
+
+`-c SIZE'
+     Create a new HASHFILE.  File size is 2^size entries of
+     approximately 65+?  bytes.
+
+`-C'
+     Use curses-based display mode.
+
+`-h'
+     Do not use hashfile.
+
+`h'
+     Do use hashfile.
+
+`-l PATHNAME'
+     Pathname of the loadfile used with get or xget.
+
+`-L LANG'
+     Use language lang from the file gnushogi.lang.  If -L is not
+     specified it uses the first language in the file.
+
+`-P PLYLEVELS'
+     Number of plys to include in the binbookfile.  For generating a
+     binbookfile.
+
+`-r LENGTH'
+     Rehash _length_ times in searching entries for position in
+     transposition table.
+
+`-R'
+     Use raw text display mode.  This can be used for dumb terminals or
+     for systems that don't have curses.
+
+`-s PATHNAME'
+     Pathname of the save file to use with the save command.
+
+`-S SIZE'
+     Size of binbookfile for memory based books.  For creating a
+     binbookfile.
+
+`-t'
+     Show statistics for HASHFILE.
+
+`-T SIZE'
+     Set the transposition table size to 2^size entries.
+
+`-v'
+     Show version and patchlevel.
+
+`-x VALUE'
+     Use value as the evaluation window xwndw.
+
+`-X'
+     Use xshogi display mode (the default).
+
+
+   COMMANDS
+
+
+   In addition to legal moves, the following commands can be entered at
+the gnushogi prompt.  Note: command names are determined by the language
+file and may vary with the implementation.  The default language is
+English.
+
+`alg'
+     allow algebraic input (not implemented).
+
+`Awindow'
+     change Alpha window (default score + 90).
+
+`Bwindow'
+     change Beta window (default score - 90).
+
+`beep'
+     toggles beeping after each move (default: on).
+
+`bd'
+     updates the current board position on the display.
+
+`book'
+     turns off use of the opening library.
+
+`both'
+     causes the computer to play both sides of a shogi game.
+
+`black'
+     causes the computer to take the white pieces, if the computer is
+     to move first.
+
+`bsave'
+     saves a game to disk as a book textfile.  The program will prompt
+     the user for a file name.
+
+`gamein'
+     toggles game mode time control.  Assumes the time specified for
+     time control is the time for a complete game.  Input with the
+     level command should be the game time and the expected number of
+     moves in a game.  go command must be given.
+
+`coords'
+     show coordinates on the display (visual only).
+
+`contempt'
+     allows the value of _contempt_ to be modified.
+
+`debug'
+     asks for a piece as color piece, as wb or bn, and shows its
+     calculated value on each square.
+
+`debuglevel'
+     sets level of debugging output if compiled with debug options.
+
+`depth'
+     allows the user to change the search depth of the program.  The
+     maximum depth is 29 ply.  Normally the depth is set to 29 and the
+     computer terminates its search based on elapsed time rather than
+     depth.  If depth is set to (say) 4 ply, the program will search
+     until all moves have been examined to a depth of 4 ply (with
+     extensions up to 11 additional ply for sequences of checks and
+     captures).  If you set a maximum time per move and also use the
+     depth command, the search will stop at the specified time or the
+     specified depth, whichever comes first.
+
+`easy'
+     toggles easy mode (thinking on opponents time) on and off. The
+     default is easy mode ON.  If easy mode is disabled, the keyboard
+     is polled for input every so often and when input is seen the
+     search is terminated. It may also be terminated with a sigint.
+
+`edit'
+     allows the user to set up a board position.
+        - # clear the board.
+
+        - c toggle piece color.
+
+        - .  command will exit setup mode.
+
+        - p3b place a pawn on 3b
+
+        - p3b+ place a promoted pawn on 3b
+
+        - p* place a pawn in hand (among the captured pieces)
+
+
+     Pieces are entered by typing a letter (p,l,n,s,g,b,r,k)  for the
+     piece followed by the coordinate.  Here, letter case is ignored.
+
+     The usual warning about the language file applies.
+
+`exit'
+     exits gnushogi.
+
+`first'
+     tells the computer to move first.  Computer begins searching for a
+     move.  (same as "go").
+
+`force'
+     allows the user to enter moves for both sides.  To get the program
+     to play after a sequence of moves has been entered use the "black"
+     or "white" commands.
+
+`get'
+     retrieves a game from disk.  The program will prompt the user for
+     a file name.
+
+`go'
+     tells the computer to move first.  Computer begins searching for a
+     move.  (same as "first").
+
+`hash'
+     use/don't use hashfile.
+
+`hashdepth'
+     allows the user to change the minimum depth for using the hashfile
+     and the number of moves from the beginning of the game to use it.
+
+`help'
+     displays a short description of the commands and the current
+     status of options.
+
+`hint'
+     causes the program to supply the user with its predicted move.
+
+`level'
+     allows the user to set time controls such as 60 moves in 5 minutes
+     etc.  In tournament mode, the program will vary the time it takes
+     for each move depending on the situation.  If easy mode is
+     disabled (using the "easy" command), the program will often
+     respond with its move immediately, saving time on its clock for
+     use later on.
+
+`list'
+     writes the game moves and some statistics on search depth, nodes,
+     and time to the file "shogi.lst".
+
+`material'
+     toggle material flag - draws on no pawns and both sides < rook.
+
+`new'
+     starts a new game.
+
+`p'
+     evaluates the board and shows the point score for each piece.  The
+     total score for a position is the sum of these individual piece
+     scores.
+
+`post'
+     causes the program to display the principal variation and the score
+     during the search.  A score of 100 is equivalent to a 1 pawn
+     advantage for the computer.
+
+`quit'
+     exits the game.
+
+`random'
+     causes the program to randomize its move selection slightly.
+
+`rcptr'
+     set recapture mode.
+
+`remove'
+     backout the last level for both sides.  Equal to 2 undo's.
+
+`reverse'
+     causes the board display to be reversed.  That is, the black
+     pieces will now appear at the top of the board.
+
+`rv'
+     reverse board display.
+
+`save'
+     saves a game to disk.  The program will prompt the user for a file
+     name.
+
+`switch'
+     causes the program to switch places with the opponent and begin
+     searching.
+
+`test'
+     performs some speed tests for MoveList and CaptureList generation,
+     and ScorePosition position scoring for the current board.
+
+`time'
+     set computer's time remaining, intended for synchronizing clocks
+     among multiple players.
+
+`tsume'
+     toggle tsume mode. In tsume mode, not all possible moves will be
+     generated. If a king is in check, only moves that get the king out
+     of check are generated.  If the king is not in check, only moves
+     that give check to the opponent's king are generated.
+
+`undo'
+     undoes the last move whether it was the computer's or the human's.
+     You may also type "remove".  This is equivalent to two "undo"'s
+     (e.g. retract one move for each side).
+
+`white'
+     causes the computer to take the black pieces, if the computer is
+     to move first the go command must be given.
+
+`xget'
+     read an xshogi position file.
+
+`xsave'
+     save as an xshogi position file.
+
+`xwndw'
+     change X window. The window around alpha/beta used to determine
+     whether the position should be scored or just estimated.  Note:
+     this has _nothing_ to do with xshogi or X windows; the terms are
+     completely separate.
+
+
+
+File: gnushogi.info,  Node: xshogi,  Next: References and links,  Prev: gnushogi,  Up: Top
+
+xshogi
+******
+
+   This section describes how to run the "xshogi" program.
+
+
+   SYNOPSIS
+
+
+   xshogi [ options ]
+
+
+   DESCRIPTION
+
+
+   xshogi provides an X11/Xt/Athena Widgets user interface for gnushogi.
+With xshogi you can play gnushogi, set up arbitrary positions, force
+variations, or watch xshogi manage a game between two shogi programs.
+Furthermore, it can be used as an interface between two players on
+different displays.
+
+   xshogi can also be used as a shogi board to play out games.  It will
+read through a game file or allow a player to play through a variation
+manually (force mode).  This is useful for keeping track of email postal
+games or browsing games off the net.
+
+   After starting xshogi, you can make moves by pressing mouse button 1
+while the cursor is over a square with your piece on it and dragging the
+mouse to another square.  If the move is illegal, gnushogi will not
+allow it.  xshogi will then retract the move.
+
+
+   COMMAND-LINE OPTIONS
+
+
+   The following command line options also correspond to X resources
+that you can set in your .Xdefaults file.
+
+
+`[standard Xt options]'
+     xshogi accepts standard Xt options like -display, -geometry, and
+     -iconic.
+
+`-tc or -timeControl minutes[:seconds]'
+     Amount of time for a set of moves determined by movesPerSession.
+     If this number of moves is played within the time control period,
+     xshogi resets the time clocks.  Default: 5 minutes.
+
+`-mps or -movesPerSession moves'
+     Number of moves in a time control period.  Default: 40 moves.
+
+`-st or -searchTime minutes[:seconds]'
+     Tell gnushogi to spend at most the given amount of time searching
+     for each of its moves.  Without this option, gnushogi chooses its
+     search time based on the number of moves and amount of time
+     remaining until the next time control.  Setting this option also
+     sets -clockMode to False.
+
+`-sd or -searchDepth number'
+     Tell gnushogi to look ahead at most the given number of moves when
+     searching for a move to make.  Without this option, gnushogi
+     chooses its search depth based on the number of moves and amount
+     of time remaining until the next time control.  Setting this
+     option also sets -clockMode to False.
+
+`-clock or -clockMode (True | False)'
+     Determines whether or not to use the clock.  If clockMode is
+     False, the clock does not run, but the side that is to play next
+     is still highlighted.
+
+`-td or -timeDelay seconds'
+     Time delay between moves during "Load Game".  This doesn't have to
+     be a round number.  Try -td 0.4.  Default: 1 second.
+
+`-nsp or -noShogiProgram (True | False)'
+     If this option is True, xshogi acts as a passive shogi board; it
+     does not try to start a shogi program, not even to check whether
+     moves made in Force mode are legal.  It also sets -clockMode to
+     False.  Default: False.
+
+`-fsp or -firstShogiProgram program'
+     Name of first shogi program.  In matches between two machines, this
+     program plays white.  Default: "gnushogi".
+
+`-ssp or -secondShogiProgram program'
+     Name of second shogi program, if needed.  In matches between two
+     machines, this program plays black; otherwise it is not started.
+     Default: "gnushogi".
+
+`-fh or -firstHost host'
+     Name of host the first shogi program plays on.  Default:
+     "localhost".
+
+`-sh or -secondHost host'
+     Name of host the second shogi program plays on.  Default:
+     "localhost".
+
+`-rsh or -remoteShell shell_name'
+     Some systems do not use rsh as the remote shell.  This option
+     allows a user to name the remote shell command.  This should be
+     done in the resource file.
+
+`-mm or -matchMode (False | Init | Position | Opening)'
+     Automatically run a game between firstShogiProgram and
+     secondShogiProgram.  If matchMode is set to Init, xshogi will
+     start the game with the initial shogi position.  If matchMode is
+     set to Position, xshogi will start the game with the position
+     specified by the loadPositionFile resource.  If matchMode is set
+     to Opening, xshogi will play out the opening moves specified by
+     the -loadGameFile resource.  If the -saveGameFile resource is set,
+     a move record for the match will be saved in the specified file.
+     Default: "False".
+
+`-lgf or -loadGameFile file'
+     Name of file to read a game record from.  Game files are found in
+     the directory named by the SHOGIDIR environment variable.  If this
+     variable is not set, the current directory is used unless the file
+     name starts with a /.
+
+`-lpf or -loadPositionFile file'
+     Name of file to read a game position from.  Position files are
+     found in the directory named by the SHOGIDIR environment variable.
+     If this variable is not set, the current directory is used unless
+     the file name starts with a /.
+
+`-sgf or -saveGameFile file'
+     Name of file to save a game record to.  Game files are saved in the
+     directory named by the SHOGIDIR environment variable.  If this
+     variable is not set, the current directory is used unless the file
+     name starts with a /.
+
+`-spf or -savePositionFile file'
+     Name of file to save a game position to.  Position files are saved
+     in the directory named by the SHOGIDIR environment variable.  If
+     this variable is not set, the current directory is used unless the
+     file name starts with a /.
+
+`-coords or -showCoords (True | False)'
+     If this option is True, xshogi displays algebraic coordinates
+     along the board's left and bottom edges.  The default is False.
+     The coordFont resource specifies what font to use.
+
+`-mono or -monoMode (True | False)'
+     Determines whether xshogi displays its pieces and squares with two
+     colors or four.  You shouldn't have to specify monochrome.  xshogi
+     will determine if this is necessary.
+
+`-wpc or -blackPieceColor color'
+     Color specification for black pieces suitable for
+     XParseColor(3X11).  Default: #FFFFCC.  These colors look good on a
+     DEC workstation.  If you need different colors, try using the
+     xcolors application.  Source for xcolors can be found in the X11
+     contrib directory.
+
+`-bpc or -whitePieceColor color'
+     Same for white pieces.  Default: #202020.
+
+`-lsc or -lightSquareColor color'
+     Same for light squares.  Default: #C8C365.
+
+`-dsc or -darkSquareColor color'
+     Same for dark squares.  Default: #77A26D.
+
+`-wps or -westernPieceSet (True | False)'
+     Choose the Western style piece set.
+
+`-npb or -normalPawnBitmap file'
+
+`-nnb or -normalKnightBitmap file'
+
+`-nbb or -normalBishopBitmap file'
+
+`-nrb or -normalRookBitmap file'
+
+`-nkb or -normalKingBitmap file'
+     Names of the bitmap files for the bitmap piece icons.
+
+`-rpb or -reversePawnBitmap file'
+
+`-rnb or -reverseKnightBitmap file'
+
+`-rbb or -reverseBishopBitmap file'
+
+`-rrb or -reverseRookBitmap file'
+
+`-rkb or -reverseKingBitmap file'
+     Names of the bitmap files for the outline piece icons.
+
+`-debug or -debugMode (True | False)'
+     Turns on debugging printout.
+
+
+   OTHER X RESOURCES
+
+
+`initString'
+     The actual string that is sent to initialize the shogi program can
+     be set from .Xdefaults.  It can't be set from the command line
+     because of syntax problems.  The default value is
+     "new\nbeep\nrandom\neasy\n".  The "new" and "beep" commands are
+     required. You can remove the "random" command if you like;
+     including it causes gnushogi to randomize its move selection
+     slightly so that it doesn't play the same moves in every game.
+     Even without "random", gnushogi randomizes its choice of moves
+     from its opening book.  You can also remove "easy" if you like;
+     including it toggles easy mode off, causing gnushogi to think on
+     your time.  That is, if "easy" is included in the initString, GNU
+     Shogi thinks on your time; if not, it does not.  (Yes, this does
+     seem backwards, doesn't it.)  You can also try adding other
+     commands to the initString; see the gnushogi documentation (*note
+     gnushogi::.) for details.
+
+`blackString and whiteString'
+     These resources control what is sent when the Machine Black and
+     Machine White buttons are selected.  This is mostly for
+     compatibility with obsolete versions of gnushogi.
+
+     Alternate bitmaps for piece icons can be specified either by
+     choosing one of the built-in sets or with the file name resources
+     described above.  There are three built-in sets of piece bitmaps
+     available, large (the default), medium, or small.  It is easiest
+     to select the set you prefer in the .Xdefaults file:
+
+     XShogi*boardSize:   Medium
+
+     The font used for button labels and comments can be changed in the
+     .Xdefaults file.  You may want to choose a smaller font if you are
+     using the small pieces:
+
+     XShogi*font:    helvetica_oblique12
+
+     The font used for coordinates (when the showCoords option is True)
+     can be set similarly:
+
+     XShogi*coordFont:    helvetica_10
+
+     If you are using a grayscale monitor, try setting the colors to:
+
+     XShogi*blackPieceColor:     gray100
+     XShogi*whitePieceColor:     gray0
+     XShogi*lightSquareColor:    gray60
+     XShogi*darkSquareColor:     gray40
+
+
+   COMMAND BUTTONS AND KEYS
+
+
+`Quit'
+     Quits xshogi.  Q or q is a keyboard equivalent.
+
+`Reset'
+     Resets xshogi to the beginning of a shogi game.  It also deselects
+     any game or position files.
+
+`Flip View'
+     inverts the view of the shogi board.
+
+`Hint'
+     displays a move hint from gnushogi.
+
+`Load Game'
+     plays a game from a record file.  If no file is specified a popup
+     dialog asks for a filename.  Game files are found in the directory
+     named by the SHOGIDIR environment variable.  If this variable is
+     not declared then the current directory is used unless the file
+     name starts with a /.  G or g is a keyboard equivalent.  The game
+     file parser will accept almost any file that contains moves in
+     algebraic notation.  If the first line begins with `#', it is
+     assumed to be a title and is displayed.  Text enclosed in
+     parentheses or square brackets is assumed to be commentary and is
+     displayed in a pop-up window.  Any other text in the file is
+     ignored.
+
+`Load Position'
+     sets up a position from a position file.  If no file is specified a
+     popup dialog asks for a filename.  Position files are found in the
+     directory named by the SHOGIDIR environment variable.  If this
+     variable is not declared then the current directory is used unless
+     the file name starts with a /.  Position files must be in the
+     format that the Save Position command writes.
+
+`Save Game'
+     saves a game to a record file.  If no file is specified a popup
+     dialog asks for a filename.  If the filename exists, the user is
+     asked whether the current game record is be appended to this file
+     or if the file should be replaced.  Game files are saved in the
+     directory named by the SHOGIDIR environment variable.  If this
+     variable is not declared then the current directory is used unless
+     the file name starts with a /.  Game files are human-readable, and
+     can also be read back by the Load Game command. Furthermore, they
+     are accepted as gnushogi text bookfiles.
+
+`Save Position'
+     saves a position to a position file.  If no file is specified a
+     popup dialog asks for a filename.  Position files are saved in the
+     directory named by the SHOGIDIR environment variable.  If this
+     variable is not declared then the current directory is used unless
+     the file name starts with a /.  Position files are human-readable,
+     and can also be read back by the Load Position command.
+
+`Machine White'
+     forces gnushogi to play white.
+
+`Machine Black'
+     forces gnushogi to play black.
+
+`Force Moves'
+     forces a series of moves.  That is, gnushogi stops playing and
+     xshogi allows you to make moves for both white and black.
+
+`Two Machines'
+     plays a game between two computer programs.
+
+`Forward'
+     moves forward through a series of remembered moves.  F or f is a
+     keyboard equivalent.
+
+`Backward'
+     moves backward through a series of remembered moves.  As a side
+     effect, puts xshogi into Force Moves mode.  B or b is a keyboard
+     equivalent.
+
+`Pause'
+     pauses the clocks or (in Load Game mode) pauses the game being
+     loaded.  Press Pause again to continue.  P or p is a keyboard
+     equivalent.
+
+`Edit Position'
+     lets you set up an arbitrary board position.  Use mouse button 1
+     to drag pieces to new squares, or to delete a piece by dragging it
+     off the board or dragging an empty square on top of it.  To drop a
+     new piece on a square, press mouse button 2 or 3 over the square.
+     This brings up a menu of black pieces (button 2) or white pieces
+     (button 3).  Additional menu choices let you empty the square or
+     clear the board.  You can set the side to play next by clicking on
+     the Black or White indicator at the top of the screen.
+
+`Challenge'
+     allows to make a two display game between two human players.
+     Enter the display you want to connect to.  If you are allowed to
+     connect, a new board is displayed at the remote display.
+     Challenge mode can only be stopped by pressing "quit".
+
+`Select Level'
+     allows to reset the clocks for both players.  Enter the number of
+     moves and the number of minutes in which the moves should be done.
+
+`Move NOW'
+     force computer to stop thinking and to make the current best move.
+
+`Iconify I, i, C or c'
+     iconifies xshogi.
+
+
+   LIMITATIONS
+
+
+   If you press the  Pause  button  during  GNU  Shogi's  turn, xshogi
+will stop the clocks, but gnushogi will still make a move.
+
+   After a mate or draw when playing against gnushogi, if  you back  up
+with  the  Backward  button,  the clocks are reset (because gnushogi
+has exited and must be restarted).
+
+   The game parser recognizes only algebraic notation.
+
+
+   AUTHORS
+
+
+   Original authors of XBoard:  Chris Sears and Dan Sears.
+
+   Enhancements for XBoard (Version 2.0):  Tim Mann.
+
+   Conversion to XShogi (Version 1.1):  Matthias Mutz.
+
+   Current maintainer: Mike Vanier.
+
+
+   COPYRIGHT INFORMATION
+
+
+   XShogi borrows its piece bitmaps from CRANES Shogi.
+
+   Copyright 1991 by Digital Equipment Corporation, Maynard,
+Massachusetts.  Enhancements Copyright 1992 Free Software Foundation,
+Inc.  Enhancements Copyright 1993 Matthias Mutz.  Further enhancements
+copyright 1999 by Michael Vanier and the Free Software Foundation, Inc.
+
+   The following terms apply to Digital Equipment Corporation's
+copyright interest in XBoard:
+
+   All Rights Reserved
+
+   Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation, and that the name of Digital not be used in
+advertising or publicity pertaining to distribution of the software
+without specific, written prior permission.
+
+   DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+EVENT SHALL DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+
+   The following terms apply to the enhanced version of XShogi
+distributed by the Free Software Foundation:
+
+   This file is part of XSHOGI.
+
+   XSHOGI is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY.  No author or distributor accepts responsibility to anyone
+for the consequences of using it or for whether it serves any particular
+purpose or works at all, unless he says so in writing.  Refer to the
+XSHOGI General Public License for full details.
+
+   Everyone is granted permission to copy, modify and redistribute
+XSHOGI, but only under the conditions described in the XSHOGI General
+Public License. A copy of this license is supposed to have been given
+to you along with XSHOGI so you can know your rights and
+responsibilities.  It should be in a file named COPYING.  Among other
+things, the copyright notice and this notice must be preserved on all
+copies.
+
+
+File: gnushogi.info,  Node: References and links,  Next: Acknowledgements,  Prev: xshogi,  Up: Top
+
+References and links
+********************
+
+   There are very few English-language books for people learning shogi.
+The two I recommend are:
+
+
+  1. `Shogi for Beginners, 2nd. Edition', by John Fairbairn.  This is a
+     superb beginner's book in every way, covering all phases of the
+     game.  It was out of print for a long time, but has now been
+     reprinted and is available either from Kiseido
+     (`http://www.labnet.or.jp/~kiseido') or from George Hodges (see
+     below).
+
+  2. `The Art of Shogi', by Tony Hoskings.  This is one step up from the
+     Fairbairn book.  It covers a lot of ground, and is especially
+     noteworthy for its detailed treatment of opening lines.  You can
+     order this book from Amazon.com's UK branch
+     (`http://www.amazon.co.uk').
+
+
+
+   Another book you may find is `Shogi: Japan's Game of Strategy' by
+Trevor Leggett.  This book is very elementary and is somewhat outdated,
+having been published first in 1966.  However, it does feature a paper
+shogi board and punch-out pieces, so if you want a really cheap shogi
+set you might pick this book up.  It is still in print.
+
+   Two books that are no longer in print but are definitely worth
+getting if you find them are `Guide to Shogi Openings' and `Better
+Moves for Better Shogi', both by Aono Teriuchi.  They are published in a
+bilingual edition (English/Japanese) and are the only books on shogi in
+English written by a Japanese professional shogi player.  John Fairbairn
+did the translation from Japanese to English.
+
+   Shogi sets are available from:
+
+
+     George F. Hodges
+     P.O. Box 77
+     Bromley, Kent
+     United Kingdom BR1 2WT
+
+
+   George also sells equipment for all the historical shogi variants
+(*note Shogi variants::.) (except for Kyoku tai shogi) and also sells
+back issues of the magazine "Shogi" which he published for 70 issues in
+the late 70's to late 80's.  This magazine is STRONGLY recommended; it
+contains more information about shogi in English than you will ever
+find anywhere else.
+
+   Here are some useful URLs:
+
+
+Pieter Stouten's shogi page: `http://www.halcyon.com/stouten/shogi.html'
+     This is the main shogi-related site on the internet, with links to
+     almost all the other sites.
+
+Roger Hare's shogi page: `http://www.ed.ac.uk/~rjhare/shogi'
+     This has lots of information, including full rules to most of the
+     shogi variants.
+
+Patrick Davin's Shogi Nexus: `http://www.vega.or.jp/~patrick/shogi/'
+     There's lots of cool stuff on this site; my favorite is the
+     extensive collection of Tsume-shogi (mating) problems, both for
+     beginners and more advanced players.
+
+Steve Evans' shogi page: `http://www.netspace.net.au/~trout/index.html'
+     Steve has written a program that plays almost all of the shogi
+     variants, unfortunately it only runs on Windows :-(
+
+Hans Bodlaender's chess variant pages: `http://www.cs.ruu.nl/~hansb/d.chessvar'
+     This page has an almost unimaginable variety of rules for different
+     chess variants, including many shogi variants (historical and
+     non-historical).
+
+
+
+File: gnushogi.info,  Node: Acknowledgements,  Next: Bugs,  Prev: References and links,  Up: Top
+
+Acknowledgements
+****************
+
+   I would like to thank the following people:
+
+
+   * Matthias Mutz, who originally developed GNU shogi as a spin-off of
+     GNU chess and who very kindly let me take over the maintenance of
+     this very interesting project.
+
+   * Richard Stallman and the Free Software Foundation, for creating an
+     organization where anyone can contribute software for the common
+     good of all, for making GNU/Linux possible, and especially for
+     writing emacs and gcc, without which my working life would be
+     intolerable.
+
+   * Georges Hodges, for starting the Shogi Association in England,
+     without which I would probably never have heard of shogi, for
+     supplying shogi equipment, for publishing the excellent magazine
+     "Shogi" (now sadly defunct), for personally answering all my silly
+     questions by mail, and for being the ambassador of shogi to the
+     West.
+
+   * Pieter Stouten, for having the most comprehensive shogi site on the
+     World Wide Web `http://www.halcyon.com/stouten/shogi.html', and for
+     maintaining the shogi-l mailing list.  Go to Pieter's web site for
+     more information on subscribing to the list.  Also thanks to
+     everyone who contributes and has contributed to that list.
+
+   * Matt Casters, for testing GNU shogi.  Matt and I will be working
+     together on improving the solution engine in future versions of
+     this program.
+
+
+
+
+File: gnushogi.info,  Node: Bugs,  Next: Index,  Prev: Acknowledgements,  Up: Top
+
+Bugs
+****
+
+   The motto of GNU shogi is "100% bug-free or you don't pay!" :-)  In
+the extremely unlikely case (*ahem*) that you do find a bug, please
+send me (Mike Vanier) an email at <mvanier@bbb.caltech.edu>.  Also, feel
+free to send me comments, complaints, out-and-out raves, suggestions,
+plane tickets to Hawaii, and/or large suitcases filled with unmarked,
+untraceable hundred-dollar bills.
+
+
+File: gnushogi.info,  Node: Index,  Prev: Bugs,  Up: Top
+
+Index
+*****
+
+* Menu:
+
+* Acknowledgements:                      Acknowledgements.
+* Books:                                 References and links.
+* Chu Shogi:                             Shogi variants.
+* Dai Shogi:                             Shogi variants.
+* Dai-dai Shogi:                         Shogi variants.
+* Draws:                                 Draws.
+* Drops:                                 Drops.
+* GPL:                                   License.
+* Handicaps:                             Handicaps.
+* Introduction:                          Introduction.
+* Kyoku Tai Shogi:                       Shogi variants.
+* License:                               License.
+* Mailing lists:                         References and links.
+* Maka-dai-dai Shogi:                    Shogi variants.
+* Opening setup:                         The opening setup.
+* Piece moves:                           The moves of the pieces.
+* Piece promotion:                       Promotion of pieces.
+* References:                            References and links.
+* Rules:                                 The rules of shogi.
+* Sample game:                           Sample game.
+* Shogi variants:                        Shogi variants.
+* Shogi vs. Chess:                       Differences between shogi and chess.
+* Tai Shogi:                             Shogi variants.
+* Tenjiku Shogi:                         Shogi variants.
+* Tori Shogi:                            Shogi variants.
+* Variants:                              Shogi variants.
+* Wa Shogi:                              Shogi variants.
+* Web sites:                             References and links.
+* Winning the game:                      Winning the game.
+* gnushogi:                              gnushogi.
+* xshogi:                                xshogi.
+
+

@@ -1,0 +1,17 @@
+F CHANGELO.;1                       	ChangeLog
+F CONFIGUR.;1                       	configure
+F CONFIGUR.IN;1                     	configure.in
+F CONFIG_H.IN;1                     	config.h.in
+F CONTRIB.;1                        	CONTRIB
+F COPYING.;1                        	COPYING
+D DOC                               	doc
+D GNUSHOGI                          	gnushogi
+F INSTALL.;1                        	INSTALL
+F INSTALL.GEN;1                     	INSTALL.generic
+F INSTALL-.;1                       	install-sh
+F MAKEFILE.IN;1                     	Makefile.in
+D MISC                              	misc
+F NEWS.;1                           	NEWS
+F README.;1                         	README
+F VERSION.H;1                       	version.h
+D XSHOGI                            	xshogi

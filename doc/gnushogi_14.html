@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.57 from gnushogi.texinfo on June 29,  1999 -->
+
+<TITLE>GNU Shogi manual - Mating problems</TITLE>
+</HEAD>
+<BODY >
+ [<A HREF="gnushogi_toc.html">Contents</A>] &#160; [<A HREF="gnushogi_13.html">Back</A>] &#160; [<A HREF="gnushogi_13.html">Prev</A>] &#160; [<A HREF="gnushogi_3.html">Up</A>] &#160; [<A HREF="gnushogi_15.html">Next</A>] &#160; [<A HREF="gnushogi_15.html">Forward</A>] &#160;<BR><HR><BR>
+
+
+<H2><A NAME="SEC17">Mating problems</A></H2>
+
+<P>
+One good way to improve at shogi is to solve mating problems.  There are
+several types of these problems, but the most common is called a
+"tsume-shogi" problem, or "tsume" problem for short.  In a tsume
+problem, all pieces that are not on the board are assumed to be in the
+opponent's hand (except for your King, which is usually not shown).
+Every move you make must be check until the final checkmate.  Your
+opponent may play any piece on the board or drop any of his pieces in
+hand in order to prevent the mate.  In a properly constructed tsume
+problem, all of your pieces on the board and in hand must be essential
+to the solution.  One consequence of this is that all of your pieces in
+hand must be played during the solution.  There should only be one
+correct solution for the given number of moves.  Tsume problems use
+Japanese-style move numbering; thus, a problem where you move (and give
+check), your opponent moves, and you move to give checkmate is called a
+
+three-mover.  Here is a really trivial three-mover:
+<P>
+<PRE>
+
+   3    2    1            
+----------------+         
+ |    |    |    |  a         
+----------------+           
+ |    |    | wK |  b         
+----------------+           
+ |    |    |    |  c       
+----------------+         
+ | bN |    |    |  d       
+----------------+         
+ |    |    |    |  e       
+----------------+         
+ |    | bN |    |  f       
+----------------+
+
+Black in hand: S, G
+
+</PRE>
+
+
+<P>
+Here, Black plays G*2b, White plays K1c, and Black plays S*1d mate.
+More typical tsume problems range from 5 moves to arbitrarily high
+numbers of moves, and they can be quite brain-busting.  Tsume problems
+may seem artificial, but in the closing stages of the game where both
+players have a lot of pieces in hand, it is often necessary to give
+check at every move, or else your opponent will start a counterattack
+and will mate you before you mate him.  A tsume problem is a worst-case
+scenario for the attacker: you have to mate your opponent even though he
+has every piece not on the board in hand, which means you have to
+develop sharp attacking skills.  Many more tsume problems can be found
+on the internet; I particularly recommend Patrick Davin's "Shogi
+Nexus" (see section <A HREF="gnushogi_19.html#SEC22">References and links</A>).
+
+
+<P></P><HR>
+ [<A HREF="gnushogi_toc.html">Contents</A>] &#160; [<A HREF="gnushogi_13.html">Back</A>] &#160; [<A HREF="gnushogi_13.html">Prev</A>] &#160; [<A HREF="gnushogi_3.html">Up</A>] &#160; [<A HREF="gnushogi_15.html">Next</A>] &#160; [<A HREF="gnushogi_15.html">Forward</A>] &#160;
+
+</BODY>
+</HTML>
