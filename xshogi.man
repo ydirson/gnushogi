@@ -25,6 +25,7 @@ off the net.
 .LP
 .IR xshogi
 can also be used as a X client for the Internet Shogi Server (ISS).
+The Internet Shogi Server is currently embedded in the Internet Go Server (IGS).
 .IR xshogi
 connects to the ISS and displays all positions sent by the ISS graphically.
 So,games from the observation list are recognized as well as own matches.
@@ -248,11 +249,11 @@ or save them with Save Game.
 .B -isshost or -internetShogiServerHost host
 The Internet host name or address of the shogi server to connect 
 to when in ISS mode.  
-Default: "hellspark.wharton.upenn.edu".
+Default: "igs.nuri.net".
 
 If your site doesn't have a working Internet name server, try 
-specifying the host address in numeric form.  The address for hellspark
-is currently "130.91.160.217".
+specifying the host address in numeric form.  The address for igs
+is currently "203.255.112.3".
 .TP 8
 .B -issport or -internetShogiServerPort port-number
 The port number to use when connecting to a shogi server in ISS mode.

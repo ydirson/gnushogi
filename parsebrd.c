@@ -1,3 +1,14 @@
+
+
+/* This file needs a lot of updates. Please, take it as a first try
+   to adapt the concepts of XBoard in order to support Shogi on IGS/ISS 
+   The sections enclosed with 'needs_update' are not yet completed. */
+
+
+/* Option NO_MAIN_PARSEBRD is enabled by default. It's disabled for a 
+   test of the parsebrd functions. */
+
+
 #if !defined NO_MAIN_PARSEBRD
 
 #include <stdio.h>
@@ -36,12 +47,14 @@ typedef enum { False, True } Boolean;
 #define NO_COLS 9
 #define NO_ROWS 9
 
-Boolean ParseBoard (char *string);
+
+Boolean ParseBoard P((char *string));
 
 
 Boolean debugMode = True;
 
-int  iss_column_bug = 1;  /* column number in reversed order */
+int  iss_column_bug = 0;  /* column number in reversed order */
+int  iss_capture_bug = 0;  /* column number in reversed order */
 
 char IssPieceChar[15] =
  { 'p', 'l', 'n', 's', 'G', 'b', 'r', 'K', ' ', 'P', 'L', 'N', 'S', 'B', 'R' };
@@ -165,27 +178,41 @@ int ParseNumber ()
 
 void ParseCaptures (inhand)
   short *inhand;
-{
+{    
+  short loc_inhand[NO_PIECES];
+  short corrupted = 0;
   short piece, n;
   for ( piece=0; piece<=king; piece++ )
-    inhand[piece] = 0;
+    loc_inhand[piece] = 0;
   skipb();
-  while ( !eoln() ) {
+  while ( !eoln() && !corrupted ) {
     n = ParseNumber();
     if ( n == 0 ) n = 1;
     for (piece = 0; piece < NO_PIECES; piece++) {
       if ( IssPieceChar[piece] == *InPtr ) {
-        if ( piece > king )
-          ParseError(6);
-        else
-          inhand[piece] = n;
+        if ( piece > king ) {
+	  if ( !iss_capture_bug )
+            ParseError(6);
+        } else
+          loc_inhand[piece] = n;
         break;
       }
     }
-    InPtr++;
-    skipb();
+    if ( loc_inhand[piece] == 0 )
+      corrupted = 1;
+    else {
+      InPtr++;
+      skipb();
+    }
   }
-  
+  if ( corrupted && iss_capture_bug == 0 ) {
+    /* there is still an error on ISS in the area of captured pieces */
+    fprintf(stderr,"ISS capture bug still there...\n");
+    fprintf(stderr,"parse warning: corrupted captured area, assuming no captures\n",n);
+    iss_capture_bug = 1;
+  }
+  for ( piece=0; piece<=king; piece++ )
+    inhand[piece] = corrupted ? 0 : loc_inhand[piece];
 }
 
 
@@ -486,10 +513,17 @@ Boolean ParseBoard(string)
       skipln();
     } 
 
-#ifdef needs_update
+    skipln(); /* skip bottom border */
+    skipln(); /* skip bottom column numbers */
+
+    /* print out the remaining lines */
+
+    fprintf(stdout, "%s\n", InPtr);
+
+#if defined needs_update || !defined(NO_MAIN_PARSEBRD)
 #else                    
-    /* don't know the move number but need, whether black or white has to move.
-     */
+    /* don't know the move number but need to know whether 
+       black or white has to move. */
     if ( (move_nr & 1) != (forwardMostMove & 1) )
       move_num = forwardMostMove + 1;
     else

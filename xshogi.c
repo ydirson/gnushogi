@@ -13,7 +13,7 @@
  *
  * Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts.
  * Enhancements Copyright 1992 Free Software Foundation, Inc.
- * Enhancements for XShogi Copyright 1993 Matthias Mutz
+ * Enhancements for XShogi Copyright 1993, 1994, 1995 Matthias Mutz
  *
  * The following terms apply to Digital Equipment Corporation's copyright
  * interest in XBoard:
@@ -192,7 +192,7 @@
 #include "eastern_bitmaps/rookR.xbm"
 #include "eastern_bitmaps/rookPR.top.xbm"
 #include "eastern_bitmaps/bishopR.xbm"
-#include "eastern_bitmaps/bishopPR.xbm"
+#include "eastern_bitmaps/bishopPR.top.xbm"
 #include "eastern_bitmaps/goldR.xbm"
 #include "eastern_bitmaps/silverR.xbm"
 #include "eastern_bitmaps/silverPR.xbm"
@@ -556,6 +556,8 @@ int currentMove = 0, forwardMostMove = 0, backwardMostMove = 0,
         blackFlag = False, whiteFlag = False, maybeThinking = False,
 	filemodeUp = False;
 
+int at_least_gnushogi_1_2p03 = False;
+
 int firstSendTime = 2, secondSendTime = 2;  /* 0=don't, 1=do, 2=test first*/
 
 #ifdef ISS
@@ -566,6 +568,7 @@ int iss_input = -1, iss_output = -1, iss_user_moved = 0, iss_gamenum = -1,
 IssMode iss_mode = IssIdle;                              
 
 int  iss_column_bug = 0;  /* column number in reversed order */
+int  iss_capture_bug = 0; /* garbage in text area of captured pieces */
 
 /* conversions from/to piece numbers or chess squares to/from ISS characters */                          
 
@@ -785,6 +788,9 @@ typedef struct {
 	Pixel whitePieceColor;
 	Pixel lightSquareColor;
 	Pixel darkSquareColor;
+	Pixel charPieceColor;
+	Pixel zeroColor;
+	Pixel oneColor;
 #ifdef BOTH_BITMAPS
 	Boolean westernPieceSet;
 #endif
@@ -832,6 +838,7 @@ typedef struct {
 	String remoteShell;
 	float timeDelay;
 	String timeControl;
+	String gameIn;
 #ifdef ISS
 	Boolean issActive;
 	String issHost;
@@ -872,6 +879,18 @@ XtResource clientResources[] = {
 		"whitePieceColor", "WhitePieceColor", XtRPixel, sizeof(Pixel),
 		XtOffset(AppDataPtr, whitePieceColor), XtRString,
 		WHITE_PIECE_COLOR
+	}, {
+		"charPieceColor", "CharPieceColor", XtRPixel, sizeof(Pixel),
+		XtOffset(AppDataPtr, charPieceColor), XtRString,
+		CHAR_PIECE_COLOR
+	}, {
+		"oneColor", "OneColor", XtRPixel, sizeof(Pixel),
+		XtOffset(AppDataPtr, oneColor), XtRString,
+		ONE_COLOR
+	}, {
+		"zeroColor", "ZeroColor", XtRPixel, sizeof(Pixel),
+		XtOffset(AppDataPtr, zeroColor), XtRString,
+		ZERO_COLOR
 	}, {
 		"lightSquareColor", "LightSquareColor", XtRPixel,
 		sizeof(Pixel), XtOffset(AppDataPtr, lightSquareColor),
@@ -1040,6 +1059,11 @@ XtResource clientResources[] = {
 		"timeControl", "timeControl", XtRString, sizeof(String),
 		XtOffset(AppDataPtr, timeControl), XtRString,
 		(XtPointer) TIME_CONTROL
+	}, {
+		"gameIn", "gameIn", 
+		XtRBoolean, sizeof(Boolean),
+		XtOffset(AppDataPtr, gameIn), XtRImmediate,
+		(XtPointer) False
 #ifdef ISS
         }, { 
 		"internetShogiServerMode", "internetShogiServerMode",
@@ -1179,9 +1203,10 @@ struct DisplayData {
     int xScreen;
     Window xBoardWindow;
 
-    GC lightSquareGC, darkSquareGC, lineGC, wdPieceGC, wlPieceGC,
-	bdPieceGC, blPieceGC, wbPieceGC, bwPieceGC, coordGC,
-	charPieceGC, dropPiece;              
+    GC lightSquareGC, darkSquareGC, lineGC, wdPieceGC, wlPieceGC, woPieceGC, boPieceGC,
+	bdPieceGC, blPieceGC, wbPieceGC, bwPieceGC, coordGC, dropPiece;
+
+    GC charPieceGC;              
 
     Font mainFontID, coordFontID;
     XFontStruct *mainFontStruct, *coordFontStruct;
@@ -1325,17 +1350,14 @@ char pieceToChar[] = {
 };  
 
 
-#if defined WESTERN_BITMAPS || defined BOTH_BITMAPS
-
 int pieceisWhite[] = {
+ 	False, False, False, False, False, False, False,  
+ 	False, False, False, False, False, False, False,  
  	True,  True,  True,  True,  True, True,  True,  
  	True, True, True, True, True, True, True,  
- 	False, False, False, False, False, False, False,  
- 	False, False, False, False, False, False, False,  
         False
 };
 
-#endif
 
 
 ChessSquare pieceToPromoted[] = {                               
@@ -1351,9 +1373,15 @@ ChessSquare pieceToPromoted[] = {
 
 XrmOptionDescRec shellOptions[] = {
 	{ "-blackPieceColor", "blackPieceColor", XrmoptionSepArg, NULL },
-	{ "-wpc", "blackPieceColor", XrmoptionSepArg, NULL },
+	{ "-bpc", "blackPieceColor", XrmoptionSepArg, NULL },
 	{ "-whitePieceColor", "whitePieceColor", XrmoptionSepArg, NULL },
-	{ "-bpc", "whitePieceColor", XrmoptionSepArg, NULL },
+	{ "-wpc", "whitePieceColor", XrmoptionSepArg, NULL },
+	{ "-charPieceColor", "charPieceColor", XrmoptionSepArg, NULL },
+	{ "-cpc", "charPieceColor", XrmoptionSepArg, NULL },
+	{ "-zeroColor", "zeroColor", XrmoptionSepArg, NULL },
+	{ "-zc", "zeroColor", XrmoptionSepArg, NULL },
+	{ "-oneColor", "oneColor", XrmoptionSepArg, NULL },
+	{ "-oc", "oneColor", XrmoptionSepArg, NULL },
 	{ "-lightSquareColor", "lightSquareColor", XrmoptionSepArg, NULL },
 	{ "-lsc", "lightSquareColor", XrmoptionSepArg, NULL },
 	{ "-darkSquareColor", "darkSquareColor", XrmoptionSepArg, NULL },
@@ -1444,6 +1472,8 @@ XrmOptionDescRec shellOptions[] = {
 	{ "-td", "timeDelay", XrmoptionSepArg, NULL },
 	{ "-timeControl", "timeControl", XrmoptionSepArg, NULL },
 	{ "-tc", "timeControl", XrmoptionSepArg, NULL },
+	{ "-gameIn", "gameIn", XrmoptionSepArg, NULL },
+	{ "-gi", "gameIn", XrmoptionSepArg, NULL },
 	{ "-loadGameFile", "loadGameFile", XrmoptionSepArg, NULL },
 	{ "-lgf", "loadGameFile", XrmoptionSepArg, NULL },
 	{ "-loadPositionFile", "loadPositionFile", XrmoptionSepArg, NULL },
@@ -1993,7 +2023,7 @@ main(argc, argv)
     
     player = &localPlayer;
 
-    CreatePlayerWindow();
+    CreatePlayerWindow();  
 
     XtAppMainLoop(appContext);
 }
@@ -2296,9 +2326,8 @@ void read_from_iss(client_data, file_num, id)
 		started = 0;
 		next_out = i;
 		parse[parse_pos] = NULLCHAR;
-		
+
 		if ( ParseBoard(parse) ) {
-		
 		  /* Display the board */
 		  if (gameMode != PauseGame) {
 		    DrawPosition(localPlayer.boardWidget, NULL, NULL, NULL);
@@ -2364,6 +2393,19 @@ void read_from_iss(client_data, file_num, id)
 	    }
 	    
 	    if (started && i >= leftover_len) {
+		/* there is currently an error on ISS in the text area
+		   of captured pieces */
+	        if ( buf[i] < ' ' && 
+		     buf[i] != (char)10 &&
+		     buf[i] != (char)13 &&
+		     buf[i] != '\r' ) {
+                  if ( iss_capture_bug == 0 ) {
+	            fprintf(stderr, "ISS capture bug still there...\n");
+	            fprintf(stderr, "illegal character while parsing board, ord=%d\n", (int)buf[i]);
+		    iss_capture_bug = 1;
+		  }
+		  buf[i] = '\r'; 
+    	        }
 		/* Accumulate characters in board
 		   or move list*/
 		if (buf[i] != '\r')
@@ -2637,44 +2679,62 @@ CreateGCs()
 		player->bwPieceGC
 			= XtGetGC(player->shellWidget, value_mask, &gc_values);
 	} else {
+		/* white piece black background */
 		gc_values.foreground = XWhitePixel(player->xDisplay, player->xScreen);
 		gc_values.background = XBlackPixel(player->xDisplay, player->xScreen);
 		player->wbPieceGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
 
+		/* black piece white background */
 		gc_values.foreground = XBlackPixel(player->xDisplay, player->xScreen);
 		gc_values.background = XWhitePixel(player->xDisplay, player->xScreen);
 		player->bwPieceGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
 
+		/* light empty square */
 		gc_values.foreground = player->appData.lightSquareColor;
 		gc_values.background = player->appData.darkSquareColor;
 		player->lightSquareGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
 
+		/* dark empty square */
 		gc_values.foreground = player->appData.darkSquareColor;
 		gc_values.background = player->appData.lightSquareColor;
 		player->darkSquareGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
 
-		gc_values.foreground = player->appData.blackPieceColor;
-		gc_values.background = player->appData.darkSquareColor;
-		player->wdPieceGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
-
-		gc_values.foreground = player->appData.blackPieceColor;
-		gc_values.background = player->appData.lightSquareColor;
-		player->wlPieceGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
-
-		gc_values.foreground = player->appData.whitePieceColor;
-		gc_values.background = player->appData.darkSquareColor;
+		/* black piece on dark square */
+		gc_values.background = player->appData.blackPieceColor;
+		gc_values.foreground = player->appData.darkSquareColor;
 		player->bdPieceGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
 
-		gc_values.foreground = player->appData.whitePieceColor;
-		gc_values.background = player->appData.lightSquareColor;
+		/* black piece on light square */
+		gc_values.background = player->appData.blackPieceColor;
+		gc_values.foreground = player->appData.lightSquareColor;
 		player->blPieceGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
 
+		/* white piece on dark square */
+		gc_values.background = player->appData.whitePieceColor;
+		gc_values.foreground = player->appData.darkSquareColor;
+		player->wdPieceGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
+
+		/* white piece on dark square */
+		gc_values.background = player->appData.whitePieceColor;
+		gc_values.foreground = player->appData.lightSquareColor;
+		player->wlPieceGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
+
+		/* black piece off board */
+		gc_values.background = player->appData.blackPieceColor;
+		gc_values.foreground = XWhitePixel(player->xDisplay, player->xScreen);
+		player->boPieceGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
+
+		/* white piece off board */
+		gc_values.background = player->appData.whitePieceColor;
+		gc_values.foreground = XWhitePixel(player->xDisplay, player->xScreen);
+		player->woPieceGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
+
+		/* piece symbol */
 		gc_values.function = (player->black_pixel_is_zero ? GXand : GXor);
 
 		gc_values.foreground = XBlackPixel(player->xDisplay, player->xScreen);
 		gc_values.background = XWhitePixel(player->xDisplay, player->xScreen);
 		player->charPieceGC = XtGetGC(player->shellWidget, value_mask, &gc_values);
-
 	}
 }                
 
@@ -2957,8 +3017,8 @@ ReadBitmap(name, pm, qm, small_bits, medium_bits, large_bits)
 		  fg = XBlackPixel(player->xDisplay, player->xScreen);
 		  bg = XWhitePixel(player->xDisplay, player->xScreen);
 		} else if ( qm == NULL ) {
-		  fg = player->appData.whitePieceColor;
-		  bg = player->appData.lightSquareColor;
+		  fg = player->appData.oneColor;
+		  bg = player->appData.zeroColor; 
 		} else {
 		  fg = (player->black_pixel_is_zero ? 0 : ~0);
 		  bg = (player->black_pixel_is_zero ? ~0 : 0);
@@ -3340,19 +3400,23 @@ DrawSquare(row, column, piece)
 		    (player->squareSize + LINE_GAP);
 	}
 
-	square_color = ((column + row) % 2) == 1;
+	square_color = ((column + row) % 2) ? LIGHT : DARK;
 
 	if (piece == EmptySquare) {
-		if ( column < 0 || column >= BOARD_SIZE )
+		if ( column < 0 || column >= BOARD_SIZE ) {
+		  /* empty square off board */
 		  XFillRectangle(player->xDisplay, player->xBoardWindow,
 			         player->wbPieceGC,
 			         x, y, player->squareSize, player->squareSize);
-		else
+		} else {
+		  /* empty square on board */
 		  XFillRectangle(player->xDisplay, player->xBoardWindow,
-			         square_color ? player->lightSquareGC : player->darkSquareGC,
+			         (square_color == LIGHT) ? player->lightSquareGC : player->darkSquareGC,
 			         x, y, player->squareSize, player->squareSize);
-	} else if (player->monoMode || column < 0 || column >= BOARD_SIZE) {
-		if (square_color)
+		}
+	} else if (player->monoMode) {
+		/* in mono mode */
+		if (square_color == LIGHT)
 		  XCopyArea(player->xDisplay, ((int) piece < (int) WhitePawn) ^ player->flipView
 			     ? *pieceToNormal[remote][(int) piece]
 			     : *pieceToReverse[remote][(int) piece],
@@ -3365,18 +3429,20 @@ DrawSquare(row, column, piece)
 			     ? *pieceToNormal[remote][(int) piece]
 			     : *pieceToReverse[remote][(int) piece],
 			     player->xBoardWindow, 
-			     (player->monoMode ? player->bwPieceGC : player->wlPieceGC), 
+			     (player->monoMode ? player->bwPieceGC : player->blPieceGC), 
 			     0, 0,
 			     player->squareSize, player->squareSize, x, y);
 	} else {          
-		if (square_color) {
-		  XCopyArea(player->xDisplay, ((int) piece < (int) WhitePawn) ^ player->flipView
+		/* in colour mode */
+		if ( column < 0 || column >= BOARD_SIZE ) {
+		  /* off board */
+		  XCopyPlane(player->xDisplay, ((int) piece < (int) WhitePawn) ^ player->flipView
 			     ? *pieceToNormalSolid[remote][(int) piece]
 			     : *pieceToReverseSolid[remote][(int) piece],
 			     player->xBoardWindow, 
-			     player->wlPieceGC, 
+			     pieceisWhite[(int)piece] ? player->woPieceGC : player->boPieceGC, 
 			     0, 0,
-			     player->squareSize, player->squareSize, x, y);
+			     player->squareSize, player->squareSize, x, y, 1);
 		  XCopyArea(player->xDisplay, ((int) piece < (int) WhitePawn) ^ player->flipView
 			     ? *pieceToNormal[remote][(int) piece]
 			     : *pieceToReverse[remote][(int) piece],
@@ -3384,14 +3450,31 @@ DrawSquare(row, column, piece)
 			     player->charPieceGC, 
 			     0, 0,
 			     player->squareSize, player->squareSize, x, y);
-		} else {
-		  XCopyArea(player->xDisplay, ((int) piece < (int) WhitePawn) ^ player->flipView
+		} else if (square_color == LIGHT) {
+		  /* on board, light square */
+		  XCopyPlane(player->xDisplay, ((int) piece < (int) WhitePawn) ^ player->flipView
 			     ? *pieceToNormalSolid[remote][(int) piece]
 			     : *pieceToReverseSolid[remote][(int) piece],
 			     player->xBoardWindow, 
-			     player->wlPieceGC, 
+			     pieceisWhite[(int)piece] ? player->wlPieceGC : player->blPieceGC, 
+			     0, 0,
+			     player->squareSize, player->squareSize, x, y, 1);
+		  XCopyArea(player->xDisplay, ((int) piece < (int) WhitePawn) ^ player->flipView
+			     ? *pieceToNormal[remote][(int) piece]
+			     : *pieceToReverse[remote][(int) piece],
+			     player->xBoardWindow, 
+			     player->charPieceGC,
 			     0, 0,
 			     player->squareSize, player->squareSize, x, y);
+		} else {
+		  /* on board, dark square */
+		  XCopyPlane(player->xDisplay, ((int) piece < (int) WhitePawn) ^ player->flipView
+			     ? *pieceToNormalSolid[remote][(int) piece]
+			     : *pieceToReverseSolid[remote][(int) piece],
+			     player->xBoardWindow, 
+			     pieceisWhite[(int)piece] ? player->wdPieceGC : player->bdPieceGC, 
+			     0, 0,
+			     player->squareSize, player->squareSize, x, y, 1);
 		  XCopyArea(player->xDisplay, ((int) piece < (int) WhitePawn) ^ player->flipView
 			     ? *pieceToNormal[remote][(int) piece]
 			     : *pieceToReverse[remote][(int) piece],
@@ -4128,11 +4211,11 @@ FinishUserMove(move_type, to_x, to_y)
 	      break;
 	  }
 	  Attention(firstProgramPID);
-	  SendToProgram(user_move, toFirstProgFP);
-#ifdef SENDTIME
+#ifdef SENDTIME 
 	  if (firstSendTime)
 	    SendTimeRemaining(toFirstProgFP);
 #endif
+	  SendToProgram(user_move, toFirstProgFP);
 	  strcpy(moveList[currentMove - 1], user_move);
 	}
 
@@ -4263,16 +4346,6 @@ HandleMachineMove(message, fp)
 		exit(1);
 	}
 
-	if (strncmp(message, "time", 4) == 0) {
-	  if (StrStr(message, "SHOGI")) {
-	    /* Program has a broken "time" command that
-	       outputs a string not ending in newline.
-	       Don't use it. */
-	    if (fp == fromFirstProgFP) firstSendTime = 0;
-	    if (fp == fromSecondProgFP) secondSendTime = 0;
-	  }
-	} 
-    
 	/*
 	 * If the move is illegal, cancel it and redraw the board.
 	 */
@@ -4327,7 +4400,12 @@ HandleMachineMove(message, fp)
 		return;
 	}
 
-	if (strncmp(message, "Hint:", 5) == 0) {
+	if (StrStr(message, "GNU Shogi") != NULL) {
+	  at_least_gnushogi_1_2p03 = True;
+	  return;
+	}
+
+        if (strncmp(message, "Hint:", 5) == 0) {
 		char promoPiece;
 		sscanf(message, "Hint: %s", machine_move);
 		ParseMachineMove(machine_move, &move_type,
@@ -4409,14 +4487,16 @@ HandleMachineMove(message, fp)
 	maybeThinking = True;
 	if (StrStr(message, "...") != NULL) {
 		sscanf(message, "%s %s %s", buf1, buf2, machine_move);
+#ifdef SYNCHTIME
 		mpr = message;
-		SkipString(&mpr);
-		SkipString(&mpr);
-		SkipString(&mpr);
-		if ( *mpr == '-' || (*mpr >= '0' && *mpr <= '9') ) {
+		SkipString(&mpr); /* skip move number */
+		SkipString(&mpr); /* skip ... */
+		SkipString(&mpr); /* skip move */
+                if ( gameMode != TwoMachinesPlay && gameMode != ForceMoves &&
+		     ( *mpr == '-' || (*mpr >= '0' && *mpr <= '9') ) ) {
 		  /* synchronize with shogi program clock */
 		  sscanf(mpr, "%ld", &time_remaining);
-		  if ( False /* xshogiDebug */)
+		  if ( xshogiDebug )
 		    printf("from '%s' synchronize %s clock %ld\n",
 			message, BlackOnMove(forwardMostMove) ? "Black's" : "White's", time_remaining);
 		  if ( BlackOnMove(forwardMostMove) ) 
@@ -4424,26 +4504,32 @@ HandleMachineMove(message, fp)
   		  else
 		    whiteTimeRemaining = time_remaining;
 		}
+#endif
 		if (machine_move[0] == NULLCHAR)
 			return;
 	} else {
 	        mpr = message;
-		SkipString(&mpr);
-		SkipString(&mpr);
-		if ( *mpr == '-' || (*mpr >= '0' && *mpr <= '9') ) {
+#ifdef SYNCHTIME
+		if (StrStr(message, "time") == NULL) {
+		  /* remaining time will be determined from move */
+		  SkipString(&mpr); /* skip move number */
+		  SkipString(&mpr); /* skip move */
+		}
+                if ( gameMode != TwoMachinesPlay && gameMode != ForceMoves &&
+		     ( *mpr == '-' || (*mpr >= '0' && *mpr <= '9') ) ) {
 		  /* synchronize with shogi program clock */
 		  sscanf(mpr, "%ld", &time_remaining);
-		  if ( False /* xshogiDebug */)
+		  if ( xshogiDebug )
 		    printf("from '%s' synchronize %s clock %ld\n",
 			message, !BlackOnMove(forwardMostMove) ? "Black's" : "White's", time_remaining);
 		  if ( !BlackOnMove(forwardMostMove) ) 
 		    blackTimeRemaining = time_remaining;
   		  else
 		    whiteTimeRemaining = time_remaining;
-		} else {                      
-		  if ( xshogiDebug )
-		    printf("ignore noise: '%s'\n",message);
-		}
+		} else 
+#endif
+		if ( xshogiDebug )
+		  printf("ignore noise: '%s'\n",message);
 		return; /* ignore noise */
 	}
 
@@ -4468,8 +4554,10 @@ HandleMachineMove(message, fp)
     	    strcat(machine_move, "\n");
     	    if (BlackOnMove(forwardMostMove)) {
     	        Attention(secondProgramPID);
+#ifdef SENDTIME
     	        if (secondSendTime) 
 	          SendTimeRemaining(toSecondProgFP);
+#endif
 	        SendToProgram(machine_move, toSecondProgFP);
 	        if (firstMove) {
 	    	firstMove = False;
@@ -4478,8 +4566,10 @@ HandleMachineMove(message, fp)
 	        }
 	    } else {
 	        Attention(firstProgramPID);
+#ifdef SENDTIME
 	        if (firstSendTime)
 	          SendTimeRemaining(toFirstProgFP);
+#endif
 	        SendToProgram(machine_move, toFirstProgFP);
 	        if (firstMove) {
 	    	firstMove = False;
@@ -4762,7 +4852,13 @@ InitChessProgram(host_name, program_name, pid, to, from, xid, sendTime)
 	*to = to_fp = fdopen(to_prog[1], "w");
 	setbuf(from_fp, NULL); setbuf(to_fp, NULL);
 
-	ReceiveFromProgram(from_fp, &dummy_source, &dummy_id); /*"Shogi"*/
+	ReceiveFromProgram(from_fp, &dummy_source, &dummy_id); /* "GNU Shogi"*/
+
+	if ( !at_least_gnushogi_1_2p03 ) {
+	  printf("you must have at least gnushogi-1.2p03\n");
+	  exit(1);
+	}
+
 	if (*pid == 0) return;
 
 	*xid = XtAppAddInput(appContext, fileno(from_fp), 
@@ -4771,6 +4867,10 @@ InitChessProgram(host_name, program_name, pid, to, from, xid, sendTime)
 			     (XtPointer)from_fp);
 
 	SendToProgram(localPlayer.appData.initString, *to);
+
+	if ( localPlayer.appData.gameIn )
+	  SendToProgram("gamein\n", *to);
+
 	SendSearchDepth(*to);
 
 #ifdef SENDTIME
@@ -4778,13 +4878,15 @@ InitChessProgram(host_name, program_name, pid, to, from, xid, sendTime)
 		/* Does program have "time" command? */
 		char buf[MSG_SIZ];
 		
-		sprintf(buf, "time %d\nhelp\n", blackTimeRemaining/10);
-		/* "help" is a kludge to work around a gnuchess bug;
-		   some versions do not send a newline at the end of
-		   their response to the time command */
+		sprintf(buf, "time %d\n", blackTimeRemaining/10);
 		SendToProgram(buf, to_fp);
 		ReceiveFromProgram(from_fp, &dummy_source, &dummy_id);
-		if (*sendTime == 2) *sendTime = 1;  /* yes! */
+		if (*sendTime == 2) {
+		  *sendTime = 1;  /* yes! */
+		  sprintf(buf, "otime %d\n", whiteTimeRemaining/10);
+		  SendToProgram(buf, to_fp);
+		  ReceiveFromProgram(from_fp, &dummy_source, &dummy_id);
+                }
 	}
 #else
 	*sendTime = 0;  	 
@@ -6308,7 +6410,9 @@ void BackwardProc(w, event, prms, nprms)
     if ( updateRemotePlayer ) {
 	DisplayMessage("Backward button disabled",fromRemotePlayer);
 	return;
-    }
+    }              
+
+    ForceProc(w,event,prms,nprms);
 
     if ((currentMove <= backwardMostMove) || (gameMode == EditPosition))
       return;
@@ -7108,16 +7212,22 @@ void SendTimeRemaining(fp)
      FILE *fp;
 {
     char message[MSG_SIZ];
-    long time;
+    long comtime, opptime;
 
-    if (BlackOnMove(forwardMostMove))
-      time = blackTimeRemaining;
-    else
-      time = whiteTimeRemaining;
+    if (BlackOnMove(forwardMostMove) == (fp == toFirstProgFP)) { 
+      comtime = blackTimeRemaining;
+      opptime = whiteTimeRemaining;
+    } else {
+      comtime = whiteTimeRemaining;
+      opptime = blackTimeRemaining;
+    }
+
+    if (comtime <= 0) comtime = 1000;
+    if (opptime <= 0) opptime = 1000;
     
-    if (time <= 0) time = 1000;
-    
-    sprintf(message, "time %d\n", time/10);
+    sprintf(message, "time %d\n", comtime/10);
+    SendToProgram(message, fp);
+    sprintf(message, "otime %d\n", opptime/10);
     SendToProgram(message, fp);
 }
 
@@ -7539,6 +7649,7 @@ Usage()
 	fprintf(stderr, "\tstandard Xt options\n");
 	fprintf(stderr, "\t-iconic\n");
 	fprintf(stderr, "\t-tc or -timeControl minutes[:seconds]\n");
+	fprintf(stderr, "\t-gi or -gameIn (True | False)\n");
 	fprintf(stderr, "\t-mps or -movesPerSession moves\n");
 	fprintf(stderr, "\t-st or -searchTime minutes[:seconds]\n");
 	fprintf(stderr, "\t-sd or -searchDepth number\n");
@@ -7564,8 +7675,8 @@ Usage()
 	fprintf(stderr, "\t-size or -boardSize (Large | Medium | Small)\n");
 	fprintf(stderr, "\t-coords or -showCoords (True | False)\n");
 	fprintf(stderr, "\t-mono or -monoMode (True | False)\n");
-	fprintf(stderr, "\t-wpc or -blackPieceColor color\n");
-	fprintf(stderr, "\t-bpc or -whitePieceColor color\n");
+	fprintf(stderr, "\t-bpc or -blackPieceColor color\n");
+	fprintf(stderr, "\t-wpc or -whitePieceColor color\n");
 	fprintf(stderr, "\t-lsc or -lightSquareColor color\n");
 	fprintf(stderr, "\t-dsc or -darkSquareColor color\n");
 #ifdef BOTH_BITMAPS

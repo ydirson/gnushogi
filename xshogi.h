@@ -1,4 +1,3 @@
-
 #define BOARD_SIZE		9
 #define DROP_LINES		3
 #define DROP_COLS		3
@@ -22,8 +21,7 @@
 #define BlackOnMove(move)	((int) ((move) % 2) == 0)
 #define ATTENTION
 #ifdef ISS
-/* #define ISS_HOST                "hellspark.wharton.upenn.edu" */
-#define ISS_HOST                "130.91.160.217"
+#define ISS_HOST                "igs.nuri.net"
 #define ISS_PORT	        6969
 #define tstwd                   "si\177mon says "
 #endif
@@ -46,6 +44,11 @@
 #define BLACK_STRING		"black\ngo\n"
 #define WHITE_STRING		"white\ngo\n"
 #define DEFAULT_SIZE            "Small"
+#define LIGHT			1
+#define DARK			0
+#define CHAR_PIECE_COLOR	"Black"
+#define ZERO_COLOR		"#000000"
+#define ONE_COLOR		"#FFFFFF"
 #define BLACK_PIECE_COLOR	"#FFFFD7"
 #define WHITE_PIECE_COLOR	"#FFFFD7"
 #define LIGHT_SQUARE_COLOR	"#EBDFB0"

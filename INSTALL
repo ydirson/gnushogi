@@ -15,7 +15,7 @@ Other option:
     western chess.
 
   - use -DBOTH_BITMAPS for being able to choose between the eastern style
-    pieces and the western style pieces (default).
+    pieces and the western style pieces.
 
   - use -DISS if you like to use xshogi as X client for the Internet 
     Shogi Server (ISS) (default)

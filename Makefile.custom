@@ -25,16 +25,21 @@
 # xshogi    is the XWindow based user interface for GNU Shogi (gnushogix)
 #
 
-VERS = 1.2p02
+VERS = 1.2p03
 
-# Home directory
-#HOME= /home/staff/mutz/capella
-HOME= //capella/u/mutz
-#HOME= /public/projects/shogi
+# Installation directory
+prefix=/usr/local
+#prefix=/public/projects/shogi
+
+# Change these to something less transitory, like /usr/games, and then
+# compile. 
+# Where the binaries live (especially gnushogix).
+BINDIR= $(prefix)/games
+#BINDIR=/public/projects/shogi/bin
 
 
 # Distribution directory
-DISTDIR = $(HOME)
+DISTDIR=/public/projects/shogi
 
 # Compress program
 COMPRESS = gzip
@@ -45,13 +50,6 @@ PROGS=xshogi-$(VERS)
 
 # number of lines per uuencoded file
 UULINES=1500
-
-# Change these to something less transitory, like /usr/games, and then
-# compile. Ask your system admin / unix guru to put gnushogi.{hash,lang,book}
-# in $(LIBDIR).
-# Where the binaries live.
-BINDIR= $(HOME)/bin
-
 
 #for apollo and sun cc
 CC= cc
@@ -66,19 +64,20 @@ BISON= bison
 # Machine dependent CC options
 # Set proper options in order to find the XWindow libraries
 # This is for apollo with inlib files and local X-includes
-ANSI= -I/usr/local/include/ansi
-CCOPTIONS= -O -I/usr/local/include -W0,-inlib,/lib/x11lib.r4,/lib/xawlib.r4,/lib/xtlib.r4,/lib/xmulib.r4 -A inlib,/lib/x11lib.r4,/lib/xawlib.r4,/lib/xtlib.r4,/lib/xmulib.r4,/lib/xextlib.r4
-# This is for Sun4
-#CCOPTIONS= -g -I/usr/include
-#LDOPTIONS= -L/usr/lib -lXaw -lXmu -lXt -lXext -lX11
+#ANSI= -I/usr/local/include/ansi
+#CCOPTIONS= -O -I/usr/local/include -W0,-inlib,/lib/x11lib.r4,/lib/xawlib.r4,/lib/xtlib.r4,/lib/xmulib.r4 -A inlib,/lib/x11lib.r4,/lib/xawlib.r4,/lib/xtlib.r4,/lib/xmulib.r4,/lib/xextlib.r4
 # This is for IRIS
 #CCOPTIONS= -cckr -fload -DSYSV -DIRIS
 #LDOPTIONS= -lXaw -lXmu -lXt_s -lXext -lX11_s -lsun -lmalloc -lc_s
 # This is for dhendrik
 #CCOPTIONS= -g 
 #LDOPTIONS= -lXaw -lXmu -lXt -lXext -lX11
+# This is for cc on SunOS with debug
+CCOPTIONS= -g -I/usr/include
+LDOPTIONS= -L/usr/lib -lXaw -lXmu -lXt -lXext -lX11
 
 # Options for xshogi
+# Use -DSENDTIME with at least gnushogix 1.2 patchlevel 3
 # Use the -DTOP_PART_PITMAPS for alternative eastern bitmaps of
 # the promoted rook and the promoted bishop. 
 # Thanks to Ken'ichi Nakayama for providing these bitmaps.
@@ -87,7 +86,7 @@ CCOPTIONS= -O -I/usr/local/include -W0,-inlib,/lib/x11lib.r4,/lib/xawlib.r4,/lib
 # The option -DBOTH_BITMAPS includes -DWESTERN_BITMAPS so that the western piece
 # set can be choosen by invoking xshogi with -wps True.
 # The option -DISS compiles xshogi for supporting the Internet Shogi Server. 
-OPT = -DHAS_GETTIMEOFDAY -DISS -DTOP_PART_BITMAPS -DBOTH_BITMAPS # -DWESTERN_BITMAPS
+OPT = -DHAS_GETTIMEOFDAY -DSENDTIME -DISS -DTOP_PART_BITMAPS # -DBOTH_BITMAPS -DWESTERN_BITMAPS
 
 FIRST_PROGRAM  = -DFIRST_CHESS_PROGRAM=\"$(BINDIR)/gnushogix\"
 SECOND_PROGRAM = -DSECOND_CHESS_PROGRAM=\"$(BINDIR)/gnushogix\"

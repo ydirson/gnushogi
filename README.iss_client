@@ -15,8 +15,14 @@
     with displaying the board, you can type "moves <game number>" in order
     to get the moves of the current observed or played game.
 
-    The ISS is currently (30 Oct. 93) running as part of the IGS (Internet
-    Go Server) located at hellspark.wharton.upenn.edu port 6969.
+    The ISS is currently (7 March 1995) running as part of the IGS (Internet
+    Go Server) located at igs.nuri.net port 6969.
+
+    The IGS options must be set as follows:
+
+      Verbose   Client 
+	   On      Off
+
     If you only want to observe games you can login as guest. If you want
     to play games you have to register from the guest account.
     After login type "choice shogi" to switch to Shogi mode. To see
