@@ -1,0 +1,9 @@
+
+If you want to use a remote host, you have to modify "xshogi.h".
+The program "gnushogix" must be known. In case of trouble, create a
+symbolic link to the gnushogi distribution , e.g. :
+  ln -s $(HOME)/gnushogi-1.0/src/gnushogix gnushogix1
+for the first gnushogi program. If you would like to let
+two versions play against each other, establish a similar link
+for gnushogix2.
+

@@ -1,0 +1,39 @@
+
+    GNU XShogi can now serve as an Internet Chess Server (ISS) client!
+    Positions received from the ISS are graphically displayed
+    on the XShogi board. In a match, you can move the pieces
+    by moving it on the graphical display. If observing a game,
+    each observed position is displayed graphically.
+
+    Start the program with
+         xshogi -iss True 
+    or in debug mode (in case of problems)
+         xshogi -iss True -debug True
+    Hopefully, you're able to connect. Just type the command into the window
+    you have started xshogi from. Additionally, you can find the responses
+    of ISS not concerning the board update. If xshogi comes into trouble
+    with displaying the board, you can type "moves <game number>" in order
+    to get the moves of the current observed or played game.
+
+    The ISS is currently (30 Oct. 93) running as part of the IGS (Internet
+    Go Server) located at hellspark.wharton.upenn.edu port 6969.
+    If you only want to observe games you can login as guest. If you want
+    to play games you have to register from the guest account.
+    After login type "choice shogi" to switch to Shogi mode. To see
+    who is logged in interesting in Shogi type "who all 3", i.e. Shogi
+    related communication use channel 3. You first may give the command
+    "help shogi" to read something about notations. You can observe games
+    by typing "observe <game number", where <game number> can be obtained
+    from the "who all 3" response. A match with another player is started
+    with "match <player> B <time> <time>", the challenged player has to
+    accept the challenge.
+
+    In case of trouble with the display during a match press "Draw Position".
+    In order to see the move list type "moves". 
+
+Hope all works, enjoy,
+
+  Matthias. 
+  
+  mutz@fmi.uni-passau.de
+

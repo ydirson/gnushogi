@@ -1,0 +1,17 @@
+09/07/1993
+  Cameron Gregory has added the shogi rules to tha manual pages.
+
+05/04/1993
+  Ken'ichi Nakayama has created alternative bitmaps for
+  promoted rook and promoted bishop. He claims that these
+  icons are more readable for japanese people. The bitmaps
+  are introduced using the -DTOP_PART_BITMAPS option.
+
+04/02/1993
+  Paul Reines has created a set of pieces with more chess-like
+  graphics, so that it may easier to learn how to play shogi.
+  These pieces can be choosen instead of the japanese pieces
+  by using the -DWESTERN_BITMAPS options in the Makefile.
+  The postript file western_moves.ps shows the possible moves
+  using these icons.
+  

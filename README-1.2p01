@@ -1,0 +1,47 @@
+This is XShogi version 1.2 patchlevel 1.
+
+It provides an XWindows interface to the Japanese Chess (Shogi)
+playing program GNU Shogi. You have to create "gnushogix" from
+GNU Shogi (at least version 1.1 patchlevel 2). XShogi has been
+created by modifying XBoard 2.0 and XBoard 2.1 by Tim Mann.
+
+Additionally, you can use xshogi as an interface for a game between two humans. 
+Please read README.challenge. "gnushogix" must be present in order to check
+legality of moves (but you can not use gnushogi in order to find a next move :-)
+
+Furthermore, you can use xshogi as an X client for the Internet Shogi Server 
+by invoking xshogi with -iss True if it is compiled with the -DISS option (default).
+Pease read README.iss_client. In this case, "gnushogix" is not used and needs
+not to be present.
+
+For creating xshogi I recommend to use Makefile.custom:  
+  
+  make -f Makefile.custom install
+
+If you want to use this file, you have to change some directory paths.
+
+You may be able to modify the Imakefile in order to build the program.
+You have to regard the OPT options from Makefile.custom.
+If you manage to create an Imakefile, please contribute to xshogi by
+sending it to me :-)
+
+If you determine bugs, please save game, and rerun xshogi with the
+-debug True option. Report the bug to me.
+By the way, gnushogix (the shogi playing program used by xshogi)
+produces a record of the game: CL....
+
+In order to determine the options, try "xshogi -help". Manual pages are also
+available.
+
+Especially, you can give GNU Shogi more searching time by using the -tc option.
+For example, "xshogi -tc 15" allows GNU Shogi to think 15 minutes for 40 moves.
+
+You can choose a western style piece set by invoking xshogi with -wpc True if it
+is compiled with the -DBOTH_BITMAPS option (default).
+
+In case of trouble, comments or suggestions for improvements you may contact me.
+
+Matthias Mutz
+
+mutz@kirk.fmi.uni-passau.de
+

@@ -1,0 +1,24 @@
+
+Ok, here is my try for a challenge button within xshogi.
+There are still some problems, but I think it can be used if you regard
+the following things:
+
+In order to invoke a two display game, do the following things:
+
+   1. invoke xshogi
+   2. press the Challenge Button
+   3. enter the name of the display (you should be allowed to connect
+          to this display)
+   4. press the Force Button
+   5. have a nice game
+
+I recommend to establish a "talk" connexion before invoking a two display game.
+
+Good luck! If you like, please email me whether you succeed or fail to use
+the new button. 
+
+Matthias Mutz.
+
+
+mutz@kirk.fmi.uni-passau.de
+

@@ -1,0 +1,22 @@
+1. edit Makefile.custom. Normally only BINDIR need to be changed.
+
+2. type 'make -f Makefile.custom' and all programs will be make.
+
+3. type 'make install -f Makefile.custom' to install in BINDIR
+                                           
+You should use the same BINDIR as used for installing the
+gnushogix program from GNU Shogi. Otherwise, you have to
+edit the makefile changing the FIRST_PROGRAM and SECOND_PROGRAM
+variables.
+
+Other option:
+
+  - use -DWESTERN_BITMAPS to choose the pieces more oriented to
+    western chess.
+
+  - use -DBOTH_BITMAPS for being able to choose between the eastern style
+    pieces and the western style pieces (default).
+
+  - use -DISS if you like to use xshogi as X client for the Internet 
+    Shogi Server (ISS) (default)
+

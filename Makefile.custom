@@ -1,0 +1,142 @@
+# Makefile for XShogi
+# Copyright (c) 1993 Matthias Mutz
+#
+# XShogi 1.1 is based on XBoard 2.0
+# Copyright (c) 1992 Free Software Foundation
+#
+# This file is part of XShogi.
+#
+# XShogi is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 1, or (at your option)
+# any later version.
+#
+# XShogi is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with XShogi; see the file COPYING.  If not, write to
+# the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+
+#
+# xshogi    is the XWindow based user interface for GNU Shogi (gnushogix)
+#
+
+VERS = 1.2p02
+
+# Home directory
+#HOME= /home/staff/mutz/capella
+HOME= //capella/u/mutz
+#HOME= /public/projects/shogi
+
+
+# Distribution directory
+DISTDIR = $(HOME)
+
+# Compress program
+COMPRESS = gzip
+Z = gz
+
+# Programs being distributed
+PROGS=xshogi-$(VERS)
+
+# number of lines per uuencoded file
+UULINES=1500
+
+# Change these to something less transitory, like /usr/games, and then
+# compile. Ask your system admin / unix guru to put gnushogi.{hash,lang,book}
+# in $(LIBDIR).
+# Where the binaries live.
+BINDIR= $(HOME)/bin
+
+
+#for apollo and sun cc
+CC= cc
+FLEX= flex
+BISON= bison
+
+#for gcc
+#CC= /usr/pub/bin/gcc -fsigned-char
+#FLEX= /usr/pub/bin/flex
+#BISON= /usr/pub/bin/bison
+
+# Machine dependent CC options
+# Set proper options in order to find the XWindow libraries
+# This is for apollo with inlib files and local X-includes
+ANSI= -I/usr/local/include/ansi
+CCOPTIONS= -O -I/usr/local/include -W0,-inlib,/lib/x11lib.r4,/lib/xawlib.r4,/lib/xtlib.r4,/lib/xmulib.r4 -A inlib,/lib/x11lib.r4,/lib/xawlib.r4,/lib/xtlib.r4,/lib/xmulib.r4,/lib/xextlib.r4
+# This is for Sun4
+#CCOPTIONS= -g -I/usr/include
+#LDOPTIONS= -L/usr/lib -lXaw -lXmu -lXt -lXext -lX11
+# This is for IRIS
+#CCOPTIONS= -cckr -fload -DSYSV -DIRIS
+#LDOPTIONS= -lXaw -lXmu -lXt_s -lXext -lX11_s -lsun -lmalloc -lc_s
+# This is for dhendrik
+#CCOPTIONS= -g 
+#LDOPTIONS= -lXaw -lXmu -lXt -lXext -lX11
+
+# Options for xshogi
+# Use the -DTOP_PART_PITMAPS for alternative eastern bitmaps of
+# the promoted rook and the promoted bishop. 
+# Thanks to Ken'ichi Nakayama for providing these bitmaps.
+# Use the -DWESTERN_BITMAPS option if you do not want the japenese images.
+# Thanks to Paul Raines for making the "westernized" set available.
+# The option -DBOTH_BITMAPS includes -DWESTERN_BITMAPS so that the western piece
+# set can be choosen by invoking xshogi with -wps True.
+# The option -DISS compiles xshogi for supporting the Internet Shogi Server. 
+OPT = -DHAS_GETTIMEOFDAY -DISS -DTOP_PART_BITMAPS -DBOTH_BITMAPS # -DWESTERN_BITMAPS
+
+FIRST_PROGRAM  = -DFIRST_CHESS_PROGRAM=\"$(BINDIR)/gnushogix\"
+SECOND_PROGRAM = -DSECOND_CHESS_PROGRAM=\"$(BINDIR)/gnushogix\"
+FIRST_HOST     = -DFIRST_HOST=\"localhost\"
+SECOND_HOST    = -DSECOND_HOST=\"localhost\"
+
+all: xshogi
+
+xshogi: xshogi.o parser.o
+	$(CC) -o xshogi xshogi.o parser.o $(CCOPTIONS) $(LDOPTIONS) 
+
+xshogi.o: xshogi.c parser.o xshogi.h parsebrd.c version.h
+	$(CC) -c xshogi.c $(CCOPTIONS) $(OPT) $(FIRST_PROGRAM) $(SECOND_PROGRAM) $(FIRST_HOST) $(SECOND_HOST)
+
+parser.o: scanner.c parser.c xshogi.h
+	$(CC) -c parser.c $(ANSI) $(CCOPTIONS)
+
+scanner.c: scanner.flex
+	$(FLEX) scanner.flex
+	mv lex.yy.c scanner.c
+
+parser.c: parser.bison
+	$(BISON) parser.bison
+	mv parser.bison.tab.c parser.c
+
+parsebrd: parsebrd.c
+	$(CC) parsebrd.c -o parsebrd -DISS_DEBUG
+
+distribution:
+	-patchlevel=`cat $(DISTDIR)/xshogi-$(VERS)/version.h|grep patchlevel|sed -e 's/[^0-9]//g'` ;\
+	echo " XShogi patchlevel is $$patchlevel" ;\
+	cd $(DISTDIR) ;\
+	rm -f xshogi.tar.$(VERS).$(Z)* ;\
+	tar cf - $(PROGS) | $(COMPRESS) > $(DISTDIR)/xshogi-$(VERS).tar.$(Z) ;\
+#	rm -f xshogi.tar.$(VERS).$(Z).uu* ;\
+#	uuencode xshogi-$(VERS).pl$$patchlevel.tar.$(Z) xshogi-$(VERS).tar.$(Z) > xshogi-$(VERS).tar.$(Z).uu ;\
+#	rm -f x?? ;\
+#	split -$(UULINES) xshogi-$(VERS).tar.$(Z).uu ;\
+#	for i in x??; do \
+#	  mv $$i $(DISTDIR)/XShogi_$$i; \
+#	done
+
+install: xshogi
+	-cp xshogi $(BINDIR)/xshogi
+
+clean:
+	-rm -f xshogi
+	-echo $(DISTDIR)/xshogi-$(VERS)
+	-find $(DISTDIR)/xshogi-$(VERS) \( -name '*.o' -o -name '*~' -o -name 'CL*' -o -name 'PATCH*' -o -name '#*#' -o -name '%*%' -o -name '*orig' -o -name '*bak' -o -name '*BAK' \) -exec rm -f {} \;
+
+
+ 

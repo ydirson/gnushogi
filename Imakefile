@@ -1,0 +1,28 @@
+#
+# Imakefile -- to generate a Makefile for xshogi, use:
+#   /usr/local/X11/mit/config/imake \
+#       -I/usr/local/X11/mit/config \
+#       -DTOPDIR=/usr/local/X11/mit
+#
+
+   SYS_LIBRARIES = -lm
+ LOCAL_LIBRARIES = XawClientLibs
+         DEPLIBS = XawClientDepLibs
+         DEFINES = -DHAS_GETTIMEOFDAY
+#    CDEBUGFLAGS = -g
+#             CC = /contrib/system/bin/gcc -Wall
+
+# For HP-UX, per R. K. Lloyd:
+#    CDEBUGFLAGS = +O3 +Obb1000
+
+SRCS = parser.c xshogi.c
+OBJS = parser.o xshogi.o
+
+AllTarget(xshogi)
+
+depend:: parser.c
+
+clean::
+	$(RM) parser.c
+
+ComplexProgramTarget(xshogi)
