@@ -1,8 +1,13 @@
+NOTE: this file may be seriously outdated.  I haven't had time to go over
+it yet.  Let me know if there are problems.
+
+-- Mike (mvanier@bbb.caltech.edu)
+
+
+
 This is a message from Pieter Stouten, one of the owners of a listserver
 for the game of Shogi.
-                
-
--------------------------------------------------------------------------------------------
+------------------------------------------------------------------------
 
 
 H O W   T O   D E A L   W I T H   T E C H N I O N
@@ -13,12 +18,13 @@ explanation about how it all works. This file will also automatically
 be sent to all new subscribers to the list.
 One thing that must be clear is the fundamental difference between
 
- the List Server <listserv@technion>  or <LISTSERV%TECHNION.BITNET@taunivm.tau.ac.il>
-
+the List Server <listserv@technion> 
+or <LISTSERV%TECHNION.BITNET@taunivm.tau.ac.il>
 
                       and
 
- the Shogi Discussion List <shogi-l@technion> or <SHOGI-L%TECHNION.BITNET@taunivm.tau.ac.il>.
+the Shogi Discussion List <shogi-l@technion> or 
+<SHOGI-L%TECHNION.BITNET@taunivm.tau.ac.il>.
 
 
 LISTSERV

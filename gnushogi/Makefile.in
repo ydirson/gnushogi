@@ -1,0 +1,284 @@
+#
+# Makefile for GNU Shogi
+#
+# Copyright (c) 1993, 1994 Matthias Mutz
+# Copyright (c) 1998, 1999 Michael Vanier and the Free Software Foundation
+#
+# GNU Shogi is based on GNU Chess
+# Copyright (c) 1992 Free Software Foundation
+#
+# This file is part of GNU Shogi.
+#
+# GNU Shogi is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either ../version 1, or (at your option)
+# any later ../version.
+#
+# GNU Shogi is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GNU Shogi; see the file COPYING.  If not, write to
+# the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+
+#
+# gnushogi   is GNU shogi, for raw text, curses, or x output.
+# pat2inc    converts pattern textfile to "pattern.inc" include file.
+# sizetest   shows the memory usage of the main data structures.
+#
+
+SHELL           = /bin/sh
+VERS            = 1.3
+INSTALL         = @INSTALL@
+INSTALL_DATA    = @INSTALL_DATA@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+ROOT            = ..
+
+
+# Installation directory.
+prefix  =   @prefix@
+
+# Where the binaries live.
+BINDIR  =   $(prefix)/bin
+
+# Where the language description, the book, and the 
+# persistent hashtable live.
+LIBDIR  =   $(prefix)/lib/gnushogi
+
+# Where the man page goes.
+MANDIR  = $(prefix)/man/man6
+
+# Where the info file goes.
+INFODIR = $(prefix)/info
+
+# For _pow external 
+LIBS    = -lm
+
+# Display routines.
+LCURSES =   -lcurses -ltermcap
+
+
+#
+# C compiler and compiler options.
+#
+
+CC          = @CC@
+CWARNINGS   = @WARNINGS@
+CEXTRAFLAGS = @CEXTRAFLAGS@
+CFLAGS      = @CFLAGS@ $(CEXTRAFLAGS) $(CWARNINGS) -I..
+
+
+# The hashfile is a record of positions seen. It is used by
+# GNU Shogi to avoid making the same mistakes, a form of learning.
+
+HASH       = -DHASHFILE=\"$(LIBDIR)/gnushogi.hsh\"
+
+
+# The "book" is a record of the first few moves, for playing good
+# moves easily and quickly, saving time, and irritating the human
+# opponent.
+
+TEXTBOOK   = -DBOOK=\"$(LIBDIR)/gnushogi.tbk\"
+BINBOOK    = -DBINBOOK=\"$(LIBDIR)/gnushogi.bbk\"
+
+
+# The language file describes capabilities of the program.  It may
+# be useful for customizing gnushogi for non-English-speaking players.
+
+LANGF      = -DLANGFILE=\"../misc/gnushogi.lng\"
+
+
+# The pattern file contains various opening patterns. The program tries to
+# obtain such a pattern in the opening stage. Sequences of opening
+# patterns may be described in order to support the correct order of moves.
+
+PATTERN    = -DPATTERNFILE=\"../misc/gnushogi.pat\"
+
+
+all:
+	@echo No target specified.
+
+
+#
+# Source files.
+#
+
+COMMONFILES = \
+                attacks.o      \
+                book.o         \
+                commondsp.o    \
+                cursesdsp.o    \
+                dspwrappers.o  \
+                eval.o         \
+                genmove.o      \
+                globals.o      \
+                init.o         \
+                pattern.o      \
+                rawdsp.o       \
+                search.o       \
+                sysdeps.o      \
+                tcontrl.o      \
+                util.o
+
+GNUSHOGI_FILES  = $(COMMONFILES) main.o      
+
+
+PAT2INCFILES    = $(COMMONFILES) makepattern.o pat2inc.o
+
+
+#
+# Primary targets.
+#
+
+gnushogi:
+	$(CC) $(CFLAGS) -o gnushogi $(GNUSHOGI_FILES) $(LCURSES) $(LIBS)
+
+pat2inc:
+	$(CC) $(CFLAGS) -o pat2inc $(PAT2INCFILES) $(LCURSES) $(LIBS)
+
+sizetest:
+	$(CC) $(CFLAGS) -o sizetest sizetest.o $(LIBS)
+
+
+#
+# Object files.
+#
+
+# Common files.
+
+attacks.o:
+	$(CC) $(CFLAGS) -c attacks.c
+
+book.o:
+	$(CC) $(CFLAGS) $(TEXTBOOK) $(BINBOOK) -c book.c 
+
+commondsp.o:
+	$(CC) $(CFLAGS) -c commondsp.c 
+
+cursesdsp.o:
+	$(CC) $(CFLAGS) -c cursesdsp.c
+
+dspwrappers.o:
+	$(CC) $(CFLAGS) -c dspwrappers.c
+
+genmove.o:
+	$(CC) $(CFLAGS) -c genmove.c
+
+globals.o:
+	$(CC) $(CFLAGS) -c globals.c
+
+eval.o:
+	$(CC) $(CFLAGS) -c eval.c
+
+init.o:
+	$(CC)  $(CFLAGS) $(LANGF) -c init.c
+
+main.o:
+	$(CC) $(CFLAGS) $(BINBOOK) -c main.c
+
+# To create "pattern.inc" with "pat2inc", the external
+# pattern textfile must be used.
+
+makepattern.o:
+	$(CC) $(CFLAGS) $(PATTERN) -c makepattern.c
+
+pattern.o:
+	$(CC)  $(CFLAGS) -c pattern.c
+
+rawdsp.o:
+	$(CC) $(CFLAGS) -c rawdsp.c 
+
+search.o:
+	$(CC) $(CFLAGS) -c search.c
+
+sysdeps.o:
+	$(CC) $(CFLAGS) -c sysdeps.c 
+
+tcontrl.o:
+	$(CC) $(CFLAGS) -c tcontrl.c
+
+util.o:
+	$(CC) $(CFLAGS) -c util.c
+
+
+# Files specific to particular targets.
+
+pat2inc.o:
+	$(CC) $(CFLAGS) $(LANGF) $(BINBOOK) $(PATTERN) -c pat2inc.c
+
+sizetest.o:
+	$(CC) $(CFLAGS) -c sizetest.c
+
+
+#
+# Other targets.
+#
+
+gnushogi.bbk: 
+	@if [ -f ./gnushogi.bbk ]; then rm ./gnushogi.bbk; fi
+	echo quit > test
+	cat ../misc/gnushogi.tbk > _tmp_t
+	cat test | ./gnushogi -R -b _tmp_t -B ./gnushogi.bbk -S 8000 -P 40 3 0
+	rm test _tmp_t
+	@echo
+
+
+#
+# Installation.
+#
+
+install: gnushogi
+	strip gnushogi
+	$(INSTALL_PROGRAM) -d $(BINDIR)
+	$(INSTALL_PROGRAM) -d $(LIBDIR)
+	$(INSTALL_PROGRAM) -d $(MANDIR)
+	$(INSTALL_PROGRAM) -d $(INFODIR)
+	$(INSTALL_PROGRAM) gnushogi $(BINDIR)
+	$(INSTALL_DATA)    $(ROOT)/doc/gnushogi.6     $(MANDIR)
+	$(INSTALL_DATA)    $(ROOT)/doc/gnushogi.info* $(INFODIR)
+	$(INSTALL_DATA)    gnushogi.bbk $(LIBDIR)/gnushogi.bbk
+
+
+#
+# Cleanup.
+#
+
+CLEANFILES = *.o gnushogi sizetest pat2inc CLp* *.bbk
+
+clean: 
+	@for file in $(CLEANFILES); do \
+	if [ -f $$file ]; then rm $$file; fi; \
+	done
+
+
+#
+# Dependencies.
+#
+
+gnushogi:   $(GNUSHOGI_FILES)
+pat2inc:       $(PAT2INCFILES)
+sizetest:      sizetest.o 
+attacks.o:     attacks.c gnushogi.h ../version.h
+book.o:        book.c gnushogi.h ../version.h 
+commondsp.o:   commondsp.c gnushogi.h ../version.h
+cursesdsp.o:   cursesdsp.c gnushogi.h ../version.h
+dspwrappers.o: dspwrappers.c gnushogi.h ../version.h
+genmove.o:     genmove.c gnushogi.h ../version.h
+globals.o:     globals.c gnushogi.h ../version.h
+eval.o:        eval.c eval.h gnushogi.h ../version.h pattern.h
+init.o:        init.c gnushogi.h ../version.h pattern.h
+main.o:        main.c gnushogi.h ../version.h
+makepattern.o: pattern.c gnushogi.h pattern.h
+pattern.o:     pattern.c gnushogi.h pattern.h pattern.inc
+rawdsp.o:      rawdsp.c gnushogi.h ../version.h
+search.o:      search.c gnushogi.h ../version.h 
+sysdeps.o:     sysdeps.c gnushogi.h ../version.h
+tcontrl.o:     tcontrl.c gnushogi.h ../version.h 
+util.o:        util.c gnushogi.h ../version.h
+pat2inc.o:     pat2inc.c pattern.h gnushogi.h 
+sizetest.o:    sizetest.c gnushogi.h eval.h
+gnushogi.bbk:  gnushogi
+

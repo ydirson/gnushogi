@@ -1,0 +1,53 @@
+#! /usr/bin/env python
+
+import sys, re
+
+key = "three-mover.  Here is a really trivial three-mover:"
+
+replace = """
+three-mover.  Here is a really trivial three-mover:
+<P>
+<PRE>
+
+   3    2    1            
+----------------+         
+ |    |    |    |  a         
+----------------+           
+ |    |    | wK |  b         
+----------------+           
+ |    |    |    |  c       
+----------------+         
+ | bN |    |    |  d       
+----------------+         
+ |    |    |    |  e       
+----------------+         
+ |    | bN |    |  f       
+----------------+
+
+Black in hand: S, G
+
+</PRE>
+"""
+
+#
+# Insert the figure directly into the html file.
+#
+
+done = 0
+
+while 1:
+    line = sys.stdin.readline()
+    if not line:
+        break
+    
+    if not done:
+        match = re.match(key, line)
+        if match:
+            print replace,
+            done = 1
+        else:
+            print line,
+    else:
+        print line,
+
+
