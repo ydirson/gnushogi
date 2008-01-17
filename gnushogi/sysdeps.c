@@ -91,7 +91,6 @@ ElapsedTime_FIONREAD(ElapsedTime_mode iop)
     int  nchar;
 
     struct timeval tv;
-    extern int errno;
 
     if ((i = ioctl((int) 0, FIONREAD, &nchar)))
     {
@@ -226,9 +225,6 @@ ElapsedTime_FIONREAD(ElapsedTime_mode iop)
     long current_time;
     int  nchar;
     int  i;
-
-    extern int errno;
-
 
     if ((i = ioctl((int) 0, FIONREAD, &nchar)))
     {
