@@ -881,7 +881,7 @@ search(short side,
 
             MakeMove(side, node, &tempb, &tempc, &tempsf,
                      &tempst, &INCscore);
-            CptrFlag[ply] = (node->flags & capture);
+            CptrFlag[ply] = ((node->flags & capture) != 0);
             TesujiFlag[ply] = (node->flags & tesuji)
                 && (node->flags & dropmask);
             Tscore[ply] = node->score;

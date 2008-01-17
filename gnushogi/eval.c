@@ -1002,7 +1002,7 @@ BRLscan(short sq, short *mob)
 { \
     if (color[u] != c2) \
     { \
-        if ((atk1[u] == 0) || ((atk2[u] & CNT_MASK) > 1)) \
+        if ((atk1[u] == 0) || ((atk2[u] & CNT_MASK) != 0)) \
         { \
             ++cnt; \
         } \
