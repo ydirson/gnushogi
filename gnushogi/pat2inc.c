@@ -48,7 +48,7 @@ small_short color[NO_SQUARES];
 */
 
 void
-test_distance()
+test_distance(void)
 {
     short side, piece, f, t, d;
 
