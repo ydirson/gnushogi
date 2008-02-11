@@ -37,6 +37,14 @@
 #define MAX_PATTERN          200
 
 char *patternfile = PATTERNFILE;
+small_short pattern_data[MAX_PATTERN_DATA];
+
+/* minimal ShowMessage to avoid dependency on extraneous display code */
+void
+ShowMessage(char *s)
+{
+    printf("%s\n", s);
+}
 
 #define is_digit(c) (((c) >= '0') && ((c) <= '9'))
 #define is_alpha(c) ((((c) >= 'a') && ((c) <= 'z')) \

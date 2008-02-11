@@ -43,11 +43,10 @@ extern void WriteOpeningSequences(short pindex);
 small_short PieceCnt[2];
 small_short PieceList[2][NO_SQUARES];
 small_short PieceIndex[NO_SQUARES];
+*/
 
 small_short board[NO_SQUARES];
 small_short color[NO_SQUARES];
-
-*/
 
 void
 test_distance(void)
@@ -94,8 +93,6 @@ main(int argc, char **argv)
     short d;
     char  s[80];
 #endif
-
-    display_type = DISPLAY_RAW;
 
     Initialize_data();
 

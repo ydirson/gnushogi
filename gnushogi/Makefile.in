@@ -70,7 +70,7 @@ LCURSES = @LIBCURSES@
 CC          = @CC@
 CWARNINGS   = @WARNINGS@
 CEXTRAFLAGS = @CEXTRAFLAGS@
-CFLAGS      = @CFLAGS@ $(CEXTRAFLAGS) $(CWARNINGS) -I$(ROOT) -I@top_builddir@
+CFLAGS      = @CFLAGS@ $(CEXTRAFLAGS) $(CWARNINGS) -I$(ROOT) -I@top_builddir@ -I.
 LDFLAGS     = @LDFLAGS@
 
 # The hashfile is a record of positions seen. It is used by
@@ -91,7 +91,8 @@ BINBOOK    = -DBINBOOK=\"$(LIBDIR)/gnushogi.bbk\"
 # obtain such a pattern in the opening stage. Sequences of opening
 # patterns may be described in order to support the correct order of moves.
 
-PATTERN    = -DPATTERNFILE=\"$(ROOT)/misc/gnushogi.pat\"
+PATTERNFILE=$(ROOT)/misc/gnushogi.pat
+PATTERN    = -DPATTERNFILE=\"$(PATTERNFILE)\"
 
 
 all:
@@ -103,6 +104,11 @@ all:
 #
 
 COMMONFILES = \
+                globals.o      \
+                init-common.o    \
+                pattern-common.o
+
+NOTCOMMONFILES = \
                 attacks.o      \
                 book.o         \
                 commondsp.o    \
@@ -110,7 +116,6 @@ COMMONFILES = \
                 dspwrappers.o  \
                 eval.o         \
                 genmove.o      \
-                globals.o      \
                 init.o         \
                 pattern.o      \
                 rawdsp.o       \
@@ -118,7 +123,7 @@ COMMONFILES = \
                 tcontrl.o      \
                 util.o
 
-GNUSHOGI_FILES  = $(COMMONFILES) main.o      
+GNUSHOGI_FILES  = $(COMMONFILES) $(NOTCOMMONFILES) main.o
 
 
 PAT2INCFILES    = $(COMMONFILES) makepattern.o pat2inc.o
@@ -173,6 +178,9 @@ eval.o: eval.c
 init.o: init.c
 	$(CC)  $(CFLAGS) -c $<
 
+init-common.o: init-common.c
+	$(CC)  $(CFLAGS) $(LANGF) -c $<
+
 main.o: main.c
 	$(CC) $(CFLAGS) $(BINBOOK) -c $<
 
@@ -183,6 +191,9 @@ makepattern.o: makepattern.c
 	$(CC) $(CFLAGS) $(PATTERN) -c $<
 
 pattern.o: pattern.c
+	$(CC)  $(CFLAGS) -c $<
+
+pattern-common.o: pattern-common.c
 	$(CC)  $(CFLAGS) -c $<
 
 rawdsp.o: rawdsp.c
@@ -206,6 +217,8 @@ pat2inc.o: pat2inc.c
 sizetest.o: sizetest.c
 	$(CC) $(CFLAGS) -c $<
 
+pattern.inc: $(PATTERNFILE) pat2inc
+	./pat2inc
 
 #
 # Other targets.
@@ -266,7 +279,7 @@ eval.o:        eval.c eval.h gnushogi.h $(SRCDIR)/pattern.h
 init.o:        init.c gnushogi.h $(SRCDIR)/pattern.h
 main.o:        main.c gnushogi.h
 makepattern.o: pattern.c gnushogi.h $(SRCDIR)/pattern.h
-pattern.o:     pattern.c gnushogi.h $(SRCDIR)/pattern.h $(SRCDIR)/pattern.inc
+pattern.o:     pattern.c gnushogi.h $(SRCDIR)/pattern.h pattern.inc
 rawdsp.o:      rawdsp.c gnushogi.h
 search.o:      search.c gnushogi.h
 tcontrl.o:     tcontrl.c gnushogi.h
