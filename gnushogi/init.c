@@ -1271,7 +1271,7 @@ InitMain(void)
 
     if (XSHOGI)
     {
-        signal(SIGINT, TerminateSearch);
+        signal(SIGUSR1, TerminateSearch);
 
         TCmoves      = 40;
         TCminutes    = 5;

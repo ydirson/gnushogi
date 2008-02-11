@@ -2148,7 +2148,7 @@ InputCommand(char *command)
 #endif
     }
 
-    signal(SIGINT, TerminateSearch);
+    signal(SIGUSR1, TerminateSearch);
 }
 
 

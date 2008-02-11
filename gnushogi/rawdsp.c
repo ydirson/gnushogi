@@ -311,8 +311,7 @@ Raw_help(void)
            TimeControl.moves[black], TimeControl.clock[black] / 100,
            TCadd/100, MaxSearchDepth);
 
-    signal(SIGINT, Raw_TerminateSearch);
-    signal(SIGQUIT, Raw_TerminateSearch);
+    signal(SIGUSR1, Raw_TerminateSearch);
 }
 
 
@@ -484,8 +483,7 @@ SetupBoard(void)
 void
 Raw_SearchStartStuff(short side)
 {
-    signal(SIGINT, Raw_TerminateSearch);
-    signal(SIGQUIT, Raw_TerminateSearch);
+    signal(SIGUSR1, Raw_TerminateSearch);
 
     if (flag.post)
     {
