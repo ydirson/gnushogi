@@ -230,39 +230,42 @@ extern void movealgbr(short m, char *s);
 #define neutral 2
 
 /* piece code defines */
-/* CHECKME: Replace with an enum? */
-#define no_piece 0
-#define pawn     1
-#define lance    2
-#define knight   3
-#define silver   4
-#define gold     5
-#define bishop   6
-#define rook     7
-#define ppawn    8
-#define plance   9
-#define pknight 10
-#define psilver 11
-#define pbishop 12
-#define prook   13
-#define king    14
+enum {
+    no_piece = 0,
+    pawn,
+    lance,
+    knight,
+    silver,
+    gold,
+    bishop,
+    rook,
+    ppawn,
+    plance,
+    pknight,
+    psilver,
+    pbishop,
+    prook,
+    king
+};
 
-#define ptype_no_piece  0
-#define ptype_pawn      0
-#define ptype_lance     1
-#define ptype_knight    2
-#define ptype_silver    3
-#define ptype_gold      4
-#define ptype_bishop    5
-#define ptype_rook      6
-#define ptype_pbishop   7
-#define ptype_prook     8
-#define ptype_king      9
-#define ptype_wpawn    10
-#define ptype_wlance   11
-#define ptype_wknight  12
-#define ptype_wsilver  13
-#define ptype_wgold    14
+enum {
+    ptype_no_piece = 0,
+    ptype_pawn = 0,
+    ptype_lance,
+    ptype_knight,
+    ptype_silver,
+    ptype_gold,
+    ptype_bishop,
+    ptype_rook,
+    ptype_pbishop,
+    ptype_prook,
+    ptype_king,
+    ptype_wpawn,
+    ptype_wlance,
+    ptype_wknight,
+    ptype_wsilver,
+    ptype_wgold
+};
 
 /* node flags */
 #define pmask        0x000f /*    15 */
