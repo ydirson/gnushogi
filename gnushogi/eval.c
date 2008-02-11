@@ -44,6 +44,7 @@ int PUTVAR = false; /* shall the current scoring be cached? */
 
 /* Pieces and colors of initial board setup */
 
+#ifndef MINISHOGI
 const small_short Stboard[NO_SQUARES] =
 {
     lance, knight, silver,   gold,   king,   gold, silver, knight,  lance,
@@ -79,7 +80,26 @@ const small_short Stcolor[NO_SQUARES] =
     white,   white,   white,   white,
     white,   white,   white, white, white
 };
+#else
+const small_short Stboard[NO_SQUARES] =
+{
+    king,   gold,   silver, bishop, rook,
+    pawn,   0,      0,      0,      0,
+    0,      0,      0,      0,      0,
+    0,      0,      0,      0,      pawn,
+    rook,   bishop, silver, gold,   king,
+};
 
+
+const small_short Stcolor[NO_SQUARES] =
+{
+    black,   black,   black,   black,   black,
+    black,   neutral, neutral, neutral, neutral,
+    neutral, neutral, neutral, neutral, neutral,
+    neutral, neutral, neutral, neutral, white,
+    white,   white,   white,   white,   white
+};
+#endif
 
 /* Actual pieces and colors */
 
@@ -95,15 +115,19 @@ static small_short ispvalue[NO_PIECES][MAIN_STAGES] =
     {   0,  35,  70,  99 }, /* main stage borders */
     /* ------------------------------------------ */
     {   7,   7,   8,  10 }, /* Pawn               */
+#ifndef MINISHOGI
     {  20,  35,  45,  60 }, /* Lance              */
     {  20,  35,  45,  60 }, /* Knight             */
+#endif
     {  35,  40,  60,  80 }, /* Silver             */
     {  35,  50,  65,  80 }, /* Gold               */
     {  90,  90,  90,  90 }, /* Bishop             */
     {  95,  95,  95,  95 }, /* Rook               */
     {  15,  25,  40,  65 }, /* promoted Pawn      */
+#ifndef MINISHOGI
     {  25,  45,  55,  65 }, /* promoted Lance     */
     {  25,  45,  55,  65 }, /* promoted Knight    */
+#endif
     {  35,  55,  75,  75 }, /* promoted Silver    */
     {  99,  99,  99,  99 }, /* promoted Bishop    */
     {  97,  97,  99,  99 }, /* promoted Rook      */
@@ -192,8 +216,13 @@ static const short OwnKingDistanceBonus[10] =
 { 0, 5, 2, 1, 0, -1, -2, -3, -4, -5 };
 
 /* distance to promotion zone */
+#ifndef MINISHOGI
 static const int PromotionZoneDistanceBonus[NO_ROWS] =
 { 0, 0, 0, 0, 2, 6, 6, 8, 8 };
+#else
+static const int PromotionZoneDistanceBonus[NO_ROWS] =
+{ 0, 0, 2, 6, 8 };				  /* FIXME ? */
+#endif
 
 #define MAX_BMBLTY 20
 #define MAX_RMBLTY 20
@@ -207,12 +236,22 @@ static const short BMBLTY[MAX_BMBLTY] =
 static const short RMBLTY[MAX_RMBLTY] =
 { 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 14, 14, 16, 16, 16, 16 };
 
+#ifndef MINISHOGI
 /* Lance mobility bonus indexed by # reachable squares */
 static const short LMBLTY[MAX_LMBLTY] =
 { 0, 0, 0, 0, 4, 6, 8, 10 };
+#endif
 
 static const short MBLTY[NO_PIECES] =
-{ 0, 2, 1, 10, 5, 5, 1, 1, 5, 5, 5, 5, 1, 1, 4 };
+{ 0, 2,
+#ifndef MINISHOGI
+  1, 10,
+#endif
+  5, 5, 1, 1, 5,
+#ifndef MINISHOGI
+  5, 5,
+#endif
+  5, 1, 1, 4 };
 
 static const short KTHRT[36] =
 {   0,  -8, -20, -36, -52, -68, -80, -80, -80, -80, -80, -80,
@@ -255,17 +294,30 @@ static small_short Mpawn  [2][NO_SQUARES];
 static small_short Msilver[2][NO_SQUARES];
 static small_short Mgold  [2][NO_SQUARES];
 static small_short Mking  [2][NO_SQUARES];
+#ifndef MINISHOGI
 static small_short Mlance [2][NO_SQUARES];
 static small_short Mknight[2][NO_SQUARES];
+#endif
 static small_short Mbishop[2][NO_SQUARES];
 static small_short Mrook  [2][NO_SQUARES];
 
-static Mpiece_array Mpawn, Mlance, Mknight, Msilver, Mgold,
-    Mbishop, Mrook, Mking;
+static Mpiece_array Mpawn,
+#ifndef MINISHOGI
+    Mlance, Mknight,
+#endif
+    Msilver, Mgold, Mbishop, Mrook, Mking;
 
 Mpiece_array *Mpiece[NO_PIECES] =
-{ NULL, &Mpawn, &Mlance, &Mknight, &Msilver, &Mgold, &Mbishop, &Mrook,
-  &Mgold, &Mgold, &Mgold, &Mgold, &Mbishop, &Mrook, &Mking };
+{ NULL, &Mpawn,
+#ifndef MINISHOGI
+  &Mlance, &Mknight,
+#endif
+  &Msilver, &Mgold, &Mbishop, &Mrook,
+  &Mgold,
+#ifndef MINISHOGI
+  &Mgold, &Mgold,
+#endif
+  &Mgold, &Mbishop, &Mrook, &Mking };
 
 
 static short c1, c2;
@@ -478,11 +530,13 @@ CheckTargetPiece(short sq, short side)
         add_target(sq, side, 11);
         break;
 
+#ifndef MINISHOGI
     case knight: /* vertically ahead if advanced */
         /* FIXME: gotta love them magic numbers... */
         if ((sq != 1) && (sq != 7) && (sq != 73) && (sq != 79))
             add_target(sq, side, 11);
         break;
+#endif
     }
 }
 
@@ -847,6 +901,7 @@ BRLscan(short sq, short *mob)
                 /* it's the first piece in the current direction */
                 if (color[u] == c1)
                 {
+#ifndef MINISHOGI
                     /* own intercepting piece in x-ray attack */
                     if (upiece == lance)
                     {
@@ -861,6 +916,7 @@ BRLscan(short sq, short *mob)
                         }
                     }
                     else
+#endif
                     {
                         /* bishop or rook x-ray */
                         if ((upiece == bishop) && (board[u] == pawn)
@@ -868,17 +924,20 @@ BRLscan(short sq, short *mob)
                         {
                             s += (ds = -2*fv1[HCLSD]);
                         }
+#ifndef MINISHOGI
                         else if ((upiece == rook) && (board[u] == lance)
                                  && (GameType[c1] == STATIC_ROOK)
                                  && (column(u) == csq))
                         {
                             s += (ds = fv1[XRAY]);
                         }
+#endif
                     }
                 }
                 else
                 {
                     /* enemy's intercepting piece in pin attack */
+#ifndef MINISHOGI
                     if (upiece == lance)
                     {
                         /* lance pin attack */
@@ -892,6 +951,7 @@ BRLscan(short sq, short *mob)
                         }
                     }
                     else
+#endif
                     {
                         /* bishop or rook pin attack */
                         if (board[u] == pawn)
@@ -958,11 +1018,13 @@ BRLscan(short sq, short *mob)
                         }
                         else
                         {
+#ifndef MINISHOGI
                             if (upiece == lance)
                             {
                                 s += (ds = fv1[XRAY] / 2);
                             }
                             else
+#endif
                             {
                                 s += (ds = fv1[XRAY]);
                             }
@@ -1348,7 +1410,7 @@ PawnValue(short sq, short side)
 }
 
 
-
+#ifndef MINISHOGI
 /*
  * Calculate the positional value for a lance on 'sq'.
  */
@@ -1412,6 +1474,7 @@ KnightValue(short sq, short side)
 
     return s;
 }
+#endif
 
 
 
@@ -1636,6 +1699,7 @@ PPawnValue(short sq, short side)
 
 
 
+#ifndef MINISHOGI
 /*
  * Calculate the positional value for a promoted lance on 'sq'.
  */
@@ -1665,6 +1729,7 @@ PKnightValue(short sq, short side)
 
     return s;
 }
+#endif
 
 
 
@@ -1785,8 +1850,10 @@ PieceValue(short sq, short side)
             s += (ds = BMBLTY[mob] * fv1[MOBILITY] / 100);
         else if ((piece == rook) || (piece == prook))
             s += (ds = RMBLTY[mob] * fv1[MOBILITY] / 100);
+#ifndef MINISHOGI
         else
             s += (ds = LMBLTY[mob] * fv1[MOBILITY] / 100);
+#endif
     }
     else
     {
@@ -1878,6 +1945,7 @@ PieceValue(short sq, short side)
         s += PawnValue(sq, side);
         break;
 
+#ifndef MINISHOGI
     case lance:
         s += LanceValue(sq, side);
         break;
@@ -1885,6 +1953,7 @@ PieceValue(short sq, short side)
     case knight:
         s += KnightValue(sq, side);
         break;
+#endif
 
     case silver:
         s += SilverValue(sq, side);
@@ -1910,6 +1979,7 @@ PieceValue(short sq, short side)
         s += PPawnValue(sq, side);
         break;
 
+#ifndef MINISHOGI
     case plance:
         s += PLanceValue(sq, side);
         break;
@@ -1917,6 +1987,7 @@ PieceValue(short sq, short side)
     case pknight:
         s += PKnightValue(sq, side);
         break;
+#endif
 
     case psilver:
         s += PSilverValue(sq, side);
@@ -2064,7 +2135,7 @@ ScoreCaptures(void)
 
     if ((m = seed[c1]))
     {
-        for (piece = lance, n = 0; piece <= rook; piece++)
+        for (piece = pawn+1, n = 0; piece <= rook; piece++)
         {
             if (Captured[c1][piece])
                 n++;
@@ -2087,9 +2158,11 @@ ScoreCaptures(void)
                 ds = RMBLTY[MAX_RMBLTY - 1];
                 break;
 
+#ifndef MINISHOGI
             case lance:
                 ds = LMBLTY[MAX_LMBLTY - 1];
                 break;
+#endif
 
             default:
                 ds = MBLTY[piece];
@@ -2382,8 +2455,10 @@ DetermineGameType(short side_to_move)
     GuessGameType(side_to_move);
 
     array_zero(Mpawn,   sizeof(Mpawn));
+#ifndef MINISHOGI
     array_zero(Mlance,  sizeof(Mlance));
     array_zero(Mknight, sizeof(Mknight));
+#endif
     array_zero(Msilver, sizeof(Msilver));
     array_zero(Mgold,   sizeof(Mgold));
     array_zero(Mbishop, sizeof(Mbishop));
@@ -2491,6 +2566,7 @@ DetermineStage(short side)
             stage = 30;
     }
 
+#ifndef MINISHOGI
     /* Update stage depending on board features and attack balance value */
 
     if (abs(ds = (mtl[side] - mtl[xside]))
@@ -2505,6 +2581,7 @@ DetermineStage(short side)
 
         stage += (ds = db1);
     }
+#endif
 
     for (c1 = black, c2 = white; c1 <= white; c1++, c2--)
     {
@@ -2577,8 +2654,10 @@ DetermineStage(short side)
     /* Determine stage dependant weights */
 
     ADVNCM[pawn]   = 1; /* advanced pawn bonus increment   */
+#ifndef MINISHOGI
     ADVNCM[lance]  = 1;
     ADVNCM[knight] = 1;
+#endif
     ADVNCM[silver] = 1; /* advanced silver bonus increment */
     ADVNCM[gold]   = 1; /* advanced gold bonus increment   */
     ADVNCM[bishop] = 1;

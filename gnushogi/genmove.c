@@ -326,8 +326,10 @@ PromotionPossible(short color, short f, short t, short p)
     switch (p)
     {
     case pawn:
+#ifndef MINISHOGI
     case lance:
     case knight:
+#endif
     case silver:
     case bishop:
     case rook:
@@ -358,6 +360,7 @@ NonPromotionPossible(short color, short f,
                     : (generate_move_flags ? ILLEGAL_TRAPPED : false));
         }
 
+#ifndef MINISHOGI
     case lance:
         if (color == black)
         {
@@ -385,6 +388,7 @@ NonPromotionPossible(short color, short f,
                     ? true
                     : (generate_move_flags ? ILLEGAL_TRAPPED : false));
         }
+#endif
     }
 
     return true;
@@ -533,7 +537,11 @@ field_bonus(short ply, short side, short piece,
 
                     /* CHECKME: is this right? */
                     if (((rvupiece == rvuboard) && (upiece == pawn))
-                        || (upiece == bishop) || (upiece == knight))
+                        || (upiece == bishop)
+#ifndef MINISHOGI
+			|| (upiece == knight)
+#endif
+			)
                     {
                         s++; /* The opposing pawn (piece) */
 
@@ -772,7 +780,11 @@ LinkMove(short ply, short f,
             {
 #ifdef TESUJIBONUS
                 /* Look at non-promoting silver or knight */
-                if (piece == silver || piece == knight)
+                if (piece == silver
+#ifndef MINISHOGI
+		    || piece == knight
+#endif
+		    )
                 {
                     local_flag |= tesuji; /* Non-promotion */
                     s++;
@@ -908,6 +920,7 @@ DropPossible(short piece, short side, short sq)
             GenUnmakeMove(side, f, sq, tempb, tempc, false);
         }
     }
+#ifndef MINISHOGI
     else if (piece == lance)
     {
         if ((side == black) && (r == 8))
@@ -922,6 +935,7 @@ DropPossible(short piece, short side, short sq)
         else if ((side == white) && (r <= 1))
             possible = (generate_move_flags ? ILLEGAL_TRAPPED : false);
     }
+#endif
 
     return possible;
 }
@@ -1110,9 +1124,13 @@ LinkPreventCheckDrops(short side, short xside, short ply)
     if (board[square = PieceList[side][0]] != king)
         return;
 
-    for (piece = lance; piece <= rook; piece++)	  /* FIXME */
+    for (piece = pawn+1; piece <= rook; piece++)
     {
-        if (piece == lance || piece == bishop || piece == rook)
+        if (
+#ifndef MINISHOGI
+	    piece == lance ||
+#endif
+	    piece == bishop || piece == rook)
         {
             /* check for threat of xside piece */
             ptyp = ptype[side][piece];
@@ -1639,7 +1657,7 @@ IsCheckmate(short side, short in_check, short blockable)
                  * Drops are restricted for pawns, lances, and knights.
                  */
 
-                if (piece > knight)
+                if (piece >= silver)
                     break;
             }
         }

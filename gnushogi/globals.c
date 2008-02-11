@@ -116,12 +116,28 @@ const short kingP[3] =
 { 4, 76, 0 };
 
 const small_short relative_value[NO_PIECES] =
-{ 0,  1,  3,  4,  7,  9,  10,  12,
-  2,  5,  6,  8, 11, 13,  14 };
+{ 0,  1,
+#ifndef MINISHOGI
+  3,  4,
+#endif
+  7,  9,  10,  12,
+  2,
+#ifndef MINISHOGI
+  5,  6,
+#endif
+8, 11, 13,  14 };
 
 const long control[NO_PIECES] =
-{ 0,  ctlP,  ctlL,  ctlN,  ctlS,  ctlG, ctlB, ctlR,
-     ctlPp, ctlLp, ctlNp, ctlSp, ctlBp, ctlRp, ctlK };
+{ 0,  ctlP,
+#ifndef MINISHOGI
+  ctlL,  ctlN,
+#endif
+  ctlS,  ctlG, ctlB, ctlR,
+  ctlPp,
+#ifndef MINISHOGI
+  ctlLp, ctlNp,
+#endif
+  ctlSp, ctlBp, ctlRp, ctlK };
 
 short stage, stage2;
 short balance[2];

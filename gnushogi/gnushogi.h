@@ -164,11 +164,19 @@ extern void movealgbr(short m, char *s);
 #define SEEK_SET 0
 #define SEEK_END 2
 
+#ifdef MINISHOGI
+#define NO_PIECES       11
+#define MAX_CAPTURED    19
+#define NO_PTYPE_PIECES 11
+#define NO_COLS          5
+#define NO_ROWS          5
+#else
 #define NO_PIECES       15
 #define MAX_CAPTURED    19
 #define NO_PTYPE_PIECES 15
 #define NO_COLS          9
 #define NO_ROWS          9
+#endif
 #define NO_SQUARES      (NO_COLS*NO_ROWS)
 
 #define ROW_NAME(n) ('a' + NO_ROWS - 1 - n)
@@ -220,12 +228,18 @@ extern void movealgbr(short m, char *s);
 
 
 /* board properties */
+#ifndef MINISHOGI
 #define InBlackCamp(sq) ((sq) < 27)
 #define InWhiteCamp(sq) ((sq) > 53)
+#else
+#define InBlackCamp(sq) ((sq) < 5)
+#define InWhiteCamp(sq) ((sq) > 19)
+#endif
 #define InPromotionZone(side, sq) \
 (((side) == black) ? InWhiteCamp(sq) : InBlackCamp(sq))
 
 /* constants */
+/* FIXME ? */
 #define OPENING_HINT 0x141d /* P7g-7f (20->29) */
 
 /* truth values */
@@ -246,15 +260,20 @@ extern void movealgbr(short m, char *s);
 enum {
     no_piece = 0,
     pawn,
+#ifndef MINISHOGI
     lance,
     knight,
+#endif
+    /* start of pieces that can be dropped at any square */
     silver,
     gold,
     bishop,
     rook,
     ppawn,
+#ifndef MINISHOGI
     plance,
     pknight,
+#endif
     psilver,
     pbishop,
     prook,
@@ -265,8 +284,10 @@ enum {
 enum {
     ptype_no_piece = 0,
     ptype_pawn = 0,
+#ifndef MINISHOGI
     ptype_lance,
     ptype_knight,
+#endif
     ptype_silver,
     ptype_gold,
     ptype_bishop,
@@ -275,8 +296,10 @@ enum {
     ptype_prook,
     ptype_king,
     ptype_wpawn,
+#ifndef MINISHOGI
     ptype_wlance,
     ptype_wknight,
+#endif
     ptype_wsilver,
     ptype_wgold
 };
@@ -303,10 +326,17 @@ enum {
 #endif
 
 /* move symbols */
+#ifndef MINISHOGI
 #define pxx (" PLNSGBRPLNSBRK ")
 #define qxx (" plnsgbrplnsbrk ")
 #define rxx ("ihgfedcba")
 #define cxx ("987654321")
+#else
+#define pxx (" PSGBRPSBRK ")
+#define qxx (" psgbrpsbrk ")
+#define rxx ("edcba")
+#define cxx ("54321")
+#endif
 
 /***************** Table limits ********************************************/
 
@@ -352,7 +382,7 @@ enum {
 #define MAXDEPTH  40            /* max depth a search can be carried */
 #define MINDEPTH   2            /* min search depth =1 (no hint), >1 hint */
 #define MAXMOVES 300            /* max number of half moves in a game */
-#define CPSIZE   235            /* size of lang file max */
+#define CPSIZE   241            /* size of lang file max */
 
 #if defined SMALL_MEMORY
 #  if defined SAVE_SSCORE
@@ -755,7 +785,11 @@ typedef unsigned char next_array[NO_SQUARES][NO_SQUARES];
 typedef small_short distdata_array[NO_SQUARES][NO_SQUARES];
 
 extern const small_short inunmap[NO_SQUARES];
+#ifndef MINISHOGI
 extern const small_short nunmap[(NO_COLS + 2)*(NO_ROWS + 4)];
+#else
+extern const small_short nunmap[(NO_COLS + 2)*(NO_ROWS + 2)];
+#endif
 
 #if defined SAVE_NEXTPOS
 extern const small_short direc[NO_PTYPE_PIECES][8];

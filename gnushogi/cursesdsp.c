@@ -854,10 +854,17 @@ Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
         gotoXY(3, 4 + 2*NO_ROWS);
         printw("    ");
 
+#ifndef MINISHOGI
         if (flag.reverse)
             printw("  1    2    3    4    5    6    7    8    9");
         else
             printw("  9    8    7    6    5    4    3    2    1");
+#else
+        if (flag.reverse)
+            printw("  1    2    3    4    5");
+        else
+            printw("  1    2    3    4    5");
+#endif
 
         for (sq = 0; sq < NO_SQUARES; sq++)
             DrawPiece(sq);

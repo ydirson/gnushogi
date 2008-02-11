@@ -542,10 +542,12 @@ GetGame(void)
             skipb();
             Captured[side][pawn] = atoi(InPtr);
             skip();
+#ifndef MINISHOGI
             Captured[side][lance] = atoi(InPtr);
             skip();
             Captured[side][knight] = atoi(InPtr);
             skip();
+#endif
             Captured[side][silver] = atoi(InPtr);
             skip();
             Captured[side][gold] = atoi(InPtr);
@@ -710,16 +712,24 @@ SaveGame(void)
         }
 
         fputs(empty, fd);
-        fprintf(fd, "   9 8 7 6 5 4 3 2 1\n");    /* FIXME */
+#ifndef MINISHOGI
+        fprintf(fd, "   9 8 7 6 5 4 3 2 1\n");
         fputs(empty, fd);
         fprintf(fd, "   p  l  n  s  g  b  r  k\n");
+#else
+        fprintf(fd, "   5 4 3 2 1\n");
+        fputs(empty, fd);
+        fprintf(fd, "   p  s  g  b  r  k\n");
+#endif
 
         for (side = 0; side <= 1; side++)
         {
             fprintf(fd, "%c", (side == black) ? 'B' : 'W');
             fprintf(fd, " %2d", Captured[side][pawn]);
+#ifndef MINISHOGI
             fprintf(fd, " %2d", Captured[side][lance]);
             fprintf(fd, " %2d", Captured[side][knight]);
+#endif
             fprintf(fd, " %2d", Captured[side][silver]);
             fprintf(fd, " %2d", Captured[side][gold]);
             fprintf(fd, " %2d", Captured[side][bishop]);
@@ -871,10 +881,12 @@ GetXGame(void)
             InPtr = fname;
             Captured[side][pawn]   = atoi(InPtr);
             skip();
+#ifndef MINISHOGI
             Captured[side][lance]  = atoi(InPtr);
             skip();
             Captured[side][knight] = atoi(InPtr);
             skip();
+#endif
             Captured[side][silver] = atoi(InPtr);
             skip();
             Captured[side][gold]   = atoi(InPtr);
@@ -955,10 +967,17 @@ SaveXGame(void)
 
         for (side = 0; side <= 1; side++)
         {
-            sprintf(fname, "%d %d %d %d %d %d %d %d\n",
+            sprintf(fname,
+#ifndef MINISHOGI
+		    "%d %d %d %d %d %d %d %d\n",
+#else
+		    "%d %d %d %d %d %d\n",
+#endif
                     Captured[side][pawn],
+#ifndef MINISHOGI
                     Captured[side][lance],
                     Captured[side][knight],
+#endif
                     Captured[side][silver],
                     Captured[side][gold],
                     Captured[side][bishop],

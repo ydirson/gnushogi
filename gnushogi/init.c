@@ -77,15 +77,32 @@ unsigned int ttbllimit;
 
 const small_short piece_of_ptype[NO_PTYPE_PIECES] =
 {
-    pawn, lance, knight, silver, gold, bishop, rook, pbishop, prook, king,
-    pawn, lance, knight, silver, gold
+    pawn,
+#ifndef MINISHOGI
+    lance, knight,
+#endif
+    silver, gold, bishop, rook, pbishop, prook, king,
+    pawn,
+#ifndef MINISHOGI
+    lance, knight,
+#endif
+    silver, gold
 };
 
 
+/* FIXME: all bishops and rooks are black ? */
 const small_short side_of_ptype[NO_PTYPE_PIECES] =
 {
-    black, black, black, black, black, black, black, black, black, black,
-    white, white, white, white, white
+    black,
+#ifndef MINISHOGI
+    black, black,
+#endif
+    black, black, black, black, black, black, black,
+    white,
+#ifndef MINISHOGI
+    white, white,
+#endif
+    white, white
 };
 
 #ifdef SAVE_NEXTPOS
@@ -98,8 +115,16 @@ const small_short psweep[NO_PTYPE_PIECES] =
 
 const small_short sweep[NO_PIECES] =
 {
-    false, false, true, false, false, false, true, true,
-    false, false, false, false, true, true, false
+    false, false,
+#ifndef MINISHOGI
+    true, false,
+#endif
+    false, false, true, true,
+    false,
+#ifndef MINISHOGI
+    false, false,
+#endif
+    false, true, true, false
 };
 
 
@@ -136,6 +161,7 @@ ptype_distance(short ptyp, short f, short t)
         else
             return drow;
 
+#ifndef MINISHOGI
     case lance:
         if ((dcol != 0) || (drow < 1))
             return CANNOT_REACH;
@@ -149,6 +175,7 @@ ptype_distance(short ptyp, short f, short t)
             return CANNOT_REACH;
         else
             return (drow / 2);
+#endif
 
     case silver:
         if (drow > 0)
@@ -175,8 +202,10 @@ ptype_distance(short ptyp, short f, short t)
 
     case gold:
     case ppawn:
+#ifndef MINISHOGI
     case pknight:
     case plance:
+#endif
     case psilver:
         if (abs(dcol) == 0)
             return (abs(drow));
@@ -328,38 +357,78 @@ Initialize_dist(void)
 const small_short ptype[2][NO_PIECES] =
 {
     {
-        ptype_no_piece, ptype_pawn,  ptype_lance,  ptype_knight,
+        ptype_no_piece, ptype_pawn,
+#ifndef MINISHOGI
+	ptype_lance,  ptype_knight,
+#endif
         ptype_silver,   ptype_gold,  ptype_bishop, ptype_rook,
-        ptype_gold,     ptype_gold,  ptype_gold,   ptype_gold,
+        ptype_gold,
+#ifndef MINISHOGI
+	ptype_gold,  ptype_gold,
+#endif
+	ptype_gold,
         ptype_pbishop,  ptype_prook, ptype_king
     },
     {
-        ptype_no_piece, ptype_wpawn, ptype_wlance, ptype_wknight,
+        ptype_no_piece, ptype_wpawn,
+#ifndef MINISHOGI
+	ptype_wlance, ptype_wknight,
+#endif
         ptype_wsilver,  ptype_wgold, ptype_bishop, ptype_rook,
-        ptype_wgold,    ptype_wgold, ptype_wgold,  ptype_wgold,
+        ptype_wgold,
+#ifndef MINISHOGI
+	ptype_wgold, ptype_wgold,
+#endif
+	ptype_wgold,
         ptype_pbishop,  ptype_prook, ptype_king
     },
 };
 
 const small_short promoted[NO_PIECES] =
 {
-    no_piece, ppawn, plance, pknight, psilver, gold, pbishop, prook,
-    ppawn, plance, pknight, psilver, pbishop, prook, king
+    no_piece, ppawn,
+#ifndef MINISHOGI
+    plance, pknight,
+#endif
+    psilver, gold, pbishop, prook,
+    ppawn,
+#ifndef MINISHOGI
+    plance, pknight,
+#endif
+    psilver, pbishop, prook, king
 };
 
 const small_short unpromoted[NO_PIECES] =
 {
-    no_piece, pawn, lance, knight, silver, gold, bishop, rook,
-    pawn, lance, knight, silver, bishop, rook, king
+    no_piece, pawn,
+#ifndef MINISHOGI
+    lance, knight,
+#endif
+    silver, gold, bishop, rook,
+    pawn,
+#ifndef MINISHOGI
+    lance, knight,
+#endif
+    silver, bishop, rook, king
 };
 
 const small_short is_promoted[NO_PIECES] =
 {
-    false, false, false, false, false, false, false, false,
-    true, true, true, true, true, true, false
+    false, false,
+#ifndef MINISHOGI
+    false, false,
+#endif
+    false, false, false, false,
+    true,
+#ifndef MINISHOGI
+    true, true,
+#endif
+    true, true, true, false
 };
 
 /* data used to generate nextpos/nextdir */
+#ifndef MINISHOGI
+/* FIXME: use predefined constants ! */
 #if !defined SAVE_NEXTPOS
 static
 #endif
@@ -379,8 +448,27 @@ const small_short direc[NO_PTYPE_PIECES][8] =
     { -11,   0,   0,   0,   0,   0,   0,   0 },   /* 11 ptype_wlance  */
     { -21, -23,   0,   0,   0,   0,   0,   0 },   /* 12 ptype_wknight */
     { -10, -11, -12,  12,  10,   0,   0,   0 },   /* 13 ptype_wsilver */
-    { -10, -11, -12,   1,  -1,  11,   0,   0 }
-};  /* 14 ptype_wgold */
+    { -10, -11, -12,   1,  -1,  11,   0,   0 }    /* 14 ptype_wgold */
+};
+#else
+#if !defined SAVE_NEXTPOS
+static
+#endif
+const small_short direc[NO_PTYPE_PIECES][8] =
+{
+    {   7,   0,   0,   0,   0,   0,   0,   0 },   /*  0 ptype_pawn    */
+    {   6,   7,   8,  -8,  -6,   0,   0,   0 },   /*  3 ptype_silver  */
+    {   6,   7,   8,  -1,   1,  -7,   0,   0 },   /*  4 ptype_gold    */
+    {   6,   8,  -8,  -6,   0,   0,   0,   0 },   /*  5 ptype_bishop  */
+    {   7,  -1,   1,  -7,   0,   0,   0,   0 },   /*  6 ptype_rook    */
+    {   6,   8,  -8,  -6,   7,  -1,   1,  -7 },   /*  7 ptype_pbishop */
+    {   7,  -1,   1,  -7,   6,   8,  -8,  -6 },   /*  8 ptype_prook   */
+    {   6,   7,   8,  -1,   1,  -8,  -7,  -6 },   /*  9 ptype_king    */
+    {  -7,   0,   0,   0,   0,   0,   0,   0 },   /* 10 ptype_wpawn   */
+    {  -6,  -7,  -8,   8,   6,   0,   0,   0 },   /* 13 ptype_wsilver */
+    {  -6,  -7,  -8,   1,  -1,   7,   0,   0 }    /* 14 ptype_wgold */
+};
+#endif
 
 
 small_short diagonal(short d)
@@ -389,12 +477,20 @@ small_short diagonal(short d)
 }
 
 
+#ifndef MINISHOGI
+/* FIXME */
 static const small_short max_steps[NO_PTYPE_PIECES] =
 {
     1, 8, 1, 1, 1, 8, 8, 8, 8, 1, 1, 8, 1, 1, 1
 };
+#else
+static const small_short max_steps[NO_PTYPE_PIECES] =
+{
+    1, 1, 1, 4, 4, 4, 4, 1, 1, 1, 1
+};
+#endif
 
-
+#ifndef MINISHOGI
 const small_short nunmap[(NO_COLS + 2)*(NO_ROWS + 4)] =
 {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -425,7 +521,28 @@ const small_short inunmap[NO_SQUARES] =
     100, 101, 102, 103, 104, 105, 106, 107, 108,
     111, 112, 113, 114, 115, 116, 117, 118, 119
 };
+#else
+const small_short nunmap[(NO_COLS + 2)*(NO_ROWS + 2)] =
+{
+    -1, -1, -1, -1, -1, -1, -1,
+    -1,  0,  1,  2,  3,  4, -1,
+    -1,  5,  6,  7,  8,  9, -1,
+    -1, 10, 11, 12, 13, 14, -1,
+    -1, 15, 16, 17, 18, 19, -1,
+    -1, 20, 21, 22, 23, 24, -1,
+    -1, -1, -1, -1, -1, -1, -1,
+};
 
+
+const small_short inunmap[NO_SQUARES] =
+{
+      8,   9,  10,  11,  12,
+     15,  16,  17,  18,  19,
+     22,  23,  24,  25,  26,
+     29,  30,  31,  32,  33,
+     36,  37,  38,  39,  40,
+};
+#endif
 
 int InitFlag = false;
 

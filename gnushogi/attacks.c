@@ -118,6 +118,7 @@ SqAttacked(short square, short side, short *blockable)
     }
     while (u != square);
 
+#ifndef MINISHOGI
     /* try a knight capture (using xside's knight moves) */
 
     ptyp = ptype[side ^ 1][knight];
@@ -141,6 +142,7 @@ SqAttacked(short square, short side, short *blockable)
 #endif
     }
     while (u != square);
+#endif	/* MINISHOGI */
 
     *blockable = true;
 
@@ -216,6 +218,7 @@ SqAttacked(short square, short side, short *blockable)
     }
     while (u != square);
 
+#ifndef MINISHOGI
     /* try a lance capture (using xside's lance moves) */
 
     ptyp = ptype[side ^ 1][lance];
@@ -248,6 +251,7 @@ SqAttacked(short square, short side, short *blockable)
         }
     }
     while (u != square);
+#endif	/* MINISHOGI */
 
     return false;
 }

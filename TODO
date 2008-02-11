@@ -1,0 +1,28 @@
+Generic cleanups
+
+- hunt for more hardcoded variant-specific constants
+  - position of captured pieces in curses mode
+  - compile with bound-checker
+- add autosave mode to ease hunt for segfaults ?
+- generate patterns.inc at build-time
+- use 2D array for the board, get rid of the (i)nunmap stuff
+- fixup build procedure to support parallel make runs
+- investigate those preexisting "overflow in implicit constant
+  conversion" warnings
+
+Minishogi-related stuff
+
+- make minishogi a run-time option rather than a compile-time one
+- minishogi patterns
+- tune difficulty levels
+- other tunings to investigate
+  * PromotionZoneDistanceBonus
+  * OPENING_HINT
+- add minishogi stuff to the doc
+- use valid minishogi moves in online help
+
+- segfault (on level 1) following 2e1d 1d4a
+	=> field.piece can reach 14 in pattern.c::update_advance_bonus
+	   => probably related to using patterns for standard shogi
+	   => must break the circular pattern.o <-> pattern.inc dep to
+		be able to generated pattern.inc as needed
