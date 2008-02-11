@@ -36,7 +36,7 @@
 #ifndef _GNUSHOGI_H_
 #define _GNUSHOGI_H_
 
-#include "../config.h"        /* Portability #defines. */
+#include "config.h"        /* Portability #defines. */
 #include "debug.h"
 #include "opts.h"          /* Various option-setting #defines.  */
 

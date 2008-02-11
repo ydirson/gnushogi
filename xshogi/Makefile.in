@@ -33,7 +33,10 @@ VERS            = 1.3
 INSTALL         = @INSTALL@
 INSTALL_DATA    = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
-ROOT            = ..
+ROOT            = @top_srcdir@
+SRCDIR		= @srcdir@
+
+VPATH=$(SRCDIR)
 
 
 #
@@ -61,7 +64,7 @@ CC          = @CC@
 XINCLUDES   = @X_CFLAGS@
 CWARNINGS   = @WARNINGS@
 CEXTRAFLAGS = @CEXTRAFLAGS@
-CFLAGS      = @CFLAGS@ $(CEXTRAFLAGS) $(XINCLUDES) -I..
+CFLAGS      = @CFLAGS@ $(CEXTRAFLAGS) $(XINCLUDES) -I$(ROOT) -I@top_builddir@
 LIBS        =
 XLIBS       = @X_LIBS@ -lXaw -lXmu -lXt -lXext -lX11
 LDFLAGS     = $(XLIBS) $(LIBS)
@@ -83,8 +86,8 @@ all: xshogi
 xshogi: 
 	$(CC) -o xshogi xshogi.o parser.o $(CFLAGS) $(LDFLAGS) 
 
-xshogi.o: 
-	$(CC) -c xshogi.c $(CWARNINGS) $(CFLAGS) \
+xshogi.o: xshogi.c
+	$(CC) -c $< $(CWARNINGS) $(CFLAGS) \
         $(OPT) $(FIRST_SHOGI_PROGRAM) $(SECOND_SHOGI_PROGRAM) \
         $(FIRST_HOST) $(SECOND_HOST) 
 
@@ -94,15 +97,15 @@ xshogi.o:
 # is #included into parser.y.
 #
 
-parser.o: 
-	$(CC) -c parser.c $(CFLAGS)
+parser.o: parser.c
+	$(CC) $(CFLAGS) -I$(SRCDIR) -c $<
 
-parser.c: 
-	$(YACC) parser.y
+parser.c: parser.y
+	$(YACC) $<
 	mv y.tab.c parser.c
 
 scanner.c: scanner.l
-	$(LEX) scanner.l
+	$(LEX) $<
 	mv lex.yy.c scanner.c
 
 
@@ -142,8 +145,8 @@ clean:
 #
 
 xshogi:     xshogi.o parser.o
-xshogi.o:   xshogi.c sysdeps.h xshogi.h bitmaps.h ../version.h ../config.h
-parser.o:   parser.c xshogi.h
+xshogi.o:   xshogi.c $(SRCDIR)/sysdeps.h $(SRCDIR)/xshogi.h $(SRCDIR)/bitmaps.h $(ROOT)/version.h ../config.h
+parser.o:   parser.c $(SRCDIR)/xshogi.h
 parser.c:   parser.y scanner.c
 scanner.c:  scanner.l
 

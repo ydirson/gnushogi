@@ -33,8 +33,10 @@ VERS            = 1.3
 INSTALL         = @INSTALL@
 INSTALL_DATA    = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
-ROOT            = ..
+ROOT            = @top_srcdir@
+SRCDIR		= @srcdir@
 
+VPATH=$(SRCDIR)
 
 # Installation directory.
 prefix  =   @prefix@
@@ -66,7 +68,7 @@ LCURSES =   -lcurses -ltermcap
 CC          = @CC@
 CWARNINGS   = @WARNINGS@
 CEXTRAFLAGS = @CEXTRAFLAGS@
-CFLAGS      = @CFLAGS@ $(CEXTRAFLAGS) $(CWARNINGS) -I..
+CFLAGS      = @CFLAGS@ $(CEXTRAFLAGS) $(CWARNINGS) -I$(ROOT) -I@top_builddir@
 
 
 # The hashfile is a record of positions seen. It is used by
@@ -149,68 +151,68 @@ profile:
 
 # Common files.
 
-attacks.o:
-	$(CC) $(CFLAGS) -c attacks.c
+attacks.o: attacks.c
+	$(CC) $(CFLAGS) -c $<
 
-book.o:
-	$(CC) $(CFLAGS) $(TEXTBOOK) $(BINBOOK) -c book.c 
+book.o: book.c
+	$(CC) $(CFLAGS) $(TEXTBOOK) $(BINBOOK) -c $<
 
-commondsp.o:
-	$(CC) $(CFLAGS) -c commondsp.c 
+commondsp.o: commondsp.c
+	$(CC) $(CFLAGS) -c $<
 
-cursesdsp.o:
-	$(CC) $(CFLAGS) -c cursesdsp.c
+cursesdsp.o: cursesdsp.c
+	$(CC) $(CFLAGS) -c $<
 
-dspwrappers.o:
-	$(CC) $(CFLAGS) -c dspwrappers.c
+dspwrappers.o: dspwrappers.c
+	$(CC) $(CFLAGS) -c $<
 
-genmove.o:
-	$(CC) $(CFLAGS) -c genmove.c
+genmove.o: genmove.c
+	$(CC) $(CFLAGS) -c $<
 
-globals.o:
-	$(CC) $(CFLAGS) -c globals.c
+globals.o: globals.c
+	$(CC) $(CFLAGS) -c $<
 
-eval.o:
-	$(CC) $(CFLAGS) -c eval.c
+eval.o: eval.c
+	$(CC) $(CFLAGS) -c $<
 
-init.o:
-	$(CC)  $(CFLAGS) $(LANGF) -c init.c
+init.o: init.c
+	$(CC)  $(CFLAGS) $(LANGF) -c $<
 
-main.o:
-	$(CC) $(CFLAGS) $(BINBOOK) -c main.c
+main.o: main.c
+	$(CC) $(CFLAGS) $(BINBOOK) -c $<
 
 # To create "pattern.inc" with "pat2inc", the external
 # pattern textfile must be used.
 
-makepattern.o:
-	$(CC) $(CFLAGS) $(PATTERN) -c makepattern.c
+makepattern.o: makepattern.c
+	$(CC) $(CFLAGS) $(PATTERN) -c $<
 
-pattern.o:
-	$(CC)  $(CFLAGS) -c pattern.c
+pattern.o: pattern.c
+	$(CC)  $(CFLAGS) -c $<
 
-rawdsp.o:
-	$(CC) $(CFLAGS) -c rawdsp.c 
+rawdsp.o: rawdsp.c
+	$(CC) $(CFLAGS) -c $<
 
-search.o:
-	$(CC) $(CFLAGS) -c search.c
+search.o: search.c
+	$(CC) $(CFLAGS) -c $<
 
-sysdeps.o:
-	$(CC) $(CFLAGS) -c sysdeps.c 
+sysdeps.o: sysdeps.c
+	$(CC) $(CFLAGS) -c $<
 
-tcontrl.o:
-	$(CC) $(CFLAGS) -c tcontrl.c
+tcontrl.o: tcontrl.c
+	$(CC) $(CFLAGS) -c $<
 
-util.o:
-	$(CC) $(CFLAGS) -c util.c
+util.o: util.c
+	$(CC) $(CFLAGS) -c $<
 
 
 # Files specific to particular targets.
 
-pat2inc.o:
-	$(CC) $(CFLAGS) $(LANGF) $(BINBOOK) $(PATTERN) -c pat2inc.c
+pat2inc.o: pat2inc.c
+	$(CC) $(CFLAGS) $(LANGF) $(BINBOOK) $(PATTERN) -c $<
 
-sizetest.o:
-	$(CC) $(CFLAGS) -c sizetest.c
+sizetest.o: sizetest.c
+	$(CC) $(CFLAGS) -c $<
 
 
 #
@@ -220,7 +222,7 @@ sizetest.o:
 gnushogi.bbk: 
 	@if [ -f ./gnushogi.bbk ]; then rm ./gnushogi.bbk; fi
 	echo quit > test
-	cat ../misc/gnushogi.tbk > _tmp_t
+	cat $(ROOT)/misc/gnushogi.tbk > _tmp_t
 	cat test | ./gnushogi -R -b _tmp_t -B ./gnushogi.bbk -S 8000 -P 40 3 0
 	rm test _tmp_t
 	@echo
@@ -261,24 +263,24 @@ clean:
 gnushogi:   $(GNUSHOGI_FILES)
 pat2inc:       $(PAT2INCFILES)
 sizetest:      sizetest.o 
-attacks.o:     attacks.c gnushogi.h ../version.h
-book.o:        book.c gnushogi.h ../version.h 
-commondsp.o:   commondsp.c gnushogi.h ../version.h
-cursesdsp.o:   cursesdsp.c gnushogi.h ../version.h
-dspwrappers.o: dspwrappers.c gnushogi.h ../version.h
-genmove.o:     genmove.c gnushogi.h ../version.h
-globals.o:     globals.c gnushogi.h ../version.h
-eval.o:        eval.c eval.h gnushogi.h ../version.h pattern.h
-init.o:        init.c gnushogi.h ../version.h pattern.h
-main.o:        main.c gnushogi.h ../version.h
-makepattern.o: pattern.c gnushogi.h pattern.h
-pattern.o:     pattern.c gnushogi.h pattern.h pattern.inc
-rawdsp.o:      rawdsp.c gnushogi.h ../version.h
-search.o:      search.c gnushogi.h ../version.h 
-sysdeps.o:     sysdeps.c gnushogi.h ../version.h
-tcontrl.o:     tcontrl.c gnushogi.h ../version.h 
-util.o:        util.c gnushogi.h ../version.h
-pat2inc.o:     pat2inc.c pattern.h gnushogi.h 
-sizetest.o:    sizetest.c gnushogi.h eval.h
+attacks.o:     attacks.c gnushogi.h $(ROOT)/version.h
+book.o:        book.c gnushogi.h $(ROOT)/version.h
+commondsp.o:   commondsp.c gnushogi.h $(ROOT)/version.h
+cursesdsp.o:   cursesdsp.c gnushogi.h $(ROOT)/version.h
+dspwrappers.o: dspwrappers.c gnushogi.h $(ROOT)/version.h
+genmove.o:     genmove.c gnushogi.h $(ROOT)/version.h
+globals.o:     globals.c gnushogi.h $(ROOT)/version.h
+eval.o:        eval.c eval.h gnushogi.h $(ROOT)/version.h $(SRCDIR)/pattern.h
+init.o:        init.c gnushogi.h $(ROOT)/version.h $(SRCDIR)/pattern.h
+main.o:        main.c gnushogi.h $(ROOT)/version.h
+makepattern.o: pattern.c gnushogi.h $(SRCDIR)/pattern.h
+pattern.o:     pattern.c gnushogi.h $(SRCDIR)/pattern.h $(SRCDIR)/pattern.inc
+rawdsp.o:      rawdsp.c gnushogi.h $(ROOT)/version.h
+search.o:      search.c gnushogi.h $(ROOT)/version.h
+sysdeps.o:     sysdeps.c gnushogi.h $(ROOT)/version.h
+tcontrl.o:     tcontrl.c gnushogi.h $(ROOT)/version.h
+util.o:        util.c gnushogi.h $(ROOT)/version.h
+pat2inc.o:     pat2inc.c $(SRCDIR)/pattern.h $(SRCDIR)/gnushogi.h
+sizetest.o:    sizetest.c $(SRCDIR)/gnushogi.h $(SRCDIR)/eval.h
 gnushogi.bbk:  gnushogi
 
