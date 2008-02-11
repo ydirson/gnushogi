@@ -45,8 +45,8 @@ int mycnt1, mycnt2;
 
 #define TAB (58)
 
-#define VIR_C(s)  ((flag.reverse) ? (8 - column(s)) : column(s))
-#define VIR_R(s)  ((flag.reverse) ? (8 - row(s)) : row(s))
+#define VIR_C(s)  ((flag.reverse) ? (NO_COLS - 1 - column(s)) : column(s))
+#define VIR_R(s)  ((flag.reverse) ? (NO_ROWS - 1 - row(s)) : row(s))
 
 unsigned short MV[MAXDEPTH];
 int MSCORE;
@@ -162,7 +162,7 @@ Curses_ShowPatternCount(short side, short n)
 {
     if (flag.post)
     {
-        gotoXY(TAB + 10 + 3 * side, 20);
+        gotoXY(TAB + 10 + 3 * side, 20);	  /* CHECKME */
 
         if (n >= 0)
             printw("%3d", n);
@@ -175,9 +175,9 @@ Curses_ShowPatternCount(short side, short n)
 void
 ShowPlayers(void)
 {
-    gotoXY(5, ((flag.reverse) ? 23 : 2));
+    gotoXY(5, ((flag.reverse) ? (5 + 2*NO_ROWS) : 2));
     printw("%s", (computer == white) ? CP[218] : CP[74]);
-    gotoXY(5, ((flag.reverse) ? 2 : 23));
+    gotoXY(5, ((flag.reverse) ? 2 : (5 + 2*NO_ROWS)));
     printw("%s", (computer == black) ? CP[218] : CP[74]);
 }
 
@@ -498,8 +498,8 @@ Curses_EditBoard(void)
         }
         else
         {
-            c = '9' - s[1];
-            r = 'i' - s[2];
+            c = COL_NAME(s[1]);
+            r = ROW_NAME(s[2]);
         }
 
         if ((c >= 0) && (c < NO_COLS) && (r >= 0) && (r < NO_ROWS))
@@ -598,7 +598,7 @@ Curses_SearchStartStuff(short side)
     signal(SIGINT, Curses_TerminateSearch);
     signal(SIGQUIT, Curses_TerminateSearch);
 
-    for (i = 4; i < 14; i++)
+    for (i = 4; i < 14; i++)			  /* CHECKME */
     {
         gotoXY(TAB, i);
         ClearEoln();
@@ -745,7 +745,7 @@ DrawPiece(short sq)
         y = pxx[(int)piece];
     }
 
-    gotoXY(8 + 5 * VIR_C(sq), 4 + 2 * (8 - VIR_R(sq)));
+    gotoXY(8 + 5 * VIR_C(sq), 4 + 2 * ((NO_ROWS - 1) - VIR_R(sq)));
     printw("%c%c%c%c", l, p, y, r);
 }
 
@@ -761,7 +761,7 @@ Curses_ShowPostnValue(short sq)
 {
     short score;
 
-    gotoXY(4 + 5 * VIR_C(sq), 5 + 2 * (7 - VIR_R(sq)));
+    gotoXY(4 + 5 * VIR_C(sq), 5 + 2 * (7 - VIR_R(sq)));	/* CHECKME */
     score = ScorePosition(color[sq]);
 
     if (color[sq] != neutral)
@@ -807,6 +807,7 @@ void
 Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
 {
     short i, sq, z;
+    int j;
 
     if (redraw)
     {
@@ -816,31 +817,38 @@ Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
         i = 2;
         gotoXY(3, ++i);
 
-        printw("    +----+----+----+----+----+----+----+----+----+");
+        printw("    +");
+	for (j=0; j<NO_COLS; j++)
+	    printw("----+");
 
-        while (i < 20)
+        while (i <= 1 + 2*NO_ROWS)
         {
             gotoXY(1, ++i);
 
             if (flag.reverse)
                 z = (i / 2) - 1;
             else
-                z = 11 - ((i + 1) / 2);
+                z = NO_ROWS + 2 - ((i + 1) / 2);
 
-            printw("    %c |    |    |    |    |    |"
-                   "    |    |    |    |", 'a' + 9 - z);
+            printw("    %c |", ROW_NAME(z+1));
+	    for (j=0; j<NO_COLS; j++)
+		printw("    |");
 
             gotoXY(3, ++i);
 
-            if (i < 20)
+            if (i < 2 + 2*NO_ROWS)
             {
-                printw("    +----+----+----+----+----+----+----+----+----+");
+		printw("    +");
+		for (j=0; j<NO_COLS; j++)
+		    printw("----+");
             }
         }
 
-        printw("    +----+----+----+----+----+----+----+----+----+");
+	printw("    +");
+	for (j=0; j<NO_COLS; j++)
+	    printw("----+");
 
-        gotoXY(3, 22);
+        gotoXY(3, 4 + 2*NO_ROWS);
         printw("    ");
 
         if (flag.reverse)

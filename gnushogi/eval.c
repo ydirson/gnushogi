@@ -271,7 +271,7 @@ static small_short *fv1;
 static long *atk1, *atk2;
 static long  a1, a2;
 
-#define csquare(side, sq) ((side == black) ? sq : (NO_SQUARES_1 - sq))
+#define csquare(side, sq) ((side == black) ? sq : (NO_SQUARES - 1 - sq))
 #define crow(side, sq)    row(csquare(side, sq))
 #define ccolumn(side, sq) column(csquare(side, sq))
 
@@ -291,7 +291,7 @@ on_column(short side, short piece, short c)
 {
     short sq;
 
-    for (sq = c; sq < NO_SQUARES; sq += 9)
+    for (sq = c; sq < NO_SQUARES; sq += NO_COLS)
     {
         if (on_csquare(side, piece, sq))
             return true;
@@ -1277,7 +1277,7 @@ PawnValue(short sq, short side)
     PromotionZoneDistanceValue(sq, 3);
 
     /* pawn mobility */
-    if (color[(c1 == black) ? (sq + 9) : (sq - 9)] == neutral)
+    if (color[(c1 == black) ? (sq + NO_COLS) : (sq - NO_COLS)] == neutral)
     {
         s += (ds = MBLTY[pawn]);
     }

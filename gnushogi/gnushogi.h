@@ -155,10 +155,12 @@ extern void movealgbr(short m, char *s);
 #define NO_PIECES       15
 #define MAX_CAPTURED    19
 #define NO_PTYPE_PIECES 15
-#define NO_SQUARES      81
-#define NO_SQUARES_1    80
 #define NO_COLS          9
 #define NO_ROWS          9
+#define NO_SQUARES      (NO_COLS*NO_ROWS)
+
+#define ROW_NAME(n) ('a' + NO_ROWS - 1 - n)
+#define COL_NAME(n) ('1' + NO_COLS - 1 - n)
 
 #if defined HASHFILE || defined CACHE
 #  define PTBLBDSIZE (NO_SQUARES + NO_PIECES)
@@ -851,14 +853,9 @@ extern struct hashentry  *ttable[2];
 extern short rpthash[2][256];
 extern char *DRAW;
 
-/*
- * FIXME: these should be more generic instead of using the
- * magic number 9.
- */
-
-#define row(a)     ((a) / 9)
-#define column(a)  ((a) % 9)
-#define locn(a, b) (((a) * 9) + b)
+#define row(a)     ((a) / NO_COLS)
+#define column(a)  ((a) % NO_COLS)
+#define locn(a, b) (((a) * NO_COLS) + b)
 
 /* init external functions */
 extern void InitConst(char *lang); /* init.c */

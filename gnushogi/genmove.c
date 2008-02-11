@@ -310,12 +310,12 @@ PromotionPossible(short color, short f, short t, short p)
 {
     if (color == black)
     {
-        if ((f < 54) && (t < 54))
+	if ((!InWhiteCamp(f)) && (!InWhiteCamp(t)))
             return false;
     }
     else
     {
-        if ((f > 26) && (t > 26))
+	if ((!InBlackCamp(f)) && (!InBlackCamp(t)))
             return false;
     }
 
@@ -1107,7 +1107,7 @@ LinkPreventCheckDrops(short side, short xside, short ply)
     if (board[square = PieceList[side][0]] != king)
         return;
 
-    for (piece = lance; piece <= rook; piece++)
+    for (piece = lance; piece <= rook; piece++)	  /* FIXME */
     {
         if (piece == lance || piece == bishop || piece == rook)
         {

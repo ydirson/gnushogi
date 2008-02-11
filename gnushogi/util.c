@@ -81,10 +81,10 @@ parse(FILE * fd, unsigned short *mv, short side, char *opening)
         return 0;
     }
 
-    c1 = '9' - s[0];
-    r1 = 'i' - s[1];
-    c2 = '9' - s[2];
-    r2 = 'i' - s[3];
+    c1 = COL_NAME(s[0]);
+    r1 = ROW_NAME(s[1]);
+    c2 = COL_NAME(s[2]);
+    r2 = ROW_NAME(s[3]);
     *mv = (locn(r1, c1) << 8) | locn(r2, c2);
 
     if (c == '?')

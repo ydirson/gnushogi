@@ -386,17 +386,17 @@ parser(char *f, int side, short *fpiece)
 
     if (f[1] == '*' || f[1] == '\'')
     {
-        c2 = '9' - f[2];
-        r2 = 'i' - f[3];
+        c2 = COL_NAME(f[2]);
+        r2 = ROW_NAME(f[3]);
 
         return ((NO_SQUARES + *fpiece) << 8) | locn(r2, c2);
     }
     else
     {
-        c1 = '9' - f[1];
-        r1 = 'i' - f[2];
-        c2 = '9' - f[3];
-        r2 = 'i' - f[4];
+        c1 = COL_NAME(f[1]);
+        r1 = ROW_NAME(f[2]);
+        c2 = COL_NAME(f[3]);
+        r2 = ROW_NAME(f[4]);
         p = (f[5] == '+') ? 0x80 : 0;
 
         return (locn(r1, c1) << 8) | locn(r2, c2) | p;
@@ -716,7 +716,7 @@ SaveGame(void)
 
         for (i = NO_ROWS - 1; i > -1; i--)
         {
-            fprintf(fd, "%c ", 'i' - i);
+            fprintf(fd, "%c ", ROW_NAME(i));
 
             for (c = 0; c < NO_COLS; c++)
             {
@@ -751,7 +751,7 @@ SaveGame(void)
         }
 
         fputs(empty, fd);
-        fprintf(fd, "   9 8 7 6 5 4 3 2 1\n");
+        fprintf(fd, "   9 8 7 6 5 4 3 2 1\n");    /* FIXME */
         fputs(empty, fd);
         fprintf(fd, "   p  l  n  s  g  b  r  k\n");
 

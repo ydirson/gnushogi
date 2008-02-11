@@ -400,7 +400,7 @@ const small_short direc[NO_PTYPE_PIECES][8] =
 
 small_short diagonal(short d)
 {
-    return (abs(d) == 10 || abs(d) == 12);
+  return (abs(d) == (NO_COLS+1) || abs(d) == (NO_COLS+3));
 }
 
 
@@ -512,7 +512,7 @@ Initialize_moves(void)
     short dest[8][9];
     short sorted[9];
     short steps[8];
-    short fpo = 23, tpo = 120;
+    short fpo = inunmap[0], tpo = 1 + inunmap[NO_SQUARES-1];
 
     for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++)
     {
