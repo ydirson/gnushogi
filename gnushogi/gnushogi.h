@@ -250,6 +250,7 @@ enum {
     king
 };
 
+/* move types */
 enum {
     ptype_no_piece = 0,
     ptype_pawn = 0,

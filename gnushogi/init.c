@@ -310,12 +310,12 @@ Initialize_dist(void)
 
 
 /*
- * nextpos[piece][from-square], nextdir[piece][from-square] gives vector
- * of positions reachable from from-square in ppos with piece such that the
+ * nextpos[ptype][from-square], nextdir[ptype][from-square] gives vector
+ * of positions reachable from from-square in ppos with ptype such that the
  * sequence
  *
- *     ppos = nextpos[piece][from-square];
- *     pdir = nextdir[piece][from-square];
+ *     ppos = nextpos[ptype][from-square];
+ *     pdir = nextdir[ptype][from-square];
  *     u = ppos[sq];
  *
  *     do
@@ -514,6 +514,9 @@ Initialize_moves(void)
     short steps[8];
     short fpo = inunmap[0], tpo = 1 + inunmap[NO_SQUARES-1];
 
+    /* pre-fill nextpos and nextdir with source position, probably so
+     * (color[u] == neutral) stops to match once all moves have been seen
+     */
     for (ptyp = 0; ptyp < NO_PTYPE_PIECES; ptyp++)
     {
         for (po = 0; po < NO_SQUARES; po++)

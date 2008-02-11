@@ -125,6 +125,17 @@ movealgbr(short m, char *s)
 
 /*
  * Generate move strings in different formats.
+ *
+ * INPUT:
+ * - f					piece to be moved
+ *   - 0 < f < NO_SQUARES				source square
+ *   - NO_SQUARES <= f NO_SQUARES + 2*NO_PIECES		dropped piece modulo NO_PIECES
+ * - t & 0x7f				target square
+ * - t & 0x80				promotion flag
+ * - flag				FIXME: must be zero ?
+ *
+ * OUTPUT:
+ * - GLOBAL mvstr
  */
 
 void
