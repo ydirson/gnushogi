@@ -103,9 +103,6 @@ ShowOpeningPatterns(short max_opening_sequence);
 extern short
 ValueOfOpeningName(char *name);
 
-extern void
-NameOfOpeningValue(short i, char *name);
-
 extern small_short pattern_data[];
 
 

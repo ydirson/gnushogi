@@ -86,7 +86,7 @@ ValueOfOpeningName (char *name)
 }
 
 
-void
+static void
 NameOfOpeningValue (short i, char *name)
 {
     if (i < 100)
