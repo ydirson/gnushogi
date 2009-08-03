@@ -238,7 +238,7 @@ Raw_help(void)
 {
     Raw_ClearScreen();
     /* printf("SHOGI command summary\n"); */
-    printf(CP[40]);
+    printf(CP[40], version, patchlevel);
     printf("----------------------------------"
            "------------------------------\n");
     /* printf("7g7f      move from 7g to 7f      quit
