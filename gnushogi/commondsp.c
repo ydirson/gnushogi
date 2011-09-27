@@ -707,12 +707,12 @@ SaveGame(void)
 
         fprintf(fd, CP[37], w, b, Game50,
                 flag.force ? "force" : "");
-        fprintf(fd, empty);
+        fputs(empty, fd);
         fprintf(fd, CP[111], TCflag, OperatorTime);
         fprintf(fd, CP[117],
                 TimeControl.clock[black], TimeControl.moves[black],
                 TimeControl.clock[white], TimeControl.moves[white]);
-        fprintf(fd, empty);
+        fputs(empty, fd);
 
         for (i = NO_ROWS - 1; i > -1; i--)
         {
@@ -750,9 +750,9 @@ SaveGame(void)
             fprintf(fd, "\n");
         }
 
-        fprintf(fd, empty);
+        fputs(empty, fd);
         fprintf(fd, "   9 8 7 6 5 4 3 2 1\n");
-        fprintf(fd, empty);
+        fputs(empty, fd);
         fprintf(fd, "   p  l  n  s  g  b  r  k\n");
 
         for (side = 0; side <= 1; side++)
@@ -769,8 +769,8 @@ SaveGame(void)
             fprintf(fd, "\n");
         }
 
-        fprintf(fd, empty);
-        fprintf(fd, CP[126]);
+        fputs(empty, fd);
+        fputs(CP[126], fd);
 
         for (i = 1; i <= GameCnt; i++)
         {
@@ -1200,8 +1200,8 @@ ListGame(void)
 
     /* fprintf(fd, "gnushogi game %d\n", u); */
     fprintf(fd, CP[161], version, patchlevel);
-    fprintf(fd, CP[10]);
-    fprintf(fd, CP[11]);
+    fputs(CP[10], fd);
+    fputs(CP[11], fd);
 
     for (i = 1; i <= GameCnt; i++)
     {

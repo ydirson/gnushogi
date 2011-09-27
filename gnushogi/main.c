@@ -208,7 +208,7 @@ main (int argc, char **argv)
                 long j;
                 struct fileentry n;
 
-                printf(CP[66]);
+                fputs(CP[66], stdout);
                 n.f = n.t = 0;
                 n.flags = 0;
                 n.depth = 0;
@@ -242,7 +242,7 @@ main (int argc, char **argv)
                 int nr[MAXDEPTH];
                 struct fileentry n;
 
-                printf(CP[49]);
+                fputs(CP[49], stdout);
 
                 for (i = 0; i < MAXDEPTH; i++)
                     nr[i] = 0;
@@ -305,7 +305,7 @@ main (int argc, char **argv)
 
 
         default:
-            fprintf(stderr, CP[113]);
+            fputs(CP[113], stderr);
             exit(1);
         }
 

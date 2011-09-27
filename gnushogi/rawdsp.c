@@ -63,7 +63,7 @@ PromptForMove(void)
     if (!barebones && !XSHOGI)
     {
         /* printf("\nYour move is? "); */
-        printf(CP[124]);
+        fputs(CP[124], stdout);
     }
 }
 
@@ -243,7 +243,7 @@ Raw_help(void)
            "------------------------------\n");
     /* printf("7g7f      move from 7g to 7f      quit
      * Exit Shogi\n"); */
-    printf(CP[158]);
+    fputs(CP[158], stdout);
     /* printf("S6h       move silver to 6h       beep
      * turn %s\n", (flag.beep) ? "off" : "on"); */
     printf(CP[86], (flag.beep) ? CP[92] : CP[93]);
@@ -257,36 +257,36 @@ Raw_help(void)
     printf(CP[174], (flag.hash) ? CP[92] : CP[93]);
     /* printf("bd        redraw board            reverse
      * board display\n"); */
-    printf(CP[130]);
+    fputs(CP[130], stdout);
     /* printf("list      game to shogi.lst       book
      * turn %s used %d of %d\n", (Book) ? "off" : "on", bookcount); */
     printf(CP[170], (Book) ? CP[92] : CP[93], bookcount, booksize);
     /* printf("undo      undo last ply           remove
      * take back a move\n"); */
-    printf(CP[200]);
+    fputs(CP[200], stdout);
     /* printf("edit      edit board              force
      * enter game moves\n"); */
-    printf(CP[153]);
+    fputs(CP[153], stdout);
     /* printf("switch    sides with computer     both
      * computer match\n"); */
-    printf(CP[194]);
+    fputs(CP[194], stdout);
     /* printf("black     computer plays black    white
      * computer plays white\n"); */
-    printf(CP[202]);
+    fputs(CP[202], stdout);
     /* printf("depth     set search depth        clock
      * set time control\n"); */
-    printf(CP[149]);
+    fputs(CP[149], stdout);
     /* printf("post      principle variation     hint
      * suggest a move\n"); */
-    printf(CP[177]);
+    fputs(CP[177], stdout);
     /* printf("save      game to file            get
      * game from file\n"); */
-    printf(CP[188]);
+    fputs(CP[188], stdout);
     printf("xsave     pos. to xshogi file     xget"
            "      pos. from xshogi file\n");
     /* printf("random    randomize play          new
      * start new game\n"); */
-    printf(CP[181]);
+    fputs(CP[181], stdout);
     printf("--------------------------------"
            "--------------------------------\n");
     /* printf("Computer: %-12s Opponent:            %s\n", */
@@ -332,13 +332,13 @@ Raw_EditBoard(void)
     Raw_ClearScreen();
     Raw_UpdateDisplay(0, 0, 1, 0);
     /* printf(".   exit to main\n"); */
-    printf(CP[29]);
+    fputs(CP[29], stdout);
     /* printf("#   clear board\n"); */
-    printf(CP[28]);
+    fputs(CP[28], stdout);
     /* printf("c   change sides\n"); */
-    printf(CP[136]);
+    fputs(CP[136], stdout);
     /* printf("enter piece & location: \n"); */
-    printf(CP[155]);
+    fputs(CP[155], stdout);
 
     a = black;
 
@@ -476,7 +476,7 @@ SetupBoard(void)
     Raw_ClearScreen();
     Raw_UpdateDisplay(0, 0, 1, 0);
     /* printf("Setup successful\n"); */
-    printf(CP[106]);
+    fputs(CP[106], stdout);
 }
 
 
@@ -568,7 +568,7 @@ Raw_OutputMove(void)
     if (root->flags & draw)
     {
         /*  printf("Drawn game!\n"); */
-        printf(CP[57]);
+        fputs(CP[57], stdout);
     }
     else if (root->score == -(SCORE_LIMIT + 999))
     {
@@ -685,7 +685,7 @@ Raw_GiveHint(void)
         printf(CP[72], mvstr[0]);   /*hint*/
     }
     else
-        printf(CP[223]);
+        fputs(CP[223], stdout);
 }
 
 
@@ -712,7 +712,7 @@ Raw_SelectLevel(char *sx)
     /* line empty ask for input */
     if (!T[0])
     {
-        printf(CP[61]);
+        fputs(CP[61], stdout);
         fgets(T, NO_SQUARES + 1, stdin);
         strcat(T, "XX");
     }
@@ -743,7 +743,7 @@ Raw_SelectLevel(char *sx)
             TCseconds = 0;
 
 #ifdef OPERATORTIME
-        printf(CP[94]);
+        fputs(CP[94], stdout);
         scanf("%hd", &OperatorTime);
 #endif
 
