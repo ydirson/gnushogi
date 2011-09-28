@@ -1291,7 +1291,8 @@ PawnValue(short sq, short side)
     {
         if (crow(c1, sq) == 2) /* pawn on 3d rank */
         {
-            if (board[(c1 == black) ? (sq + 27) : (sq - 27)] == pawn)
+            if (board[(c1 == black) ?
+		      (sq + 3*NO_COLS) : (sq - 3*NO_COLS)] == pawn)
             {
                 /* opposing pawn has been moved (even column == (sq & 1)) */
 
