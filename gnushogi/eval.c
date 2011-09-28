@@ -2241,6 +2241,21 @@ ScorePosition(short side)
             ScoreCaptures();
         }
 
+#ifndef MINISHOGI
+# define BLACKHOME_START  0
+# define BLACKHOME_END   26
+# define MIDDLEROW_START 36
+# define MIDDLEROW_END   44
+# define WHITEHOME_START 54
+# define WHITEHOME_END   80
+#else
+# define BLACKHOME_START  0
+# define BLACKHOME_END    4
+# define MIDDLEROW_START 10
+# define MIDDLEROW_END   14
+# define WHITEHOME_START 19
+# define WHITEHOME_END   24
+#endif
         for (c1 = black, c2 = white; c1 <= white; c1++, c2--)
         {
             short n;
@@ -2248,7 +2263,7 @@ ScorePosition(short side)
             fv1 = fvalue[c1];
 
             /* Score fifth rank */
-            for (sq = 36, n = 0; sq <= 44; sq++)
+            for (sq = MIDDLEROW_START, n = 0; sq <= MIDDLEROW_END; sq++)
             {
                 if ((color[sq] == c1) || (attack[c1][sq] != 0))
                     n++;
@@ -2260,8 +2275,8 @@ ScorePosition(short side)
             }
 
             /* Score holes */
-            for (sq = ((c1 == black) ? 0 : 54), n = 0;
-                 sq <= ((c1 == black) ? 26 : 80);
+            for (sq = ((c1 == black) ? BLACKHOME_START : WHITEHOME_START), n = 0;
+                 sq <= ((c1 == black) ? BLACKHOME_END : WHITEHOME_END);
                  sq++)
             {
                 if (board[sq] == no_piece && attack[c1][sq] == 0)
