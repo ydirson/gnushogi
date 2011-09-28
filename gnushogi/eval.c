@@ -2325,6 +2325,7 @@ ScorePosition(short side)
  * Try to determine the game type of "side".
  */
 
+#ifndef MINISHOGI
 inline static void
 GuessGameType(short side_to_move)
 {
@@ -2458,6 +2459,7 @@ GuessGameType(short side_to_move)
         }
     }
 }
+#endif
 
 
 
@@ -2467,7 +2469,13 @@ DetermineGameType(short side_to_move)
 {
     short side;
 
+#ifndef MINISHOGI
+    /* FIXME: calculations below are wrong for minishogi, all done for 9x9 */
     GuessGameType(side_to_move);
+#else
+    GameType[black] = UNKNOWN;
+    GameType[white] = UNKNOWN;
+#endif
 
     array_zero(Mpawn,   sizeof(Mpawn));
 #ifndef MINISHOGI
