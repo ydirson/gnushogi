@@ -1383,6 +1383,10 @@ PawnValue(short sq, short side)
             }
         }
 
+#ifndef MINISHOGI
+/* FIXME: calculations below are wrong for minishogi, all done for 9x9
+ * board - and anyway we don't know the stage really :)
+ */
         if ((GameType[c1] == STATIC_ROOK) && (sq == csquare(c1, 43)))
         {
             if ((atk2[csquare(c1, 52)] & CNT_MASK) < 2)
@@ -1404,6 +1408,7 @@ PawnValue(short sq, short side)
                 s += (ds = -2 * fv1[ATTACKED]);
             }
         }
+#endif
     }
 
     return s;
@@ -1497,6 +1502,10 @@ SilverValue(short sq, short side)
 
     if (in_opening_stage)
     {
+#ifndef MINISHOGI
+/* FIXME: calculations below are wrong for minishogi, all done for 9x9
+ * board - and anyway we don't know the stage really :)
+ */
         if (GameType[c1] == STATIC_ROOK)
         {
             if (csquare(c1, sq) == 12)
@@ -1510,6 +1519,7 @@ SilverValue(short sq, short side)
                 }
             }
         }
+#endif
     }
     else
     {
@@ -1540,6 +1550,10 @@ GoldValue(short sq, short side)
 
     if (in_opening_stage)
     {
+#ifndef MINISHOGI
+/* FIXME: calculations below are wrong for minishogi, all done for 9x9
+ * board - and anyway we don't know the stage really :)
+ */
         if ((GameType[c1] == STATIC_ROOK) && (GameType[c2] != STATIC_ROOK))
         {
             if (Mvboard[csquare(c1, 3)])
@@ -1547,6 +1561,7 @@ GoldValue(short sq, short side)
                 s += (ds = -2 * fv1[OPENWRONG]);
             }
         }
+#endif
     }
     else
     {
@@ -1569,6 +1584,10 @@ BishopValue(short sq, short side)
 
     if (in_opening_stage)
     {
+#ifndef MINISHOGI
+/* FIXME: calculations below are wrong for minishogi, all done for 9x9
+ * board - and anyway we don't know the stage really :)
+ */
         if (GameType[c1] == RANGING_ROOK)
         {
             /* Bishops diagonal should not be open */
@@ -1590,6 +1609,7 @@ BishopValue(short sq, short side)
                 s += (ds = -fv1[OPENWRONG]);
             }
         }
+#endif
     }
     else
     {
@@ -1614,6 +1634,10 @@ RookValue(short sq, short side)
 
     if (in_opening_stage)
     {
+#ifndef MINISHOGI
+/* FIXME: calculations below are wrong for minishogi, all done for 9x9
+ * board - and anyway we don't know the stage really :)
+ */
         short WRONG = fv1[OPENWRONG], OPOK = WRONG / 3;
 
         if (GameType[c1] == STATIC_ROOK)
@@ -1672,6 +1696,7 @@ RookValue(short sq, short side)
                 }
             }
         }
+#endif
     }
     else
     {
@@ -1795,6 +1820,10 @@ KingValue(short sq, short side)
     if (fv1[KSFTY] != 0)
         s += KingScan(sq);
 
+#ifndef MINISHOGI
+/* FIXME: calculations below are wrong for minishogi, all done for 9x9
+ * board - and anyway we don't know the stage really :)
+ */
     if (in_opening_stage)
     {
         if ((GameType[c1] != UNKNOWN) && (ccolumn(c1, sq) == 4))
@@ -1810,6 +1839,7 @@ KingValue(short sq, short side)
             s += (ds = -fv1[OPENWRONG] / 2);
         }
     }
+#endif
 
     /* CHECKME: is this correct? */
     if ((ds = fv1[HOPN]))
@@ -2544,6 +2574,7 @@ ExaminePosition(short side)
 
 
 
+/* FIXME: calculations below are wrong for minishogi, all done for 9x9 */
 void
 DetermineStage(short side)
 {
