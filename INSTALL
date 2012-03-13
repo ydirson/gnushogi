@@ -1,0 +1,77 @@
+Installation procedure for GNU Shogi
+====================================
+
+If you've never installed a software package using a configure script before,
+please read (or skim) the file "INSTALL.generic" which gives general
+information on using configure scripts.  This file contains information
+specific to GNU shogi.
+
+The basic procedure:
+-------------------
+
+1. Type 'configure --prefix=<where you want GNU shogi installed>'.  If you
+   don't specify a prefix, it will be set to /usr/local.  There are a few GNU
+   shogi-specific options you can use for this command; see below.
+
+2. Type 'make' to create gnushogi, the binary book file gnushogi.bbk, and
+   xshogi (the graphical interface to gnushogi).
+
+3. Type 'make install' to copy the binary book file to the library
+   destination directory and to copy the gnushogi executable to the
+   binary destination directory.
+
+4. OPTIONAL:
+   Type 'make clean' to remove object files and binaries from destination
+   source directory.
+
+
+Configuration options specific to GNU shogi:
+-------------------------------------------
+
+These only affect xshogi.
+
+  --with-top-part-bitmaps    Use top part of Kanji bitmaps only.
+
+  --with-first-shogi-program=PROGNAME    
+        Use PROGNAME as the first shogi program (default: gnushogi)
+
+  --with-second-shogi-program=PROGNAME    
+        Use PROGNAME as the second shogi program (default: gnushogi)
+
+  --with-first-host=HOSTNAME    
+        Use HOSTNAME as the machine on which the first shogi program 
+        runs (default: localhost)
+
+  --with-second-host=HOSTNAME    
+        Use HOSTNAME as the machine on which the second shogi program 
+        runs (default: localhost)
+
+  --with-xshogi    
+        Compile the xshogi graphical interface to GNU shogi (default: yes)
+
+If you don't want to compile xshogi, do 
+'configure <other options> --without-xshogi'
+
+
+Other options:
+-------------
+
+In the gnushogi directory, the file 'opts.h' includes a number of options that
+can be set to configure the evaluator, to set the debugging level, etc.  These
+options will probably only be of interest to people who are hacking the source
+code, with one exception: if you want to have your games automatically saved
+on exit, #define LIST_ON_EXIT in this file.
+
+
+Platforms GNU shogi is known to compile on:
+------------------------------------------
+
+Red Hat Linux 5.2
+Sun Solaris 2.6
+
+Information about attempted or successful ports to other platforms would be
+appreciated.   If you submit such a report, please specify what you had to do
+to get GNU shogi to compile and run successfully.
+
+-- Mike Vanier (mvanier@bbb.caltech.edu)
+

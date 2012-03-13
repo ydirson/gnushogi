@@ -1,49 +1,51 @@
 Binary book files
 -----------------
 
-In GNU Shogi the book file is a binary file.
-The binary book file is "gnushogi.bbk". 
-It is intended that text book files will only be 
-used to generate the binary file (see remarks about syntax below).
+In GNU Shogi the book file is a binary file.  The binary book file is
+called "gnushogi.bbk".  It is intended that book files in text form
+(hereafter referred to as "text book files") will only be used to generate
+the binary file (see remarks about the text book file syntax below).
 
-The Makefile will generate a "gnushogi.bbk" in the "src" directory
-from the text book file "gnushogi.tbk" in the "misc" directory
-if "make gnushogi.bbk" is entered (the "gnushogir" executable
-must be available in the "src" directory or it is created).
+The Makefile will generate a file called "gnushogi.bbk" in the "src"
+directory from the text book file "gnushogi.tbk" in the "misc" directory if
+"make gnushogi.bbk" is entered (the "gnushogir" executable must be
+available in the "src" directory or it will be created).
 
 "make install" also copies the "gnushogi.bbk" to the installation
 directory for libraries. 
 
+
 Adding new opening lines
 ------------------------
 
-You can add entries to the binary file by providing a text book 
-file "gnushogi.tbk" in the installation directory.
-After starting gnushogi, the new entries will be added. It is 
-recommended to remove the text book file after adding the entries to
-the binary book file (or gnushogi will always check for new entries).
+You can add entries to the binary file by providing a text book file
+"gnushogi.tbk" in the installation directory.  After starting gnushogi, the
+new entries will be added. It is recommended to remove the text book file
+after adding the entries to the binary book file (or gnushogi will always
+check for new entries).
 
 You can also use the "bsave" command while running gnushogi. The current
 moves will be appended to the named file in a text book file style.
 
+
 Syntax of text book files
 -------------------------
 
-Text book files are used to generate the binary book file. You must follow a 
-special text book file syntax while adding an opening line. The book file 
-parser (program that interpretes the text book moves) is abble to accept 
-several common Shogi notations.
-It also allows to include comments.
+Text book files are used to generate the binary book file. You must follow
+a special text book file syntax while adding an opening line. The book file
+parser (program that interpretes the text book moves) is able to accept
+several common Shogi notations.  It also allows the writer to include
+comments.
                                   
-All characters in a line following a '#' character are comments. 
-The moves of an opening line is always between two lines with a '#' as its first
-character. So, you must not use 1st-column-'#'-comments to give comments to an
-opening line. "in-opening" comments are included in brackets ('[' ... ']').
-After each ply, you can add a comment in parantheses ('(' ... ')'). 
-This is normally used in Shogi notations to indicate the amount of time used by 
-the player to enter that move. 
+All characters in a line following a '#' character are comments.  The moves
+of an opening line are always between two lines with a '#' as its first
+character.  Therefore, you must not use 1st-column-'#'-comments to give
+comments to an opening line. "In-opening" comments are included in brackets
+('[' ... ']').  After each ply, you can add a comment in parantheses ('('
+... ')').  This is normally used in Shogi notations to indicate the amount
+of time used by the player to enter that move.
 
-There are several possibilites to describe a move. Examples are
+There are several possibilites for describing a move.  Examples are
 
    7g7f P7f P7g-7f P-7f 
    3c3d +B3cx3d +Bx3d +B3d 
@@ -57,7 +59,7 @@ may be important in order to avoid ambiguities.
 For example
    
    #
-   # Double Fortess
+   # Double Fortress
    P7f P8d
    [ this is an "in-opening" comment ]
    S6h P8e(1)

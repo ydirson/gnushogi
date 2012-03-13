@@ -1,0 +1,43 @@
+This is XShogi version 1.3
+--------------------------
+
+This program provides an XWindows interface to the Japanese Chess (Shogi)
+playing program GNU Shogi.  You have to create "gnushogi" from GNU Shogi
+(version 1.3).  Xshogi has been created by modifying XBoard 2.0 and XBoard 2.1
+by Tim Mann.  Xshogi was originally written by Matthias Mutz
+(mutz@fmi.uni-passau.de) but is now being maintained by me, Mike Vanier
+(mvanier@bbb.caltech.edu).  I would like to thank Matthias for passing the
+maintenance of this program over to me.
+
+For changes since the last version please read the file NEWS.  The most
+significant change is that xshogi has been merged into the gnushogi source
+tree, and it is now very easy to configure and build both programs at the same
+time.  In addition, support for the Internet Shogi Server has been dropped.
+There are now much better ways to play Shogi over the internet (such as
+JavaShogi), and the ISS support seemed to be only partial, so I decided (as
+the new maintainer) to keep things simple and just remove ISS support
+altogether.
+
+For creating xshogi read the file INSTALL in the top-level gnushogi
+directory.  
+
+If you determine bugs, please save the game, and rerun xshogi with the
+-debug True option. Report the bug to me.  By the way, gnushogi (the shogi
+playing program used by xshogi) can produce a record of the game if you
+#define LIST_ON_EXIT in the file `gnushogi/opts.h'.
+
+In order to determine the options, try "xshogi -help".  A man page is also
+included. 
+
+You can give GNU Shogi more searching time by using the -tc option.  For
+example, "xshogi -tc 15" allows GNU Shogi to think 15 minutes for 40 moves.
+
+You can choose a western style piece set by invoking xshogi with -wps True.
+This can also be set in your .Xdefaults file or .Xresources file.  See the
+xshogi man page for more about X resources.
+
+In case of trouble, comments or suggestions for improvements you may contact me.
+Otherwise, enjoy the program :-)
+
+Mike Vanier (mvanier@bbb.caltech.edu)
+

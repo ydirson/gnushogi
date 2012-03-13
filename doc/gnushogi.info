@@ -1,0 +1,55 @@
+This is gnushogi.info, produced by Makeinfo version 3.12h from
+gnushogi.texinfo.
+
+   This file describes how to use GNU shogi, a program which plays
+Shogi (Japanese chess).
+
+   Copyright (C) 1999 Michael C. Vanier and the Free Software
+Foundation, Inc.
+
+   Permission is granted to make and distribute verbatim copies of this
+manual provided the copyright notice and this permission notice are
+preserved on all copies.
+
+   Permission is granted to copy and distribute modified versions of
+this manual under the conditions for verbatim copying, provided that
+the entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+
+   Permission is granted to copy and distribute translations of this
+manual into another language, under the above conditions for modified
+versions, except that this permission notice may be stated in a
+translation approved by the Free Software Foundation.
+
+
+Indirect:
+gnushogi.info-1: 928
+gnushogi.info-2: 49347
+
+Tag Table:
+(Indirect)
+Node: Top928
+Node: Introduction1486
+Node: License2566
+Node: About shogi21727
+Node: The rules of shogi24322
+Node: The moves of the pieces25984
+Node: The opening setup29150
+Node: Promotion of pieces30682
+Node: Drops32525
+Node: Winning the game34777
+Node: Draws35491
+Node: Handicaps37896
+Node: Notes for chess players41323
+Node: Sample game42042
+Node: Mating problems49347
+Node: Shogi variants51596
+Node: Differences between shogi and chess55956
+Node: gnushogi60365
+Node: xshogi71847
+Node: References and links88414
+Node: Acknowledgements91580
+Node: Bugs93108
+Node: Index93592
+
+End Tag Table

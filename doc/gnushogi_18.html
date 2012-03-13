@@ -1,0 +1,543 @@
+<HTML>
+<HEAD>
+<!-- Created by texi2html 1.57 from gnushogi.texinfo on June 29,  1999 -->
+
+<TITLE>GNU Shogi manual - xshogi</TITLE>
+</HEAD>
+<BODY >
+ [<A HREF="gnushogi_toc.html">Contents</A>] &#160; [<A HREF="gnushogi_17.html">Back</A>] &#160; [<A HREF="gnushogi_17.html">Prev</A>] &#160; [<A>Up</A>] &#160; [<A HREF="gnushogi_19.html">Next</A>] &#160; [<A HREF="gnushogi_19.html">Forward</A>] &#160;<BR><HR><BR>
+
+
+<H1><A NAME="SEC21">xshogi</A></H1>
+<P>
+<A NAME="IDX26"></A>
+
+
+<P>
+This section describes how to run the "xshogi" program.
+
+
+<P>
+SYNOPSIS
+
+
+<P>
+xshogi [ options ]
+
+
+<P>
+DESCRIPTION
+
+
+<P>
+xshogi provides an X11/Xt/Athena Widgets user interface for gnushogi.
+With xshogi you can play gnushogi, set up arbitrary positions, force
+variations, or watch xshogi manage a game between two shogi programs.
+Furthermore, it can be used as an interface between two players on
+different displays.
+
+
+<P>
+xshogi can also be used as a shogi board to play out games.  It will
+read through a game file or allow a player to play through a variation
+manually (force mode).  This is useful for keeping track of email postal
+games or browsing games off the net.
+
+
+<P>
+After starting xshogi, you can make moves by pressing mouse button 1
+while the cursor is over a square with your piece on it and dragging the
+mouse to another square.  If the move is illegal, gnushogi will not
+allow it.  xshogi will then retract the move.
+
+
+<P>
+COMMAND-LINE OPTIONS
+
+
+<P>
+The following command line options also correspond to X resources that
+you can set in your .Xdefaults file.
+
+
+<DL COMPACT>
+
+<DT><SAMP>`[standard Xt options]'</SAMP>
+<DD>
+xshogi accepts standard Xt options like -display, -geometry, and
+-iconic.
+
+<DT><SAMP>`-tc or -timeControl minutes[:seconds]'</SAMP>
+<DD>
+Amount of time for a set of moves determined by movesPerSession.  If
+this number of moves is played within the time control period, xshogi
+resets the time clocks.  Default: 5 minutes.
+
+<DT><SAMP>`-mps or -movesPerSession moves'</SAMP>
+<DD>
+Number of moves in a time control period.  Default: 40 moves.
+
+<DT><SAMP>`-st or -searchTime minutes[:seconds]'</SAMP>
+<DD>
+Tell gnushogi to spend at most the given amount of time searching for
+each of its moves.  Without this option, gnushogi chooses its search
+time based on the number of moves and amount of time remaining until the
+next time control.  Setting this option also sets -clockMode to False.
+
+<DT><SAMP>`-sd or -searchDepth number'</SAMP>
+<DD>
+Tell gnushogi to look ahead at most the given number of moves when
+searching for a move to make.  Without this option, gnushogi chooses
+its search depth based on the number of moves and amount of time
+remaining until the next time control.  Setting this option also sets
+-clockMode to False.
+
+<DT><SAMP>`-clock or -clockMode (True | False)'</SAMP>
+<DD>
+Determines whether or not to use the clock.  If clockMode is False, the
+clock does not run, but the side that is to play next is still
+highlighted.
+
+<DT><SAMP>`-td or -timeDelay seconds'</SAMP>
+<DD>
+Time delay between moves during "Load Game".  This doesn't have to be
+a round number.  Try -td 0.4.  Default: 1 second.
+
+<DT><SAMP>`-nsp or -noShogiProgram (True | False)'</SAMP>
+<DD>
+If this option is True, xshogi acts as a passive shogi board; it does
+not try to start a shogi program, not even to check whether moves made
+in Force mode are legal.  It also sets -clockMode to False.  Default:
+False.
+
+<DT><SAMP>`-fsp or -firstShogiProgram program'</SAMP>
+<DD>
+Name of first shogi program.  In matches between two machines, this
+program plays white.  Default: "gnushogi".
+
+<DT><SAMP>`-ssp or -secondShogiProgram program'</SAMP>
+<DD>
+Name of second shogi program, if needed.  In matches between two
+machines, this program plays black; otherwise it is not started.
+Default: "gnushogi".
+
+<DT><SAMP>`-fh or -firstHost host'</SAMP>
+<DD>
+Name of host the first shogi program plays on.  Default: "localhost".
+
+<DT><SAMP>`-sh or -secondHost host'</SAMP>
+<DD>
+Name of host the second shogi program plays on.  Default: "localhost".
+
+<DT><SAMP>`-rsh or -remoteShell shell_name'</SAMP>
+<DD>
+Some systems do not use rsh as the remote shell.  This option allows a
+user to name the remote shell command.  This should be done in the
+resource file.
+
+<DT><SAMP>`-mm or -matchMode (False | Init | Position | Opening)'</SAMP>
+<DD>
+Automatically run a game between firstShogiProgram and
+secondShogiProgram.  If matchMode is set to Init, xshogi will start the
+game with the initial shogi position.  If matchMode is set to Position,
+xshogi will start the game with the position specified by the
+loadPositionFile resource.  If matchMode is set to Opening, xshogi will
+play out the opening moves specified by the -loadGameFile resource.  If
+the -saveGameFile resource is set, a move record for the match will be
+saved in the specified file.  Default: "False".
+
+<DT><SAMP>`-lgf or -loadGameFile file'</SAMP>
+<DD>
+Name of file to read a game record from.  Game files are found in the
+directory named by the SHOGIDIR environment variable.  If this variable
+is not set, the current directory is used unless the file name starts
+with a /.
+
+<DT><SAMP>`-lpf or -loadPositionFile file'</SAMP>
+<DD>
+Name of file to read a game position from.  Position files are found in
+the directory named by the SHOGIDIR environment variable.  If this
+variable is not set, the current directory is used unless the file name
+starts with a /.
+
+<DT><SAMP>`-sgf or -saveGameFile file'</SAMP>
+<DD>
+Name of file to save a game record to.  Game files are saved in the
+directory named by the SHOGIDIR environment variable.  If this variable
+is not set, the current directory is used unless the file name starts
+with a /.
+
+<DT><SAMP>`-spf or -savePositionFile file'</SAMP>
+<DD>
+Name of file to save a game position to.  Position files are saved in
+the directory named by the SHOGIDIR environment variable.  If this
+variable is not set, the current directory is used unless the file name
+starts with a /.
+
+<DT><SAMP>`-coords or -showCoords (True | False)'</SAMP>
+<DD>
+If this option is True, xshogi displays algebraic coordinates along the
+board's left and bottom edges.  The default is False.  The coordFont
+resource specifies what font to use.
+
+<DT><SAMP>`-mono or -monoMode (True | False)'</SAMP>
+<DD>
+Determines whether xshogi displays its pieces and squares with two
+colors or four.  You shouldn't have to specify monochrome.  xshogi will
+determine if this is necessary.
+
+<DT><SAMP>`-wpc or -blackPieceColor color'</SAMP>
+<DD>
+Color specification for black pieces suitable for XParseColor(3X11).
+Default: #FFFFCC.  These colors look good on a DEC workstation.  If you
+need different colors, try using the xcolors application.  Source for
+xcolors can be found in the X11 contrib directory.
+
+<DT><SAMP>`-bpc or -whitePieceColor color'</SAMP>
+<DD>
+Same for white pieces.  Default: #202020.
+
+<DT><SAMP>`-lsc or -lightSquareColor color'</SAMP>
+<DD>
+Same for light squares.  Default: #C8C365.
+
+<DT><SAMP>`-dsc or -darkSquareColor color'</SAMP>
+<DD>
+Same for dark squares.  Default: #77A26D.
+
+<DT><SAMP>`-wps or -westernPieceSet (True | False)'</SAMP>
+<DD>
+Choose the Western style piece set.
+
+<DT><SAMP>`-npb or -normalPawnBitmap file'</SAMP>
+<DD>
+<DT><SAMP>`-nnb or -normalKnightBitmap file'</SAMP>
+<DD>
+<DT><SAMP>`-nbb or -normalBishopBitmap file'</SAMP>
+<DD>
+<DT><SAMP>`-nrb or -normalRookBitmap file'</SAMP>
+<DD>
+<DT><SAMP>`-nkb or -normalKingBitmap file'</SAMP>
+<DD>
+Names of the bitmap files for the bitmap piece icons.
+
+<DT><SAMP>`-rpb or -reversePawnBitmap file'</SAMP>
+<DD>
+<DT><SAMP>`-rnb or -reverseKnightBitmap file'</SAMP>
+<DD>
+<DT><SAMP>`-rbb or -reverseBishopBitmap file'</SAMP>
+<DD>
+<DT><SAMP>`-rrb or -reverseRookBitmap file'</SAMP>
+<DD>
+<DT><SAMP>`-rkb or -reverseKingBitmap file'</SAMP>
+<DD>
+Names of the bitmap files for the outline piece icons.
+
+<DT><SAMP>`-debug or -debugMode (True | False)'</SAMP>
+<DD>
+Turns on debugging printout.
+
+</DL>
+
+<P>
+OTHER X RESOURCES
+
+
+<DL COMPACT>
+
+<DT><SAMP>`initString'</SAMP>
+<DD>
+The actual string that is sent to initialize the shogi program can be
+set from .Xdefaults.  It can't be set from the command line because of
+syntax problems.  The default value is "new\nbeep\nrandom\neasy\n".
+The "new" and "beep" commands are required. You can remove the
+"random" command if you like; including it causes gnushogi to
+randomize its move selection slightly so that it doesn't play the same
+moves in every game.  Even without "random", gnushogi randomizes its
+choice of moves from its opening book.  You can also remove "easy" if
+you like; including it toggles easy mode off, causing gnushogi to think
+on your time.  That is, if "easy" is included in the initString, GNU
+Shogi thinks on your time; if not, it does not.  (Yes, this does seem
+backwards, doesn't it.)  You can also try adding other commands to the
+initString; see the gnushogi documentation (see section <A HREF="gnushogi_17.html#SEC20">gnushogi</A>) for
+details.
+
+<DT><SAMP>`blackString and whiteString'</SAMP>
+<DD>
+These resources control what is sent when the Machine Black and Machine
+White buttons are selected.  This is mostly for compatibility with
+obsolete versions of gnushogi.
+
+Alternate bitmaps for piece icons can be specified either by choosing
+one of the built-in sets or with the file name resources described
+above.  There are three built-in sets of piece bitmaps available, large
+(the default), medium, or small.  It is easiest to select the set you
+prefer in the .Xdefaults file:
+
+     XShogi*boardSize:   Medium
+
+The font used for button labels and comments can be changed in the
+.Xdefaults file.  You may want to choose a smaller font if you are using
+the small pieces:
+
+     XShogi*font:    helvetica_oblique12
+
+The font used for coordinates (when the showCoords option is True) can
+be set similarly:
+
+     XShogi*coordFont:    helvetica_10
+
+If you are using a grayscale monitor, try setting the colors to:
+
+     XShogi*blackPieceColor:     gray100 <BR>
+     XShogi*whitePieceColor:     gray0   <BR>
+     XShogi*lightSquareColor:    gray60  <BR>
+     XShogi*darkSquareColor:     gray40
+
+</DL>
+
+<P>
+COMMAND BUTTONS AND KEYS
+
+
+<DL COMPACT>
+
+<DT><SAMP>`Quit'</SAMP>
+<DD>
+Quits xshogi.  Q or q is a keyboard equivalent.
+
+<DT><SAMP>`Reset'</SAMP>
+<DD>
+Resets xshogi to the beginning of a shogi game.  It also deselects any
+game or position files.
+
+<DT><SAMP>`Flip View'</SAMP>
+<DD>
+inverts the view of the shogi board.
+
+<DT><SAMP>`Hint'</SAMP>
+<DD>
+displays a move hint from gnushogi.
+
+<DT><SAMP>`Load Game'</SAMP>
+<DD>
+plays a game from a record file.  If no file is specified a popup dialog
+asks for a filename.  Game files are found in the directory named by the
+SHOGIDIR environment variable.  If this variable is not declared then
+the current directory is used unless the file name starts with a /.  G
+or g is a keyboard equivalent.  The game file parser will accept almost
+any file that contains moves in algebraic notation.  If the first line
+begins with `#', it is assumed to be a title and is displayed.  Text
+enclosed in parentheses or square brackets is assumed to be commentary
+and is displayed in a pop-up window.  Any other text in the file is
+ignored.
+
+<DT><SAMP>`Load Position'</SAMP>
+<DD>
+sets up a position from a position file.  If no file is specified a
+popup dialog asks for a filename.  Position files are found in the
+directory named by the SHOGIDIR environment variable.  If this variable
+is not declared then the current directory is used unless the file name
+starts with a /.  Position files must be in the format that the Save
+Position command writes.
+
+<DT><SAMP>`Save Game'</SAMP>
+<DD>
+saves a game to a record file.  If no file is specified a popup dialog
+asks for a filename.  If the filename exists, the user is asked whether
+the current game record is be appended to this file or if the file
+should be replaced.  Game files are saved in the directory named by the
+SHOGIDIR environment variable.  If this variable is not declared then
+the current directory is used unless the file name starts with a /.
+Game files are human-readable, and can also be read back by the Load
+Game command. Furthermore, they are accepted as gnushogi text bookfiles.
+
+<DT><SAMP>`Save Position'</SAMP>
+<DD>
+saves a position to a position file.  If no file is specified a popup
+dialog asks for a filename.  Position files are saved in the directory
+named by the SHOGIDIR environment variable.  If this variable is not
+declared then the current directory is used unless the file name starts
+with a /.  Position files are human-readable, and can also be read back
+by the Load Position command.
+
+<DT><SAMP>`Machine White'</SAMP>
+<DD>
+forces gnushogi to play white.
+
+<DT><SAMP>`Machine Black'</SAMP>
+<DD>
+forces gnushogi to play black.
+
+<DT><SAMP>`Force Moves'</SAMP>
+<DD>
+forces a series of moves.  That is, gnushogi stops playing and xshogi
+allows you to make moves for both white and black.
+
+<DT><SAMP>`Two Machines'</SAMP>
+<DD>
+plays a game between two computer programs.
+
+<DT><SAMP>`Forward'</SAMP>
+<DD>
+moves forward through a series of remembered moves.  F or f is a
+keyboard equivalent.
+
+<DT><SAMP>`Backward'</SAMP>
+<DD>
+moves backward through a series of remembered moves.  As a side effect,
+puts xshogi into Force Moves mode.  B or b is a keyboard equivalent.
+
+<DT><SAMP>`Pause'</SAMP>
+<DD>
+pauses the clocks or (in Load Game mode) pauses the game being loaded.
+Press Pause again to continue.  P or p is a keyboard equivalent.
+
+<DT><SAMP>`Edit Position'</SAMP>
+<DD>
+lets you set up an arbitrary board position.  Use mouse button 1 to drag
+pieces to new squares, or to delete a piece by dragging it off the board
+or dragging an empty square on top of it.  To drop a new piece on a
+square, press mouse button 2 or 3 over the square.  This brings up a
+menu of black pieces (button 2) or white pieces (button 3).  Additional
+menu choices let you empty the square or clear the board.  You can set
+the side to play next by clicking on the Black or White indicator at the
+top of the screen.
+
+<DT><SAMP>`Challenge'</SAMP>
+<DD>
+allows to make a two display game between two human players.  Enter the
+display you want to connect to.  If you are allowed to connect, a new
+board is displayed at the remote display.  Challenge mode can only be
+stopped by pressing "quit".
+
+<DT><SAMP>`Select Level'</SAMP>
+<DD>
+allows to reset the clocks for both players.  Enter the number of moves
+and the number of minutes in which the moves should be done.
+
+<DT><SAMP>`Move NOW'</SAMP>
+<DD>
+force computer to stop thinking and to make the current best move.
+
+<DT><SAMP>`Iconify I, i, C or c'</SAMP>
+<DD>
+iconifies xshogi.
+
+</DL>
+
+<P>
+LIMITATIONS
+
+
+<P>
+If you press the  Pause  button  during  GNU  Shogi's  turn,
+xshogi will stop the clocks, but gnushogi will still make a
+move.
+
+
+<P>
+After a mate or draw when playing against gnushogi, if  you
+back  up  with  the  Backward  button,  the clocks are reset
+(because gnushogi has exited and must be restarted).
+
+
+<P>
+The game parser recognizes only algebraic notation.
+
+
+<P>
+AUTHORS
+
+
+<P>
+Original authors of XBoard:  Chris Sears and Dan Sears.
+
+
+<P>
+Enhancements for XBoard (Version 2.0):  Tim Mann.
+
+
+<P>
+Conversion to XShogi (Version 1.1):  Matthias Mutz.
+
+
+<P>
+Current maintainer: Mike Vanier.
+
+
+<P>
+COPYRIGHT INFORMATION
+
+
+<P>
+XShogi borrows its piece bitmaps from CRANES Shogi.
+
+
+<P>
+Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts.
+Enhancements Copyright 1992 Free Software Foundation, Inc.  Enhancements
+Copyright 1993 Matthias Mutz.  Further enhancements copyright 1999 by
+Michael Vanier and the Free Software Foundation, Inc.
+
+
+<P>
+The following terms apply to Digital Equipment Corporation's copyright
+interest in XBoard:
+
+
+<P>
+All Rights Reserved
+
+
+<P>
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation, and that the name of Digital not be used in
+advertising or publicity pertaining to distribution of the software
+without specific, written prior permission.
+
+
+<P>
+DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
+DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
+ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+SOFTWARE.
+
+
+<P>
+The following terms apply to the enhanced version of XShogi distributed
+by the Free Software Foundation:
+
+
+<P>
+This file is part of XSHOGI.
+
+
+<P>
+XSHOGI is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY.  No author or distributor accepts responsibility to anyone
+for the consequences of using it or for whether it serves any particular
+purpose or works at all, unless he says so in writing.  Refer to the
+XSHOGI General Public License for full details.
+
+
+<P>
+Everyone is granted permission to copy, modify and redistribute XSHOGI,
+but only under the conditions described in the XSHOGI General Public
+License. A copy of this license is supposed to have been given to you
+along with XSHOGI so you can know your rights and responsibilities.  It
+should be in a file named COPYING.  Among other things, the copyright
+notice and this notice must be preserved on all copies.
+
+
+<P></P><HR>
+ [<A HREF="gnushogi_toc.html">Contents</A>] &#160; [<A HREF="gnushogi_17.html">Back</A>] &#160; [<A HREF="gnushogi_17.html">Prev</A>] &#160; [<A>Up</A>] &#160; [<A HREF="gnushogi_19.html">Next</A>] &#160; [<A HREF="gnushogi_19.html">Forward</A>] &#160;
+
+</BODY>
+</HTML>

@@ -1,0 +1,15 @@
+NOTE: this file may be seriously outdated.  I haven't had time to go over
+it yet.  Let me know if there are problems.
+
+-- Mike (mvanier@bbb.caltech.edu)
+
+If you want to use a remote host, you have to modify "xshogi.h".
+The program "gnushogi" must be known. In case of trouble, create a
+symbolic link to the gnushogi distribution , e.g. :
+
+    ln -s $(HOME)/gnushogi-1.3/src/gnushogi gnushogi1
+
+for the first gnushogi program.  If you would like to let
+two versions play against each other, establish a similar link
+for gnushogi2.
+

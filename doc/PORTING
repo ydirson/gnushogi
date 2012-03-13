@@ -1,15 +1,23 @@
+Porting GNU shogi
+-----------------
 
-This is a note how to port gnushogi to machines with scarce memory:
-gnushogi minimal requirements are:
- - approximately 200 kByte memory for the executable program.
- - at least 300 kByte for data structures.
-You dont want to port gnushogi to a machine with less memory than that.
+NOTE: this file may be seriously outdated.  I haven't had time to go over
+it yet.  Let me know if there are problems.
 
-gnushogi is optmized for speed and that means that memory has been used
+-- Mike (mvanier@bbb.caltech.edu)
+
+
+This describes how to port GNU shogi to machines with scarce memory.
+GNU shogi's minimal requirements are:
+ - approximately 200 kBytes memory for the executable program.
+ - at least 300 kBytes for data structures.
+You don't want to port GNU shogi to a machine with less memory than that.
+
+GNU shogi is optimized for speed and that means that memory has been used
 when there has been a tradeoff between memory usage and speed. If you intend
-to run gnushogi on a machine with less than 4 Mbyte memory the size of some
+to run GNU shogi on a machine with less than 4 Mbyte memory the size of some
 data structures have to be reduced. Here is a list of the largest data
-structures in gnushogi, their sizes and a small comment on what can
+structures in GNU shogi, their sizes and a small comment on what can
 be done to reduce their size:
 
 ttable:		1.5	MByte	(#define vttblsz <something small>)
@@ -31,8 +39,8 @@ You can remove the static evaluation cache by omitting the compiler
 option CACHE.
 You can remove the history table by omitting the compiler option HISTORY
 (NOT recommended).
-If this isn`nt enough, reconsider if you really want to do this port.
-There is`nt really that much to gain by changing the other
+If this isn't enough, reconsider if you really want to do this port.
+There isn't really that much to gain by changing the other
 data structures. 
 
 There are some switches in order to enable space reduction:

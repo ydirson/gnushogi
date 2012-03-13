@@ -1,0 +1,198 @@
+# ------------------------------------------------------------
+# GNU shogi and xshogi configuration script.
+# ------------------------------------------------------------
+
+dnl Process this file with autoconf to produce a configure script.
+
+AC_INIT(gnushogi/gnushogi.h)
+AC_CONFIG_HEADER(config.h)
+
+
+#
+# Check for C compiler.
+#
+
+echo
+AC_MSG_CHECKING(for C compiler)
+echo
+
+AC_PROG_CC
+
+
+#
+# Check for parser generators.
+#
+
+echo
+AC_MSG_CHECKING([for yacc/bison, lex/flex, and install])
+echo
+
+AC_PROG_YACC
+AC_PROG_LEX
+AC_PROG_INSTALL
+
+
+#
+# Check for X windows.
+#
+
+echo
+AC_PATH_XTRA
+
+
+#
+# Check for other libraries.
+#
+
+AC_CHECK_LIB(curses, clrtoeol)
+AC_CHECK_LIB(m, pow)
+dnl Replace `main' with a function in -ltermcap:
+AC_CHECK_LIB(termcap, tgoto)
+
+
+#
+# C compiler warnings.
+#
+
+if [[ $ac_cv_prog_gcc = yes ]]
+then
+WARNINGS="-Wall -Wno-implicit-int"
+CEXTRAFLAGS="-fsigned-char -funroll-loops \$(HASH)"
+else
+# Who knows what warnings your compiler uses?
+WARNINGS=
+CEXTRAFLAGS="\$(HASH)"
+fi
+
+AC_SUBST(WARNINGS)
+AC_SUBST(CEXTRAFLAGS)
+
+
+#
+# Check for header files.
+#
+
+echo
+AC_MSG_CHECKING(for header files)
+echo
+
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS(fcntl.h sys/file.h sys/ioctl.h sys/time.h unistd.h)
+AC_CHECK_HEADERS(time.h sys/time.h sys/filio.h)
+AC_HEADER_TIME
+
+
+#
+# Check for typedefs, structures, and compiler characteristics.
+#
+
+echo 
+AC_MSG_CHECKING(for typedefs)
+echo
+
+AC_C_CONST
+AC_TYPE_SIZE_T
+AC_HEADER_TIME
+AC_STRUCT_TM
+
+echo 
+AC_MSG_CHECKING(for compiler characteristics)
+echo
+
+AC_CHECK_SIZEOF(long)
+
+
+#
+# Check for library functions.
+#
+
+echo
+AC_MSG_CHECKING(for library functions)
+echo
+
+AC_FUNC_SETVBUF_REVERSED
+AC_TYPE_SIGNAL
+AC_CHECK_FUNCS(gethostname gettimeofday strstr strtol)
+AC_CHECK_FUNCS(memcpy bcopy)
+AC_CHECK_FUNCS(setlinebuf setvbuf)
+
+
+#
+# Set various user-definable options.
+#
+# Valid OPT settings:
+# --with-top-part-bitmaps
+#
+# Other settings:
+# --with-first-shogi-program=PROGNAME
+# --with-second-shogi-program=PROGNAME
+# --with-first-host=HOSTNAME
+# --with-second-host=HOSTNAME
+#
+
+OPT=
+FIRST_SHOGI_PROGRAM=gnushogi
+SECOND_SHOGI_PROGRAM=gnushogi
+FIRST_HOST=localhost
+SECOND_HOST=localhost
+
+AC_ARG_WITH(top-part-bitmaps,
+[  --with-top-part-bitmaps    Use top part of Kanji bitmaps only.],
+OPT=-DTOP_PART_BITMAPS)
+
+AC_ARG_WITH(first-shogi-program,
+[  --with-first-shogi-program=PROGNAME    
+        Use PROGNAME as the first shogi program (default: gnushogi)],
+FIRST_SHOGI_PROGRAM=$withval)
+
+AC_ARG_WITH(second-shogi-program,
+[  --with-second-shogi-program=PROGNAME    
+        Use PROGNAME as the second shogi program (default: gnushogi)],
+SECOND_SHOGI_PROGRAM=$withval)
+
+AC_ARG_WITH(first-host,
+[  --with-first-host=HOSTNAME    
+        Use HOSTNAME as the machine on which the first shogi program 
+        runs (default: localhost)],
+FIRST_HOST=$withval)
+
+AC_ARG_WITH(second-host,
+[  --with-second-host=HOSTNAME    
+        Use HOSTNAME as the machine on which the second shogi program 
+        runs (default: localhost)],
+SECOND_HOST=$withval)
+
+AC_ARG_WITH(xshogi,
+[  --with-xshogi    
+        Compile the xshogi graphical interface to GNU shogi (default: yes)],
+with_xshogi=$withval,
+with_xshogi=yes)
+
+AC_SUBST(OPT)
+AC_SUBST(FIRST_SHOGI_PROGRAM)
+AC_SUBST(SECOND_SHOGI_PROGRAM)
+AC_SUBST(FIRST_HOST)
+AC_SUBST(SECOND_HOST)
+
+if [[ $with_xshogi = yes ]]
+then
+XSHOGI=xshogi_compile
+XSHOGIINSTALL=xshogi_install
+XSHOGICLEAN=xshogi_clean
+else
+XSHOGI=
+XSHOGIINSTALL=
+XSHOGICLEAN=
+fi
+
+AC_SUBST(XSHOGI)
+AC_SUBST(XSHOGIINSTALL)
+AC_SUBST(XSHOGICLEAN)
+
+
+echo
+echo outputting files...
+
+AC_OUTPUT(Makefile gnushogi/Makefile xshogi/Makefile)
+

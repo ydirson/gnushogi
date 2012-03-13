@@ -1,0 +1,15 @@
+F BITMAPS.H;1                       	bitmaps.h
+F BUGS.;1                           	BUGS
+D EASTERN_                          	eastern_bitmaps
+F MAKEFILE.IN;1                     	Makefile.in
+F NEWS.;1                           	NEWS
+F PARSER.Y;1                        	parser.y
+F README.;1                         	README
+F README.XBO;1                      	README.xboard
+F REMOTEHO.;1                       	REMOTEHOSTS
+F SCANNER.L;1                       	scanner.l
+F SYSDEPS.H;1                       	sysdeps.h
+D WESTERN_                          	western_bitmaps
+F XSHOGI.C;1                        	xshogi.c
+F XSHOGI.H;1                        	xshogi.h
+F XSHOGIFN.H;1                      	xshogifn.h

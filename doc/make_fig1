@@ -1,0 +1,55 @@
+#! /usr/bin/env python
+
+import sys, re
+
+key = "The opening setup for shogi is as follows:"
+
+replace = """
+The opening setup for shogi is as follows:
+<P>
+<PRE>
+   9    8    7    6    5    4    3    2    1
++--------------------------------------------+     
+| wL | wN | wS | wG | wK | wG | wS | wN | wL |  a     
++--------------------------------------------+       
+|    | wR |    |    |    |    |    | wB |    |  b     
++--------------------------------------------+       
+| wP | wP | wP | wP | wP | wP | wP | wP | wP |  c   
++--------------------------------------------+     
+|    |    |    |    |    |    |    |    |    |  d   
++--------------------------------------------+     
+|    |    |    |    |    |    |    |    |    |  e   
++--------------------------------------------+     
+|    |    |    |    |    |    |    |    |    |  f   
++--------------------------------------------+     
+| bP | bP | bP | bP | bP | bP | bP | bP | bP |  g   
++--------------------------------------------+       
+|    | bB |    |    |    |    |    | bR |    |  h   
++--------------------------------------------+       
+| bL | bN | bS | bG | bK | bG | bS | bN | bL |  i    
++--------------------------------------------+
+</PRE>
+"""
+
+#
+# Insert the first figure directly into the html file.
+#
+
+done = 0
+
+while 1:
+    line = sys.stdin.readline()
+    if not line:
+        break
+    
+    if not done:
+        match = re.match(key, line)
+        if match:
+            print replace,
+            done = 1
+        else:
+            print line,
+    else:
+        print line,
+
+
