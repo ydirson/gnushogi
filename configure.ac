@@ -178,9 +178,9 @@ SECOND_HOST=$withval)
 
 AC_ARG_WITH(xshogi,
 [  --with-xshogi    
-        Compile the xshogi graphical interface to GNU shogi (default: yes)],
+        Compile the xshogi graphical interface to GNU shogi (default: no)],
 with_xshogi=$withval,
-with_xshogi=yes)
+with_xshogi=no)
 
 AC_SUBST(OPT)
 AC_SUBST(FIRST_SHOGI_PROGRAM)
