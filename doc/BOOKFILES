@@ -1,0 +1,93 @@
+Binary book files
+-----------------
+
+In GNU Shogi the book file is a binary file.
+The binary book file is "gnushogi.bbk". 
+It is intended that text book files will only be 
+used to generate the binary file (see remarks about syntax below).
+
+The Makefile will generate a "gnushogi.bbk" in the "src" directory
+from the text book file "gnushogi.tbk" in the "misc" directory
+if "make gnushogi.bbk" is entered (the "gnushogir" executable
+must be available in the "src" directory or it is created).
+
+"make install" also copies the "gnushogi.bbk" to the installation
+directory for libraries. 
+
+Adding new opening lines
+------------------------
+
+You can add entries to the binary file by providing a text book 
+file "gnushogi.tbk" in the installation directory.
+After starting gnushogi, the new entries will be added. It is 
+recommended to remove the text book file after adding the entries to
+the binary book file (or gnushogi will always check for new entries).
+
+You can also use the "bsave" command while running gnushogi. The current
+moves will be appended to the named file in a text book file style.
+
+Syntax of text book files
+-------------------------
+
+Text book files are used to generate the binary book file. You must follow a 
+special text book file syntax while adding an opening line. The book file 
+parser (program that interpretes the text book moves) is abble to accept 
+several common Shogi notations.
+It also allows to include comments.
+                                  
+All characters in a line following a '#' character are comments. 
+The moves of an opening line is always between two lines with a '#' as its first
+character. So, you must not use 1st-column-'#'-comments to give comments to an
+opening line. "in-opening" comments are included in brackets ('[' ... ']').
+After each ply, you can add a comment in parantheses ('(' ... ')'). 
+This is normally used in Shogi notations to indicate the amount of time used by 
+the player to enter that move. 
+
+There are several possibilites to describe a move. Examples are
+
+   7g7f P7f P7g-7f P-7f 
+   3c3d +B3cx3d +Bx3d +B3d 
+   2d2c+ P2c+ P2dx2c+ Px2c+
+
+When you use a character to indicate the piece type, you have to observe
+whether the piece is promoted or not, i.e for a promoted piece you have to
+indicate this using a '+'. In Shogi notations, the '+' for promoted pieces
+may be important in order to avoid ambiguities.
+ 
+For example
+   
+   #
+   # Double Fortess
+   P7f P8d
+   [ this is an "in-opening" comment ]
+   S6h P8e(1)
+   # this is an "off-opening" comment
+
+defines an opening line with two moves (four plys). The first comment line 
+above an opening line serves as the name of the opening line. This name is 
+used in case of errors in the opening line.  
+
+You can use move numbers given as a decimal number followed by a '.'.
+
+You can indicate good and bad moves using the character combinations 
+  ? ?? ?! ! !! !? !?/?! ?!/!?
+They have the same meaning as in chess. The characters must directly follow 
+a move, i.e. there must be no spaces between the move and the bad/good 
+indicator.
+  P5e-5d? is correct, while P5e-5d ? is incorrect.
+The indicators can be seen as a comment with one exception: if the first 
+character of the indicator is a '?', the move is marked as BAD_MOVE by the 
+program and it is not used by the computer if the computer has the option 
+to make this move.
+
+You can add some words which indicate the end of a game. These words are
+  Resigns Sennichite Jishogi 1-0 0-1
+"Sennichite" means "draw by repitition and "Jishogi" means "impasse".
+
+Request
+-------
+
+If you add new opening lines, please make them available to the
+GNU Shogi community. Thank you.
+
+

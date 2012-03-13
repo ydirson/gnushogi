@@ -1,0 +1,27 @@
+Installation procedure for GNU Shogi
+------------------------------------
+
+1. edit src/Makefile. For setting the paths, normally only
+   HOME or LIBDIR and BINDIR need to be changed. Setting CC
+   and CFLAGS sets C compiler and compiler options.
+
+2. type 'make gnushogir' to create plain dumb-terminal shogi.
+
+3. type 'make gnushogi.bbk' to create the binary book file.
+
+4. OPTIONAL:
+   type 'make gnushogi' to create cursed based shogi            
+
+5. OPTIONAL:
+   type 'make gnushogix' to create xshogi based shogi. You may
+   use GNU XShogi as an X Windows based graphical interface to
+   GNU Shogi. GNU XShogi also supports the Internet Shogi 
+   Server (ISS).
+
+6. type 'make install' to copy the binary book file to the libraries
+   destination directory and to copy the gnushogi* executables to
+   the binaries destination directory.
+
+7. OPTIONAL:
+   type 'make clean' to remove objects from destination source
+   directory.
