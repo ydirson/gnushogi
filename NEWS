@@ -3,6 +3,12 @@ GNU shogi news
 
 This file starts with GNU Shogi 1.3 (07/01/1999).
 
+Changes in version 1.4.0 (03/2012):
+
+* Main change is the license switch to GPL3.
+* Project is now being maintained on a git repository.
+* Bug fixes.
+
 Changes in version 1.3.2 (07/2004):
 
 * configure.in has been renamed to configure.ac

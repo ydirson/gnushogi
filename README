@@ -1,15 +1,15 @@
-GNU Shogi, release 1.3.1
+GNU Shogi, release 1.4.0
 ------------------------
 
-This is release 1.3.1 of GNU shogi, a program which plays shogi (Japanese
+This is release 1.4.0 of GNU shogi, a program which plays shogi (Japanese
 chess), as well as xshogi, the graphical interface to GNU shogi.  GNU shogi
 and xshogi were originally written by Matthias Mutz (mutz@fmi.uni-passau.de),
-but are now maintained by me, Mike Vanier (mvanier@bbb.caltech.edu).  GNU
-shogi was in turn based on GNU Chess 4.0, i.e. the first version of GNU Shogi
-was obtained by "simply" modifying the chess-specific parts of GNU Chess 4.0.
+have been maintained by Mike Vanier (mvanier@bbb.caltech.edu) and are now maintained
+by Luis Felipe Strano Moraes (luis.strano@gmail.com). GNU shogi was in turn based on 
+GNU Chess 4.0, i.e. the first version of GNU Shogi was obtained by "simply" modifying
+the chess-specific parts of GNU Chess 4.0.
 We would like to thank the authors of GNU Chess 4.0 for making the sources of
-that program available.  I would also like to thank Matthias for allowing me
-to take over the maintenance of this project.
+that program available.
 
 See the file NEWS for the new features of this release.
 
@@ -19,5 +19,5 @@ on shogi please look at the files in the doc directory or read the info file.
 Please email bugs, comments, suggestions, and wish lists regarding GNU shogi
 to me.  And enjoy the program :-)
 
-Mike Vanier (mvanier@bbb.caltech.edu)
+Luis Felipe Strano Moraes (luis.strano@gmail.com)
 

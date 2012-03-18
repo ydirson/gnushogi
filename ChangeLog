@@ -1,5 +1,10 @@
 ChangeLog will start with GNU Shogi 1.0 patchlevel 11 (04/07/1993)
 
+version 1.4.0
+    03/2012
+        License change to GPL3.
+
+
 version 1.3.2
     07/2004
         Numerous little fixes to keep the program working on modern
