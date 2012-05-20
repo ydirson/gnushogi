@@ -5,6 +5,11 @@
 @settitle GNU Shogi manual
 @c % **  End of header.
 
+@dircategory Games
+@direntry
+* gnushogi: (gnushogi).		 Japanese chess
+@end direntry
+
 @setchapternewpage odd
 
 @c ==================================
