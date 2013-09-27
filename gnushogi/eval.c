@@ -1354,6 +1354,12 @@ PawnValue(short sq, short side)
 
     if (in_opening_stage)
     {
+#ifndef MINISHOGI
+/* FIXME: [HGM] The 3rd-rank Pawn section is meaningless in mini-Shogi,
+ * (which does not have opposing Pawns), and can do out-of-bound access,
+ * as the promotion zone is only 1 rank, so Pawns can be closer than 3 ranks
+ * to the board edge.
+ */
         if (crow(c1, sq) == 2) /* pawn on 3d rank */
         {
             if (board[(c1 == black) ?
@@ -1383,7 +1389,6 @@ PawnValue(short sq, short side)
             }
         }
 
-#ifndef MINISHOGI
 /* FIXME: calculations below are wrong for minishogi, all done for 9x9
  * board - and anyway we don't know the stage really :)
  */
