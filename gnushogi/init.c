@@ -69,7 +69,9 @@ unsigned int ttbllimit;
 /* .... MOVE GENERATION VARIABLES AND INITIALIZATIONS .... */
 
 
+#ifndef WIN32
 #define max(a, b) (((a) < (b))?(b):(a))
+#endif
 #define odd(a) ((a) & 1)
 
 

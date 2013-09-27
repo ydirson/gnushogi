@@ -81,7 +81,6 @@ extern short nolist;          /* Don't list game after exit.           */
 #define small_ushort unsigned char
 
 
-typedef small_short    BYTE;
 typedef small_ushort   UBYTE;
 typedef short          SHORT;
 typedef unsigned short USHORT;
@@ -130,9 +129,13 @@ typedef unsigned long  ULONG;
 
 #include <sys/param.h>
 #include <sys/types.h>
-#include <sys/times.h>
-#include <sys/ioctl.h>
-
+#ifdef WIN32
+#  include <windows.h>
+#else
+   typedef small_short    BYTE;
+#  include <sys/times.h>
+#  include <sys/ioctl.h>
+#endif
 
 #if TIME_WITH_SYS_TIME
 #  include <sys/time.h>

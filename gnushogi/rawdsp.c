@@ -35,8 +35,10 @@
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/file.h>
+#ifndef WIN32
 #include <poll.h>
 #include <unistd.h>
+#endif
 
 #include "gnushogi.h"
 #include "rawdsp.h"
@@ -217,6 +219,10 @@ Raw_Initialize(void)
 
     if (XSHOGI)
     {
+#ifdef WIN32
+        /* needed because of inconsistency between MSVC run-time system and gcc includes */
+        setbuf(stdout, NULL);
+#else
 #ifdef HAVE_SETLINEBUF
         setlinebuf(stdout);
 #else
@@ -225,6 +231,7 @@ Raw_Initialize(void)
 #  else
 #    error "Need setlinebuf() or setvbuf() to compile gnushogi!"
 #  endif
+#endif
 #endif
         printf("GNU Shogi %s\n", PACKAGE_VERSION);
     }
@@ -944,6 +951,11 @@ Raw_ShowPostnValues(void)
 void
 Raw_PollForInput(void)
 {
+#ifdef WIN32
+    DWORD cnt;
+    if (!PeekNamedPipe(GetStdHandle(STD_INPUT_HANDLE), NULL, 0, NULL, &cnt, NULL))
+        cnt = 1;
+#else
     static struct pollfd pollfds[1] = { /* [0] = */ { /* .fd = */ STDIN_FILENO,
                                                       /* .events = */ POLLIN } };
     int cnt = poll(pollfds, sizeof(pollfds)/sizeof(pollfds[0]), 0);
@@ -951,6 +963,7 @@ Raw_PollForInput(void)
         perror("polling standard input");
         ExitShogi();
     }
+#endif
     if (cnt) { /* if anything to read, or error occured */
         if (!flag.timeout)
             flag.back = true; /* previous: flag.timeout = true; */
