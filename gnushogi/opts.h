@@ -66,8 +66,8 @@
  * Don't print post information in background (easy mode OFF)
  */
 
-#define QUIETBACKGROUND
-/* #undef  QUIETBACKGROUND */
+/* #define QUIETBACKGROUND */
+#undef  QUIETBACKGROUND
 
 
 /*
