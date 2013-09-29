@@ -150,37 +150,37 @@ SECOND_SHOGI_PROGRAM=gnushogi
 FIRST_HOST=localhost
 SECOND_HOST=localhost
 
+AC_ARG_WITH(xshogi,
+[  --with-xshogi
+        Compile the xshogi graphical interface to GNU shogi (default: no)],
+with_xshogi=$withval,
+with_xshogi=no)
+
 AC_ARG_WITH(top-part-bitmaps,
-[  --with-top-part-bitmaps    Use top part of Kanji bitmaps only.],
+[  --with-top-part-bitmaps    Use top part of Kanji bitmaps only in xshogi.],
 OPT=-DTOP_PART_BITMAPS)
 
 AC_ARG_WITH(first-shogi-program,
 [  --with-first-shogi-program=PROGNAME    
-        Use PROGNAME as the first shogi program (default: gnushogi)],
+        Use PROGNAME as the first shogi program in xshogi (default: gnushogi)],
 FIRST_SHOGI_PROGRAM=$withval)
 
 AC_ARG_WITH(second-shogi-program,
 [  --with-second-shogi-program=PROGNAME    
-        Use PROGNAME as the second shogi program (default: gnushogi)],
+        Use PROGNAME as the second shogi program in xshogi(default: gnushogi)],
 SECOND_SHOGI_PROGRAM=$withval)
 
 AC_ARG_WITH(first-host,
 [  --with-first-host=HOSTNAME    
         Use HOSTNAME as the machine on which the first shogi program 
-        runs (default: localhost)],
+        runs in xshogi (default: localhost)],
 FIRST_HOST=$withval)
 
 AC_ARG_WITH(second-host,
 [  --with-second-host=HOSTNAME    
         Use HOSTNAME as the machine on which the second shogi program 
-        runs (default: localhost)],
+        runs in xshogi (default: localhost)],
 SECOND_HOST=$withval)
-
-AC_ARG_WITH(xshogi,
-[  --with-xshogi    
-        Compile the xshogi graphical interface to GNU shogi (default: no)],
-with_xshogi=$withval,
-with_xshogi=no)
 
 AC_SUBST(OPT)
 AC_SUBST(FIRST_SHOGI_PROGRAM)
