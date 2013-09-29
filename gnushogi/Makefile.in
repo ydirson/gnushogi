@@ -71,7 +71,7 @@ CC          = @CC@
 CWARNINGS   = @WARNINGS@
 CEXTRAFLAGS = @CEXTRAFLAGS@
 CFLAGS      = @CFLAGS@ $(CEXTRAFLAGS) $(CWARNINGS) -I$(ROOT) -I@top_builddir@
-
+LDFLAGS     = @LDFLAGS@
 
 # The hashfile is a record of positions seen. It is used by
 # GNU Shogi to avoid making the same mistakes, a form of learning.
@@ -136,13 +136,13 @@ PAT2INCFILES    = $(COMMONFILES) makepattern.o pat2inc.o
 #
 
 gnushogi:
-	$(CC) $(CFLAGS) -o gnushogi $(GNUSHOGI_FILES) $(LCURSES) $(LIBS)
+	$(CC) $(CFLAGS) -o gnushogi $(GNUSHOGI_FILES) $(LDFLAGS) $(LCURSES) $(LIBS)
 
 pat2inc:
-	$(CC) $(CFLAGS) -o pat2inc $(PAT2INCFILES) $(LCURSES) $(LIBS)
+	$(CC) $(CFLAGS) -o pat2inc $(PAT2INCFILES) $(LDFLAGS) $(LCURSES) $(LIBS)
 
 sizetest:
-	$(CC) $(CFLAGS) -o sizetest sizetest.o $(LIBS)
+	$(CC) $(CFLAGS) -o sizetest sizetest.o $(LDFLAGS) $(LIBS)
 
 profile:
 	$(MAKE) -f Makefile.profile gnushogi

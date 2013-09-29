@@ -67,7 +67,7 @@ CEXTRAFLAGS = @CEXTRAFLAGS@
 CFLAGS      = @CFLAGS@ $(CEXTRAFLAGS) $(XINCLUDES) -I$(ROOT) -I@top_builddir@
 LIBS        =
 XLIBS       = @X_LIBS@ -lXaw -lXmu -lXt -lXext -lX11
-LDFLAGS     = $(XLIBS) $(LIBS)
+LDFLAGS     = @LDFLAGS@ $(XLIBS) $(LIBS)
 
 
 OPT                   = @OPT@
