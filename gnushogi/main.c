@@ -95,12 +95,13 @@ main (int argc, char **argv)
             break;
 #endif
 
+#ifdef HAVE_LIBCURSES
         case 'C':
             /* Curses interface. */
             display_type = DISPLAY_CURSES;
 
             break;
-
+#endif
 
         case 'h':
             /* Need the "+" syntax here... */

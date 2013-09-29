@@ -41,12 +41,31 @@ AC_PROG_INSTALL
 echo
 AC_PATH_XTRA
 
+#
+# Check for ncurses.
+#
+
+AC_ARG_WITH([curses],
+  [AS_HELP_STRING([--with-curses],
+    [enable curses UI])],
+  [],
+  [with_curses=check])
+
+LIBCURSES=
+AS_IF([test "x$with_curses" != xno],
+  [AC_CHECK_LIB([curses], [clrtoeol],
+    [AC_SUBST([LIBCURSES], ["-lcurses"])
+     AC_DEFINE([HAVE_LIBCURSES], [1],
+               [Define if you have lib])
+    ],
+    [AC_MSG_FAILURE(
+       [--with-curses was given, but test for curses failed])],
+    [-ltermcap])])
 
 #
 # Check for other libraries.
 #
 
-AC_CHECK_LIB(curses, clrtoeol)
 AC_CHECK_LIB(m, pow)
 dnl Replace `main' with a function in -ltermcap:
 AC_CHECK_LIB(termcap, tgoto)

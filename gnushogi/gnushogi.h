@@ -47,7 +47,13 @@
  * Display options.
  */
 
-typedef enum { DISPLAY_RAW, DISPLAY_CURSES, DISPLAY_X } display_t;
+typedef enum {
+  DISPLAY_RAW,
+#ifdef HAVE_LIBCURSES
+  DISPLAY_CURSES,
+#endif
+  DISPLAY_X
+} display_t;
 extern display_t display_type;
 
 #define XSHOGI     (display_type == DISPLAY_X)

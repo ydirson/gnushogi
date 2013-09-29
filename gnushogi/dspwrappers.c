@@ -42,10 +42,15 @@
   case DISPLAY_X:               \
     func args;                  \
     break
+
+#ifdef HAVE_LIBCURSES
 #define CASE_DSP_CURSES(func,args) \
   case DISPLAY_CURSES:             \
     func args;                     \
     break;
+#else
+#define CASE_DSP_CURSES(func,args)
+#endif
 
 #define DISPLAY_FUNC(func,argsdecl,args)        \
   void func argsdecl                            \
