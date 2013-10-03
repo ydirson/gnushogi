@@ -4,10 +4,13 @@
  *     System-dependent functions for GNU Shogi.
  *
  * ----------------------------------------------------------------------
- *
- * Copyright (c) 2012 Free Software Foundation
+ * Copyright (c) 1993, 1994, 1995 Matthias Mutz
+ * Copyright (c) 1999 Michael Vanier and the Free Software Foundation
  *
  * GNU SHOGI is based on GNU CHESS
+ *
+ * Copyright (c) 1988, 1989, 1990 John Stanback
+ * Copyright (c) 1992 Free Software Foundation
  *
  * This file is part of GNU SHOGI.
  *
