@@ -1,0 +1,116 @@
+2013-09-30  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/Makefile.in, xshogi/Makefile.in: Honor LDFLAGS at
+	link-time.
+
+2013-09-29  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac, gnushogi/dspwrappers.c, gnushogi/gnushogi.h,
+	gnushogi/main.c: Allow configure --without-curses.  Not finding libcurses was surely causing problems, we now also
+	proceed cleanly in that case.
+
+2013-09-29  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/dspwrappers.c: Remove excessive boilerplate duplication
+	from dspwrappers.
+
+2013-09-29  Yann Dirson <ydirson@free.fr>
+
+	* .gitignore: Add .gitignore file
+
+2013-09-29  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac: Clarify configure options that only relate to xshogi
+
+2013-10-03  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/Makefile.in, gnushogi/Makefile.profile.in,
+	gnushogi/attacks.c, gnushogi/book.c, gnushogi/book.h,
+	gnushogi/commondsp.c, gnushogi/cursesdsp.c, gnushogi/cursesdsp.h,
+	gnushogi/debug.h, gnushogi/dspwrappers.c, gnushogi/dspwrappers.h,
+	gnushogi/eval.c, gnushogi/eval.h, gnushogi/genmove.c,
+	gnushogi/globals.c, gnushogi/gnushogi.h, gnushogi/init.c,
+	gnushogi/main.c, gnushogi/makepattern.c, gnushogi/opts.h,
+	gnushogi/pat2inc.c, gnushogi/pattern.c, gnushogi/pattern.h,
+	gnushogi/rawdsp.c, gnushogi/rawdsp.h, gnushogi/search.c,
+	gnushogi/sizetest.c, gnushogi/sysdeps.c, gnushogi/tcontrl.c,
+	gnushogi/util.c, version.h: Restore previous copyright information
+	that got removed by error.  This reverts part of commit
+	82b026e6376b640a4d3409a461dd6bd83708e33e, which changed too much of
+	the copyright headers when changing license to GPL3.
+
+2011-09-29  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/eval.c: Fix another hardcored 9x9-board hardcoded value.
+
+2008-02-11  Yann Dirson <ydirson@altern.org>
+
+	* gnushogi/commondsp.c, gnushogi/gnushogi.h, gnushogi/init.c: 
+	Document internal APIs.
+
+2008-02-11  Yann Dirson <ydirson@altern.org>
+
+	* gnushogi/commondsp.c, gnushogi/cursesdsp.c, gnushogi/eval.c,
+	gnushogi/genmove.c, gnushogi/gnushogi.h, gnushogi/init.c,
+	gnushogi/rawdsp.c, gnushogi/util.c: Parametrize more hardcoded
+	contants.
+
+2008-02-11  Yann Dirson <ydirson@altern.org>
+
+	* gnushogi/gnushogi.h: Use enums.
+
+2008-02-11  Yann Dirson <ydirson@altern.org>
+
+	* gnushogi/Makefile.in, gnushogi/gnushogi.h, xshogi/Makefile.in: Add
+	support for building gnushogi and xshogi out of source tree.
+
+2011-09-27  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/book.c, gnushogi/commondsp.c, gnushogi/main.c,
+	gnushogi/rawdsp.c: Deal with warnings raised by -Wformat-security.
+
+2009-08-03  Stijn van Drongelen <tinctorius@gmail.com>
+
+	* gnushogi/rawdsp.c: Fixes segfault in gnushogi when asking for
+	help.  Closes Debian Bug#434139.
+
+2008-02-11  Yann Dirson <ydirson@altern.org>
+
+	* gnushogi/pattern.c, gnushogi/pattern.h: Statify functions not used
+	outside their compilation unit.
+
+2008-02-11  Yann Dirson <ydirson@altern.org>
+
+	* gnushogi/commondsp.c, gnushogi/init.c, gnushogi/rawdsp.c,
+	xshogi/xshogi.c: Don't intercept INT and QUIT signals, and use USR1
+	instead of QUIT for communication.  This braindead use of SIGINT causes problem when a frontend is
+	interrupted with Ctrl-C: if gnushogi is waiting for input, it would
+	enter a tight loop trying to read stdin, eating 100% CPU.
+
+2008-01-18  Yann Dirson <ydirson@altern.org>
+
+	* gnushogi/eval.c, gnushogi/search.c: Fix integer overflow caused by
+	bad use of binary operator.  Guess this may make the AI more accurate :) Problem caught by gcc: ../../gnushogi/search.c: In function 'search':
+	../../gnushogi/search.c:887: warning: overflow in implicit constant
+	conversion A quick audit only revealed a place where another logical AND was
+	tested using a curious idiom, so let's make it consistent at the
+	same time.
+
+2008-01-18  Yann Dirson <ydirson@altern.org>
+
+	* gnushogi/sysdeps.c: Do not attempt to outguess system headers by
+	(re)defining errno.  Recent glibc define error as a cpp macro expanding to a function
+	call.  Thus, "extern int errno" should cause a link-time undefined
+	symbol when errno.h is not included.  Here it is, and gcc complains
+	with the following cryptic warning: ../../gnushogi/sysdeps.c: In function 'ElapsedTime_FIONREAD':
+	../../gnushogi/sysdeps.c:97: warning: function declaration isn't a
+	prototype
+
+2008-01-18  Yann Dirson <ydirson@altern.org>
+
+	* gnushogi/pat2inc.c: Fix a function prototype.
+
+2012-05-20  Yann Dirson <ydirson@free.fr>
+
+	* Add missing info headers
+
