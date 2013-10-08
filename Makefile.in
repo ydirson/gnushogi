@@ -89,9 +89,17 @@ doc_clean:
 # Building a distribution.
 #
 
-dist: 
-	./make_dist $(VERSION)
+DISTNAME = @PACKAGE_TARNAME@-@PACKAGE_VERSION@
 
+dist:
+	$(MAKE) maintainerclean
+	rm -rf $(DISTNAME)
+	mkdir $(DISTNAME)
+	tar -cf - --exclude .git . | (cd $(DISTNAME) && tar -xf -)
+	cd $(DISTNAME) && ./autogen.sh && ./configure
+	cd $(DISTNAME)/doc && $(MAKE) info
+	cd $(DISTNAME) && make distclean
+	tar -zcf $(DISTNAME).tar.gz $(DISTNAME)
 
 #
 # Return to a pristine pre-configuration state.

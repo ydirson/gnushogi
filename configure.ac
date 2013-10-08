@@ -5,7 +5,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([gnushogi],[1.3.2],[mvanier@cs.caltech.edu])
+AC_INIT([gnushogi],[1.4.0+],[https://savannah.gnu.org/bugs/?group=gnushogi])
 AC_CONFIG_SRCDIR([version.h])
 AC_CONFIG_HEADER(config.h)
 
@@ -186,7 +186,7 @@ FIRST_SHOGI_PROGRAM=$withval)
 
 AC_ARG_WITH(second-shogi-program,
 [  --with-second-shogi-program=PROGNAME    
-        Use PROGNAME as the second shogi program in xshogi(default: gnushogi)],
+        Use PROGNAME as the second shogi program in xshogi (default: gnushogi)],
 SECOND_SHOGI_PROGRAM=$withval)
 
 AC_ARG_WITH(first-host,
