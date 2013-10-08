@@ -15,10 +15,6 @@ tex:
 
 html:
 	texi2html -split_node gnushogi.texinfo
-	./make_fig1 < gnushogi_6.html > tmp.html
-	mv tmp.html gnushogi_6.html
-	./make_fig2 < gnushogi_14.html > tmp.html
-	mv tmp.html gnushogi_14.html
 
 view:
 	xdvi gnushogi.dvi
