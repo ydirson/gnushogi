@@ -132,9 +132,7 @@ Vanier, the current maintainer of GNU shogi.  My email address is
 @email{mvanier@@cs.caltech.edu}.
 
 
-GNU shogi is actually two programs: 
-
-@sp 1
+GNU Shogi is actually two programs:
 
 @table @samp
 
@@ -145,8 +143,6 @@ is the text-based program which also contains the game-playing engine.
 is the X-windows graphical interface to gnushogi.
 
 @end table
-
-@sp 1
 
 Since xshogi invokes gnushogi, most players will just type ``xshogi''
 and start playing.
@@ -169,23 +165,17 @@ game... it is at least as interesting.''
 --- Alexander Alekhine @*
 (quoted in David Pritchard, @cite{The Encyclopedia of Chess Variants}) 
 
-@sp 1
-
 ``... shogi [is] by far the most complex form of chess that has ever
 achieved widespread popularity.''
 
 --- R. Wayne Schmittberger, @cite{New Rules for Classic Games}
 @end quotation
 
-@sp 1
-
 Shogi is the version of chess played in Japan.  It is strikingly
 different from standard chess (which I shall refer to henceforth as
 ``international chess'') and also to all other regional variants,
 because captured pieces can re-enter play on the side of the capturer.
 This has several interesting effects on the play of the game:
-
-@sp 1
 
 @enumerate
 @item
@@ -214,8 +204,6 @@ piece.
 Most importantly: it's more fun than other forms of chess :-)
 
 @end enumerate
-
-@sp 1
 
 Shogi is extremely popular in Japan; it has been estimated that 20
 million Japanese can play shogi, of which perhaps 1 million are active
@@ -367,26 +355,28 @@ promoted pawn is usually known as a ``Tokin''.
 The opening setup for shogi is as follows:
 
 @ifnottex
+@verbatim
    9    8    7    6    5    4    3    2    1
-+---------------------------------------------+     @*
-| wL | wN | wS | wG | wK | wG | wS | wN | wL |  a   @*  
-+---------------------------------------------+     @*  
-|    | wR |    |    |    |    |    | wB |    |  b   @*  
-+---------------------------------------------+     @*  
-| wP | wP | wP | wP | wP | wP | wP | wP | wP |  c   @*
-+---------------------------------------------+     @*
-|    |    |    |    |    |    |    |    |    |  d   @*
-+---------------------------------------------+     @*
-|    |    |    |    |    |    |    |    |    |  e   @*
-+---------------------------------------------+     @*
-|    |    |    |    |    |    |    |    |    |  f   @*
-+---------------------------------------------+     @*
-| bP | bP | bP | bP | bP | bP | bP | bP | bP |  g   @*
-+---------------------------------------------+     @*  
-|    | bB |    |    |    |    |    | bR |    |  h   @*
-+---------------------------------------------+     @*  
-| bL | bN | bS | bG | bK | bG | bS | bN | bL |  i   @* 
 +---------------------------------------------+
+| wL | wN | wS | wG | wK | wG | wS | wN | wL |  a
++---------------------------------------------+
+|    | wR |    |    |    |    |    | wB |    |  b
++---------------------------------------------+
+| wP | wP | wP | wP | wP | wP | wP | wP | wP |  c
++---------------------------------------------+
+|    |    |    |    |    |    |    |    |    |  d
++---------------------------------------------+
+|    |    |    |    |    |    |    |    |    |  e
++---------------------------------------------+
+|    |    |    |    |    |    |    |    |    |  f
++---------------------------------------------+
+| bP | bP | bP | bP | bP | bP | bP | bP | bP |  g
++---------------------------------------------+
+|    | bB |    |    |    |    |    | bR |    |  h
++---------------------------------------------+
+| bL | bN | bS | bG | bK | bG | bS | bN | bL |  i
++---------------------------------------------+
+@end verbatim
 @end ifnottex
 
 @c The following TeX macros are taken with permission from 
@@ -429,8 +419,6 @@ The opening setup for shogi is as follows:
 
 \endVerbatim
 @end tex
-
-@sp 1
 
 Here, ``b'' stands for ``black'' and ``w'' stands for ``white'', so
 that, for instance, ``bL'' means ``black lance''.  The numbers above the
@@ -481,16 +469,12 @@ does not promote.
 
 @end table
 
-@sp 1
-
 The three ranks furthest away from each player constitute his/her
 ``promotion zone''.  A player may, but is not required to, promote a
 piece after making a move in which the piece begins and/or ends in the
 promotion zone.  Thus you can promote a piece when moving the piece into
 the promotion zone, out of the promotion zone, or entirely within the
 promotion zone.  Promotion is mandatory in these cases:
-
-@sp 1
 
 @enumerate
 
@@ -500,8 +484,6 @@ promotion zone.  Promotion is mandatory in these cases:
 two ranks.
 
 @end enumerate
-
-@sp 1
 
 These forced promotions ensure that a piece cannot be moved to a square
 from which it would have no further move.
@@ -592,8 +574,6 @@ depleted as in chess, because captured pieces are constantly re-entering
 play as a consequence of the drop rule.  In fact, most of the ways a
 game can be drawn in chess are not allowed in shogi:
 
-@sp 1
-
 @itemize @bullet
 
 @item Draws cannot be offered.
@@ -607,11 +587,7 @@ if you can't move, you lose.
 
 @end itemize
 
-@sp 1
-
 There are only two legal ways in which a draw can occur:
-
-@sp 1
 
 @enumerate
 
@@ -642,8 +618,6 @@ player has managed to get all his pieces protected in the promotion
 zone.
 
 @end enumerate
-
-@sp 1
 
 @c Handicaps.
 
@@ -678,8 +652,6 @@ which the handicap is appropriate.  These rules are taken from the books
 ``Shogi for Beginners'' by John Fairbairn and ``The Art of Shogi'' by
 Tony Hoskings (@pxref{References and links}) and, I believe, represent
 current Japanese practice.
-
-@sp 1
 
 @enumerate
 
@@ -723,8 +695,6 @@ and both silvers.  This is called an ``eight-piece'' handicap.
 
 @end enumerate
 
-@sp 1
-
 Another advantage of playing handicap games is that the handicaps alter
 the optimal strategy for both players.  For instance, handicaps all have
 their own opening lines which may bear little or no resemblance to those
@@ -747,8 +717,6 @@ pieces will soon even out.
 Here are a few miscellaneous things that may confuse chess players.
 Some of these have been mentioned elsewhere, but they bear repeating.
 
-@sp 1
-
 @enumerate
 @item There is no queen.
 
@@ -763,8 +731,6 @@ them.
 @item A given piece can only promote to @emph{one} other kind of piece.
 
 @end enumerate
-
-@sp 1
 
 @c 
 @c Sample game.
@@ -948,27 +914,24 @@ check), your opponent moves, and you move to give checkmate is called a
 three-mover.  Here is a really trivial three-mover:
 
 @ifnottex
-
-
-   3    2    1            @*
-----------------+         @*
-|    |    |    |  a       @*  
-----------------+         @*  
-|    |    | wK |  b       @*  
-----------------+         @*  
-|    |    |    |  c       @*
-----------------+         @*
-| bN |    |    |  d       @*
-----------------+         @*
-|    |    |    |  e       @*
-----------------+         @*
-|    | bN |    |  f       @*
-----------------+         @*
-
-@sp 1
+@verbatim
+   3    2    1
+----------------+
+|    |    |    |  a
+----------------+
+|    |    | wK |  b
+----------------+
+|    |    |    |  c
+----------------+
+| bN |    |    |  d
+----------------+
+|    |    |    |  e
+----------------+
+|    | bN |    |  f
+----------------+
 
 Black in hand: S, G
-
+@end verbatim
 @end ifnottex
 
 
@@ -1004,8 +967,6 @@ Black in hand: 2G
 
 \endVerbatim
 @end tex
-
-@sp 1
 
 Here, Black plays G*2b, White plays K1c, and Black plays G*1d mate.
 More typical tsume problems range from 5 moves to arbitrarily high
@@ -1055,8 +1016,6 @@ variants of shogi; I don't know much about them but you can find
 information about them on the internet (@pxref{References and links}).
 
 The historical variants include:
-
-@sp 1
 
 @enumerate
 
@@ -1128,8 +1087,6 @@ playable, assuming one has the time.
 
 @end enumerate
 
-@sp 1
-
 @c
 @c Differences between shogi and chess.
 @c
@@ -1150,8 +1107,6 @@ chess fan you'll really like shogi as well, and shogi is also popular
 with many people who don't particularly like chess.
 
 Here are the significant differences between chess and shogi:
-
-@sp 1
 
 @enumerate
 
@@ -1216,11 +1171,7 @@ chess does not.
 
 @end enumerate
 
-@sp 1
-
 The effects of all these differences on play include (in my opinion):
-
-@sp 1
 
 @enumerate
 
@@ -1247,8 +1198,6 @@ dropping a piece.
 
 @end enumerate
 
-@sp 1
-
 
 @c --------------------
 @c gnushogi.
@@ -1260,21 +1209,13 @@ dropping a piece.
 
 This section describes how to run the ``gnushogi'' program.
 
-@sp 1
-
 SYNOPSIS
      
-@sp 1
-
 gnushogi [ [[-]a] [-b bookfile] [-B binbookfile] [-C] [-h langfile] 
 [-L langfile] [-r length] [-R] [-s pathname] [-l pathname] [-S binbooksize]
 [-t] [-c size] [-T size] [-v] [-x] [-X] arg1 arg2 ]
 
-@sp 1
-
 DESCRIPTION
-
-@sp 1
 
 GNU shogi (gnushogi) plays a game of japanese chess (shogi) against the
 user or it plays against itself.
@@ -1290,8 +1231,6 @@ under X windows.  The program gets its opening moves from the file
 gnushogi.bbk which is located in a directory specified in the Makefile.
 To invoke the program type:
 
-@sp 1
-
 @table @samp
 
 @item  gnushogi -C
@@ -1304,11 +1243,7 @@ xshogi compatible version
 raw test display version
 @end table
 
-@sp 1
-
 TIME CONTROLS
-
-@sp 1
 
 If one argument is given, it is the search time per move in
 [minutes:]seconds.  So gnushogi 30 will generate one move every 30
@@ -1331,13 +1266,9 @@ play.
 For use with xshogi see the documentation on that program.
 @xref{xshogi}.
 
-@sp 1
-
 @page
 
 BOOK
-
-@sp 1
 
 The book gnushogi.tbk consists of a sequence of openings.  An opening
 begins with a line starting with a # (the rest of the line is a comment).
@@ -1347,11 +1278,7 @@ after it indicating this move should never be made in this position.  Moves
 are stored as position:move so transpositions between openings can take
 place.
 
-@sp 1
-
 HASHFILE
-
-@sp 1
 
 The hashfile if created should be on the order of 4 megabytes; you can
 create such a hashfile by typing ``gnushogi -c 22'' (see below).  This
@@ -1361,11 +1288,7 @@ past games.  Tests run so far show that it plays no worse with the
 hashfile than without, but it is not clear yet whether it provides a
 real advantage.
 
-@sp 1
-
 LEGAL MOVES
-
-@sp 1
 
 Note: Piece letters are determined by the language file.  What is
 specified here is the default (English).
@@ -1379,11 +1302,7 @@ to use the notation P7f where the first letter indicates the piece type
 the move, as in 2d2c+ or P2c+. Note that you must use capital letters
 for the pieces by default.
 
-@sp 1
-
 COMMAND-LINE OPTIONS
-
-@sp 1
 
 @table @samp
 
@@ -1454,11 +1373,8 @@ Use xshogi display mode (the default).
 
 @end table
 
-@sp 1
 
 COMMANDS
-
-@sp 1
 
 In addition to legal moves, the following commands can be entered at the
 gnushogi prompt.  Note: command names are determined by the language
@@ -1683,8 +1599,6 @@ separate.
 
 @end table
 
-@sp 1
-
 
 @c --------------------
 @c xshogi.
@@ -1696,19 +1610,11 @@ separate.
 
 This section describes how to run the ``xshogi'' program.
 
-@sp 1
-
 SYNOPSIS
-
-@sp 1
 
 xshogi [ options ]
 
-@sp 1
-
 DESCRIPTION
-
-@sp 1
 
 xshogi provides an X11/Xt/Athena Widgets user interface for gnushogi.
 With xshogi you can play gnushogi, set up arbitrary positions, force
@@ -1726,16 +1632,10 @@ while the cursor is over a square with your piece on it and dragging the
 mouse to another square.  If the move is illegal, gnushogi will not
 allow it.  xshogi will then retract the move.
 
-@sp 1
-
 COMMAND-LINE OPTIONS
-
-@sp 1
 
 The following command line options also correspond to X resources that
 you can set in your .Xdefaults file.
-
-@sp 1
 
 @table @samp
 
@@ -1872,13 +1772,9 @@ Turns on debugging printout.
 
 @end table
 
-@sp 1
-
 @page
 
 OTHER X RESOURCES
-
-@sp 1
 
 @table @samp
 
@@ -1929,11 +1825,7 @@ If you are using a grayscale monitor, try setting the colors to:
 
 @end table
 
-@sp 1
-
 COMMAND BUTTONS AND KEYS
-
-@sp 1
 
 @table @samp
 
@@ -2041,11 +1933,7 @@ iconifies xshogi.
 
 @end table
 
-@sp 1
-
 LIMITATIONS
-
-@sp 1
 
 If you press the  Pause  button  during  GNU  Shogi's  turn,
 xshogi will stop the clocks, but gnushogi will still make a
@@ -2057,11 +1945,7 @@ back  up  with  the  Backward  button,  the clocks are reset
 
 The game parser recognizes only algebraic notation.
 
-@sp 1
-
 AUTHORS
-
-@sp 1
 
 Original authors of XBoard:  Chris Sears and Dan Sears.
 
@@ -2071,11 +1955,7 @@ Conversion to XShogi (Version 1.1):  Matthias Mutz.
 
 Current maintainer: Mike Vanier.
 
-@sp 1
-
 COPYRIGHT INFORMATION
-
-@sp 1
 
 XShogi borrows its piece bitmaps from CRANES Shogi.
 
@@ -2139,8 +2019,6 @@ notice and this notice must be preserved on all copies.
 There are very few English-language books for people learning shogi.
 The two I recommend are:
 
-@sp 1
-
 @enumerate
 
 @item
@@ -2158,8 +2036,6 @@ from Amazon.com's UK branch (@uref{http://www.amazon.co.uk}).
 
 @end enumerate
 
-@sp 1
-
 Another book you may find is @cite{Shogi: Japan's Game of Strategy} by
 Trevor Leggett.  This book is very elementary and is somewhat outdated,
 having been published first in 1966.  However, it does feature a paper
@@ -2175,16 +2051,12 @@ did the translation from Japanese to English.
 
 Shogi sets are available from:
 
-@sp 1
-
 @quotation
 George F. Hodges @*
 P.O. Box 77 @*
 Bromley, Kent @*
 United Kingdom BR1 2WT
 @end quotation
-
-@sp 1
 
 George also sells equipment for all the historical shogi variants
 (@pxref{Shogi variants}) (except for Kyoku tai shogi) and also sells
@@ -2194,8 +2066,6 @@ it contains more information about shogi in English than you will ever
 find anywhere else.
 
 Here are some useful URLs:
-
-@sp 1
 
 @table @asis
 
@@ -2222,8 +2092,6 @@ chess variants, including many shogi variants (historical and non-historical).
 
 @end table
 
-@sp 1
-
 @c -----------------
 @c Acknowledgements.
 @c -----------------
@@ -2233,8 +2101,6 @@ chess variants, including many shogi variants (historical and non-historical).
 @cindex  Acknowledgements
 
 I would like to thank the following people:
-
-@sp 1
 
 @itemize @bullet
 
@@ -2269,8 +2135,6 @@ together on improving the solution engine in future versions of this
 program.
 
 @end itemize
-
-@sp 1
 
 @c -----
 @c Bugs.
