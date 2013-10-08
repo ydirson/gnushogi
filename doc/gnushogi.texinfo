@@ -92,7 +92,7 @@ Copyright @copyright{} 1999 Michael C. Vanier and the Free Software Foundation
 @node    Top, (dir), (dir), (dir)
 @top     GNU Shogi (Japanese chess)
 
-@ifinfo
+@ifnottex
 @menu
 * Introduction::         What is GNU shogi?
 * About shogi::          General information, rules, etc.
@@ -103,7 +103,7 @@ Copyright @copyright{} 1999 Michael C. Vanier and the Free Software Foundation
 * Bugs::                 Where and how to report bugs.
 * Index::        
 @end menu
-@end ifinfo
+@end ifnottex
 
 @iftex
 This document describes GNU shogi, a program which plays Japanese chess
@@ -229,7 +229,7 @@ people, but mostly it's due, I think, to lack of exposure to the game
 and to the difficulty of finding opponents.  I hope that GNU shogi will
 help introduce shogi to a wider audience.
 
-@ifinfo
+@ifnottex
 @menu
 * The rules of shogi::
 * Sample game::
@@ -237,7 +237,7 @@ help introduce shogi to a wider audience.
 * Shogi variants::
 * Differences between shogi and chess::
 @end menu
-@end ifinfo
+@end ifnottex
 
 
 @c -------------------------------------------------------
@@ -272,7 +272,7 @@ a grid of 9x9 uncolored squares, and pieces are placed on the squares.
 Each player begins with 20 pieces, described in the next section.
 Capture is by displacement, as in international chess.
 
-@ifinfo
+@ifnottex
 @menu
 * The moves of the pieces::
 * The opening setup::
@@ -283,7 +283,7 @@ Capture is by displacement, as in international chess.
 * Handicaps::
 * Notes for chess players::
 @end menu
-@end ifinfo
+@end ifnottex
 
 @c The moves of the pieces.
 
@@ -366,8 +366,7 @@ promoted pawn is usually known as a ``Tokin''.
 
 The opening setup for shogi is as follows:
 
-@ifinfo
-
+@ifnottex
    9    8    7    6    5    4    3    2    1
 +---------------------------------------------+     @*
 | wL | wN | wS | wG | wK | wG | wS | wN | wL |  a   @*  
@@ -388,7 +387,7 @@ The opening setup for shogi is as follows:
 +---------------------------------------------+     @*  
 | bL | bN | bS | bG | bK | bG | bS | bN | bL |  i   @* 
 +---------------------------------------------+
-@end ifinfo
+@end ifnottex
 
 @c The following TeX macros are taken with permission from 
 @c "TeX for the Beginner" by Wynter Snow.
@@ -948,9 +947,8 @@ Japanese-style move numbering; thus, a problem where you move (and give
 check), your opponent moves, and you move to give checkmate is called a
 three-mover.  Here is a really trivial three-mover:
 
-@sp 1
+@ifnottex
 
-@ifinfo
 
    3    2    1            @*
 ----------------+         @*
@@ -971,7 +969,7 @@ three-mover.  Here is a really trivial three-mover:
 
 Black in hand: S, G
 
-@end ifinfo
+@end ifnottex
 
 
 @tex
