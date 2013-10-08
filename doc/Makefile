@@ -1,5 +1,5 @@
-DISTCLEANFILES = *.info* *.ps *.html
-
+MAINTAINERCLEANFILES = *.info*
+DISTCLEANFILES = *.ps *.html
 CLEANFILES = *.log *.dvi *.aux *.dlog \
              *.cp *.cps *.fn *.ky *.pg *.toc *.tp *.vr
 
@@ -7,8 +7,11 @@ CLEANFILES = *.log *.dvi *.aux *.dlog \
 info:
 	makeinfo gnushogi.texinfo
 
-tex:
+dvi:
 	texi2dvi gnushogi.texinfo
+
+pdf:
+	texi2pdf gnushogi.texinfo
 
 # I do some egregious hacks to get around limitations of 
 # texi2html.
@@ -16,13 +19,10 @@ tex:
 html:
 	texi2html -split_node gnushogi.texinfo
 
-view:
-	xdvi gnushogi.dvi
-
-ps:
+ps: dvi
 	dvips -t letter gnushogi.dvi -o gnushogi.ps
 
-ps2:
+ps2: dvi
 	dvi2ps gnushogi.dvi > gnushogi.ps
 
 spell:
@@ -39,5 +39,7 @@ distclean: clean
         do if [ -f $$file ]; then rm $$file; fi; \
         done
 
-
-
+maintainerclean: distclean
+	@for file in $(MAINTAINERCLEANFILES); \
+        do if [ -f $$file ]; then rm $$file; fi; \
+        done

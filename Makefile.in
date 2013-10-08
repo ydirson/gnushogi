@@ -73,13 +73,16 @@ xshogi_install: $(XSHOGIDIR)/xshogi
 # Cleanup.
 #
 
-clean: gnushogi_clean @XSHOGICLEAN@
+clean: gnushogi_clean @XSHOGICLEAN@ doc_clean
 
 gnushogi_clean:
 	cd $(GNUSHOGIDIR); $(MAKE) clean
 
 xshogi_clean:
 	cd $(XSHOGIDIR); $(MAKE) clean
+
+doc_clean:
+	cd doc; $(MAKE) clean
 
 
 #
@@ -101,14 +104,14 @@ DISTCLEANFILES = \
 
 distclean: clean
 	rm -rf $(DISTCLEANFILES)
-
+	cd doc; $(MAKE) distclean
 
 #
 # Extra cleanup, for the maintainer only.
 #
 
-MAINTAINERCLEANFILES = configure config.h.in doc/gnushogi.info 
+MAINTAINERCLEANFILES = configure config.h.in
 
 maintainerclean: distclean
 	rm -f $(MAINTAINERCLEANFILES)
-
+	cd doc; $(MAKE) maintainerclean
