@@ -2,7 +2,4 @@
 
 autoreconf -f -i
 
-if [ -z "$NOCONFIGURE" ]; then
-    ./configure "$@"
-fi
-
+echo "You may now run ./configure"
