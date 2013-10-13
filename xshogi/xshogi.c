@@ -7131,7 +7131,7 @@ void DisplayTitle(char *title)
 
 
 /* CHECKME: does this work?
- * This routine sends a SIGUSR1 to gnushogi to awaken it
+ * This routine sends a SIGINT (^C interrupt) to gnushogi to awaken it
  * if it might be busy thinking on our time.  This normally isn't needed,
  * but is useful on systems where the FIONREAD ioctl doesn't work since
  * on those systems the gnushogi feature that lets you interrupt its thinking
@@ -7159,11 +7159,11 @@ Attention(int pid)
         {
             if (xshogiDebug || localPlayer.appData.debugMode)
             {
-                fprintf(stderr, "Sending SIGUSR1 to %s\n",
+                fprintf(stderr, "Sending SIGINT to %s\n",
                         ((pid == firstProgramPID) ? "first" : "second"));
             }
 
-            (void)kill(pid, SIGUSR1); /* stop it thinking */
+            (void)kill(pid, SIGINT); /* stop it thinking */
         }
         break;
 
