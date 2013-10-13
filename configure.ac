@@ -169,11 +169,11 @@ SECOND_SHOGI_PROGRAM=gnushogi
 FIRST_HOST=localhost
 SECOND_HOST=localhost
 
-AC_ARG_WITH(xshogi,
-[  --with-xshogi
+AC_ARG_ENABLE(xshogi,
+[  --enable-xshogi
         Compile the xshogi graphical interface to GNU shogi (default: no)],
-with_xshogi=$withval,
-with_xshogi=no)
+enable_xshogi=$enableval,
+enable_xshogi=no)
 
 AC_ARG_WITH(top-part-bitmaps,
 [  --with-top-part-bitmaps    Use top part of Kanji bitmaps only in xshogi.],
@@ -207,7 +207,7 @@ AC_SUBST(SECOND_SHOGI_PROGRAM)
 AC_SUBST(FIRST_HOST)
 AC_SUBST(SECOND_HOST)
 
-if [[ $with_xshogi = yes ]]
+if [[ $enable_xshogi = yes ]]
 then
 XSHOGI=xshogi_compile
 XSHOGIINSTALL=xshogi_install
