@@ -1745,8 +1745,8 @@ InputCommand(char *command)
             {
                 s[0] = sx[0] = '\0';
 
-                while(!sx[0])
-                    (void)fgets(sx, 80, stdin);
+                while(!eof && !sx[0])
+                    eof = (fgets(sx, 80, stdin) == NULL);
             }
             else
             {

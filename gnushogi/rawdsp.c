@@ -204,6 +204,8 @@ Raw_ExitShogi(void)
 
     if (!nolist)
         ListGame();
+
+    exit(0);
 }
 
 
