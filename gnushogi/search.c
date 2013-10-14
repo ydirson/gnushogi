@@ -30,6 +30,8 @@
  */
 
 #include "gnushogi.h"
+#include <poll.h>
+#include <unistd.h>
 
 #if !defined OLDTIME && defined HAVE_GETTIMEOFDAY
 double pow(double x, double y);
@@ -176,6 +178,7 @@ SelectMove(short side, SelectMove_mode iop)
     }
     else
     {
+        background = false; /* [HGM] with ponder on we did not switch back to foreground mode??? */
         player = side;
         SetResponseTime(side);
     }
@@ -529,6 +532,8 @@ search(short side,
     short best = -(SCORE_LIMIT + 3000);
     short bestwidth = 0;
     short mustcut;
+    static struct pollfd pollfds[1] = { /* [0] = */ { /* .fd = */ STDIN_FILENO,
+                                                      /* .events = */ POLLIN } };
 
 #ifdef NULLMOVE
     short PVsave;
@@ -545,6 +550,19 @@ search(short side,
         if (NodeCnt > ETnodes)
         {
             ElapsedTime(COMPUTE_MODE);
+
+            if(background) {
+                int cnt = poll(pollfds, sizeof(pollfds)/sizeof(pollfds[0]), 0);
+                if (cnt < 0) {
+                    perror("polling standard input");
+                    ExitShogi();
+                }
+                if (cnt) { /* if anything to read, or error occured */
+                    if (!flag.timeout)
+                        flag.back = true; /* previous: flag.timeout = true; */
+                    flag.bothsides = false;
+                }
+            }
 
             if (flag.back)
             {
