@@ -7130,23 +7130,21 @@ void DisplayTitle(char *title)
 
 
 
-/* CHECKME: does this work?
- * This routine sends a SIGINT (^C interrupt) to gnushogi to awaken it
+/*
+ * This routine used to send a SIGINT (^C interrupt) to gnushogi to awaken it
  * if it might be busy thinking on our time.  This normally isn't needed,
  * but is useful on systems where the FIONREAD ioctl doesn't work since
  * on those systems the gnushogi feature that lets you interrupt its thinking
  * just by typing a command does not work.
  *
- * In the future, similar code could be used to stop gnushogi and make
- * it move immediately when it is thinking about its own move; this could
- * be useful if we want to make Backward or ForceMoves work while gnushogi
- * is thinking.
+ * Now gnushogi periodically checks for user input without a need for
+ * this hack.
  */
 
 void
 Attention(int pid)
 {
-#if !defined(FIONREAD)
+#if 0
     if (localPlayer.appData.noShogiProgram || (pid == 0))
         return;
 

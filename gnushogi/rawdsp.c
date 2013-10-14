@@ -315,9 +315,6 @@ Raw_help(void)
            (TCflag) ? CP[93] : CP[92],
            TimeControl.moves[black], TimeControl.clock[black] / 100,
            TCadd/100, MaxSearchDepth);
-
-    signal(SIGINT, Raw_TerminateSearch);
-    signal(SIGQUIT, Raw_TerminateSearch);
 }
 
 
@@ -489,9 +486,6 @@ SetupBoard(void)
 void
 Raw_SearchStartStuff(short side)
 {
-    signal(SIGINT, Raw_TerminateSearch);
-    signal(SIGQUIT, Raw_TerminateSearch);
-
     if (flag.post)
     {
         printf(CP[123],
@@ -969,4 +963,3 @@ Raw_ShowPostnValues(void)
            mtl[opponent], pscore[opponent], GameType[opponent]);
     printf("\nhung black %d hung white %d\n", hung[black], hung[white]);
 }
-

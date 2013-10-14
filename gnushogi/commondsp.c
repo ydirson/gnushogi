@@ -2161,8 +2161,6 @@ InputCommand(char *command)
         printf("\n");
 #endif
     }
-
-    signal(SIGINT, TerminateSearch);
 }
 
 
