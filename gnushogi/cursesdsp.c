@@ -151,6 +151,18 @@ Curses_ShowMessage(char *s)
 
 
 void
+Curses_AlwaysShowMessage(const char *format, ...)
+{
+    static char buffer[60];
+    va_list ap;
+    va_start(ap, format);
+    vsnprintf(buffer, sizeof(buffer), format, ap);
+    Curses_ShowMessage(buffer);
+    va_end(ap);
+}
+
+
+void
 Curses_Printf(const char *format, ...)
 {
     static char buffer[60];

@@ -298,20 +298,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
         if (SqAttacked(PieceList[opponent][0], computer, &blocked))
         {
             UnmakeMove(opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
-
-            if (NOT_CURSES)
-            {
-                /* Illegal move in check */
-                printf(CP[77], s);
-                printf("\n");
-            }
-            else
-            {
-                /* Illegal move in check */
-                sprintf(buffer, CP[77], s);
-                ShowMessage(buffer);
-            }
-
+            AlwaysShowMessage(CP[77], s);
             return false;
         }
         else
@@ -353,17 +340,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
         }
     }
 
-    if (NOT_CURSES)
-    {
-        /* Illegal move */
-        printf (CP[75], s);
-    }
-    else /* Curses. */
-    {
-        /* Illegal move */
-        sprintf(buffer, CP[76], s);
-        ShowMessage(buffer);
-    }
+    AlwaysShowMessage(CP[76], s);
 
     if (!barebones && (cnt > 1))
     {

@@ -57,6 +57,7 @@ extern void ShowDepth(char ch);
 extern void ShowGameType(void);
 extern void ShowLine(unsigned short *bstline);
 extern void ShowMessage(char *s);
+extern void AlwaysShowMessage(const char *format, ...);
 extern void Printf(const char *format, ...);
 extern void RequestInputString(char* buffer, unsigned bufsize);
 extern void ShowPatternCount(short side, short n);

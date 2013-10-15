@@ -122,6 +122,15 @@ Raw_ShowMessage(char *s)
         printf("%s\n", s);
 }
 
+void
+Raw_AlwaysShowMessage(const char *format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+    vprintf(format, ap);
+    va_end(ap);
+    printf("\n");
+}
 
 void
 Raw_Printf(const char *format, ...)
