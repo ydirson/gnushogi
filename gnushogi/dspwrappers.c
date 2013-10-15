@@ -37,6 +37,8 @@
 #include "rawdsp.h"
 #include "cursesdsp.h"
 
+#include <stdarg.h>
+
 #define CASE_DSP_RAW(func,args) \
   case DISPLAY_RAW:             \
   case DISPLAY_X:               \
@@ -63,6 +65,18 @@
 #define DISPLAY_VOIDFUNC(func)                  \
   DISPLAY_FUNC(func,(void),())
 
+#define DISPLAY_STDARGFUNC(func,argsdecl,last,args)     \
+  void func argsdecl                                    \
+  {                                                     \
+    va_list ap;                                         \
+    va_start(ap, last);                                 \
+    switch (display_type) {                             \
+      CASE_DSP_RAW(Raw_ ## func, args);                 \
+      CASE_DSP_CURSES(Curses_ ## func, args);           \
+    }                                                   \
+    va_end(ap);                                         \
+  }
+
 DISPLAY_VOIDFUNC(ChangeAlphaWindow)
 DISPLAY_VOIDFUNC(ChangeBetaWindow)
 DISPLAY_VOIDFUNC(ChangeHashDepth)
@@ -84,6 +98,8 @@ DISPLAY_FUNC(ShowDepth, (char ch), (ch))
 DISPLAY_VOIDFUNC(ShowGameType)
 DISPLAY_FUNC(ShowLine, (unsigned short *bstline), (bstline))
 DISPLAY_FUNC(ShowMessage, (char *s), (s))
+DISPLAY_STDARGFUNC(Printf, (const char *format, ...), format, (format, ap))
+DISPLAY_FUNC(RequestInputString, (char* buffer), (buffer))
 DISPLAY_FUNC(ShowPatternCount, (short side, short n), (side, n))
 DISPLAY_FUNC(ShowPostnValue, (short sq), (sq))
 DISPLAY_VOIDFUNC(ShowPostnValues)

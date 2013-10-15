@@ -58,6 +58,8 @@ void Curses_ShowDepth(char ch);
 void Curses_ShowGameType(void);
 void Curses_ShowLine(unsigned short *bstline);
 void Curses_ShowMessage(char *s);
+void Curses_Printf(const char *format, ...);
+void Curses_RequestInputString(char* buffer);
 void Curses_ShowPatternCount(short side, short n);
 void Curses_ShowPostnValue(short sq);
 void Curses_ShowPostnValues(void);

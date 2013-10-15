@@ -58,6 +58,8 @@ void Raw_ShowDepth(char ch);
 void Raw_ShowGameType(void);
 void Raw_ShowLine(unsigned short *bstline);
 void Raw_ShowMessage(char *s);
+void Raw_Printf(const char *format, ...);
+void Raw_RequestInputString(char* buffer);
 void Raw_ShowPatternCount(short side, short n);
 void Raw_ShowPostnValue(short sq);
 void Raw_ShowPostnValues(void);

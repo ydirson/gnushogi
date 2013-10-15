@@ -150,6 +150,25 @@ Curses_ShowMessage(char *s)
 
 
 void
+Curses_Printf(const char *format, ...)
+{
+    static char buffer[60];
+    va_list ap;
+    va_start(ap, format);
+    vsnprintf(buffer, sizeof(buffer), format, ap);
+    printw("%s", buffer);
+    va_end(ap);
+}
+
+
+void
+Curses_RequestInputString(char* buffer)
+{
+    FLUSH_SCANW("%s", buffer);
+}
+
+
+void
 ShowNodeCnt(long NodeCnt)
 {
     gotoXY(TAB, 22);

@@ -164,12 +164,8 @@ algbr(short f, short t, short flag)
 
     if ((f == t) && ((f != 0) || (t != 0)))
     {
-        if (!barebones)
-        {
-            if (NOT_CURSES)
-                printf("error in algbr: FROM=TO=%d, flag=0x%4x\n", t, flag);
-            else
-                printw("error in algbr: FROM=TO=%d, flag=0x%4x\n", t, flag);
+        if (!barebones) {
+            Printf("error in algbr: FROM=TO=%d, flag=0x%4x\n", t, flag);
         }
 
         mvstr[0][0] = mvstr[1][0] = mvstr[2][0] = mvstr[3][0] = '\0';
@@ -448,24 +444,12 @@ GetGame(void)
     short sq;
     short side, isp;
 
-    if (savefile[0])
-    {
+    if (savefile[0]) {
         strcpy(fname, savefile);
-    }
-    else
-    {
+    } else {
         /* Enter file name */
         ShowMessage(CP[63]);
-
-        if (NOT_CURSES)
-        {
-            scanf("%s", fname);
-        }
-        else
-        {
-            fflush(stdout);
-            scanw("%s", fname);
-        }
+        RequestInputString(fname);
     }
 
     /* shogi.000 */
@@ -685,24 +669,12 @@ SaveGame(void)
     short side, piece;
     char empty[2] = "\n";
 
-    if (savefile[0])
-    {
+    if (savefile[0]) {
         strcpy(fname, savefile);
-    }
-    else
-    {
+    } else {
         /* Enter file name */
         ShowMessage(CP[63]);
-
-        if (NOT_CURSES)
-        {
-            scanf("%s", fname);
-        }
-        else
-        {
-            fflush(stdout);
-            scanw("%s", fname);
-        }
+        RequestInputString(fname);
     }
 
     if (fname[0] == '\0')        /* shogi.000 */
@@ -846,16 +818,7 @@ GetXGame(void)
 
     /* Enter file name */
     ShowMessage(CP[63]);
-
-    if (NOT_CURSES)
-    {
-        scanf("%s", fname);
-    }
-    else
-    {
-        fflush(stdout);
-        scanw("%s", fname);
-    }
+    RequestInputString(fname);
 
     if (fname[0] == '\0') /* XSHOGI.position.read */
         strcpy(fname, CP[205]);
@@ -983,16 +946,7 @@ SaveXGame(void)
 
     /* Enter file name */
     ShowMessage(CP[63]);
-
-    if (NOT_CURSES)
-    {
-        scanf("%s", fname);
-    }
-    else
-    {
-        fflush(stdout);
-        scanw("%s", fname);
-    }
+    RequestInputString(fname);
 
     if (fname[0] == '\0') /* XSHOGI.position.read */
         strcpy(fname, CP[205]);
@@ -1065,24 +1019,12 @@ BookSave(void)
     char fname[256], sflags[4];
     short i, j, f, t;
 
-    if (savefile[0])
-    {
+    if (savefile[0]) {
         strcpy(fname, savefile);
-    }
-    else
-    {
+    } else {
         /* Enter file name */
         ShowMessage(CP[63]);
-
-        if (NOT_CURSES)
-        {
-            scanf("%s", fname);
-        }
-        else
-        {
-            fflush(stdout);
-            scanw("%s", fname);
-        }
+        RequestInputString(fname);
     }
 
     if (fname[0] == '\0')

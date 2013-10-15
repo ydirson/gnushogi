@@ -31,6 +31,7 @@
 
 #include <ctype.h>
 #include <signal.h>
+#include <stdarg.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/file.h>
@@ -119,6 +120,22 @@ Raw_ShowMessage(char *s)
 {
     if (!XSHOGI)
         printf("%s\n", s);
+}
+
+
+void
+Raw_Printf(const char *format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+    vprintf(format, ap);
+    va_end(ap);
+}
+
+void
+Raw_RequestInputString(char* buffer)
+{
+    scanf("%s", buffer);
 }
 
 
