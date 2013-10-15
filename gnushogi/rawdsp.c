@@ -140,6 +140,14 @@ Raw_doRequestInputString(const char* fmt, char* buffer)
 
 
 void
+Raw_ShowNodeCnt(long NodeCnt)
+{
+    printf(CP[91],
+           NodeCnt, (((et) ? ((NodeCnt * 100) / et) : 0)));
+}
+
+
+void
 Raw_ShowPatternCount(short side, short n)
 {
     if (flag.post)

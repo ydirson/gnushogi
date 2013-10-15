@@ -47,6 +47,7 @@ extern void EditBoard(void);
 extern void ExitShogi(void);
 extern void GiveHint(void);
 extern void Initialize(void);
+extern void ShowNodeCnt(long NodeCnt);
 extern void OutputMove(void);
 extern void SetContempt(void);
 extern void SearchStartStuff(short side);

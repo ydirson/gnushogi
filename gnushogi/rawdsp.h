@@ -49,6 +49,7 @@ void Raw_EditBoard(void);
 void Raw_ExitShogi(void);
 void Raw_GiveHint(void);
 void Raw_Initialize(void);
+void Raw_ShowNodeCnt(long NodeCnt);
 void Raw_OutputMove(void);
 void Raw_SearchStartStuff(short side);
 void Raw_SelectLevel(char *sx);

@@ -1385,7 +1385,7 @@ TestSpeed(void(*f)(short side, short ply,
 #endif
 
     unsigned i;
-    long cnt, rate, t1, t2;
+    long cnt, t1, t2;
 
 #ifdef HAVE_GETTIMEOFDAY
     struct timeval tv;
@@ -1425,17 +1425,7 @@ TestSpeed(void(*f)(short side, short ply,
     else
         et = 1;
 
-    rate = (((et) ? ((cnt * 100) / et) : 0));
-
-#ifdef DYNAMIC_ZNODES
-    if (rate > 0)
-        znodes = rate;
-#endif
-
-    if (NOT_CURSES)
-        printf(CP[91], cnt, rate);
-    else
-        ShowNodeCnt(cnt);
+    ShowNodeCnt(cnt);
 }
 
 
@@ -1444,7 +1434,7 @@ void
 TestPSpeed(short(*f) (short side), unsigned j)
 {
     short i;
-    long cnt, rate, t1, t2;
+    long cnt, t1, t2;
 #ifdef HAVE_GETTIMEOFDAY
     struct timeval tv;
 #endif
@@ -1473,14 +1463,7 @@ TestPSpeed(short(*f) (short side), unsigned j)
     else
         et = 1;
 
-    rate = (et) ? ((cnt * 100) / et) : 0;
-
-    /* printf("Nodes= %ld Nodes/sec= %ld\n", cnt, rate); */
-
-    if (NOT_CURSES)
-        printf(CP[91], cnt, rate);
-    else
-        ShowNodeCnt(cnt);
+    ShowNodeCnt(cnt);
 }
 
 

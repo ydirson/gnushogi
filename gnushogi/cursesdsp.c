@@ -170,7 +170,7 @@ Curses_doRequestInputString(const char* fmt, char* buffer)
 
 
 void
-ShowNodeCnt(long NodeCnt)
+Curses_ShowNodeCnt(long NodeCnt)
 {
     gotoXY(TAB, 22);
     /* printw(CP[90], NodeCnt, (et > 100) ? NodeCnt / (et / 100) : 0); */
