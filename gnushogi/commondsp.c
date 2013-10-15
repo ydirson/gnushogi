@@ -54,6 +54,7 @@ int mycnt1, mycnt2;
 static char *InPtr;
 struct display *dsp = &raw_display;
 
+short xboard = false;
 
 #if defined(BOOKTEST)
 
@@ -310,7 +311,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
         if (SqAttacked(PieceList[opponent][0], computer, &blocked))
         {
             UnmakeMove(opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
-            dsp->AlwaysShowMessage("Illegal move (in check) %s", s);
+            dsp->AlwaysShowMessage("Illegal move (in check): %s", s);
             return false;
         }
         else
@@ -352,7 +353,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
         }
     }
 
-    dsp->AlwaysShowMessage("Illegal move (no match) %s", s);
+    dsp->AlwaysShowMessage("Illegal move (no match): %s", s);
 
     if (!XSHOGI && (cnt > 1))
     {

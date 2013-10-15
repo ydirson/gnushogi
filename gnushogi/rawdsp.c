@@ -177,7 +177,7 @@ static void
 Raw_ShowPatternCount(short side, short n)
 {
     if (flag.post)
-        printf("%s matches %d pattern(s)\n", ColorStr[side], n);
+        printf("%s%s matches %d pattern(s)\n", xboard ? "# " : "" , ColorStr[side], n);
 }
 
 
@@ -578,10 +578,10 @@ Raw_OutputMove(void)
         printf("%s mates!\n", ColorStr[computer]);
 #ifdef VERYBUGGY
     else if (!XSHOGI && (root->score < -SCORE_LIMIT))
-        printf("%s has a forced mate in %d moves!\n",
+        printf("%s%s has a forced mate in %d moves!\n", xboard ? "# " : "",
                ColorStr[opponent], SCORE_LIMIT + 999 + root->score - 1);
     else if (!XSHOGI && (root->score > SCORE_LIMIT))
-        printf("%s has a forced mate in %d moves!\n",
+        printf("%s%s has a forced mate in %d moves!\n", xboard ? "# " : "",
                ColorStr[computer], SCORE_LIMIT + 998 - root->score - 1);
 #endif /* VERYBUGGY */
 }
