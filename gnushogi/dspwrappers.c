@@ -38,6 +38,7 @@
 #include "cursesdsp.h"
 
 #include <stdarg.h>
+#include <stdio.h>
 
 #define CASE_DSP_RAW(func,args) \
   case DISPLAY_RAW:             \
@@ -99,7 +100,6 @@ DISPLAY_VOIDFUNC(ShowGameType)
 DISPLAY_FUNC(ShowLine, (unsigned short *bstline), (bstline))
 DISPLAY_FUNC(ShowMessage, (char *s), (s))
 DISPLAY_STDARGFUNC(Printf, (const char *format, ...), format, (format, ap))
-DISPLAY_FUNC(RequestInputString, (char* buffer), (buffer))
 DISPLAY_FUNC(ShowPatternCount, (short side, short n), (side, n))
 DISPLAY_FUNC(ShowPostnValue, (short sq), (sq))
 DISPLAY_VOIDFUNC(ShowPostnValues)
@@ -110,3 +110,17 @@ DISPLAY_VOIDFUNC(ShowStage)
 DISPLAY_FUNC(TerminateSearch, (int sig), (sig))
 DISPLAY_FUNC(UpdateDisplay, (short f, short t, short redraw, short isspec), (f, t, redraw, isspec))
 DISPLAY_VOIDFUNC(help)
+
+DISPLAY_FUNC(doRequestInputString, (const char* fmt, char* buffer), (fmt, buffer))
+void RequestInputString(char* buffer, unsigned bufsize)
+{
+    static char fmt[10];
+    int ret = snprintf(fmt, sizeof(fmt), "%%%us", bufsize);
+    if (ret >= sizeof(fmt)) {
+        fprintf(stderr,
+                "Insufficient format-buffer size in %s for bufsize=%u\n",
+                __FUNCTION__, bufsize);
+        exit(1);
+    }
+    doRequestInputString(fmt, buffer);
+}

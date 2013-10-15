@@ -33,6 +33,7 @@
 
 #include <ctype.h>
 #include <signal.h>
+#include <stdio.h>
 
 #include <sys/param.h>
 #include <sys/types.h>
@@ -162,9 +163,9 @@ Curses_Printf(const char *format, ...)
 
 
 void
-Curses_RequestInputString(char* buffer)
+Curses_doRequestInputString(const char* fmt, char* buffer)
 {
-    FLUSH_SCANW("%s", buffer);
+    FLUSH_SCANW(fmt, buffer);
 }
 
 

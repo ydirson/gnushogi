@@ -449,7 +449,7 @@ GetGame(void)
     } else {
         /* Enter file name */
         ShowMessage(CP[63]);
-        RequestInputString(fname);
+        RequestInputString(fname, sizeof(fname)-1);
     }
 
     /* shogi.000 */
@@ -674,7 +674,7 @@ SaveGame(void)
     } else {
         /* Enter file name */
         ShowMessage(CP[63]);
-        RequestInputString(fname);
+        RequestInputString(fname, sizeof(fname)-1);
     }
 
     if (fname[0] == '\0')        /* shogi.000 */
@@ -818,7 +818,7 @@ GetXGame(void)
 
     /* Enter file name */
     ShowMessage(CP[63]);
-    RequestInputString(fname);
+    RequestInputString(fname, sizeof(fname)-1);
 
     if (fname[0] == '\0') /* XSHOGI.position.read */
         strcpy(fname, CP[205]);
@@ -946,7 +946,7 @@ SaveXGame(void)
 
     /* Enter file name */
     ShowMessage(CP[63]);
-    RequestInputString(fname);
+    RequestInputString(fname, sizeof(fname)-1);
 
     if (fname[0] == '\0') /* XSHOGI.position.read */
         strcpy(fname, CP[205]);
@@ -1024,7 +1024,7 @@ BookSave(void)
     } else {
         /* Enter file name */
         ShowMessage(CP[63]);
-        RequestInputString(fname);
+        RequestInputString(fname, sizeof(fname)-1);
     }
 
     if (fname[0] == '\0')

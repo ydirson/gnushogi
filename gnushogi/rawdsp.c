@@ -133,9 +133,9 @@ Raw_Printf(const char *format, ...)
 }
 
 void
-Raw_RequestInputString(char* buffer)
+Raw_doRequestInputString(const char* fmt, char* buffer)
 {
-    scanf("%s", buffer);
+    scanf(fmt, buffer);
 }
 
 
