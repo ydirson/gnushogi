@@ -302,7 +302,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
             if (NOT_CURSES)
             {
                 /* Illegal move in check */
-                printf(CP[77], mvstr[0]);
+                printf(CP[77], s);
                 printf("\n");
             }
             else
