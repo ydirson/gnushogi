@@ -62,6 +62,7 @@ void Curses_ShowMessage(char *s);
 void Curses_AlwaysShowMessage(const char *format, ...);
 void Curses_Printf(const char *format, ...);
 void Curses_doRequestInputString(const char* fmt, char* buffer);
+int  Curses_GetString(char* sx);
 void Curses_ShowPatternCount(short side, short n);
 void Curses_ShowPostnValue(short sq);
 void Curses_ShowPostnValues(void);

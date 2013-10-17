@@ -181,6 +181,14 @@ Curses_doRequestInputString(const char* fmt, char* buffer)
 }
 
 
+int
+Curses_GetString(char* sx)
+{
+    fflush(stdout);
+    return (getstr(sx) == ERR);
+}
+
+
 void
 Curses_ShowNodeCnt(long NodeCnt)
 {

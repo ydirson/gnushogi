@@ -60,6 +60,7 @@ extern void ShowMessage(char *s);
 extern void AlwaysShowMessage(const char *format, ...);
 extern void Printf(const char *format, ...);
 extern void RequestInputString(char* buffer, unsigned bufsize);
+extern int  GetString(char* sx);
 extern void ShowPatternCount(short side, short n);
 extern void ShowPostnValue(short sq);
 extern void ShowPostnValues(void);

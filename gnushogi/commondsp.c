@@ -42,7 +42,6 @@
 #include <sys/types.h>
 #include <sys/file.h>
 
-#include <curses.h>
 #include "gnushogi.h"
 
 char mvstr[4][6];
@@ -1641,23 +1640,12 @@ InputCommand(char *command)
         have_shown_prompt = false;
 #endif /* QUIETBACKGROUND */
 
-        if (command == NULL)
-        {
+        if (command == NULL) {
             if (NOT_CURSES)
-            {
-                s[0] = sx[0] = '\0';
+                s[0] = '\0';
 
-                while(!eof && !sx[0])
-                    eof = (fgets(sx, 80, stdin) == NULL);
-            }
-            else
-            {
-                fflush(stdout);
-                eof = (getstr(sx) == ERR);
-            }
-        }
-        else
-        {
+            eof = GetString(sx);
+        } else {
             strcpy(sx, command);
             done = true;
         }

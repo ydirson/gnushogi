@@ -148,6 +148,18 @@ Raw_doRequestInputString(const char* fmt, char* buffer)
 }
 
 
+int
+Raw_GetString(char* sx)
+{
+    int eof = 0;
+    sx[0] = '\0';
+
+    while(!eof && !sx[0])
+        eof = (fgets(sx, 80, stdin) == NULL);
+    return eof;
+}
+
+
 void
 Raw_ShowNodeCnt(long NodeCnt)
 {

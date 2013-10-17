@@ -126,3 +126,32 @@ void RequestInputString(char* buffer, unsigned bufsize)
     }
     doRequestInputString(fmt, buffer);
 }
+
+/*********/
+
+#define CASE_DSPFUNC_RAW(func,args) \
+  case DISPLAY_RAW:                 \
+  case DISPLAY_X:                   \
+    return (func args);             \
+    break
+
+#ifdef HAVE_LIBCURSES
+#define CASE_DSPFUNC_CURSES(func,args) \
+  case DISPLAY_CURSES:                 \
+    return (func args);                \
+    break;
+#else
+#define CASE_DSPFUNC_CURSES(func,args)
+#endif
+
+#define DISPLAY_INTFUNC(func,argsdecl,args)         \
+  int func argsdecl                                 \
+  {                                                 \
+    switch (display_type) {                         \
+      CASE_DSPFUNC_RAW(Raw_ ## func, args);         \
+      CASE_DSPFUNC_CURSES(Curses_ ## func, args);   \
+    }                                               \
+    assert(0);                                      \
+  }
+
+DISPLAY_INTFUNC(GetString, (char* sx), (sx))
