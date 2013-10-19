@@ -60,9 +60,8 @@ Raw_ClearScreen(void)
 }
 
 
-/* FIXME: change to ShowPrompt? */
 void
-PromptForMove(void)
+Raw_ShowPrompt(void)
 {
     if (!barebones && !XSHOGI)
     {

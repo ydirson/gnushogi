@@ -1568,16 +1568,7 @@ InputCommand(char *command)
             Sdepth = 0;
 
 #ifdef QUIETBACKGROUND
-            if (NOT_CURSES)
-            {
-                PromptForMove();
-            }
-            else
-            {
-                ShowSidetoMove();
-                ShowPrompt();
-            }
-
+            ShowPrompt();
             have_shown_prompt = true;
 #endif /* QUIETBACKGROUND */
 
@@ -1624,15 +1615,7 @@ InputCommand(char *command)
         {
 #endif /* QUIETBACKGROUND */
 
-            if (NOT_CURSES)
-            {
-                PromptForMove();
-            }
-            else
-            {
-                ShowSidetoMove();
-                ShowPrompt();
-            }
+            ShowPrompt();
 
 #ifdef QUIETBACKGROUND
         }

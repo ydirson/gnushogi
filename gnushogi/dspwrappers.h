@@ -64,6 +64,7 @@ extern int  GetString(char* sx);
 extern void ShowPatternCount(short side, short n);
 extern void ShowPostnValue(short sq);
 extern void ShowPostnValues(void);
+extern void ShowPrompt(void);
 extern void ShowResponseTime(void);
 extern void ShowResults(short score, unsigned short *bstline, char ch);
 extern void ShowSidetoMove(void);

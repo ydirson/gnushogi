@@ -66,6 +66,7 @@ int  Raw_GetString(char* sx);
 void Raw_ShowPatternCount(short side, short n);
 void Raw_ShowPostnValue(short sq);
 void Raw_ShowPostnValues(void);
+void Raw_ShowPrompt(void);
 void Raw_ShowResponseTime(void);
 void Raw_ShowResults(short score, unsigned short *bstline, char ch);
 void Raw_ShowSidetoMove(void);
@@ -77,7 +78,6 @@ void Raw_help(void);
 
 /* The following are only found in rawdsp.h: */
 
-void PromptForMove(void);
 void SetupBoard(void);
 
 #endif /* _RAWDSP_H_ */

@@ -226,8 +226,9 @@ ShowPlayers(void)
 
 
 void
-ShowPrompt(void)
+Curses_ShowPrompt(void)
 {
+    Curses_ShowSidetoMove();
     gotoXY(TAB, 17);
     printw(CP[121]);     /* Your move is? */
     ClearEoln();
