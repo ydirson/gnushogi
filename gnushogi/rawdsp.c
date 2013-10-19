@@ -987,3 +987,67 @@ Raw_ShowPostnValues(void)
            mtl[opponent], pscore[opponent], GameType[opponent]);
     printf("\nhung black %d hung white %d\n", hung[black], hung[white]);
 }
+
+
+/*
+ * Determine the time that has passed since the search was started. If the
+ * elapsed time exceeds the target(ResponseTime + ExtraTime) then set timeout
+ * to true which will terminate the search.
+ * iop = COMPUTE_MODE calculate et, bump ETnodes
+ * iop = COMPUTE_AND_INIT_MODE calculate et, set timeout if time exceeded,
+ *     set reference time
+ */
+void
+Raw_ElapsedTime(ElapsedTime_mode iop)
+{
+    long current_time;
+#ifdef HAVE_GETTIMEOFDAY
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    current_time = tv.tv_sec*100 + (tv.tv_usec/10000);
+#else
+    et = ((current_time = time((long *) 0)) - time0) * 100;
+#endif
+
+#ifdef INTERRUPT_TEST
+    if (iop == INIT_INTERRUPT_MODE)
+    {
+        itime0 = current_time;
+    }
+    else if (iop == COMPUTE_INTERRUPT_MODE)
+    {
+        it = current_time - itime0;
+    }
+    else
+#endif
+    {
+#ifdef HAVE_GETTIMEOFDAY
+        et = current_time - time0;
+#endif
+        ETnodes = NodeCnt + znodes;
+
+        if (et < 0)
+        {
+#ifdef INTERRUPT_TEST
+            printf("elapsed time %ld not positive\n", et);
+#endif
+            et = 0;
+        }
+
+        if (iop == COMPUTE_AND_INIT_MODE)
+        {
+            if ((et > (ResponseTime + ExtraTime)) && (Sdepth > MINDEPTH))
+                flag.timeout = true;
+
+            time0 = current_time;
+        }
+
+        if (!NOT_CURSES)
+        {
+#ifdef QUIETBACKGROUND
+            if (!background)
+#endif
+                UpdateClocks();
+        }
+    }
+}

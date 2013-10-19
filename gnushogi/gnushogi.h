@@ -175,7 +175,6 @@ extern void movealgbr(short m, char *s);
 #  define PTBLBDSIZE (NO_SQUARES + NO_PIECES)
 #endif
 
-#include "dspwrappers.h"   /* Display functions. */
 #include "eval.h"
 
 #define SCORE_LIMIT 12000
@@ -1031,7 +1030,6 @@ typedef enum
 #endif
 } ElapsedTime_mode;
 
-extern void  ElapsedTime(ElapsedTime_mode iop);
 extern void  SetResponseTime(short side);
 extern void  CheckForTimeout(int score, int globalscore,
                              int Jscore, int zwndw);
@@ -1089,5 +1087,7 @@ typedef enum
 
 extern int VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv);
 extern unsigned short TTage;
+
+#include "dspwrappers.h"   /* Display functions. */
 
 #endif /* _GNUSHOGI_H_ */

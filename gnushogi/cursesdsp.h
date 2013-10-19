@@ -34,6 +34,8 @@
 #ifndef _CURSESDSP_H_
 #define _CURSESDSP_H_
 
+#include "gnushogi.h"
+
 /* The following are common to rawdsp.h and cursesdsp.h */
 
 void Curses_ChangeAlphaWindow(void);
@@ -46,6 +48,7 @@ void Curses_Die(int sig);
 void Curses_DoDebug(void);
 void Curses_DoTable(short table[NO_SQUARES]);
 void Curses_EditBoard(void);
+void Curses_ElapsedTime(ElapsedTime_mode iop);
 void Curses_ExitShogi(void);
 void Curses_GiveHint(void);
 void Curses_Initialize(void);

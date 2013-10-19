@@ -121,7 +121,6 @@ COMMONFILES = \
                 pattern.o      \
                 rawdsp.o       \
                 search.o       \
-                sysdeps.o      \
                 tcontrl.o      \
                 util.o
 
@@ -196,9 +195,6 @@ rawdsp.o: rawdsp.c
 	$(CC) $(CFLAGS) -c $<
 
 search.o: search.c
-	$(CC) $(CFLAGS) -c $<
-
-sysdeps.o: sysdeps.c
 	$(CC) $(CFLAGS) -c $<
 
 tcontrl.o: tcontrl.c
@@ -279,7 +275,6 @@ makepattern.o: pattern.c gnushogi.h $(SRCDIR)/pattern.h
 pattern.o:     pattern.c gnushogi.h $(SRCDIR)/pattern.h $(SRCDIR)/pattern.inc
 rawdsp.o:      rawdsp.c gnushogi.h $(ROOT)/version.h
 search.o:      search.c gnushogi.h $(ROOT)/version.h
-sysdeps.o:     sysdeps.c gnushogi.h $(ROOT)/version.h
 tcontrl.o:     tcontrl.c gnushogi.h $(ROOT)/version.h
 util.o:        util.c gnushogi.h $(ROOT)/version.h
 pat2inc.o:     pat2inc.c $(SRCDIR)/pattern.h $(SRCDIR)/gnushogi.h

@@ -43,6 +43,7 @@ extern void ChangeXwindow(void);
 extern void ClearScreen(void);
 extern void DoDebug(void);
 extern void DoTable(short table[NO_SQUARES]);
+extern void ElapsedTime(ElapsedTime_mode iop);
 extern void EditBoard(void);
 extern void ExitShogi(void);
 extern void GiveHint(void);

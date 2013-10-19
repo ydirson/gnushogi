@@ -43,6 +43,20 @@
 #include "gnushogi.h"
 #include "cursesdsp.h"
 
+#if HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#if HAVE_SYS_FILIO_H
+/* Definition of FIONREAD */
+#include <sys/filio.h>
+#endif
+
+#if HAVE_ERRNO_H
+/* Definition of errno(). */
+#include <errno.h>
+#endif
+
 #define FLUSH_SCANW fflush(stdout), scanw
 
 int mycnt1, mycnt2;
@@ -1186,3 +1200,90 @@ Curses_DoTable(short table[NO_SQUARES])
     }
 } 
 
+
+/*
+ * Determine the time that has passed since the search was started. If the
+ * elapsed time exceeds the target(ResponseTime + ExtraTime) then set timeout
+ * to true which will terminate the search.
+ * iop = COMPUTE_MODE calculate et, bump ETnodes
+ * iop = COMPUTE_AND_INIT_MODE calculate et, set timeout if time exceeded,
+ *     set reference time
+ */
+void
+Curses_ElapsedTime(ElapsedTime_mode iop)
+{
+    long current_time;
+    int  i;
+    int  nchar;
+
+#ifdef HAVE_GETTIMEOFDAY
+    struct timeval tv;
+#endif
+
+    if ((i = ioctl((int) 0, FIONREAD, &nchar)))
+    {
+        perror("FIONREAD");
+        fprintf(stderr,
+                "You probably have a non-ANSI <ioctl.h>; "
+                "see README. %d %d %x\n",
+                i, errno, FIONREAD);
+        exit(1);
+    }
+
+    if (nchar)
+    {
+        if (!flag.timeout)
+            flag.back = true;
+
+        flag.bothsides = false;
+    }
+
+#ifdef HAVE_GETTIMEOFDAY
+    gettimeofday(&tv, NULL);
+    current_time = tv.tv_sec*100 + (tv.tv_usec/10000);
+#else
+    et = ((current_time = time((long *) 0)) - time0) * 100;
+#endif
+
+#ifdef INTERRUPT_TEST
+    if (iop == INIT_INTERRUPT_MODE)
+    {
+        itime0 = current_time;
+    }
+    else if (iop == COMPUTE_INTERRUPT_MODE)
+    {
+        it = current_time - itime0;
+    }
+    else
+#endif
+    {
+#ifdef HAVE_GETTIMEOFDAY
+        et = current_time - time0;
+#endif
+        ETnodes = NodeCnt + znodes;
+
+        if (et < 0)
+        {
+#ifdef INTERRUPT_TEST
+            printf("elapsed time %ld not positive\n", et);
+#endif
+            et = 0;
+        }
+
+        if (iop == COMPUTE_AND_INIT_MODE)
+        {
+            if ((et > (ResponseTime + ExtraTime)) && (Sdepth > MINDEPTH))
+                flag.timeout = true;
+
+            time0 = current_time;
+        }
+
+        if (!NOT_CURSES)
+        {
+#ifdef QUIETBACKGROUND
+            if (!background)
+#endif
+                UpdateClocks();
+        }
+    }
+}
