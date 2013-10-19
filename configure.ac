@@ -9,42 +9,24 @@ AC_INIT([gnushogi],[1.4.0+],[https://savannah.gnu.org/bugs/?group=gnushogi])
 AC_CONFIG_SRCDIR([version.h])
 AC_CONFIG_HEADER(config.h)
 
-
-#
-# Check for C compiler.
-#
-
-echo
-AC_MSG_CHECKING(for C compiler)
-echo
-
+##########
+AC_MSG_NOTICE([C compiler])
 AC_PROG_CC
 
-
-#
-# Check for parser generators.
-#
-
-echo
-AC_MSG_CHECKING([for yacc/bison, lex/flex, and install])
-echo
-
+##########
+AC_MSG_NOTICE([yacc/bison, lex/flex, and install])
 AC_PROG_YACC
 AC_PROG_LEX
 AC_PROG_INSTALL
 
-
-#
-# Check for X windows.
-#
-
-echo
+##########
+AC_MSG_NOTICE([X])
 AC_PATH_XTRA
 
-#
-# Check for ncurses.
-#
+##########
+AC_MSG_NOTICE([libs])
 
+# curses
 AC_ARG_WITH([curses],
   [AS_HELP_STRING([--with-curses],
     [enable curses UI])],
@@ -58,22 +40,18 @@ AS_IF([test "x$with_curses" != xno],
      AC_DEFINE([HAVE_LIBCURSES], [1],
                [Define if you have lib])
     ],
-    [AC_MSG_FAILURE(
+    [AC_MSG_ERROR(
        [--with-curses was given, but test for curses failed])],
     [-ltermcap])])
 
-#
-# Check for other libraries.
-#
-
+# other libraries.
 AC_CHECK_LIB(m, pow)
-dnl Replace `main' with a function in -ltermcap:
 AC_CHECK_LIB(termcap, tgoto)
 
 
-#
+
+##########
 # C compiler warnings.
-#
 
 if [[ $ac_cv_c_compiler_gnu = yes ]]
 then
@@ -91,14 +69,8 @@ AC_SUBST(WARNINGS)
 AC_SUBST(CEXTRAFLAGS)
 AC_SUBST(CEXTRAFLAGS2)
 
-
-#
-# Check for header files.
-#
-
-echo
-AC_MSG_CHECKING(for header files)
-echo
+##########
+AC_MSG_NOTICE([header files])
 
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
@@ -107,14 +79,8 @@ AC_CHECK_HEADERS([sys/param.h sys/time.h unistd.h])
 AC_CHECK_HEADERS(errno.h)
 AC_HEADER_TIME
 
-
-#
-# Check for typedefs, structures, and compiler characteristics.
-#
-
-echo 
-AC_MSG_CHECKING(for typedefs)
-echo
+##########
+AC_MSG_NOTICE([typedefs])
 
 AC_C_CONST
 AC_HEADER_STDBOOL
@@ -124,20 +90,13 @@ AC_TYPE_SIZE_T
 AC_HEADER_TIME
 AC_STRUCT_TM
 
-echo 
-AC_MSG_CHECKING(for compiler characteristics)
-echo
+##########
+AC_MSG_NOTICE([compiler characteristics])
 
 AC_CHECK_SIZEOF(long)
 
-
-#
-# Check for library functions.
-#
-
-echo
-AC_MSG_CHECKING(for library functions)
-echo
+##########
+AC_MSG_NOTICE([library functions])
 
 AC_FUNC_FORK
 AC_PROG_GCC_TRADITIONAL
@@ -222,13 +181,9 @@ AC_SUBST(XSHOGI)
 AC_SUBST(XSHOGIINSTALL)
 AC_SUBST(XSHOGICLEAN)
 
-
-echo
-echo outputting files...
-
+##########
 AC_CONFIG_FILES([Makefile
                  gnushogi/Makefile
-				 gnushogi/Makefile.profile
+		 gnushogi/Makefile.profile
                  xshogi/Makefile])
 AC_OUTPUT
-
