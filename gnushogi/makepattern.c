@@ -226,20 +226,16 @@ ReadOpeningSequences (short *pindex)
         pattern_data[(*pindex)++] = END_OF_PATTERNS;
         pattern_data[(*pindex)++] = END_OF_SEQUENCES;
 
-        if (NOT_CURSES)
-        {
-            sprintf(s,
-                    "Pattern: %d bytes for %d sequences with %d patterns.\n",
-                    *pindex, max_opening_sequence, max_pattern);
-            ShowMessage(s);
-        }
+        sprintf(s,
+                "Pattern: %d bytes for %d sequences with %d patterns.\n",
+                *pindex, max_opening_sequence, max_pattern);
+        ShowMessage(s);
+
         fclose(fd);
     }
-    else if (NOT_CURSES)
-    {
-        sprintf(s, "no pattern file '%s'", patternfile);
-        ShowMessage(s);
-    }
+
+    sprintf(s, "no pattern file '%s'", patternfile);
+    ShowMessage(s);
 }
 
 
