@@ -121,6 +121,7 @@ Raw_ShowMessage(char *s)
         printf("%s\n", s);
 }
 
+
 void
 Raw_AlwaysShowMessage(const char *format, ...)
 {
@@ -131,6 +132,7 @@ Raw_AlwaysShowMessage(const char *format, ...)
     printf("\n");
 }
 
+
 void
 Raw_Printf(const char *format, ...)
 {
@@ -139,6 +141,7 @@ Raw_Printf(const char *format, ...)
     vprintf(format, ap);
     va_end(ap);
 }
+
 
 void
 Raw_doRequestInputString(const char* fmt, char* buffer)
@@ -212,7 +215,6 @@ Raw_ShowStage(void)
  * End of trivial output routines.
  ****************************************/
 
-
 void
 Raw_Initialize(void)
 {
@@ -238,7 +240,6 @@ Raw_Initialize(void)
             MaxResponseTime = 15L * 100L;
     }
 }
-
 
 
 void
@@ -267,7 +268,6 @@ Raw_Die(int sig)
 }
 
 
-
 void
 Raw_TerminateSearch(int sig)
 {
@@ -280,7 +280,6 @@ Raw_TerminateSearch(int sig)
 
     flag.bothsides = false;
 }
-
 
 
 void
@@ -363,12 +362,10 @@ Raw_help(void)
 }
 
 
-
 /*
  * Set up a board position. Pieces are entered by typing the piece followed
  * by the location. For example, Nf3 will place a knight on square f3.
  */
-
 void
 Raw_EditBoard(void)
 {
@@ -469,14 +466,11 @@ Raw_EditBoard(void)
 }
 
 
-
-
 /*
  * Set up a board position.
  * Nine lines of nine characters are used to setup the board. 9a-1a is the
  * first line. White pieces are  represented  by  uppercase characters.
  */
-
 void
 SetupBoard(void)
 {
@@ -538,7 +532,6 @@ Raw_SearchStartStuff(short side)
                ResponseTime, TimeControl.clock[side]);
     }
 }
-
 
 
 void
@@ -699,7 +692,6 @@ Raw_UpdateDisplay(short f, short t, short redraw, short isspec)
 }
 
 
-
 void
 Raw_ChangeAlphaWindow(void)
 {
@@ -710,7 +702,6 @@ Raw_ChangeAlphaWindow(void)
 }
 
 
-
 void
 Raw_ChangeBetaWindow(void)
 {
@@ -719,7 +710,6 @@ Raw_ChangeBetaWindow(void)
     printf("BBwindow: ");
     scanf("%hd", &BBwindow);
 }
-
 
 
 void
@@ -733,7 +723,6 @@ Raw_GiveHint(void)
     else
         fputs(CP[223], stdout);
 }
-
 
 
 void
@@ -818,8 +807,6 @@ Raw_SelectLevel(char *sx)
 }
 
 
-
-
 void
 Raw_ChangeSearchDepth(void)
 {
@@ -827,8 +814,6 @@ Raw_ChangeSearchDepth(void)
     scanf("%hd", &MaxSearchDepth);
     TCflag = !(MaxSearchDepth > 0);
 }
-
-
 
 
 void
@@ -841,14 +826,12 @@ Raw_ChangeHashDepth(void)
 }
 
 
-
 void
 Raw_SetContempt(void)
 {
     printf("contempt = ");
     scanf("%hd", &contempt);
 }
-
 
 
 void
@@ -863,7 +846,6 @@ Raw_ChangeXwindow(void)
  * Raw_ShowPostnValue(short sq)
  * must have called ExaminePosition() first
  */
-
 void
 Raw_ShowPostnValue(short sq)
 {
@@ -883,7 +865,6 @@ Raw_ShowPostnValue(short sq)
         printf(" *   ");
     }
 }
-
 
 
 void
@@ -964,7 +945,6 @@ Raw_DoDebug(void)
 }
 
 
-
 void
 Raw_DoTable(short table[NO_SQUARES])
 {
@@ -982,7 +962,6 @@ Raw_DoTable(short table[NO_SQUARES])
         printf("\n");
     }
 }
-
 
 
 void

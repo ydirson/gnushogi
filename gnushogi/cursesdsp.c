@@ -90,7 +90,6 @@ ClearMessage(void)
 }
 
 
-
 void
 gotoXY(short x, short y)
 {
@@ -313,11 +312,9 @@ Curses_ShowStage(void)
     ClearEoln();
 }
 
-
 /****************************************
  * End of trivial output routines.
  ****************************************/
-
 
 void
 Curses_Initialize(void)
@@ -345,7 +342,6 @@ Curses_ExitShogi(void)
 }
 
 
-
 void
 Curses_Die(int sig)
 {
@@ -365,7 +361,6 @@ Curses_Die(int sig)
 }
 
 
-
 void
 Curses_TerminateSearch(int sig)
 {
@@ -380,7 +375,6 @@ Curses_TerminateSearch(int sig)
     signal(SIGINT, Curses_Die);
     signal(SIGQUIT, Curses_Die);
 }
-
 
 
 void
@@ -581,7 +575,6 @@ Curses_EditBoard(void)
 }
 
 
-
 static void 
 UpdateCatched()
 {
@@ -633,7 +626,6 @@ UpdateCatched()
 }
 
 
-
 void
 Curses_SearchStartStuff(short side)
 {
@@ -648,7 +640,6 @@ Curses_SearchStartStuff(short side)
         ClearEoln();
     }
 }
-
 
 
 void
@@ -716,7 +707,6 @@ Curses_OutputMove(void)
 }
 
 
-
 void
 UpdateClocks(void)
 {
@@ -753,7 +743,6 @@ UpdateClocks(void)
 
     refresh();
 }
-
 
 
 void
@@ -794,12 +783,9 @@ DrawPiece(short sq)
 }
 
 
-
-
 /*
  * Curses_ShowPostnValue(): must have called ExaminePosition() first
  */
-
 void
 Curses_ShowPostnValue(short sq)
 {
@@ -825,7 +811,6 @@ Curses_ShowPostnValue(short sq)
 }
 
 
-
 void
 Curses_ShowPostnValues(void)
 {
@@ -844,7 +829,6 @@ Curses_ShowPostnValues(void)
 
     ClearEoln();
 }
-
 
 
 void
@@ -958,9 +942,6 @@ Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
 }
 
 
-extern char *InPtr;
-
-
 void
 Curses_ChangeAlphaWindow(void)
 {
@@ -971,7 +952,6 @@ Curses_ChangeAlphaWindow(void)
 }
 
 
-
 void
 Curses_ChangeBetaWindow(void)
 {
@@ -980,7 +960,6 @@ Curses_ChangeBetaWindow(void)
     Curses_ShowMessage(CP[35]);
     FLUSH_SCANW("%hd", &BBwindow);
 }
-
 
 
 void
@@ -1000,7 +979,6 @@ Curses_GiveHint(void)
         Curses_ShowMessage(CP[223]);
     }
 }
-
 
 
 void
@@ -1030,14 +1008,12 @@ Curses_SetContempt(void)
 }
 
 
-
 void
 Curses_ChangeXwindow(void)
 {
     Curses_ShowMessage(CP[208]);
     FLUSH_SCANW("%hd", &xwndw);
 }
-
 
 
 void
@@ -1150,7 +1126,6 @@ Curses_SelectLevel(char *sx)
 }
 
 
-
 void
 Curses_DoDebug(void)
 {
@@ -1198,7 +1173,6 @@ Curses_DoDebug(void)
 }
 
 
-
 void
 Curses_DoTable(short table[NO_SQUARES])
 {
@@ -1211,6 +1185,4 @@ Curses_DoTable(short table[NO_SQUARES])
         printw("%3d ", table[sq]);
     }
 } 
-
-
 
