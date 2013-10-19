@@ -84,16 +84,16 @@ ElapsedTime(ElapsedTime_mode iop)
 }
 
 
+void
+ElapsedTime_FIONREAD(ElapsedTime_mode iop)
+{
+    long current_time;
+    int  i;
+    int  nchar;
 
 #ifdef HAVE_GETTIMEOFDAY
-void
-ElapsedTime_FIONREAD(ElapsedTime_mode iop)
-{
-    long current_time;
-    int  i;
-    int  nchar;
-
     struct timeval tv;
+#endif
 
     if ((i = ioctl((int) 0, FIONREAD, &nchar)))
     {
@@ -113,140 +113,12 @@ ElapsedTime_FIONREAD(ElapsedTime_mode iop)
         flag.bothsides = false;
     }
 
+#ifdef HAVE_GETTIMEOFDAY
     gettimeofday(&tv, NULL);
     current_time = tv.tv_sec*100 + (tv.tv_usec/10000);
-
-#  ifdef INTERRUPT_TEST
-    if (iop == INIT_INTERRUPT_MODE)
-    {
-        itime0 = current_time;
-    }
-    else if (iop == COMPUTE_INTERRUPT_MODE)
-    {
-        it = current_time - itime0;
-    }
-    else
-#  endif
-    {
-        et = current_time - time0;
-        ETnodes = NodeCnt + znodes;
-
-        if (et < 0)
-        {
-#  ifdef INTERRUPT_TEST
-            printf("elapsed time %ld not positive\n", et);
-#  endif
-            et = 0;
-        }
-
-        if (iop == COMPUTE_AND_INIT_MODE)
-        {
-            if ((et > ResponseTime + ExtraTime) && (Sdepth > MINDEPTH))
-                flag.timeout = true;
-
-            time0 = current_time;
-        }
-
-        if (!NOT_CURSES)
-        {
-#  ifdef QUIETBACKGROUND
-            if (!background)
-#  endif /* QUIETBACKGROUND */
-                UpdateClocks();
-        }
-    }
-}
-
-
-void
-ElapsedTime_NOFIONREAD(ElapsedTime_mode iop)
-{
-    struct timeval tv;
-    long current_time;
-
-    gettimeofday(&tv, NULL);
-    current_time = tv.tv_sec*100 + (tv.tv_usec/10000);
-
-#  ifdef INTERRUPT_TEST
-    if (iop == INIT_INTERRUPT_MODE)
-    {
-        itime0 = current_time;
-    }
-    else if (iop == COMPUTE_INTERRUPT_MODE)
-    {
-        it = current_time - itime0;
-    }
-    else
-#  endif
-    {
-        et = current_time - time0;
-        ETnodes = NodeCnt + znodes;
-
-        if (et < 0)
-        {
-#  ifdef INTERRUPT_TEST
-            printf("elapsed time %ld not positive\n", et);
-#  endif
-            et = 0;
-        }
-
-        if (iop == COMPUTE_AND_INIT_MODE)
-        {
-            if ((et > ResponseTime + ExtraTime) && (Sdepth > MINDEPTH))
-                flag.timeout = true;
-
-            time0 = current_time;
-        }
-
-        if (!NOT_CURSES)
-        {
-#  ifdef QUIETBACKGROUND
-            if (!background)
-#  endif /* QUIETBACKGROUND */
-                UpdateClocks();
-        }
-    }
-}
-
-
-#else /* !HAVE_GETTIMEOFDAY */
-
-
-/*
- * Determine the time that has passed since the search was started.  If the
- * elapsed time exceeds the target (ResponseTime + ExtraTime) then set
- * timeout to true which will terminate the search.
- *
- * iop = 0   calculate et, bump ETnodes
- * iop = 1   calculate et, set timeout if time exceeded, calculate et
- *
- */
-
-void
-ElapsedTime_FIONREAD(ElapsedTime_mode iop)
-{
-    long current_time;
-    int  nchar;
-    int  i;
-
-    if ((i = ioctl((int) 0, FIONREAD, &nchar)))
-    {
-        perror("FIONREAD");
-        fprintf(stderr,
-                "You probably have a non-ANSI <ioctl.h>; "
-                "see README. %d %d %x\n",
-                i, errno, FIONREAD);
-        exit(1);
-    }
-
-    if (nchar)
-    {
-        if (!flag.timeout)
-            flag.back = true;
-        flag.bothsides = false;
-    }
-
+#else
     et = ((current_time = time((long *) 0)) - time0) * 100;
+#endif
 
 #ifdef INTERRUPT_TEST
     if (iop == INIT_INTERRUPT_MODE)
@@ -260,6 +132,9 @@ ElapsedTime_FIONREAD(ElapsedTime_mode iop)
     else
 #endif
     {
+#ifdef HAVE_GETTIMEOFDAY
+        et = current_time - time0;
+#endif
         ETnodes = NodeCnt + znodes;
 
         if (et < 0)
@@ -282,20 +157,24 @@ ElapsedTime_FIONREAD(ElapsedTime_mode iop)
         {
 #ifdef QUIETBACKGROUND
             if (!background)
-#endif /* QUIETBACKGROUND */
+#endif
                 UpdateClocks();
         }
     }
 }
 
 
-
 void
 ElapsedTime_NOFIONREAD(ElapsedTime_mode iop)
 {
     long current_time;
-
+#ifdef HAVE_GETTIMEOFDAY
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    current_time = tv.tv_sec*100 + (tv.tv_usec/10000);
+#else
     et = ((current_time = time((long *) 0)) - time0) * 100;
+#endif
 
 #ifdef INTERRUPT_TEST
     if (iop == INIT_INTERRUPT_MODE)
@@ -309,6 +188,9 @@ ElapsedTime_NOFIONREAD(ElapsedTime_mode iop)
     else
 #endif
     {
+#ifdef HAVE_GETTIMEOFDAY
+        et = current_time - time0;
+#endif
         ETnodes = NodeCnt + znodes;
 
         if (et < 0)
@@ -331,16 +213,8 @@ ElapsedTime_NOFIONREAD(ElapsedTime_mode iop)
         {
 #ifdef QUIETBACKGROUND
             if (!background)
-#endif /* QUIETBACKGROUND */
+#endif
                 UpdateClocks();
         }
     }
 }
-
-
-#endif /* HAVE_GETTIMEOFDAY */
-
-
-
-
-
