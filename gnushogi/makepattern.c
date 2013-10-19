@@ -232,10 +232,10 @@ ReadOpeningSequences (short *pindex)
         ShowMessage(s);
 
         fclose(fd);
+    } else {
+        sprintf(s, "no pattern file '%s'", patternfile);
+        ShowMessage(s);
     }
-
-    sprintf(s, "no pattern file '%s'", patternfile);
-    ShowMessage(s);
 }
 
 
