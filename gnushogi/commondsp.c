@@ -1679,7 +1679,7 @@ InputCommand(char *command)
         {
             EditBoard();
         }
-        else if (NOT_CURSES && (strcmp(s, CP[190]) == 0))  /* setup */
+        else if ((strcmp(s, CP[190]) == 0))  /* setup */
         {
             SetupBoard();
         }

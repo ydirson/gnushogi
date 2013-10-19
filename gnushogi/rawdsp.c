@@ -472,7 +472,7 @@ Raw_EditBoard(void)
  * first line. White pieces are  represented  by  uppercase characters.
  */
 void
-SetupBoard(void)
+Raw_SetupBoard(void)
 {
     short r, c, sq, i;
     char ch;

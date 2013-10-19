@@ -66,6 +66,7 @@ void Raw_AlwaysShowMessage(const char *format, ...);
 void Raw_Printf(const char *format, ...);
 void Raw_doRequestInputString(const char* fmt, char* buffer);
 int  Raw_GetString(char* sx);
+void Raw_SetupBoard(void);
 void Raw_ShowPatternCount(short side, short n);
 void Raw_ShowPostnValue(short sq);
 void Raw_ShowPostnValues(void);
@@ -77,11 +78,6 @@ void Raw_ShowStage(void);
 void Raw_TerminateSearch(int sig);
 void Raw_UpdateDisplay(short f, short t, short redraw, short isspec);
 void Raw_help(void);
-
-
-/* The following are only found in rawdsp.h: */
-
-void SetupBoard(void);
 
 #endif /* _RAWDSP_H_ */
 

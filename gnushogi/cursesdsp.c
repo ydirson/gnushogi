@@ -1288,3 +1288,9 @@ Curses_ElapsedTime(ElapsedTime_mode iop)
         }
     }
 }
+
+void
+Curses_SetupBoard(void)
+{
+    Curses_ShowMessage("'setup' command is not supported in Cursesmode");
+}
