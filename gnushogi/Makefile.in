@@ -60,7 +60,7 @@ INFODIR = $(prefix)/info
 LIBS    = -lm
 
 # Display routines.
-LCURSES =   -lcurses -ltermcap
+LCURSES = @LIBCURSES@
 
 
 #
@@ -112,7 +112,7 @@ COMMONFILES = \
                 attacks.o      \
                 book.o         \
                 commondsp.o    \
-                cursesdsp.o    \
+                @CURSESDSP@    \
                 dspwrappers.o  \
                 eval.o         \
                 genmove.o      \

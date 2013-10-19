@@ -36,7 +36,8 @@ AC_ARG_WITH([curses],
 LIBCURSES=
 AS_IF([test "x$with_curses" != xno],
   [AC_CHECK_LIB([curses], [clrtoeol],
-    [AC_SUBST([LIBCURSES], ["-lcurses"])
+    [AC_SUBST([LIBCURSES], [-lcurses])
+     AC_SUBST([CURSESDSP], [cursesdsp.o])
      AC_DEFINE([HAVE_LIBCURSES], [1],
                [Define if you have lib])
     ],
