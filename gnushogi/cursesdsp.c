@@ -1279,13 +1279,10 @@ Curses_ElapsedTime(ElapsedTime_mode iop)
             time0 = current_time;
         }
 
-        if (!NOT_CURSES)
-        {
 #ifdef QUIETBACKGROUND
-            if (!background)
+        if (!background)
 #endif
-                UpdateClocks();
-        }
+            UpdateClocks();
     }
 }
 
