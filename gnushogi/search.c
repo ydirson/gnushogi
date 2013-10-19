@@ -33,10 +33,6 @@
 #include <poll.h>
 #include <unistd.h>
 
-#if !defined OLDTIME && defined HAVE_GETTIMEOFDAY
-double pow(double x, double y);
-#endif
-
 short background = 0;
 static short DepthBeyond;
 unsigned short PrVar[MAXDEPTH];
