@@ -78,17 +78,4 @@ void Curses_TerminateSearch(int sig);
 void Curses_UpdateDisplay(short f, short t, short redraw, short isspec);
 void Curses_help(void);
 
-
-/* The following are only found in cursesdsp.h: */
-
-void ClearEoln(void);
-void ClearMessage(void);
-void DrawPiece(short sq);
-void ShowHeader(void);
-void ShowPlayers(void);
-void ShowScore(short score);
-void UpdateClocks(void);
-void gotoXY(short x, short y);
-
 #endif /* _CURSESDSP_H_ */
-

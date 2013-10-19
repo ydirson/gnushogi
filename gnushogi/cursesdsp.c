@@ -74,13 +74,14 @@ char *DRAW;
 /* FIXME: change this name, puh-leeze! */
 
 static void UpdateCatched(void);
-
+static void DrawPiece(short sq);
+static void ShowScore(short score);
 
 /****************************************
  * Trivial output functions.
  ****************************************/
 
-void
+static void
 ClearEoln(void)
 {
     clrtoeol();
@@ -96,7 +97,7 @@ Curses_ClearScreen(void)
 }
 
 
-void
+static void
 ClearMessage(void)
 {
     gotoXY(TAB, 6);
@@ -104,7 +105,7 @@ ClearMessage(void)
 }
 
 
-void
+static void
 gotoXY(short x, short y)
 {
     move(y - 1, x - 1);
@@ -228,7 +229,7 @@ Curses_ShowPatternCount(short side, short n)
 }
 
 
-void
+static void
 ShowPlayers(void)
 {
     gotoXY(5, ((flag.reverse) ? (5 + 2*NO_ROWS) : 2));
@@ -238,7 +239,7 @@ ShowPlayers(void)
 }
 
 
-void
+static void
 Curses_ShowPrompt(void)
 {
     Curses_ShowSidetoMove();
@@ -299,7 +300,7 @@ Curses_ShowResults(short score, unsigned short *bstline, char ch)
 }
 
 
-void
+static void
 ShowScore(short score)
 {
     gotoXY(TAB, 5);
@@ -721,7 +722,7 @@ Curses_OutputMove(void)
 }
 
 
-void
+static void
 UpdateClocks(void)
 {
     short m, s;
@@ -759,7 +760,7 @@ UpdateClocks(void)
 }
 
 
-void
+static void
 DrawPiece(short sq)
 {
     char y;
