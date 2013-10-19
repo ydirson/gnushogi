@@ -98,17 +98,17 @@ Curses_ClearScreen(void)
 
 
 static void
-ClearMessage(void)
+gotoXY(short x, short y)
 {
-    gotoXY(TAB, 6);
-    ClearEoln();
+    move(y - 1, x - 1);
 }
 
 
 static void
-gotoXY(short x, short y)
+ClearMessage(void)
 {
-    move(y - 1, x - 1);
+    gotoXY(TAB, 6);
+    ClearEoln();
 }
 
 
@@ -239,7 +239,7 @@ ShowPlayers(void)
 }
 
 
-static void
+void
 Curses_ShowPrompt(void)
 {
     Curses_ShowSidetoMove();

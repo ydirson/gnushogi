@@ -1047,7 +1047,6 @@ extern void  ShowCurrentMove(short pnt, short f, short t);
 extern void  ListGame(void);
 extern void  ShowMessage(char *s);
 extern void  ClearScreen(void);
-extern void  UpdateClocks(void);
 extern void  DoDebug(void);
 extern void  DoTable(short table[NO_SQUARES]);
 extern void  ShowPostnValues(void);
