@@ -186,5 +186,6 @@ AC_SUBST(XSHOGICLEAN)
 AC_CONFIG_FILES([Makefile
                  gnushogi/Makefile
 		 gnushogi/Makefile.profile
+                 doc/Makefile
                  xshogi/Makefile])
 AC_OUTPUT

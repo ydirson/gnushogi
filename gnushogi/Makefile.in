@@ -91,7 +91,7 @@ BINBOOK    = -DBINBOOK=\"$(LIBDIR)/gnushogi.bbk\"
 # obtain such a pattern in the opening stage. Sequences of opening
 # patterns may be described in order to support the correct order of moves.
 
-PATTERN    = -DPATTERNFILE=\"../misc/gnushogi.pat\"
+PATTERN    = -DPATTERNFILE=\"$(ROOT)/misc/gnushogi.pat\"
 
 
 all:
