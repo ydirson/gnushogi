@@ -1,5 +1,11 @@
 Generic cleanups
 
+- switch cli parsing to getopt
+- hunt for extern's and prototypes spread all over the source
+- merge old Makefile.profile.in back into Makefile.in if meaningful at all
+- use automake
+- drop gnushogi.lng, merge strings back into code
+- use version from configure.ac, get rid of version.h, drop patchlevel
 - hunt for more hardcoded variant-specific constants
   - position of captured pieces in curses mode
   - compile with bound-checker
