@@ -30,11 +30,13 @@ BUILDROOT   = @top_builddir@
 GNUSHOGIDIR = $(BUILDROOT)/gnushogi
 XSHOGIDIR   = $(BUILDROOT)/xshogi
 
+PROGNAME = @PROGNAME@
+
 #
 # Default targets.
 #
 
-all : gnushogi_compile pat2inc gnushogi.bbk @XSHOGI@ 
+all : gnushogi_compile pat2inc bbk @XSHOGI@
 
 
 #
@@ -42,7 +44,7 @@ all : gnushogi_compile pat2inc gnushogi.bbk @XSHOGI@
 #
 
 gnushogi_compile:
-	-cd $(GNUSHOGIDIR) && $(MAKE) gnushogi
+	-cd $(GNUSHOGIDIR) && $(MAKE) $(PROGNAME)
 
 pat2inc:
 	-cd $(GNUSHOGIDIR) && $(MAKE) pat2inc
@@ -53,8 +55,8 @@ sizetest:
 xshogi_compile:
 	-cd $(XSHOGIDIR) && $(MAKE)
 
-gnushogi.bbk:
-	-cd $(GNUSHOGIDIR) && $(MAKE) gnushogi.bbk
+bbk:
+	-cd $(GNUSHOGIDIR) && $(MAKE) $(PROGNAME).bbk
 
 
 #

@@ -26,6 +26,7 @@
 
 #
 # gnushogi   is GNU shogi, for raw text, curses, or x output.
+# gnuminishogi is GNU minishogi, for raw text, curses, or x output.
 # pat2inc    converts pattern textfile to "pattern.inc" include file.
 # sizetest   shows the memory usage of the main data structures.
 #
@@ -40,6 +41,8 @@ SRCDIR		= @srcdir@
 
 VPATH=$(SRCDIR)
 
+PROGNAME=@PROGNAME@
+
 # Installation directory.
 prefix  =   @prefix@
 
@@ -48,7 +51,7 @@ BINDIR  =   $(prefix)/bin
 
 # Where the language description, the book, and the 
 # persistent hashtable live.
-LIBDIR  =   $(prefix)/lib/gnushogi
+LIBDIR  =   $(prefix)/lib/$(PROGNAME)
 
 # Where the man page goes.
 MANDIR  = $(prefix)/man/man6
@@ -76,22 +79,22 @@ LDFLAGS     = @LDFLAGS@
 # The hashfile is a record of positions seen. It is used by
 # GNU Shogi to avoid making the same mistakes, a form of learning.
 
-HASH       = -DHASHFILE=\"$(LIBDIR)/gnushogi.hsh\"
+HASH       = -DHASHFILE=\"$(LIBDIR)/$(PROGNAME).hsh\"
 
 
 # The "book" is a record of the first few moves, for playing good
 # moves easily and quickly, saving time, and irritating the human
 # opponent.
 
-TEXTBOOK   = -DBOOK=\"$(LIBDIR)/gnushogi.tbk\"
-BINBOOK    = -DBINBOOK=\"$(LIBDIR)/gnushogi.bbk\"
+TEXTBOOK   = -DBOOK=\"$(LIBDIR)/$(PROGNAME).tbk\"
+BINBOOK    = -DBINBOOK=\"$(LIBDIR)/$(PROGNAME).bbk\"
 
 
 # The pattern file contains various opening patterns. The program tries to
 # obtain such a pattern in the opening stage. Sequences of opening
 # patterns may be described in order to support the correct order of moves.
 
-PATTERNFILE=$(ROOT)/misc/gnushogi.pat
+PATTERNFILE=$(ROOT)/misc/$(PROGNAME).pat
 PATTERN    = -DPATTERNFILE=\"$(PATTERNFILE)\"
 
 
@@ -133,8 +136,8 @@ PAT2INCFILES    = $(COMMONFILES) makepattern.o pat2inc.o
 # Primary targets.
 #
 
-gnushogi:
-	$(CC) $(CFLAGS) -o gnushogi $(GNUSHOGI_FILES) $(LDFLAGS) $(LCURSES) $(LIBS)
+$(PROGNAME):
+	$(CC) $(CFLAGS) -o $(PROGNAME) $(GNUSHOGI_FILES) $(LDFLAGS) $(LCURSES) $(LIBS)
 
 pat2inc:
 	$(CC) $(CFLAGS) -o pat2inc $(PAT2INCFILES) $(LDFLAGS) $(LCURSES) $(LIBS)
@@ -224,11 +227,11 @@ pattern.inc: $(PATTERNFILE) pat2inc
 # Other targets.
 #
 
-gnushogi.bbk: 
-	@if [ -f ./gnushogi.bbk ]; then rm ./gnushogi.bbk; fi
+$(PROGNAME).bbk:
+	@if [ -f ./$(PROGNAME).bbk ]; then rm ./$(PROGNAME).bbk; fi
 	echo quit > test
-	cat $(ROOT)/misc/gnushogi.tbk > _tmp_t
-	cat test | ./gnushogi -R -b _tmp_t -B ./gnushogi.bbk -S 8000 -P 40 3 0
+	cat $(ROOT)/misc/$(PROGNAME).tbk > _tmp_t
+	cat test | ./$(PROGNAME) -R -b _tmp_t -B ./$(PROGNAME).bbk -S 8000 -P 40 3 0
 	rm test _tmp_t
 	@echo
 
@@ -237,23 +240,23 @@ gnushogi.bbk:
 # Installation.
 #
 
-install: gnushogi
-	strip gnushogi
+install: $(PROGNAME)
+	strip $(PROGNAME)
 	$(INSTALL_PROGRAM) -d $(BINDIR)
 	$(INSTALL_PROGRAM) -d $(LIBDIR)
 	$(INSTALL_PROGRAM) -d $(MANDIR)
 	$(INSTALL_PROGRAM) -d $(INFODIR)
-	$(INSTALL_PROGRAM) gnushogi $(BINDIR)
+	$(INSTALL_PROGRAM) $(PROGNAME) $(BINDIR)
 	$(INSTALL_DATA)    $(ROOT)/doc/gnushogi.6     $(MANDIR)
 	$(INSTALL_DATA)    $(ROOT)/doc/gnushogi.info* $(INFODIR)
-	$(INSTALL_DATA)    gnushogi.bbk $(LIBDIR)/gnushogi.bbk
+	$(INSTALL_DATA)    $(PROGNAME).bbk $(LIBDIR)/$(PROGNAME).bbk
 
 
 #
 # Cleanup.
 #
 
-CLEANFILES = *.o gnushogi sizetest pat2inc CLp* *.bbk
+CLEANFILES = *.o gnushogi gnuminishogi sizetest pat2inc CLp* *.bbk
 
 clean: 
 	@for file in $(CLEANFILES); do \
@@ -265,7 +268,7 @@ clean:
 # Dependencies.
 #
 
-gnushogi:   $(GNUSHOGI_FILES)
+$(PROGNAME):   $(GNUSHOGI_FILES)
 pat2inc:       $(PAT2INCFILES)
 sizetest:      sizetest.o 
 attacks.o:     attacks.c gnushogi.h
@@ -286,5 +289,5 @@ tcontrl.o:     tcontrl.c gnushogi.h
 util.o:        util.c gnushogi.h
 pat2inc.o:     pat2inc.c $(SRCDIR)/pattern.h $(SRCDIR)/gnushogi.h
 sizetest.o:    sizetest.c $(SRCDIR)/gnushogi.h $(SRCDIR)/eval.h
-gnushogi.bbk:  gnushogi
+$(PROGNAME).bbk:  $(PROGNAME)
 

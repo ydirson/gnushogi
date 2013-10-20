@@ -114,15 +114,15 @@ AC_CHECK_FUNCS(setlinebuf setvbuf)
 #
 # Set various user-definable options.
 #
-# Valid OPT settings:
-# --with-top-part-bitmaps
-#
-# Other settings:
-# --with-first-shogi-program=PROGNAME
-# --with-second-shogi-program=PROGNAME
-# --with-first-host=HOSTNAME
-# --with-second-host=HOSTNAME
-#
+
+AC_ARG_ENABLE(minishogi,
+[  --enable-minishogi
+        Build gnuminishogi instead of gnushogi (default: no)],
+[AC_DEFINE([MINISHOGI], [], [Define to build gnuminishogi instead of gnushogi])
+AC_SUBST([PROGNAME], [gnuminishogi])
+],
+[AC_SUBST([PROGNAME], [gnushogi])
+])
 
 OPT=
 FIRST_SHOGI_PROGRAM=gnushogi

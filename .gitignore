@@ -15,6 +15,8 @@
 /gnushogi/pattern.inc
 /gnushogi/gnushogi
 /gnushogi/gnushogi.bbk
+/gnushogi/gnuminishogi
+/gnushogi/gnuminishogi.bbk
 
 /xshogi/scanner.c
 /xshogi/parser.c
