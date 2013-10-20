@@ -58,13 +58,13 @@ AC_CHECK_LIB(termcap, tgoto)
 if [[ $ac_cv_c_compiler_gnu = yes ]]
 then
 WARNINGS="-Wall -Wno-implicit-int -Wstrict-prototypes -ansi -pedantic"
-CEXTRAFLAGS="-fsigned-char -funroll-loops \$(HASH)"
+CEXTRAFLAGS="-fsigned-char -funroll-loops"
 # For profiling targets:
-CEXTRAFLAGS2="-fsigned-char -pg -fprofile-arcs -ftest-coverage \$(HASH)"
+CEXTRAFLAGS2="-fsigned-char -pg -fprofile-arcs -ftest-coverage"
 else
 # Who knows what warnings your compiler uses?
 WARNINGS=
-CEXTRAFLAGS="\$(HASH)"
+CEXTRAFLAGS=
 fi
 
 AC_SUBST(WARNINGS)
