@@ -35,6 +35,8 @@
 #ifndef _DSPWRAPPERS_H_
 #define _DSPWRAPPERS_H_
 
+#include <stdarg.h>
+
 extern void ChangeAlphaWindow(void);
 extern void ChangeBetaWindow(void);
 extern void ChangeHashDepth(void);

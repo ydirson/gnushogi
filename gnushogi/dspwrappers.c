@@ -37,7 +37,6 @@
 #include "rawdsp.h"
 #include "cursesdsp.h"
 
-#include <stdarg.h>
 #include <stdio.h>
 
 #define CASE_DSP_RAW(func,args) \
