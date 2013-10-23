@@ -1067,6 +1067,7 @@ extern void  ShowLine(unsigned short *bstline);
 extern int   pick(short p1, short p2);
 extern short repetition(void);
 extern void  TimeCalc(void);
+extern void  ElapsedTime(ElapsedTime_mode iop);
 
 extern short
 DropPossible(short piece, short side, short sq); /* genmoves.c */

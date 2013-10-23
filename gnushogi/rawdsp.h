@@ -48,7 +48,6 @@ void Raw_Die(int sig);
 void Raw_DoDebug(void);
 void Raw_DoTable(short table[NO_SQUARES]);
 void Raw_EditBoard(void);
-void Raw_ElapsedTime(ElapsedTime_mode iop);
 void Raw_ExitShogi(void);
 void Raw_GiveHint(void);
 void Raw_Initialize(void);
