@@ -54,6 +54,7 @@ void Curses_GiveHint(void);
 void Curses_Initialize(void);
 void Curses_ShowNodeCnt(long NodeCnt);
 void Curses_OutputMove(void);
+void Curses_PollForInput(void);
 void Curses_SearchStartStuff(short side);
 void Curses_SelectLevel(char *sx);
 void Curses_SetContempt(void);
@@ -76,6 +77,7 @@ void Curses_ShowResults(short score, unsigned short *bstline, char ch);
 void Curses_ShowSidetoMove(void);
 void Curses_ShowStage(void);
 void Curses_TerminateSearch(int sig);
+void Curses_UpdateClocks(void);
 void Curses_UpdateDisplay(short f, short t, short redraw, short isspec);
 void Curses_help(void);
 

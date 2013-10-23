@@ -54,6 +54,7 @@ void Raw_GiveHint(void);
 void Raw_Initialize(void);
 void Raw_ShowNodeCnt(long NodeCnt);
 void Raw_OutputMove(void);
+void Raw_PollForInput(void);
 void Raw_SearchStartStuff(short side);
 void Raw_SelectLevel(char *sx);
 void Raw_SetContempt(void);
@@ -76,6 +77,7 @@ void Raw_ShowResults(short score, unsigned short *bstline, char ch);
 void Raw_ShowSidetoMove(void);
 void Raw_ShowStage(void);
 void Raw_TerminateSearch(int sig);
+void Raw_UpdateClocks(void);
 void Raw_UpdateDisplay(short f, short t, short redraw, short isspec);
 void Raw_help(void);
 

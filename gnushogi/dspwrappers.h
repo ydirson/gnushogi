@@ -52,6 +52,7 @@ extern void GiveHint(void);
 extern void Initialize(void);
 extern void ShowNodeCnt(long NodeCnt);
 extern void OutputMove(void);
+extern void PollForInput(void);
 extern void SetContempt(void);
 extern void SearchStartStuff(short side);
 extern void SelectLevel(char *sx);
@@ -74,6 +75,7 @@ extern void ShowResults(short score, unsigned short *bstline, char ch);
 extern void ShowSidetoMove(void);
 extern void ShowStage(void);
 extern void TerminateSearch(int sig);
+extern void UpdateClocks(void);
 extern void UpdateDisplay(short f, short t, short redraw, short isspec);
 extern void help(void);
 

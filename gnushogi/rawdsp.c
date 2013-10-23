@@ -35,6 +35,8 @@
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/file.h>
+#include <poll.h>
+#include <unistd.h>
 
 #include "gnushogi.h"
 #include "rawdsp.h"
@@ -627,6 +629,12 @@ Raw_OutputMove(void)
 
 
 void
+Raw_UpdateClocks(void)
+{
+}
+
+
+void
 Raw_UpdateDisplay(short f, short t, short redraw, short isspec)
 {
 
@@ -983,6 +991,24 @@ Raw_ShowPostnValues(void)
 }
 
 
+void
+Raw_PollForInput(void)
+{
+    static struct pollfd pollfds[1] = { /* [0] = */ { /* .fd = */ STDIN_FILENO,
+                                                      /* .events = */ POLLIN } };
+    int cnt = poll(pollfds, sizeof(pollfds)/sizeof(pollfds[0]), 0);
+    if (cnt < 0) {
+        perror("polling standard input");
+        ExitShogi();
+    }
+    if (cnt) { /* if anything to read, or error occured */
+        if (!flag.timeout)
+            flag.back = true; /* previous: flag.timeout = true; */
+        flag.bothsides = false;
+    }
+}
+
+
 /*
  * Determine the time that has passed since the search was started. If the
  * elapsed time exceeds the target(ResponseTime + ExtraTime) then set timeout
@@ -997,6 +1023,11 @@ Raw_ElapsedTime(ElapsedTime_mode iop)
     long current_time;
 #ifdef HAVE_GETTIMEOFDAY
     struct timeval tv;
+#endif
+
+    PollForInput();
+
+#ifdef HAVE_GETTIMEOFDAY
     gettimeofday(&tv, NULL);
     current_time = tv.tv_sec*100 + (tv.tv_usec/10000);
 #else
@@ -1035,5 +1066,10 @@ Raw_ElapsedTime(ElapsedTime_mode iop)
 
             time0 = current_time;
         }
+
+#ifdef QUIETBACKGROUND
+        if (!background)
+#endif
+            UpdateClocks();
     }
 }

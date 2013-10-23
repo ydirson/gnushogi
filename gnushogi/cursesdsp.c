@@ -716,8 +716,8 @@ Curses_OutputMove(void)
 }
 
 
-static void
-UpdateClocks(void)
+void
+Curses_UpdateClocks(void)
 {
     short m, s;
     long dt;
@@ -1196,24 +1196,11 @@ Curses_DoTable(short table[NO_SQUARES])
 } 
 
 
-/*
- * Determine the time that has passed since the search was started. If the
- * elapsed time exceeds the target(ResponseTime + ExtraTime) then set timeout
- * to true which will terminate the search.
- * iop = COMPUTE_MODE calculate et, bump ETnodes
- * iop = COMPUTE_AND_INIT_MODE calculate et, set timeout if time exceeded,
- *     set reference time
- */
 void
-Curses_ElapsedTime(ElapsedTime_mode iop)
+Curses_PollForInput(void)
 {
-    long current_time;
     int  i;
     int  nchar;
-
-#ifdef HAVE_GETTIMEOFDAY
-    struct timeval tv;
-#endif
 
     if ((i = ioctl((int) 0, FIONREAD, &nchar)))
     {
@@ -1232,6 +1219,25 @@ Curses_ElapsedTime(ElapsedTime_mode iop)
 
         flag.bothsides = false;
     }
+}
+
+/*
+ * Determine the time that has passed since the search was started. If the
+ * elapsed time exceeds the target(ResponseTime + ExtraTime) then set timeout
+ * to true which will terminate the search.
+ * iop = COMPUTE_MODE calculate et, bump ETnodes
+ * iop = COMPUTE_AND_INIT_MODE calculate et, set timeout if time exceeded,
+ *     set reference time
+ */
+void
+Curses_ElapsedTime(ElapsedTime_mode iop)
+{
+    long current_time;
+#ifdef HAVE_GETTIMEOFDAY
+    struct timeval tv;
+#endif
+
+    PollForInput();
 
 #ifdef HAVE_GETTIMEOFDAY
     gettimeofday(&tv, NULL);
