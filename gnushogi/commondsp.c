@@ -297,7 +297,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
         if (SqAttacked(PieceList[opponent][0], computer, &blocked))
         {
             UnmakeMove(opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
-            AlwaysShowMessage(CP[77], s);
+            AlwaysShowMessage("Illegal move (in check) %s", s);
             return false;
         }
         else
@@ -339,11 +339,11 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
         }
     }
 
-    AlwaysShowMessage(CP[76], s);
+    AlwaysShowMessage("Illegal move (no match) %s", s);
 
     if (!barebones && (cnt > 1))
     {
-        sprintf(buffer, CP[32], s);
+        sprintf(buffer, "Ambiguous Move %s!", s);
         ShowMessage(buffer);
     }
 
@@ -423,14 +423,12 @@ GetGame(void)
     if (savefile[0]) {
         strcpy(fname, savefile);
     } else {
-        /* Enter file name */
-        ShowMessage(CP[63]);
+        ShowMessage("Enter file name: ");
         RequestInputString(fname, sizeof(fname)-1);
     }
 
-    /* shogi.000 */
     if (fname[0] == '\0')
-        strcpy(fname, CP[137]);
+        strcpy(fname, "shogi.000");
 
     if ((fd = fopen(fname, "r")) != NULL)
     {
@@ -607,7 +605,7 @@ GetGame(void)
                 }
 
                 skip();
-                g->color = ((*InPtr == CP[119][0]) ? white : black);
+                g->color = ((*InPtr == 'W') ? white : black);
                 skip();
                 g->piece = (*InPtr == '+'
                             ? promoted[piece]
@@ -648,30 +646,29 @@ SaveGame(void)
     if (savefile[0]) {
         strcpy(fname, savefile);
     } else {
-        /* Enter file name */
-        ShowMessage(CP[63]);
+        ShowMessage("Enter file name: ");
         RequestInputString(fname, sizeof(fname)-1);
     }
 
-    if (fname[0] == '\0')        /* shogi.000 */
-        strcpy(fname, CP[137]);
+    if (fname[0] == '\0')
+        strcpy(fname, "shogi.000");
 
     if ((fd = fopen(fname, "w")) != NULL)
     {
         char *b, *w;
-        b = w = CP[74];
+        b = w = "Human   ";
 
         if (computer == white)
-            w = CP[141];
+            w = "computer";
 
         if (computer == black)
-            b = CP[141];
+            b = "computer";
 
-        fprintf(fd, CP[37], w, b, Game50,
+        fprintf(fd, "White %s Black %s %d %s\n", w, b, Game50,
                 flag.force ? "force" : "");
         fputs(empty, fd);
-        fprintf(fd, CP[111], TCflag, OperatorTime);
-        fprintf(fd, CP[117],
+        fprintf(fd, "TimeControl %d Operator Time %d\n", TCflag, OperatorTime);
+        fprintf(fd, "Black Clock %ld Moves %d\nWhite Clock %ld Moves %d\n",
                 TimeControl.clock[black], TimeControl.moves[black],
                 TimeControl.clock[white], TimeControl.moves[white]);
         fputs(empty, fd);
@@ -732,7 +729,7 @@ SaveGame(void)
         }
 
         fputs(empty, fd);
-        fputs(CP[126], fd);
+        fputs("  move   score depth   nodes   time flags                         capture\n", fd);
 
         for (i = 1; i <= GameCnt; i++)
         {
@@ -766,13 +763,11 @@ SaveGame(void)
 
         fclose(fd);
 
-        /* Game saved */
-        ShowMessage(CP[70]);
+        ShowMessage("Game saved");
     }
     else
     {
-        /* ShowMessage("Could not open file"); */
-        ShowMessage(CP[48]);
+        ShowMessage("Could not open file");
     }
 }
 
@@ -792,12 +787,11 @@ GetXGame(void)
     short sq;
     short side, isp;
 
-    /* Enter file name */
-    ShowMessage(CP[63]);
+    ShowMessage("Enter file name: ");
     RequestInputString(fname, sizeof(fname)-1);
 
-    if (fname[0] == '\0') /* XSHOGI.position.read */
-        strcpy(fname, CP[205]);
+    if (fname[0] == '\0')
+        strcpy(fname, "xshogi.position.read");
 
     if ((fd = fopen(fname, "r")) != NULL)
     {
@@ -811,7 +805,7 @@ GetXGame(void)
 #ifdef notdef
         fname[6] = '\0';
 
-        if (strcmp(fname, CP[206]))
+        if (strcmp(fname, "xshogi"))
             return;
 #endif
 
@@ -920,20 +914,16 @@ SaveXGame(void)
     short sq, piece;
     short side, isp;
 
-    /* Enter file name */
-    ShowMessage(CP[63]);
+    ShowMessage("Enter file name: ");
     RequestInputString(fname, sizeof(fname)-1);
 
-    if (fname[0] == '\0') /* XSHOGI.position.read */
-        strcpy(fname, CP[205]);
+    if (fname[0] == '\0')
+        strcpy(fname, "xshogi.position.read");
 
     if ((fd = fopen(fname, "w")) != NULL)
     {
-        /* xshogi position file ... */
         fputs("# xshogi position file -- \n", fd);
-        /* -- empty line -- */
         fputs("\n", fd);
-        /* -- empty line -- */
         fputs("\n", fd);
 
         for (i = NO_ROWS - 1; i > -1; i--)
@@ -999,7 +989,7 @@ BookSave(void)
         strcpy(fname, savefile);
     } else {
         /* Enter file name */
-        ShowMessage(CP[63]);
+        ShowMessage("Enter file name: ");
         RequestInputString(fname, sizeof(fname)-1);
     }
 
@@ -1071,13 +1061,11 @@ BookSave(void)
 
         fclose(fd);
 
-        /* Game saved */
-        ShowMessage(CP[70]);
+        ShowMessage("Game saved");
     }
     else
     {
-        /* ShowMessage("Could not open file"); */
-        ShowMessage(CP[48]);
+        ShowMessage("Could not open file");
     }
 }
 
@@ -1126,14 +1114,13 @@ ListGame(void)
 
     if (!fd)
     {
-        printf(CP[219], fname);
+        printf("Open failure for file: %s", fname);
         exit(1);
     }
 
-    /* fprintf(fd, "gnushogi game %d\n", u); */
-    fprintf(fd, CP[161], version, patchlevel);
-    fputs(CP[10], fd);
-    fputs(CP[11], fd);
+    fprintf(fd, "gnushogi %sp%s game\n", version, patchlevel);
+    fputs("         score  depth   nodes  time         ", fd);
+    fputs("         score  depth   nodes  time\n", fd);
 
     for (i = 1; i <= GameCnt; i++)
     {
@@ -1180,9 +1167,9 @@ ListGame(void)
 
     if (GameList[GameCnt].flags & draw)
     {
-        fprintf(fd, CP[54], DRAW);
+        fprintf(fd, "Draw %s\n", DRAW);
 
-        if (DRAW == CP[101])
+        if (DRAW == DRAW_REPETITION)
         {
             short j;
 
@@ -1451,7 +1438,7 @@ SetOppTime(char *s)
     int m, t, sec;
 
     sec = 0;
-    time = &s[strlen(CP[228])];
+    time = &s[strlen("otime")];
     t = (int)strtol(time, &time, 10);
 
     if (*time == ':')
@@ -1485,7 +1472,7 @@ SetMachineTime(char *s)
     char *time;
     int m, t, sec;
 
-    time = &s[strlen(CP[197])];
+    time = &s[strlen("time")];
     sec = 0;
     t = (int)strtol(time, &time, 10);
 
@@ -1641,7 +1628,7 @@ InputCommand(char *command)
         if (s[0] == '\0')
             continue;
 
-        if (strcmp(s, CP[131]) == 0)   /* bd -- display board */
+        if (strcmp(s, "bd") == 0)   /* bd -- display board */
         {
             /* FIXME: Hack alert! */
             short old_xshogi = XSHOGI;
@@ -1659,35 +1646,35 @@ InputCommand(char *command)
         {
             flag.post = !flag.post;
         }
-        else if (strcmp(s, CP[129]) == 0)
+        else if (strcmp(s, "alg") == 0)
         {
             /* noop */ ; /* alg */
         }
-        else if ((strcmp(s, CP[180]) == 0)
-                 || (strcmp(s, CP[216]) == 0))  /* quit exit */
+        else if ((strcmp(s, "quit") == 0)
+                 || (strcmp(s, "exit") == 0))
         {
             flag.quit = true;
         }
 #if !defined NOPOST
-        else if (strcmp(s, CP[178]) == 0)  /* post */
+        else if (strcmp(s, "post") == 0)
         {
             flag.post = !flag.post;
         }
 #endif
-        else if ((strcmp(s, CP[191]) == 0)
-                 || (strcmp(s, CP[154]) == 0))  /* set edit */
+        else if ((strcmp(s, "set") == 0)
+                 || (strcmp(s, "edit") == 0))
         {
             EditBoard();
         }
-        else if ((strcmp(s, CP[190]) == 0))  /* setup */
+        else if ((strcmp(s, "setup") == 0))
         {
             SetupBoard();
         }
-        else if (strcmp(s, CP[156]) == 0)  /* first */
+        else if (strcmp(s, "first") == 0)
         {
             ok = true;
         }
-        else if (strcmp(s, CP[162]) == 0)  /* go */
+        else if (strcmp(s, "go") == 0)
         {
             ok = true;
             flag.force = false;
@@ -1703,15 +1690,15 @@ InputCommand(char *command)
                 opponent = white;
             }
         }
-        else if (strcmp(s, CP[166]) == 0)  /* help */
+        else if (strcmp(s, "help") == 0)
         {
             help();
         }
-        else if (strcmp(s, CP[221]) == 0)  /* material */
+        else if (strcmp(s, "material") == 0)
         {
             flag.material = !flag.material;
         }
-        else if (strcmp(s, CP[157]) == 0)  /* force */
+        else if (strcmp(s, "force") == 0)
         {
             if (XSHOGI)
             {
@@ -1724,61 +1711,61 @@ InputCommand(char *command)
                 flag.bothsides = false;
             }
         }
-        else if (strcmp(s, CP[134]) == 0)  /* book */
+        else if (strcmp(s, "book") == 0)
         {
             Book = Book ? 0 : BOOKFAIL;
         }
-        else if (strcmp(s, CP[172]) == 0)  /* new */
+        else if (strcmp(s, "new") == 0)
         {
             NewGame();
             UpdateDisplay(0, 0, 1, 0);
         }
-        else if (strcmp(s, CP[171]) == 0)  /* list */
+        else if (strcmp(s, "list") == 0)
         {
             ListGame();
         }
-        else if ((strcmp(s, CP[169]) == 0)
-                 || (strcmp(s, CP[217]) == 0))  /* level clock */
+        else if ((strcmp(s, "level") == 0)
+                 || (strcmp(s, "clock") == 0))
         {
             SelectLevel(sx);
         }
-        else if (strcmp(s, CP[165]) == 0)  /* hash */
+        else if (strcmp(s, "hash") == 0)
         {
             flag.hash = !flag.hash;
         }
-        else if (strcmp(s, CP[227]) == 0)  /* gamein */
+        else if (strcmp(s, "gamein") == 0)
         {
             flag.gamein = !flag.gamein;
         }
-        else if (strcmp(s, CP[226]) == 0)  /* beep */
+        else if (strcmp(s, "beep") == 0)
         {
             flag.beep = !flag.beep;
         }
-        else if (strcmp(s, CP[197]) == 0)  /* time */
+        else if (strcmp(s, "time") == 0)
         {
             SetMachineTime(sx);
         }
-        else if (strcmp(s, CP[228]) == 0)  /* otime */
+        else if (strcmp(s, "otime") == 0)
         {
             SetOppTime(sx);
         }
-        else if (strcmp(s, CP[33]) == 0)   /* Awindow */
+        else if (strcmp(s, "Awindow") == 0)
         {
             ChangeAlphaWindow();
         }
-        else if (strcmp(s, CP[39]) == 0)   /* Bwindow */
+        else if (strcmp(s, "Bwindow") == 0)
         {
             ChangeBetaWindow();
         }
-        else if (strcmp(s, CP[183]) == 0)  /* rcptr */
+        else if (strcmp(s, "rcptr") == 0)
         {
             flag.rcptr = !flag.rcptr;
         }
-        else if (strcmp(s, CP[168]) == 0)  /* hint */
+        else if (strcmp(s, "hint") == 0)
         {
             GiveHint();
         }
-        else if (strcmp(s, CP[135]) == 0)  /* both */
+        else if (strcmp(s, "both") == 0)
         {
             flag.bothsides = !flag.bothsides;
             flag.force = false;
@@ -1787,13 +1774,13 @@ InputCommand(char *command)
             SelectMove(opponent, FOREGROUND_MODE);
             ok = true;
         }
-        else if (strcmp(s, CP[185]) == 0)  /* reverse */
+        else if (strcmp(s, "reverse") == 0)
         {
             flag.reverse = !flag.reverse;
             ClearScreen();
             UpdateDisplay(0, 0, 1, 0);
         }
-        else if (strcmp(s, CP[195]) == 0)  /* switch */
+        else if (strcmp(s, "switch") == 0)
         {
             computer = computer ^ 1;
             opponent = opponent ^ 1;
@@ -1802,7 +1789,7 @@ InputCommand(char *command)
             Sdepth = 0;
             ok = true;
         }
-        else if (strcmp(s, CP[203]) == 0)  /* black */
+        else if (strcmp(s, "black") == 0)
         {
             computer = white;
             opponent = black;
@@ -1814,7 +1801,7 @@ InputCommand(char *command)
              * ok = true; don't automatically start with black command
              */
         }
-        else if (strcmp(s, CP[133]) == 0)  /* white */
+        else if (strcmp(s, "white") == 0)
         {
             computer = black;
             opponent = white;
@@ -1826,25 +1813,25 @@ InputCommand(char *command)
              * ok = true; don't automatically start with white command
              */
         }
-        else if (strcmp(s, CP[201]) == 0 && GameCnt > 0)   /* undo */
+        else if (strcmp(s, "undo") == 0 && GameCnt > 0)
         {
             Undo();
         }
-        else if (strcmp(s, CP[184]) == 0 && GameCnt > 1)   /* remove */
+        else if (strcmp(s, "remove") == 0 && GameCnt > 1)
         {
             Undo();
             Undo();
         }
         /* CHECKME: are these next three correct? */
-        else if (!XSHOGI && strcmp(s, CP[207]) == 0)  /* xget */
+        else if (!XSHOGI && strcmp(s, "xget") == 0)
         {
             GetXGame();
         }
-        else if (!XSHOGI && strcmp(s, "xsave") == 0)        /* xsave */
+        else if (!XSHOGI && strcmp(s, "xsave") == 0)
         {
             SaveXGame();
         }
-        else if (!XSHOGI && strcmp(s, "bsave") == 0)        /* bsave */
+        else if (!XSHOGI && strcmp(s, "bsave") == 0)
         {
             BookSave();
         }
@@ -1859,62 +1846,62 @@ InputCommand(char *command)
         {
             FlagMove(*s);
         }
-        else if (strcmp(s, CP[160]) == 0)    /* get */
+        else if (strcmp(s, "get") == 0)
         {
             GetGame();
         }
-        else if (strcmp(s, CP[189]) == 0)    /* save */
+        else if (strcmp(s, "save") == 0)
         {
             SaveGame();
         }
-        else if (strcmp(s, CP[151]) == 0)    /* depth */
+        else if (strcmp(s, "depth") == 0)
         {
             ChangeSearchDepth();
         }
-        else if (strcmp(s, CP[164]) == 0)    /* hashdepth */
+        else if (strcmp(s, "hashdepth") == 0)
         {
             ChangeHashDepth();
         }
-        else if (strcmp(s, CP[182]) == 0)    /* random */
+        else if (strcmp(s, "random") == 0)
         {
             dither = DITHER;
         }
-        else if (strcmp(s, CP[229]) == 0)    /* hard */
+        else if (strcmp(s, "hard") == 0)
         {
             flag.easy = false;
         }
-        else if (strcmp(s, CP[152]) == 0)    /* easy */
+        else if (strcmp(s, "easy") == 0)
         {
             flag.easy = !flag.easy;
         }
-        else if (strcmp(s, CP[230]) == 0)    /* tsume */
+        else if (strcmp(s, "tsume") == 0)
         {
             flag.tsume = !flag.tsume;
         }
-        else if (strcmp(s, CP[143]) == 0)    /* contempt */
+        else if (strcmp(s, "contempt") == 0)
         {
             SetContempt();
         }
-        else if (strcmp(s, CP[209]) == 0)    /* xwndw */
+        else if (strcmp(s, "xwndw") == 0)
         {
             ChangeXwindow();
         }
-        else if (strcmp(s, CP[186]) == 0)    /* rv */
+        else if (strcmp(s, "rv") == 0)
         {
             flag.rv = !flag.rv;
             UpdateDisplay(0, 0, 1, 0);
         }
-        else if (strcmp(s, CP[145]) == 0)    /* coords */
+        else if (strcmp(s, "coords") == 0)
         {
             flag.coords = !flag.coords;
             UpdateDisplay(0, 0, 1, 0);
         }
-        else if (strcmp(s, CP[193]) == 0)    /* stars */
+        else if (strcmp(s, "stars") == 0)
         {
             flag.stars = !flag.stars;
             UpdateDisplay(0, 0, 1, 0);
         }
-        else if (!XSHOGI && strcmp(s, CP[5]) == 0)          /* moves */
+        else if (!XSHOGI && strcmp(s, "moves") == 0)
         {
             short temp;
 
@@ -1930,42 +1917,42 @@ InputCommand(char *command)
 #endif
                 SwagHt = 0;
 
-            ShowMessage(CP[108]);  /* test movelist */
+            ShowMessage("Testing MoveList Speed");
             temp = generate_move_flags;
             generate_move_flags = true;
             TestSpeed(MoveList, 1);
             generate_move_flags = temp;
-            ShowMessage(CP[107]);  /* test capturelist */
+            ShowMessage("Testing CaptureList Speed");
             TestSpeed(CaptureList, 1);
-            ShowMessage(CP[85]);   /* test score position */
+            ShowMessage("Testing Eval Speed");
             ExaminePosition(opponent);
             TestPSpeed(ScorePosition, 1);
         }
-        else if (!XSHOGI && strcmp(s, CP[196]) == 0)    /* test */
+        else if (!XSHOGI && strcmp(s, "test") == 0)
         {
 #ifdef SLOW_CPU
-            ShowMessage(CP[108]); /* test movelist */
+            ShowMessage("Testing MoveList Speed");
             TestSpeed(MoveList, 2000);
-            ShowMessage(CP[107]); /* test capturelist */
+            ShowMessage("Testing CaptureList Speed");
             TestSpeed(CaptureList, 3000);
-            ShowMessage(CP[85]); /* test score position */
+            ShowMessage("Testing Eval Speed");
             ExaminePosition(opponent);
             TestPSpeed(ScorePosition, 1500);
 #else
-            ShowMessage(CP[108]); /* test movelist */
+            ShowMessage("Testing MoveList Speed");
             TestSpeed(MoveList, 20000);
-            ShowMessage(CP[107]); /* test capturelist */
+            ShowMessage("Testing CaptureList Speed");
             TestSpeed(CaptureList, 30000);
-            ShowMessage(CP[85]); /* test score position */
+            ShowMessage("Testing Eval Speed");
             ExaminePosition(opponent);
             TestPSpeed(ScorePosition, 15000);
 #endif
         }
-        else if (!XSHOGI && strcmp(s, CP[179]) == 0) /* p */
+        else if (!XSHOGI && strcmp(s, "p") == 0)
         {
             ShowPostnValues();
         }
-        else if (!XSHOGI && strcmp(s, CP[148]) == 0)    /* debug */
+        else if (!XSHOGI && strcmp(s, "debug") == 0)
         {
             DoDebug();
         }
@@ -1982,7 +1969,7 @@ InputCommand(char *command)
 
                 if (rpt >= 3)
                 {
-                    DRAW = CP[101];
+                    DRAW = DRAW_REPETITION;
                     ShowMessage(DRAW);
                     GameList[GameCnt].flags |= draw;
 

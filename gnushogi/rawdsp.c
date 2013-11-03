@@ -67,8 +67,7 @@ Raw_ShowPrompt(void)
 {
     if (!barebones && !XSHOGI)
     {
-        /* printf("\nYour move is? "); */
-        fputs(CP[124], stdout);
+        fputs("\nYour move is? ", stdout);
     }
 }
 
@@ -84,7 +83,7 @@ Raw_ShowDepth(char ch)
 {
     if (!barebones && !XSHOGI)
     {
-        printf(CP[53], Sdepth, ch);   /* Depth = %d%c */
+        printf("Depth= %d%c ", Sdepth, ch);
         printf("\n");
     }
 }
@@ -161,7 +160,7 @@ Raw_GetString(char* sx)
 void
 Raw_ShowNodeCnt(long NodeCnt)
 {
-    printf(CP[91],
+    printf("Nodes = %ld Nodes/sec = %ld\n",
            NodeCnt, (((et) ? ((NodeCnt * 100) / et) : 0)));
 }
 
@@ -256,10 +255,10 @@ Raw_Die(int sig)
 {
     char s[80];
 
-    Raw_ShowMessage(CP[31]);        /* Abort? */
+    Raw_ShowMessage("Abort? ");
     scanf("%s", s);
 
-    if (strcmp(s, CP[210]) == 0)    /* yes */
+    if (strcmp(s, "yes") == 0)
         Raw_ExitShogi();
 }
 
@@ -282,77 +281,40 @@ void
 Raw_help(void)
 {
     Raw_ClearScreen();
-    /* printf("SHOGI command summary\n"); */
-    printf(CP[40], version, patchlevel);
+    printf("GNU Shogi %sp%s command summary\n", version, patchlevel);
     printf("----------------------------------"
            "------------------------------\n");
-    /* printf("7g7f      move from 7g to 7f      quit
-     * Exit Shogi\n"); */
-    fputs(CP[158], stdout);
-    /* printf("S6h       move silver to 6h       beep
-     * turn %s\n", (flag.beep) ? "off" : "on"); */
-    printf(CP[86], (flag.beep) ? CP[92] : CP[93]);
-    /* printf("2d2c+     move from 2d to 2c and promote\n"); */
-    printf(CP[128], (flag.material) ? CP[92] : CP[93]);
-    /* printf("P*5e      drop pawn to 5e         easy
-     * turn %s\n", (flag.easy) ? "off" : "on"); */
-    printf(CP[173], (flag.easy) ? CP[92] : CP[93]);
-    /* printf("                                  hash
-     * turn %s\n", (flag.hash) ? "off" : "on"); */
-    printf(CP[174], (flag.hash) ? CP[92] : CP[93]);
-    /* printf("bd        redraw board            reverse
-     * board display\n"); */
-    fputs(CP[130], stdout);
-    /* printf("list      game to shogi.lst       book
-     * turn %s used %d of %d\n", (Book) ? "off" : "on", bookcount); */
-    printf(CP[170], (Book) ? CP[92] : CP[93], bookcount, booksize);
-    /* printf("undo      undo last ply           remove
-     * take back a move\n"); */
-    fputs(CP[200], stdout);
-    /* printf("edit      edit board              force
-     * enter game moves\n"); */
-    fputs(CP[153], stdout);
-    /* printf("switch    sides with computer     both
-     * computer match\n"); */
-    fputs(CP[194], stdout);
-    /* printf("black     computer plays black    white
-     * computer plays white\n"); */
-    fputs(CP[202], stdout);
-    /* printf("depth     set search depth        clock
-     * set time control\n"); */
-    fputs(CP[149], stdout);
-    /* printf("post      principle variation     hint
-     * suggest a move\n"); */
-    fputs(CP[177], stdout);
-    /* printf("save      game to file            get
-     * game from file\n"); */
-    fputs(CP[188], stdout);
+    fputs ("7g7f      move from 7g to 7f      quit      Exit Shogi\n", stdout);
+    printf("S6h       move silver to 6h       beep      turn %s\n", (flag.beep) ? "OFF" : "ON");
+    printf("2d2c+     move to 2c and promote  material  turn %s\n", (flag.material) ? "OFF" : "ON");
+    printf("P*5e      drop pawn to 5e         easy      turn %s\n", (flag.easy) ? "OFF" : "ON");
+    printf("tsume     toggle tsume mode       hash      turn %s\n", (flag.hash) ? "OFF" : "ON");
+    fputs ("bd        redraw board            reverse   board display\n", stdout);
+    printf("list      game to shogi.lst       book      turn %s used %d of %d\n", (Book) ? "OFF" : "ON", bookcount, booksize);
+    fputs ("undo      undo last ply           remove    take back a move\n", stdout);
+    fputs ("edit      edit board              force     toggle manual move mode\n", stdout);
+    fputs ("switch    sides with computer     both      computer match\n", stdout);
+    fputs ("black     computer plays black    white     computer plays white\n", stdout);
+    fputs ("depth     set search depth        clock     set time control\n", stdout);
+    fputs ("post      principle variation     hint      suggest a move\n", stdout);
+    fputs ("save      game to file            get       game from file\n", stdout);
     printf("xsave     pos. to xshogi file     xget"
            "      pos. from xshogi file\n");
-    /* printf("random    randomize play          new
-     * start new game\n"); */
-    fputs(CP[181], stdout);
+    fputs("random    randomize play          new       start new game\n", stdout);
     printf("--------------------------------"
            "--------------------------------\n");
-    /* printf("Computer: %-12s Opponent:            %s\n", */
-    printf(CP[46],
+    printf("Computer: %-12s Opponent:            %s\n",
            ColorStr[computer], ColorStr[opponent]);
-    /* printf("Depth:    %-12d Response time:       %d sec\n", */
-    printf(CP[51],
+    printf("Depth:    %-12d Response time:       %d sec\n",
            MaxSearchDepth, MaxResponseTime/100);
-    /* printf("Random:   %-12s Easy mode:           %s\n", */
-    printf(CP[99],
-           (dither) ? CP[93] : CP[92], (flag.easy) ? CP[93] : CP[92]);
-    /* printf("Beep:     %-12s Transposition file: %s\n", */
-    printf(CP[36],
-           (flag.beep) ? CP[93] : CP[92], (flag.hash) ? CP[93] : CP[92]);
-    /* printf("Tsume:    %-12s Force:               %s\n")*/
-    printf(CP[232],
-           (flag.tsume) ? CP[93] : CP[92], (flag.force) ? CP[93] : CP[92]);
-    /* printf("Time Control %s %d moves %d seconds %d opr %d
-     * depth\n", (TCflag) ? "ON" : "OFF", */
-    printf(CP[110],
-           (TCflag) ? CP[93] : CP[92],
+    printf("Random:   %-12s Easy mode:           %s\n",
+           (dither) ? "ON" : "OFF", (flag.easy) ? "ON" : "OFF");
+    printf("Beep:     %-12s Transposition file:  %s\n",
+           (flag.beep) ? "ON" : "OFF", (flag.hash) ? "ON" : "OFF");
+    printf("Tsume:    %-12s Force:               %s\n",
+           (flag.tsume) ? "ON" : "OFF", (flag.force) ? "ON" : "OFF");
+    printf("Time Control %s %d moves %d sec %d add %d depth\n",
+           (TCflag) ? "ON" : "OFF",
            TimeControl.moves[black], TimeControl.clock[black] / 100,
            TCadd/100, MaxSearchDepth);
 }
@@ -372,14 +334,10 @@ Raw_EditBoard(void)
     Book = BOOKFAIL;
     Raw_ClearScreen();
     Raw_UpdateDisplay(0, 0, 1, 0);
-    /* printf(".   exit to main\n"); */
-    fputs(CP[29], stdout);
-    /* printf("#   clear board\n"); */
-    fputs(CP[28], stdout);
-    /* printf("c   change sides\n"); */
-    fputs(CP[136], stdout);
-    /* printf("enter piece & location: \n"); */
-    fputs(CP[155], stdout);
+    fputs(".   Exit to main\n", stdout);
+    fputs("#   Clear board\n", stdout);
+    fputs("c   Change sides\n", stdout);
+    fputs("enter piece & location: \n", stdout);
 
     a = black;
 
@@ -388,7 +346,7 @@ Raw_EditBoard(void)
         scanf("%s", s);
         found = 0;
 
-        if (s[0] == CP[28][0])  /*#*/
+        if (s[0] == '#')
         {
             for (sq = 0; sq < NO_SQUARES; sq++)
             {
@@ -399,7 +357,7 @@ Raw_EditBoard(void)
             ClearCaptured();
         }
 
-        if (s[0] == CP[136][0]) /*c*/
+        if (s[0] == 'c')
             a = otherside[a];
 
         if (s[1] == '*')
@@ -447,7 +405,7 @@ Raw_EditBoard(void)
                 color[sq] = neutral;
         }
     }
-    while (s[0] != CP[29][0]);
+    while (s[0] != '.');
 
     for (sq = 0; sq < NO_SQUARES; sq++)
         Mvboard[sq] = ((board[sq] != Stboard[sq]) ? 10 : 0);
@@ -513,8 +471,7 @@ Raw_SetupBoard(void)
     InitializeStats();
     Raw_ClearScreen();
     Raw_UpdateDisplay(0, 0, 1, 0);
-    /* printf("Setup successful\n"); */
-    fputs(CP[106], stdout);
+    fputs("Setup successful\n", stdout);
 }
 
 
@@ -523,7 +480,7 @@ Raw_SearchStartStuff(short side)
 {
     if (flag.post)
     {
-        printf(CP[123],
+        printf("\nMove# %d    Target = %ld    Clock: %ld\n",
                GameCnt/2 + 1,
                ResponseTime, TimeControl.clock[side]);
     }
@@ -535,7 +492,7 @@ Raw_OutputMove(void)
 {
     if (flag.illegal)
     {
-        printf("%s\n", CP[225]);
+        printf("Illegal position.\n");
         return;
     }
 
@@ -576,15 +533,11 @@ Raw_OutputMove(void)
             t = (l + h) >> 1;
         }
 
-        /* printf("Nodes %ld Tree %d Eval %ld
-         * Rate %ld RS high %ld low %ld\n", */
-        printf(CP[89], GenCnt, NodeCnt, t, EvalNodes,
+        printf("Gen %ld Node %ld Tree %d Eval %ld Rate %ld EC %d/%d RS hi %ld lo %ld \n", GenCnt, NodeCnt, t, EvalNodes,
                (et > 100) ? (NodeCnt / (et / 100)) : 0,
                EADD, EGET, reminus, replus);
 
-        /* printf("Hin/Hout/Coll/Fin/Fout =
-         * %ld/%ld/%ld/%ld/%ld\n", */
-        printf(CP[71],
+        printf("Hin/Hout/Tcol/Coll/Fin/Fout = %ld/%ld/%ld/%ld/%ld/%ld\n",
                HashAdd, HashCnt, THashCol, HashCol, FHashCnt, FHashAdd);
     }
 
@@ -592,8 +545,7 @@ Raw_OutputMove(void)
 
     if (!XSHOGI)
     {
-        /* printf("My move is: %s\n", mvstr[0]); */
-        printf(CP[83], mvstr[0]);
+        printf("My move is: %5s\n", mvstr[0]);
 
         if (flag.beep)
             printf("%c", 7);
@@ -602,8 +554,7 @@ Raw_OutputMove(void)
  summary:
     if (root->flags & draw)
     {
-        /*  printf("Drawn game!\n"); */
-        fputs(CP[57], stdout);
+        fputs("Drawn game!\n", stdout);
     }
     else if (root->score == -(SCORE_LIMIT + 999))
     {
@@ -647,8 +598,7 @@ Raw_UpdateDisplay(short f, short t, short redraw, short isspec)
         c = (short)((TimeControl.clock[black] % 6000) / 100);
         l = (short)(TimeControl.clock[white] / 6000);
         m = (short)((TimeControl.clock[white] % 6000) / 100);
-        /* printf("Black %d:%02d  White %d:%02d\n", r, c, l, m); */
-        printf(CP[116], r, c, l, m);
+        printf("Black %d:%02d  White %d:%02d\n", r, c, l, m);
         printf("\n");
 
         for (r = (NO_ROWS - 1); r >= 0; r--)
@@ -720,10 +670,10 @@ Raw_GiveHint(void)
     if (hint)
     {
         algbr((short) (hint >> 8), (short) (hint & 0xFF), false);
-        printf(CP[72], mvstr[0]);   /*hint*/
+        printf("Hint: %s\n", mvstr[0]);
     }
     else
-        fputs(CP[223], stdout);
+        fputs("I have no idea.\n", stdout);
 }
 
 
@@ -733,10 +683,10 @@ Raw_SelectLevel(char *sx)
 
     char T[NO_SQUARES + 1], *p, *q;
 
-    if ((p = strstr(sx, CP[169])) != NULL)
-        p += strlen(CP[169]);
-    else if ((p = strstr(sx, CP[217])) != NULL)
-        p += strlen(CP[217]);
+    if ((p = strstr(sx, "level")) != NULL)
+        p += strlen("level");
+    else if ((p = strstr(sx, "clock")) != NULL)
+        p += strlen("clock");
 
     strcat(sx, "XX");
     q = T;
@@ -749,7 +699,7 @@ Raw_SelectLevel(char *sx)
     /* line empty ask for input */
     if (!T[0])
     {
-        fputs(CP[61], stdout);
+        fputs("Enter #moves #minutes: ", stdout);
         fgets(T, NO_SQUARES + 1, stdin);
         strcat(T, "XX");
     }
@@ -780,7 +730,7 @@ Raw_SelectLevel(char *sx)
             TCseconds = 0;
 
 #ifdef OPERATORTIME
-        fputs(CP[94], stdout);
+        fputs("Operator time (hundredths) = ", stdout);
         scanf("%hd", &OperatorTime);
 #endif
 
@@ -876,14 +826,14 @@ Raw_DoDebug(void)
     char s[40];
 
     ExaminePosition(opponent);
-    Raw_ShowMessage(CP[65]);
+    Raw_ShowMessage("Enter piece: ");
     scanf("%s", s);
     c = neutral;
 
-    if ((s[0] == CP[9][0]) || (s[0] == CP[9][1]))    /* w W */
+    if ((s[0] == 'b') || (s[0] == 'B'))
         c = black;
 
-    if ((s[0] == CP[9][2]) || (s[0] == CP[9][3]))    /* b B */
+    if ((s[0] == 'w') || (s[0] == 'W'))
         c = white;
 
     for (p = king; p > no_piece; p--)
@@ -941,7 +891,7 @@ Raw_DoDebug(void)
     }
 
     printf("stage = %d\n", stage);
-    printf(CP[103], score,
+    printf("S%d m%d ps%d gt%c m%d ps%d gt%c", score,
            mtl[computer], pscore[computer], GameType[computer],
            mtl[opponent], pscore[opponent], GameType[opponent]);
 }
@@ -984,7 +934,7 @@ Raw_ShowPostnValues(void)
     }
 
     score = ScorePosition(opponent);
-    printf(CP[103], score,
+    printf("S%d m%d ps%d gt%c m%d ps%d gt%c", score,
            mtl[computer], pscore[computer], GameType[computer],
            mtl[opponent], pscore[opponent], GameType[opponent]);
     printf("\nhung black %d hung white %d\n", hung[black], hung[white]);

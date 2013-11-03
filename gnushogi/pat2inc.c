@@ -91,20 +91,12 @@ main(int argc, char **argv)
 
     short sq, side, max_pattern_data;
 
-#if defined(EXTLANGFILE)
-    char *Lang = NULL;
-#endif
-
 #ifdef TEST_DISTANCE
     short d;
     char  s[80];
 #endif
 
     display_type = DISPLAY_RAW;
-
-#if defined(EXTLANGFILE)
-    InitConst(Lang);
-#endif
 
     Initialize_data();
 

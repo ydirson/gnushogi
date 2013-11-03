@@ -101,26 +101,6 @@ const small_short sweep[NO_PIECES] =
 };
 
 
-#if !defined EXTLANGFILE
-
-char *CP[CPSIZE] =
-
-{
-/* 000: eng: */ "",
-#ifdef LANGFILE
-#include LANGFILE
-#else
-#include "gnushogi.lng"
-#endif
-};
-
-#else
-
-char *CP[CPSIZE];
-
-#endif
-
-
 /*
  * Determine the minimum number of moves for a piece from
  * square "f" to square "t". If the piece cannot reach "t",
@@ -765,7 +745,7 @@ NewGame(void)
     if (!InitFlag)
     {
         char sx[256];
-        strcpy(sx, CP[169]);
+        strcpy(sx, "level");
 
         if (TCflag)
             SetTimeControl();
@@ -1027,231 +1007,6 @@ Initialize_data(void)
 }
 
 
-#if defined EXTLANGFILE
-
-#ifdef OLDLANGFILE
-
-void
-InitConst(char *lang)
-{
-    FILE *constfile;
-    char s[256];
-    char sl[5];
-    char buffer[120];
-    int len, entry;
-    char *p, *q;
-    constfile = fopen(LANGFILE, "r");
-
-    if (!constfile)
-    {
-        ShowMessage("NO LANGFILE");
-        exit(1);
-    }
-
-    while (fgets(s, sizeof(s), constfile))
-    {
-        if (s[0] == '!')
-            continue;
-
-        len = strlen(s);
-
-        for (q = &s[len]; q > &s[8]; q--)
-            if (*q == '}')
-                break;
-
-        if (q == &s[8])
-        {
-            ShowMessage("{ error in cinstfile");
-            exit(1);
-        }
-
-        *q = '\0';
-
-        if ((s[3] != ':') || (s[7] != ':') || (s[8] != '{'))
-        {
-            sprintf(buffer, "Langfile format error %s", s);
-            ShowMessage(buffer);
-            exit(1);
-        }
-
-        s[3] = s[7] = '\0';
-
-        if (lang == NULL)
-        {
-            lang = sl;
-            strcpy(sl, &s[4]);
-        }
-
-        if (strcmp(&s[4], lang))
-            continue;
-
-        entry = atoi(s);
-
-        if ((entry < 0) || (entry >= CPSIZE))
-        {
-            ShowMessage("Langfile number error");
-            exit(1);
-        }
-
-        for (q = p = &s[9]; *p; p++)
-        {
-            if (*p != '\\')
-            {
-                *q++ = *p;
-            }
-            else if (*(p + 1) == 'n')
-            {
-                *q++ = '\n';
-                p++;
-            }
-        }
-
-        *q = '\0';
-
-        if ((entry < 0) || (entry > 255))
-        {
-            sprintf(buffer, "Langfile error %d\n", entry);
-            ShowMessage(buffer);
-            exit(0);
-        }
-
-        CP[entry] = (char *)GLOBAL_ALLOC((unsigned) strlen(&s[9]) + 1);
-
-        if (CP[entry] == NULL)
-        {
-            char buffer[80];
-            sprintf(buffer, "CP MALLOC, entry %d", entry);
-            perror(buffer);
-            exit(0);
-        }
-
-        strcpy(CP[entry], &s[9]);
-    }
-
-    fclose(constfile);
-}
-
-#else
-
-void
-InitConst(char *lang)
-{
-    FILE *constfile;
-    char s[256];
-    char sl[5];
-    char buffer[120];
-    int len, entry;
-    char *p, *q;
-    constfile = fopen(LANGFILE, "r");
-
-    if (!constfile)
-    {
-        ShowMessage("NO LANGFILE");
-        exit(1);
-    }
-
-    while (fgets(s, sizeof(s), constfile))
-    {
-        if (s[0] == '!')
-            continue;
-
-        len = strlen(s);
-
-        if ((len > 3) && (s[3] == ':') || (len > 7) && (s[7] == ':'))
-        {
-            ShowMessage("old Langfile error");
-            exit(1);
-        }
-
-        if (len <= 15)
-        {
-            ShowMessage("length error in Langfile");
-            exit(1);
-        }
-
-        for (q = &s[len]; q > &s[15]; q--)
-        {
-            if (*q == '"')
-                break;
-        }
-
-        if (q == &s[15])
-        {
-            ShowMessage("\" error in Langfile");
-            exit(1);
-        }
-
-        *q = '\0';
-
-        if ((s[6] != ':') || (s[10] != ':') || (s[15] != '"'))
-        {
-            sprintf(buffer, "Langfile format error %s", s);
-            ShowMessage(buffer);
-            exit(1);
-        }
-
-        s[6] = s[10] = '\0';
-
-        if (lang == NULL)
-        {
-            lang = sl;
-            strcpy(sl, &s[7]);
-        }
-
-        if (strcmp(&s[7], lang))
-            continue;
-
-        entry = atoi(&s[3]);
-
-        if ((entry < 0) || (entry >= CPSIZE))
-        {
-            ShowMessage("Langfile number error");
-            exit(1);
-        }
-
-        for (q = p = &s[16]; *p; p++)
-        {
-            if (*p != '\\')
-            {
-                *q++ = *p;
-            }
-            else if (*(p + 1) == 'n')
-            {
-                *q++ = '\n';
-                p++;
-            }
-        }
-
-        *q = '\0';
-
-        if ((entry < 0) || (entry > 255))
-        {
-            sprintf(buffer, "Langfile error %d\n", entry);
-            ShowMessage(buffer);
-            exit(0);
-        }
-
-        CP[entry] = (char *)GLOBAL_ALLOC((unsigned)strlen(&s[16]) + 1);
-
-        if (CP[entry] == NULL)
-        {
-            char buffer[80];
-            sprintf(buffer, "CP MALLOC, entry %d", entry);
-            perror(buffer);
-            exit(0);
-        }
-
-        strcpy(CP[entry], &s[16]);
-    }
-
-    fclose(constfile);
-}
-
-#endif
-
-#endif
-
-
 int
 InitMain(void)
 {
@@ -1265,12 +1020,8 @@ InitMain(void)
     if (Initialize_data() != 0)
         return 1;
 
-#if defined EXTLANGFILE
-    InitConst(Lang);
-#endif
-
-    strcpy(ColorStr[0], CP[118]);
-    strcpy(ColorStr[1], CP[119]);
+    strcpy(ColorStr[0], "Black");
+    strcpy(ColorStr[1], "White");
 
     XC = 0;
     MaxResponseTime = 0;

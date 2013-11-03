@@ -300,10 +300,10 @@ enum {
 #endif
 
 /* move symbols */
-#define pxx (CP[2])
-#define qxx (CP[1])
-#define rxx (CP[4])
-#define cxx (CP[3])
+#define pxx (" PLNSGBRPLNSBRK ")
+#define qxx (" plnsgbrplnsbrk ")
+#define rxx ("ihgfedcba")
+#define cxx ("987654321")
 
 /***************** Table limits ********************************************/
 
@@ -819,7 +819,6 @@ typedef struct hashval drop_hashcode_array[2][NO_PIECES][NO_SQUARES];
 
 extern hashcode_array  *hashcode;
 extern drop_hashcode_array  *drop_hashcode;
-extern char  *CP[];
 
 #ifdef QUIETBACKGROUND
 extern short background;
@@ -861,6 +860,10 @@ extern struct hashentry  *ttable[2];
 
 extern short rpthash[2][256];
 extern char *DRAW;
+
+extern char* DRAW_REPETITION;
+extern char *DRAW_MAXMOVES;
+extern char *DRAW_JUSTDRAW;
 
 #define row(a)     ((a) / NO_COLS)
 #define column(a)  ((a) % NO_COLS)

@@ -125,7 +125,7 @@ void
 Curses_ShowDepth(char ch)
 {
     gotoXY(TAB, 4);
-    printw(CP[53], Sdepth, ch);   /* Depth = %d%c */
+    printw("Depth= %d%c ", Sdepth, ch);
     ClearEoln();
 }
 
@@ -145,7 +145,7 @@ void
 ShowHeader(void)
 {
     gotoXY(TAB, 2);
-    printw(CP[69], version, patchlevel);
+    printw("GNU Shogi %s (pl %s)", version, patchlevel);
 }
 
 
@@ -201,7 +201,7 @@ void
 Curses_ShowNodeCnt(long NodeCnt)
 {
     gotoXY(TAB, 22);
-    /* printw(CP[90], NodeCnt, (et > 100) ? NodeCnt / (et / 100) : 0); */
+    /* printw("Nodes = %8ld, Nodes/Sec = %5ld", NodeCnt, (et > 100) ? NodeCnt / (et / 100) : 0); */
     printw("n = %ld n/s = %ld", 
            NodeCnt, (et > 100) ? NodeCnt / (et / 100) : 0);
     ClearEoln();
@@ -227,9 +227,9 @@ static void
 ShowPlayers(void)
 {
     gotoXY(5, ((flag.reverse) ? (5 + 2*NO_ROWS) : 2));
-    printw("%s", (computer == white) ? CP[218] : CP[74]);
+    printw("%s", (computer == white) ? "Computer" : "Human   ");
     gotoXY(5, ((flag.reverse) ? 2 : (5 + 2*NO_ROWS)));
-    printw("%s", (computer == black) ? CP[218] : CP[74]);
+    printw("%s", (computer == black) ? "Computer" : "Human   ");
 }
 
 
@@ -238,7 +238,7 @@ Curses_ShowPrompt(void)
 {
     Curses_ShowSidetoMove();
     gotoXY(TAB, 17);
-    printw(CP[121]);     /* Your move is? */
+    printw("Your move is? ");
     ClearEoln();
 }
 
@@ -250,8 +250,6 @@ Curses_ShowResponseTime(void)
     {
         short TCC = TCcount;
         gotoXY(TAB, 21);
-        /* printw("RT = %ld TCC = %d TCL = %ld EX = %ld ET = %ld TO = %d",
-           ResponseTime, TCC, TCleft, ExtraTime, et, flag.timeout); */
         printw("%ld, %d, %ld, %ld, %ld, %d",
                ResponseTime, TCC, TCleft, ExtraTime, et, flag.timeout);
         ClearEoln();
@@ -298,7 +296,7 @@ static void
 ShowScore(short score)
 {
     gotoXY(TAB, 5);
-    printw(CP[104], score);
+    printw("Score= %d", score);
     ClearEoln();
 }
 
@@ -359,10 +357,10 @@ Curses_Die(int sig)
     signal(SIGINT, SIG_IGN);
     signal(SIGQUIT, SIG_IGN);
 
-    Curses_ShowMessage(CP[31]);     /* Abort? */
+    Curses_ShowMessage("Abort? ");
     FLUSH_SCANW("%s", s);
 
-    if (strcmp(s, CP[210]) == 0) /* yes */
+    if (strcmp(s, "yes") == 0)
         Curses_ExitShogi();
 
     signal(SIGINT, Curses_Die);
@@ -390,76 +388,44 @@ void
 Curses_help(void)
 {
     Curses_ClearScreen();
-    /* printw("GNU Shogi ??p? command summary\n"); */
-    printw(CP[40], version, patchlevel);
+    printw("GNU Shogi %sp%s command summary\n", version, patchlevel);
     printw("-------------------------------"
            "---------------------------------\n");
-    /* printw("7g7f      move from 7g to 7f      quit      
-     * Exit Shogi\n"); */
-    printw(CP[158]);
-    /* printw("S6h       move silver to 6h       beep      
-     * turn %s\n", (flag.beep) ? "off" : "on"); */
-    printw(CP[86], (flag.beep) ? CP[92] : CP[93]);
-    /* printw("2d2c+     move to 2c and promote\n"); */
-    printw(CP[128], (flag.material) ? CP[92] : CP[93]);
-    /* printw("P*5e      drop a pawn to 5e       easy      
-     * turn %s\n", (flag.easy) ? "off" : "on"); */
-    printw(CP[173], (flag.easy) ? CP[92] : CP[93]);
-    /* printw("                                  hash      
-     * turn %s\n", (flag.hash) ? "off" : "on"); */
-    printw(CP[174], (flag.hash) ? CP[92] : CP[93]);
-    /* printw("bd        redraw board            reverse   
-     * board display\n"); */
-    printw(CP[130]);
-    /* printw("list      game to shogi.lst       book      
-     * turn %s used %d of %d\n", (Book) ? "off" : "on", book
-      count, booksize); */
-    printw(CP[170], (Book) ? CP[92] : CP[93], bookcount, BOOKSIZE);
-    /* printw("undo      undo last ply           remove    
-     * take back a move\n"); */
-    printw(CP[200]);
-    /* printw("edit      edit board              force     
-     * enter game moves\n"); */
-    printw(CP[153]);
-    /* printw("switch    sides with computer     both      
-     * computer match\n"); */
-    printw(CP[194]);
-    /* printw("black     computer plays black    white     
-     * computer plays white\n"); */
-    printw(CP[202]);
-    /* printw("depth     set search depth        clock     
-     * set time control\n"); */
-    printw(CP[149]);
-    /* printw("hint      suggest a move         post      
-     * turn %s principle variation\n", (flag.post) ? "off" :
-     * "on"); */
-    printw(CP[177], (flag.post) ? CP[92] : CP[93]);
-    /* printw("save      game to file            get       
-     * game from file\n"); */
-    printw(CP[188]);
-    /* printw("random    randomize play          new       
-     * start new game\n"); */
-    printw(CP[181]);
+    printw("7g7f      move from 7g to 7f      quit      Exit Shogi\n");
+    printw("S6h       move silver to 6h       beep      turn %s\n", (flag.beep) ? "OFF" : "ON");
+    printw("2d2c+     move to 2c and promote  material  turn %s\n", (flag.material) ? "OFF" : "ON");
+    printw("P*5e      drop pawn to 5e         easy      turn %s\n", (flag.easy) ? "OFF" : "ON");
+    printw("tsume     toggle tsume mode       hash      turn %s\n", (flag.hash) ? "OFF" : "ON");
+    printw("bd        redraw board            reverse   board display\n");
+    printw("list      game to shogi.lst       book      turn %s used %d of %d\n", (Book) ? "OFF" : "ON", bookcount, BOOKSIZE);
+    printw("undo      undo last ply           remove    take back a move\n");
+    printw("edit      edit board              force     toggle manual move mode\n");
+    printw("switch    sides with computer     both      computer match\n");
+    printw("black     computer plays black    white     computer plays white\n");
+    printw("depth     set search depth        clock     set time control\n");
+    printw("post      principle variation     hint      suggest a move\n", (flag.post) ? "OFF" : "ON");
+    printw("save      game to file            get       game from file\n");
+    printw("random    randomize play          new       start new game\n");
     gotoXY(10, 20);
-    printw(CP[47], ColorStr[computer]);
+    printw("Computer: %s", ColorStr[computer]);
     gotoXY(10, 21);
-    printw(CP[97], ColorStr[opponent]);
+    printw("Opponent: %s", ColorStr[opponent]);
     gotoXY(10, 22);
-    printw(CP[79], MaxResponseTime/100);
+    printw("Level: %ld", MaxResponseTime/100);
     gotoXY(10, 23);
-    printw(CP[59], (flag.easy) ? CP[93] : CP[92]);
+    printw("Easy mode: %s", (flag.easy) ? "ON" : "OFF");
     gotoXY(25, 23);
-    printw(CP[231], (flag.tsume) ? CP[93] : CP[92]);
+    printw("Tsume: %s", (flag.tsume) ? "ON" : "OFF");
     gotoXY(40, 20);
-    printw(CP[52], MaxSearchDepth);
+    printw("Depth: %d", MaxSearchDepth);
     gotoXY(40, 21);
-    printw(CP[100], (dither) ? CP[93] : CP[92]);
+    printw("Random: %s", (dither) ? "ON" : "OFF");
     gotoXY(40, 22);
-    printw(CP[112], (flag.hash) ? CP[93] : CP[92]);
+    printw("Transposition table: %s", (flag.hash) ? "ON" : "OFF");
     gotoXY(40, 23);
-    printw(CP[73]);
+    printw("Hit <RET> to return: ");
     gotoXY(10, 24);
-    printw(CP[110], (TCflag) ? CP[93] : CP[92],
+    printw("Time Control %s %d moves %d sec %d add %d depth\n", (TCflag) ? "ON" : "OFF",
            TimeControl.moves[black], 
            TimeControl.clock[black] / 100, 
            OperatorTime, MaxSearchDepth);
@@ -498,24 +464,24 @@ Curses_EditBoard(void)
     Curses_ClearScreen();
     Curses_UpdateDisplay(0, 0, 1, 0);
     gotoXY(TAB, 3);
-    printw(CP[29]);
+    printw(".   Exit to main\n");
     gotoXY(TAB, 4);
-    printw(CP[28]);
+    printw("#   Clear board\n");
     gotoXY(TAB, 5);
-    printw(CP[136]);
+    printw("c   Change sides\n");
     gotoXY(TAB, 7);
-    printw(CP[64]);
+    printw("Enter piece & location: ");
     a = black;
 
     do
     {
         gotoXY(TAB, 6);
-        printw(CP[60], ColorStr[a]); /* Editing %s */
+        printw("Editing: %s", ColorStr[a]);
         gotoXY(TAB + 24, 7);
         ClearEoln();
         FLUSH_SCANW("%s", s);
 
-        if (s[0] == CP[28][0])    /* # */
+        if (s[0] == '#')
         {
             for (sq = 0; sq < NO_SQUARES; sq++)
             {
@@ -528,7 +494,7 @@ Curses_EditBoard(void)
             UpdateCatched();
         }
 
-        if (s[0] == CP[136][0])   /* c */
+        if (s[0] == 'c')
             a = otherside[a];
 
         if (s[1] == '*')
@@ -569,7 +535,7 @@ Curses_EditBoard(void)
             DrawPiece(sq);
         }
     }
-    while (s[0] != CP[29][0]);  /* . */
+    while (s[0] != '.');
 
     for (sq = 0; sq < NO_SQUARES; sq++)
         Mvboard[sq] = ((board[sq] != Stboard[sq]) ? 10 : 0);
@@ -660,11 +626,11 @@ Curses_OutputMove(void)
 
     if (flag.illegal) 
     {
-        printw(CP[225]);
+        printw("Illegal position.");
         return;
     }
 
-    printw(CP[84], mvstr[0]);    /* My move is %s */
+    printw("My move is: %5s", mvstr[0]);
 
     if (flag.beep)
         putchar(7);
@@ -674,16 +640,16 @@ Curses_OutputMove(void)
     gotoXY(TAB, 18);
 
     if (root->flags & draw)
-        printw(CP[58]);
+        printw("Drawn game!");
     else if (root->score == -(SCORE_LIMIT + 999))
-        printw(CP[95]);
+        printw("Opponent mates!");
     else if (root->score == SCORE_LIMIT + 998)
-        printw(CP[44]);
+        printw("Computer mates!");
 #ifdef VERYBUGGY
     else if (root->score < -SCORE_LIMIT)
-        printw(CP[96], SCORE_LIMIT + 999 + root->score - 1);
+        printw("Opp: mate in %d!", SCORE_LIMIT + 999 + root->score - 1);
     else if (root->score > SCORE_LIMIT)
-        printw(CP[45], SCORE_LIMIT + 998 - root->score - 1);
+        printw("Comp: mate in %d!", SCORE_LIMIT + 998 - root->score - 1);
 #endif /* VERYBUGGY */
 
     ClearEoln();
@@ -708,7 +674,7 @@ Curses_OutputMove(void)
 
         ShowNodeCnt(NodeCnt);
         gotoXY(TAB, 23);
-        printw(CP[81], t); /* Max Tree= */
+        printw("Max Tree = %5d", t);
         ClearEoln();
     }
 
@@ -832,7 +798,7 @@ Curses_ShowPostnValues(void)
 
     score = ScorePosition(opponent);
     gotoXY(TAB, 5);
-    printw(CP[103], score, 
+    printw("S%d m%d ps%d gt%c m%d ps%d gt%c", score,
            mtl[computer], pscore[computer], GameType[computer],
            mtl[opponent], pscore[opponent], GameType[opponent]);
 
@@ -889,9 +855,9 @@ Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
         printw("    ");
 
         if (flag.reverse)
-            printw(CP[16]);
+            printw("  1    2    3    4    5    6    7    8    9");
         else
-            printw(CP[15]);
+            printw("  9    8    7    6    5    4    3    2    1");
 
         for (sq = 0; sq < NO_SQUARES; sq++)
             DrawPiece(sq);
@@ -954,9 +920,9 @@ Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
 void
 Curses_ChangeAlphaWindow(void)
 {
-    Curses_ShowMessage(CP[114]);
+    Curses_ShowMessage("WAwindow = ");
     FLUSH_SCANW("%hd", &WAwindow);
-    Curses_ShowMessage(CP[34]);
+    Curses_ShowMessage("BAwindow = ");
     FLUSH_SCANW("%hd", &BAwindow);
 }
 
@@ -964,9 +930,9 @@ Curses_ChangeAlphaWindow(void)
 void
 Curses_ChangeBetaWindow(void)
 {
-    Curses_ShowMessage(CP[115]);
+    Curses_ShowMessage("WBwindow = ");
     FLUSH_SCANW("%hd", &WBwindow);
-    Curses_ShowMessage(CP[35]);
+    Curses_ShowMessage("BBwindow = ");
     FLUSH_SCANW("%hd", &BBwindow);
 }
 
@@ -979,13 +945,13 @@ Curses_GiveHint(void)
     if (hint)
     {
         algbr((short) (hint >> 8), (short) (hint & 0xFF), false);
-        strcpy(s, CP[198]);  /* try */
+        strcpy(s, "try ");
         strcat(s, mvstr[0]);
         Curses_ShowMessage(s);
     }
     else
     {
-        Curses_ShowMessage(CP[223]);
+        Curses_ShowMessage("I have no idea.\n");
     }
 }
 
@@ -993,7 +959,7 @@ Curses_GiveHint(void)
 void
 Curses_ChangeSearchDepth(void)
 {
-    Curses_ShowMessage(CP[150]);
+    Curses_ShowMessage("depth = ");
     FLUSH_SCANW("%hd", &MaxSearchDepth);
     TCflag = !(MaxSearchDepth > 0);
 }
@@ -1002,9 +968,9 @@ Curses_ChangeSearchDepth(void)
 void
 Curses_ChangeHashDepth(void)
 {
-    Curses_ShowMessage(CP[163]);
+    Curses_ShowMessage("hashdepth = ");
     FLUSH_SCANW("%hd", &HashDepth);
-    Curses_ShowMessage(CP[82]);
+    Curses_ShowMessage("MoveLimit = ");
     FLUSH_SCANW("%hd", &HashMoveLimit);
 }
 
@@ -1012,7 +978,7 @@ Curses_ChangeHashDepth(void)
 void
 Curses_SetContempt(void)
 {
-    Curses_ShowMessage(CP[142]);
+    Curses_ShowMessage("contempt = ");
     FLUSH_SCANW("%hd", &contempt);
 }
 
@@ -1020,7 +986,7 @@ Curses_SetContempt(void)
 void
 Curses_ChangeXwindow(void)
 {
-    Curses_ShowMessage(CP[208]);
+    Curses_ShowMessage("xwndw= ");
     FLUSH_SCANW("%hd", &xwndw);
 }
 
@@ -1032,27 +998,27 @@ Curses_SelectLevel(char *sx)
 
     Curses_ClearScreen();
     gotoXY(32, 2);
-    printw(CP[41], version, patchlevel);
+    printw("GNU Shogi %sp%s", version, patchlevel);
     gotoXY(20, 4);
-    printw(CP[18]);
+    printw(" 1.   40 moves in   5 minutes");
     gotoXY(20, 5);
-    printw(CP[19]);
+    printw(" 2.   40 moves in  15 minutes");
     gotoXY(20, 6);
-    printw(CP[20]);
+    printw(" 3.   40 moves in  30 minutes");
     gotoXY(20, 7);
-    printw(CP[21]);
+    printw(" 4.  all moves in  15 minutes");
     gotoXY(20, 8);
-    printw(CP[22]);
+    printw(" 5.  all moves in  30 minutes");
     gotoXY(20, 9);
-    printw(CP[23]);
+    printw(" 6.  all moves in  15 minutes, 30 seconds fischer clock");
     gotoXY(20, 10);
-    printw(CP[24]);
+    printw(" 7.  all moves in  30 minutes, 30 seconds fischer clock");
     gotoXY(20, 11);
-    printw(CP[25]);
+    printw(" 8.    1 move  in   1 minute");
     gotoXY(20, 12);
-    printw(CP[26]);
+    printw(" 9.    1 move  in  15 minutes");
     gotoXY(20, 13);
-    printw(CP[27]);
+    printw("10.    1 move  in  30 minutes");
 
     OperatorTime = 0;
     TCmoves = 40;
@@ -1060,7 +1026,7 @@ Curses_SelectLevel(char *sx)
     TCseconds = 0;
 
     gotoXY(20, 17);
-    printw(CP[62]);
+    printw("Enter Level: ");
     refresh();
     FLUSH_SCANW("%d", &item);
 
@@ -1142,14 +1108,14 @@ Curses_DoDebug(void)
     char s[40];
 
     ExaminePosition(opponent);
-    Curses_ShowMessage(CP[65]);
+    Curses_ShowMessage("Enter piece: ");
     FLUSH_SCANW("%s", s);
     c = neutral;
 
-    if ((s[0] == CP[9][0]) || (s[0] == CP[9][1])) /* b B */
+    if ((s[0] == 'b') || (s[0] == 'B'))
         c = black;
 
-    if ((s[0] == CP[9][2]) || (s[0] == CP[9][3])) /* w W */
+    if ((s[0] == 'w') || (s[0] == 'W'))
         c = white;
 
     for (p = king; p > no_piece; p--)
@@ -1174,7 +1140,7 @@ Curses_DoDebug(void)
 
     score = ScorePosition(opponent);
     gotoXY(TAB, 5);
-    printw(CP[103], score, 
+    printw("S%d m%d ps%d gt%c m%d ps%d gt%c", score,
            mtl[computer], pscore[computer], GameType[computer],
            mtl[opponent], pscore[opponent], GameType[opponent]);
 

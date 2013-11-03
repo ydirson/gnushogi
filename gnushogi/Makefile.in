@@ -87,12 +87,6 @@ TEXTBOOK   = -DBOOK=\"$(LIBDIR)/gnushogi.tbk\"
 BINBOOK    = -DBINBOOK=\"$(LIBDIR)/gnushogi.bbk\"
 
 
-# The language file describes capabilities of the program.  It may
-# be useful for customizing gnushogi for non-English-speaking players.
-
-LANGF      = -DLANGFILE=\"../misc/gnushogi.lng\"
-
-
 # The pattern file contains various opening patterns. The program tries to
 # obtain such a pattern in the opening stage. Sequences of opening
 # patterns may be described in order to support the correct order of moves.
@@ -177,7 +171,7 @@ eval.o: eval.c
 	$(CC) $(CFLAGS) -c $<
 
 init.o: init.c
-	$(CC)  $(CFLAGS) $(LANGF) -c $<
+	$(CC)  $(CFLAGS) -c $<
 
 main.o: main.c
 	$(CC) $(CFLAGS) $(BINBOOK) -c $<
@@ -207,7 +201,7 @@ util.o: util.c
 # Files specific to particular targets.
 
 pat2inc.o: pat2inc.c
-	$(CC) $(CFLAGS) $(LANGF) $(BINBOOK) $(PATTERN) -c $<
+	$(CC) $(CFLAGS) $(BINBOOK) $(PATTERN) -c $<
 
 sizetest.o: sizetest.c
 	$(CC) $(CFLAGS) -c $<

@@ -407,7 +407,7 @@ SelectMove(short side, SelectMove_mode iop)
     if (rpt >= 3)
     {
         root->flags |= draw;
-        DRAW = CP[101];     /* Repetition */
+        DRAW = DRAW_REPETITION;
     }
     else
     {
@@ -419,7 +419,7 @@ SelectMove(short side, SelectMove_mode iop)
         if (GameCnt == MAXMOVES)
         {
             root->flags |= draw;
-            DRAW = CP[80];      /* Max Moves */
+            DRAW = DRAW_MAXMOVES;
         }
     }
 
@@ -911,7 +911,7 @@ search(short side,
                      && !ChkFlag[ply])))
             {
                 node->flags |= (draw | exact);
-                DRAW = CP[58];  /* Draw */
+                DRAW = DRAW_JUSTDRAW;
                 node->score = ((side == computer) ? contempt : -contempt);
             }
 

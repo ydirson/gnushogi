@@ -179,3 +179,8 @@ short use_ttable = true;
 unsigned int ttblsize = ttblsz;
 struct hashentry  *ttable[2] = { NULL, NULL };
 #endif
+
+char *DRAW;
+char *DRAW_REPETITION = "Repetition";
+char *DRAW_MAXMOVES = "Max Moves";
+char *DRAW_JUSTDRAW = "Drawn game!";

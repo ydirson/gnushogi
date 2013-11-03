@@ -212,7 +212,7 @@ main (int argc, char **argv)
                 long j;
                 struct fileentry n;
 
-                fputs(CP[66], stdout);
+                fputs("Filling transposition file, wait!\n", stdout);
                 n.f = n.t = 0;
                 n.flags = 0;
                 n.depth = 0;
@@ -225,7 +225,7 @@ main (int argc, char **argv)
             }
             else
             {
-                printf(CP[50], HASHFILE);
+                printf("Create failed for %s\n", HASHFILE);
             }
 
             return 0;
@@ -246,7 +246,7 @@ main (int argc, char **argv)
                 int nr[MAXDEPTH];
                 struct fileentry n;
 
-                fputs(CP[49], stdout);
+                fputs("Counting transposition file entries, wait!\n", stdout);
 
                 for (i = 0; i < MAXDEPTH; i++)
                     nr[i] = 0;
@@ -272,7 +272,7 @@ main (int argc, char **argv)
                     }
                 }
 
-                printf(CP[109], nr[0], i);
+                printf("The file contains %d entries out of max %d\n", nr[0], i);
 
                 for (j = 1; j < MAXDEPTH; j++)
                     printf("%d ", nr[j]);
@@ -287,7 +287,7 @@ main (int argc, char **argv)
 #endif /* ttblsz */
 
         case 'v':
-            fprintf(stderr, CP[102], version, patchlevel);
+            fprintf(stderr, "gnushogi version %s patchlevel %s\n", version, patchlevel);
             exit(1);
 
 
@@ -309,7 +309,7 @@ main (int argc, char **argv)
 
 
         default:
-            fputs(CP[113], stderr);
+            fputs("Usage: gnushogi [-a] [-t] [-c size] [-s savefile][-l listfile] [-x xwndw]\n", stderr);
             exit(1);
         }
 
@@ -341,7 +341,7 @@ main (int argc, char **argv)
 
         if (argc > 9)
         {
-            printf("%s\n", CP[220]);
+            printf("Time Control Error\n");
             exit(1);
         }
 
@@ -371,7 +371,7 @@ main (int argc, char **argv)
                 XC++;
             else
             {
-                printf("%s\n", CP[220]);
+                printf("Time Control Error\n");
                 exit(1);
             }
 
@@ -386,7 +386,7 @@ main (int argc, char **argv)
              * an error message and quit.
              */
 
-            printf("%s\n", CP[233]);
+            printf("Invalid command-line arguments:\n");
             print_arglist(argc, argv);
             exit(1);
         }

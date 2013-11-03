@@ -292,8 +292,7 @@ BVerifyMove(char *s, unsigned short *mv, int moveno)
             UnmakeMove(opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
             /* Illegal move in check */
 #if !defined QUIETBOOKGEN
-            /* 077: "Illegal move (in check) %s" */
-            puts(CP[77]);
+            puts("Illegal move (in check) %s");
             bkdisplay(s, cnt, moveno);
 #endif
             return false;
@@ -313,8 +312,7 @@ BVerifyMove(char *s, unsigned short *mv, int moveno)
 
     /* Illegal move */
 #if !defined QUIETBOOKGEN
-    /* 075: "Illegal move (no match)%s\n" */
-    printf(CP[75], s);
+    printf("Illegal move (no match) %s\n", s);
     bkdisplay(s, cnt, moveno);
 #endif
     return false;
@@ -877,8 +875,7 @@ GetOpenings(void)
 
         }
 
-        /* 213: "Book used %d(%d)." */
-        sprintf(msg, CP[213], B.bookcount, B.booksize);
+        sprintf(msg, "Book used %d(%d).", B.bookcount, B.booksize);
         ShowMessage(msg);
     }
 
@@ -889,8 +886,7 @@ GetOpenings(void)
     /* Now get ready to play .*/
     if (!B.bookcount)
     {
-        /* 212: "Can't find book." */
-        ShowMessage(CP[212]);
+        ShowMessage("Can't find book.");
         Book = 0;
     }
 }

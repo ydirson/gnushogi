@@ -175,7 +175,7 @@ ProbeTTable (short side,
 
                 if (!barebones)
                 {
-                    ShowMessage(CP[199]);    /* ttable collision detected */
+                    ShowMessage("ttable collision detected");
                     ShowBD(ptbl->bd);
                     printf("hashkey = 0x%x, hashbd = 0x%x\n",
                            hashkey, hashbd);
