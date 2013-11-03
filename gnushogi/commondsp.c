@@ -1093,13 +1093,13 @@ ListGame(void)
         dbuf[16] = '\0';
         dbuf[19] = '\0';
 
-        /* use format "CLp16.Jan01-020304B" when patchlevel is 16,
+        /* use format "CL.Jan01-020304B" when
            date is Jan 1
            time is 02:03:04
            program played white */
 
-        sprintf(fname, "CLp%s.%s%s-%s%s%s%c",
-                patchlevel, dbuf + 4, dbuf + 8, dbuf + 11, dbuf + 14,
+        sprintf(fname, "CL.%s%s-%s%s%s%c",
+                dbuf + 4, dbuf + 8, dbuf + 11, dbuf + 14,
                 dbuf + 17, ColorStr[computer][0]);
 
         /* replace space padding with 0 */
@@ -1118,7 +1118,7 @@ ListGame(void)
         exit(1);
     }
 
-    fprintf(fd, "gnushogi %sp%s game\n", version, patchlevel);
+    fprintf(fd, "gnushogi %s game\n", PACKAGE_VERSION);
     fputs("         score  depth   nodes  time         ", fd);
     fputs("         score  depth   nodes  time\n", fd);
 

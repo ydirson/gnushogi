@@ -145,7 +145,7 @@ void
 ShowHeader(void)
 {
     gotoXY(TAB, 2);
-    printw("GNU Shogi %s (pl %s)", version, patchlevel);
+    printw("GNU Shogi %s", PACKAGE_VERSION);
 }
 
 
@@ -388,7 +388,7 @@ void
 Curses_help(void)
 {
     Curses_ClearScreen();
-    printw("GNU Shogi %sp%s command summary\n", version, patchlevel);
+    printw("GNU Shogi %s command summary\n", PACKAGE_VERSION);
     printw("-------------------------------"
            "---------------------------------\n");
     printw("7g7f      move from 7g to 7f      quit      Exit Shogi\n");
@@ -998,7 +998,7 @@ Curses_SelectLevel(char *sx)
 
     Curses_ClearScreen();
     gotoXY(32, 2);
-    printw("GNU Shogi %sp%s", version, patchlevel);
+    printw("GNU Shogi %s", PACKAGE_VERSION);
     gotoXY(20, 4);
     printw(" 1.   40 moves in   5 minutes");
     gotoXY(20, 5);

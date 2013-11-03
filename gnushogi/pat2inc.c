@@ -31,7 +31,6 @@
  *
  */
 
-#include "version.h"
 #include "gnushogi.h"
 #include "pattern.h"
 

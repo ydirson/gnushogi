@@ -226,7 +226,7 @@ Raw_Initialize(void)
 #    error "Need setlinebuf() or setvbuf() to compile gnushogi!"
 #  endif
 #endif
-        printf("GNU Shogi %sp%s\n", version, patchlevel);
+        printf("GNU Shogi %s\n", PACKAGE_VERSION);
     }
 
     if (hard_time_limit)
@@ -281,7 +281,7 @@ void
 Raw_help(void)
 {
     Raw_ClearScreen();
-    printf("GNU Shogi %sp%s command summary\n", version, patchlevel);
+    printf("GNU Shogi %s command summary\n", PACKAGE_VERSION);
     printf("----------------------------------"
            "------------------------------\n");
     fputs ("7g7f      move from 7g to 7f      quit      Exit Shogi\n", stdout);

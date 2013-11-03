@@ -145,7 +145,7 @@ clean:
 #
 
 xshogi:     xshogi.o parser.o
-xshogi.o:   xshogi.c $(SRCDIR)/sysdeps.h $(SRCDIR)/xshogi.h $(SRCDIR)/bitmaps.h $(ROOT)/version.h ../config.h
+xshogi.o:   xshogi.c $(SRCDIR)/sysdeps.h $(SRCDIR)/xshogi.h $(SRCDIR)/bitmaps.h ../config.h
 parser.o:   parser.c $(SRCDIR)/xshogi.h
 parser.c:   parser.y scanner.c
 scanner.c:  scanner.l

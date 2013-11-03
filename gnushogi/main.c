@@ -29,7 +29,6 @@
  *
  */
 
-#include "version.h"
 #include "gnushogi.h"
 
 #include <signal.h>
@@ -287,7 +286,7 @@ main (int argc, char **argv)
 #endif /* ttblsz */
 
         case 'v':
-            fprintf(stderr, "gnushogi version %s patchlevel %s\n", version, patchlevel);
+            fprintf(stderr, "gnushogi version %s\n", PACKAGE_VERSION);
             exit(1);
 
 

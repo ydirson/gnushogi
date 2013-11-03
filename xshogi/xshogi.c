@@ -91,7 +91,6 @@
 #include <X11/Xaw/SmeLine.h>
 #include <X11/cursorfont.h>
 
-#include "../version.h"
 #include "xshogi.h"
 
 #define BUF_SIZE 1024
@@ -1704,9 +1703,9 @@ CreatePlayerWindow(void)
                       False, (XtEventHandler)EventProc,
                       (XtPointer)(player == &remotePlayer));
 
-    sprintf(buf, "xshogi version %s, patchlevel %s based on "
+    sprintf(buf, "xshogi version %s based on "
             "xboard version %s",
-            version, patchlevel, XBOARD_VERSION);
+            PACKAGE_VERSION, XBOARD_VERSION);
 
     /*
      * If there is to be a machine match, set it up.

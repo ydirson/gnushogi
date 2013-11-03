@@ -255,22 +255,22 @@ clean:
 gnushogi:   $(GNUSHOGI_FILES)
 pat2inc:       $(PAT2INCFILES)
 sizetest:      sizetest.o 
-attacks.o:     attacks.c gnushogi.h $(ROOT)/version.h
-book.o:        book.c gnushogi.h $(ROOT)/version.h
-commondsp.o:   commondsp.c gnushogi.h $(ROOT)/version.h
-cursesdsp.o:   cursesdsp.c gnushogi.h $(ROOT)/version.h
-dspwrappers.o: dspwrappers.c gnushogi.h $(ROOT)/version.h
-genmove.o:     genmove.c gnushogi.h $(ROOT)/version.h
-globals.o:     globals.c gnushogi.h $(ROOT)/version.h
-eval.o:        eval.c eval.h gnushogi.h $(ROOT)/version.h $(SRCDIR)/pattern.h
-init.o:        init.c gnushogi.h $(ROOT)/version.h $(SRCDIR)/pattern.h
-main.o:        main.c gnushogi.h $(ROOT)/version.h
+attacks.o:     attacks.c gnushogi.h
+book.o:        book.c gnushogi.h
+commondsp.o:   commondsp.c gnushogi.h
+cursesdsp.o:   cursesdsp.c gnushogi.h
+dspwrappers.o: dspwrappers.c gnushogi.h
+genmove.o:     genmove.c gnushogi.h
+globals.o:     globals.c gnushogi.h
+eval.o:        eval.c eval.h gnushogi.h $(SRCDIR)/pattern.h
+init.o:        init.c gnushogi.h $(SRCDIR)/pattern.h
+main.o:        main.c gnushogi.h
 makepattern.o: pattern.c gnushogi.h $(SRCDIR)/pattern.h
 pattern.o:     pattern.c gnushogi.h $(SRCDIR)/pattern.h $(SRCDIR)/pattern.inc
-rawdsp.o:      rawdsp.c gnushogi.h $(ROOT)/version.h
-search.o:      search.c gnushogi.h $(ROOT)/version.h
-tcontrl.o:     tcontrl.c gnushogi.h $(ROOT)/version.h
-util.o:        util.c gnushogi.h $(ROOT)/version.h
+rawdsp.o:      rawdsp.c gnushogi.h
+search.o:      search.c gnushogi.h
+tcontrl.o:     tcontrl.c gnushogi.h
+util.o:        util.c gnushogi.h
 pat2inc.o:     pat2inc.c $(SRCDIR)/pattern.h $(SRCDIR)/gnushogi.h
 sizetest.o:    sizetest.c $(SRCDIR)/gnushogi.h $(SRCDIR)/eval.h
 gnushogi.bbk:  gnushogi

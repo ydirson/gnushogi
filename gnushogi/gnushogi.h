@@ -728,7 +728,6 @@ extern short balance[2];
 extern small_short ChkFlag[], CptrFlag[], TesujiFlag[];
 extern short Pscore[], Tscore[];
 extern /*unsigned*/ short rehash;  /* -1 is used as a flag --tpm */
-extern char version[], patchlevel[];
 extern unsigned int ttbllimit;
 extern unsigned int TTadd;
 extern unsigned int ttblsize;
