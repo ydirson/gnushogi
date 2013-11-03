@@ -29,7 +29,7 @@ AC_MSG_NOTICE([libs])
 # curses
 AC_ARG_WITH([curses],
   [AS_HELP_STRING([--with-curses],
-    [enable curses UI])],
+    [enable curses UI (default: yes if available)])],
   [],
   [with_curses=check])
 
@@ -41,8 +41,9 @@ AS_IF([test "x$with_curses" != xno],
      AC_DEFINE([HAVE_LIBCURSES], [1],
                [Define if you have lib])
     ],
-    [AC_MSG_ERROR(
-       [--with-curses was given, but test for curses failed])],
+    [AS_IF([test "x$with_curses" = xyes],
+      [AC_MSG_ERROR(
+	 [--with-curses was given, but test for curses failed])])],
     [-ltermcap])])
 
 # other libraries.
