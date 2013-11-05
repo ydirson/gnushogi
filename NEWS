@@ -5,6 +5,9 @@ This file starts with GNU Shogi 1.3 (07/01/1999).
 
 Changes in version 1.4.1 (unpublished):
 
+* Initial support for the MiniShogi variant, for now as a separate
+  executable built using "./configure --enable-minishogi".
+* Support for building with the curses UI.
 * Build system enhancements.
 * Bug fixes.
 
