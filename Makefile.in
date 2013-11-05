@@ -98,7 +98,7 @@ dist:
 	$(MAKE) maintainerclean
 	rm -rf $(DISTNAME)
 	mkdir $(DISTNAME)
-	tar -cf - --exclude .git $(ROOT) | (cd $(DISTNAME) && tar -xf -)
+	tar -cf - --exclude .git --exclude $(DISTNAME) $(ROOT) | (cd $(DISTNAME) && tar -xf -)
 	cd $(DISTNAME) && $(ROOT)/autogen.sh && $(ROOT)/configure
 	cd $(DISTNAME)/doc && $(MAKE) info
 	cd $(DISTNAME) && make distclean
