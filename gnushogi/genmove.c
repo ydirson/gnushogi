@@ -245,7 +245,7 @@ gives_check_flag(unsigned short *flags, short side, short f, short t)
 
 
 inline static void
-Link(short side, short piece,
+Link(short side,
      short from, short to, unsigned short local_flag, short s)
 {
     if (*TrP == TREE)
@@ -340,8 +340,8 @@ PromotionPossible(short color, short f, short t, short p)
 }
 
 
-inline int
-NonPromotionPossible(short color, short f,
+static inline int
+NonPromotionPossible(short color,
                      short t, short p)
 {
     switch (p)
@@ -400,7 +400,7 @@ NonPromotionPossible(short color, short f,
 /* bonus for possible next moves */
 
 inline static short
-field_bonus(short ply, short side, short piece,
+field_bonus(short side, short piece,
             short f, short t, unsigned short *local_flag)
 {
     short s, u, ptyp;
@@ -620,7 +620,7 @@ LinkMove(short ply, short f,
     if (score_if_impossible < 0)
     {
         /* The move is flagged as illegal. */
-        Link(side, piece,
+        Link(side,
              f, t, local_flag, score_if_impossible);
 
         return;
@@ -729,7 +729,7 @@ LinkMove(short ply, short f,
             s -= 16 / Captured[side][silver];
 
 #if defined DROPBONUS
-        s += field_bonus(ply, side, piece, f, t, &local_flag);
+        s += field_bonus(side, piece, f, t, &local_flag);
 
         if (s == 10 && piece != pawn)
             local_flag |= questionable;
@@ -818,7 +818,7 @@ LinkMove(short ply, short f,
         else
         {
 #if defined FIELDBONUS
-            s += field_bonus(ply, side, piece, f, t, &local_flag);
+            s += field_bonus(side, piece, f, t, &local_flag);
 #endif
         }
     }
@@ -870,7 +870,7 @@ LinkMove(short ply, short f,
 
     if (try_link || GenerateAllMoves)
     {
-        Link(side, piece, f, t, local_flag,
+        Link(side, f, t, local_flag,
              s - ((SCORE_LIMIT + 1000) * 2));
     }
 
@@ -1040,7 +1040,7 @@ GenMoves(short ply, short sq, short side,
                 LinkMove(ply, sq, u, local_flag | promote, xside, true);
 
                 if ((possible
-                     = NonPromotionPossible(color[sq], sq, u, piece)))
+                     = NonPromotionPossible(color[sq], u, piece)))
                 {
                     LinkMove(ply, sq, u, local_flag, xside, possible);
                 }
@@ -1496,7 +1496,7 @@ CaptureList(short side, short ply,
 
                     if ((PP = PromotionPossible(color[sq], sq, u, piece)))
                     {
-                        Link(side, piece,
+                        Link(side,
                              sq, u, capture | promote,
                              (*value)[stage][board[u]]
 #if !defined SAVE_SVALUE
@@ -1507,7 +1507,7 @@ CaptureList(short side, short ply,
 
                     if (!PP || flag.tsume)
                     {
-                        Link(side, piece,
+                        Link(side,
                              sq, u, capture,
                              (*value)[stage][board[u]]
 #if !defined SAVE_SVALUE

@@ -916,10 +916,8 @@ extern void Unlock_data(void);     /* init.c */
 extern void Initialize_dist(void); /* init.c */
 extern void Initialize_eval(void); /* eval.c */
 extern void NewGame(void);
-extern int  parse(FILE * fd, unsigned short *mv,
-                  short side, char *opening);
 extern void GetOpenings(void);
-extern int  OpeningBook(unsigned short *hint, short side);
+extern int  OpeningBook(unsigned short *hint);
 
 typedef enum
 {
@@ -966,7 +964,6 @@ PutInTTable(short side,
             short score,
             short depth,
             short ply,
-            short alpha,
             short beta,
             unsigned short mv);
 

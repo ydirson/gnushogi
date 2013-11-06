@@ -253,7 +253,7 @@ main (int argc, char **argv)
                     }
                 }
 
-                printf("The file contains %d entries out of max %d\n", nr[0], i);
+                printf("The file contains %d entries out of max %ld\n", nr[0], i);
 
                 for (j = 1; j < MAXDEPTH; j++)
                     printf("%d ", nr[j]);

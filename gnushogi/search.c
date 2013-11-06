@@ -258,7 +258,7 @@ SelectMove(short side, SelectMove_mode iop)
 
     if (flag.regularstart && Book)
     {
-        flag.timeout = bookflag = OpeningBook(&hint, side);
+        flag.timeout = bookflag = OpeningBook(&hint);
 
         if (TCflag)
             ResponseTime += ResponseTime;
@@ -710,7 +710,7 @@ search(short side,
                  && (ProbeFTable(side, depth, ply, &alpha, &beta, &score)
                      == true))
         {
-            PutInTTable(side, score, depth, ply, alpha, beta, PV);
+            PutInTTable(side, score, depth, ply, beta, PV);
             bstline[ply] = PV;
             bstline[ply + 1] = 0;
 
@@ -1025,13 +1025,13 @@ search(short side,
     {
 #  ifdef HASHFILE /* MCV: warning: this confuses the formatter. */
         if (use_ttable
-            && PutInTTable(side, best, depth, ply, alpha, beta, mv)
+            && PutInTTable(side, best, depth, ply, beta, mv)
             && hashfile
             && (depth > HashDepth)
             && (GameCnt < HashMoveLimit))
 #  else
         if (use_ttable
-            && PutInTTable(side, best, depth, ply, alpha, beta, mv))
+            && PutInTTable(side, best, depth, ply, beta, mv))
 #  endif
         {
             PutInFTable(side, best, depth, ply,
@@ -1116,8 +1116,8 @@ UpdatePieceList(short side, short sq, UpdatePieceList_mode iop)
 
 /* Make or Unmake drop move. */
 
-void
-drop(short side, short piece, short f, short t, short iop)
+static void
+drop(short side, short piece, short t, short iop)
 {
     if (iop == 1)
     {
@@ -1285,7 +1285,7 @@ MakeMove(short side,
         *tempst = svalue[t];
 #endif
 
-        (void)drop(side, g->fpiece, f, t, 1);
+        (void)drop(side, g->fpiece, t, 1);
     }
     else
     {
@@ -1413,7 +1413,7 @@ UnmakeMove(short side,
 
     if (node->flags & dropmask)
     {
-        (void)drop(side, (node->flags & pmask), f, t, 2);
+        (void)drop(side, (node->flags & pmask), t, 2);
 
 #if !defined SAVE_SVALUE
         svalue[t] = *tempst;

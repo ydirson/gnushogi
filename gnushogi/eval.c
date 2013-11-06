@@ -1259,13 +1259,12 @@ trapped(short sq)
 
 
 static int
-AttackedPieceValue(short sq, short side)
+AttackedPieceValue(short sq)
 {
-    short s, ds;
+    short s;
 
     s = 0;
 
-	ds = -fv1[HUNGP] * 2;
     hung[c1]++;
     shung[sq]++;
 
@@ -1423,7 +1422,7 @@ PawnValue(short sq, short side)
  */
 
 static inline int
-LanceValue(short sq, short side)
+LanceValue(short sq)
 {
     short s = 0, ds, ad;
 
@@ -1453,7 +1452,7 @@ LanceValue(short sq, short side)
  */
 
 static inline int
-KnightValue(short sq, short side)
+KnightValue(short sq)
 {
     short s = 0, ad;
     short ds, checked_trapped = false;
@@ -1490,7 +1489,7 @@ KnightValue(short sq, short side)
  */
 
 static inline int
-SilverValue(short sq, short side)
+SilverValue(short sq)
 {
     short s= 0, ds, ad;
 
@@ -1538,7 +1537,7 @@ SilverValue(short sq, short side)
  */
 
 static inline int
-GoldValue(short sq, short side)
+GoldValue(short sq)
 {
     short s = 0, ds, ad;
 
@@ -1580,7 +1579,7 @@ GoldValue(short sq, short side)
  */
 
 static inline int
-BishopValue(short sq, short side)
+BishopValue(short sq)
 {
     short s = 0, ds, ad;
 
@@ -1715,7 +1714,7 @@ RookValue(short sq, short side)
  */
 
 static inline int
-PPawnValue(short sq, short side)
+PPawnValue(short sq)
 {
     short s = 0, ds, ad;
 
@@ -1732,7 +1731,7 @@ PPawnValue(short sq, short side)
  */
 
 static inline int
-PLanceValue(short sq, short side)
+PLanceValue(short sq)
 {
     short s = 0, ds, ad;
 
@@ -1748,7 +1747,7 @@ PLanceValue(short sq, short side)
  */
 
 static inline int
-PKnightValue(short sq, short side)
+PKnightValue(short sq)
 {
     short s = 0, ds, ad;
 
@@ -1765,7 +1764,7 @@ PKnightValue(short sq, short side)
  */
 
 static inline int
-PSilverValue(short sq, short side)
+PSilverValue(short sq)
 {
     short s = 0, ds, ad;
 
@@ -1781,7 +1780,7 @@ PSilverValue(short sq, short side)
  */
 
 static inline int
-PBishopValue(short sq, short side)
+PBishopValue(short sq)
 {
     short s = 0, ds, ad;
 
@@ -1797,7 +1796,7 @@ PBishopValue(short sq, short side)
  */
 
 static inline int
-PRookValue(short sq, short side)
+PRookValue(short sq)
 {
     short s = 0, ds, ad;
 
@@ -1815,7 +1814,7 @@ PRookValue(short sq, short side)
  */
 
 static inline int
-KingValue(short sq, short side)
+KingValue(short sq)
 {
     short s = 0, ds;
 
@@ -1901,7 +1900,7 @@ PieceValue(short sq, short side)
         if (a1 == 0)
         {
             /* undefended piece */
-            s += AttackedPieceValue(sq, side);
+            s += AttackedPieceValue(sq);
         }
         else
         {
@@ -1912,7 +1911,7 @@ PieceValue(short sq, short side)
             if (attack_value < piece_value)
             {
                 /* attacked by a weaker piece */
-                s += AttackedPieceValue(sq, side) / 2;
+                s += AttackedPieceValue(sq) / 2;
             }
             else if (abs(attack_value - piece_value) < 10)
             {
@@ -1979,24 +1978,24 @@ PieceValue(short sq, short side)
 
 #ifndef MINISHOGI
     case lance:
-        s += LanceValue(sq, side);
+        s += LanceValue(sq);
         break;
 
     case knight:
-        s += KnightValue(sq, side);
+        s += KnightValue(sq);
         break;
 #endif
 
     case silver:
-        s += SilverValue(sq, side);
+        s += SilverValue(sq);
         break;
 
     case gold:
-        s += GoldValue(sq, side);
+        s += GoldValue(sq);
         break;
 
     case bishop:
-        s += BishopValue(sq, side);
+        s += BishopValue(sq);
         break;
 
     case rook:
@@ -2004,33 +2003,33 @@ PieceValue(short sq, short side)
         break;
 
     case king:
-        s += KingValue(sq, side);
+        s += KingValue(sq);
         break;
 
     case ppawn:
-        s += PPawnValue(sq, side);
+        s += PPawnValue(sq);
         break;
 
 #ifndef MINISHOGI
     case plance:
-        s += PLanceValue(sq, side);
+        s += PLanceValue(sq);
         break;
 
     case pknight:
-        s += PKnightValue(sq, side);
+        s += PKnightValue(sq);
         break;
 #endif
 
     case psilver:
-        s += PSilverValue(sq, side);
+        s += PSilverValue(sq);
         break;
 
     case pbishop:
-        s += PBishopValue(sq, side);
+        s += PBishopValue(sq);
         break;
 
     case prook:
-        s += PRookValue(sq, side);
+        s += PRookValue(sq);
         break;
     }
 
@@ -2741,6 +2740,7 @@ DetermineStage(short side)
 void
 UpdateWeights(short stage)
 {
+  /* FIXME: this was emptied between 1.1p02 ans 1.2p03, do we keep it ? */
 }
 
 

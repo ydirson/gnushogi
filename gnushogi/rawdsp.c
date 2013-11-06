@@ -32,6 +32,7 @@
 #include <ctype.h>
 #include <signal.h>
 #include <stdarg.h>
+#include <stdio.h>
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/file.h>
@@ -322,7 +323,7 @@ Raw_help(void)
            "--------------------------------\n");
     printf("Computer: %-12s Opponent:            %s\n",
            ColorStr[computer], ColorStr[opponent]);
-    printf("Depth:    %-12d Response time:       %d sec\n",
+    printf("Depth:    %-12d Response time:       %ld sec\n",
            MaxSearchDepth, MaxResponseTime/100);
     printf("Random:   %-12s Easy mode:           %s\n",
            (dither) ? "ON" : "OFF", (flag.easy) ? "ON" : "OFF");
@@ -330,7 +331,7 @@ Raw_help(void)
            (flag.beep) ? "ON" : "OFF", (flag.hash) ? "ON" : "OFF");
     printf("Tsume:    %-12s Force:               %s\n",
            (flag.tsume) ? "ON" : "OFF", (flag.force) ? "ON" : "OFF");
-    printf("Time Control %s %d moves %d sec %d add %d depth\n",
+    printf("Time Control %s %d moves %ld sec %d add %d depth\n",
            (TCflag) ? "ON" : "OFF",
            TimeControl.moves[black], TimeControl.clock[black] / 100,
            TCadd/100, MaxSearchDepth);
@@ -818,8 +819,7 @@ Raw_ChangeXwindow(void)
 void
 Raw_ShowPostnValue(short sq)
 {
-    short score;
-    score = ScorePosition(color[sq]);
+    (void) ScorePosition(color[sq]);
 
     if (color[sq] != neutral)
     {

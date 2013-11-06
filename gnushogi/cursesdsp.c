@@ -34,6 +34,7 @@
 #include <ctype.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #include <sys/param.h>
 #include <sys/types.h>
@@ -79,6 +80,7 @@ static void DrawPiece(short sq);
 static void ShowScore(short score);
 void Curses_UpdateDisplay(short f, short t, short redraw, short isspec);
 void Curses_Die(int sig);
+void Curses_ShowSidetoMove(void);
 
 /****************************************
  * Trivial output functions.
@@ -104,14 +106,6 @@ static void
 gotoXY(short x, short y)
 {
     move(y - 1, x - 1);
-}
-
-
-static void
-ClearMessage(void)
-{
-    gotoXY(TAB, 6);
-    ClearEoln();
 }
 
 
@@ -773,10 +767,8 @@ DrawPiece(short sq)
 void
 Curses_ShowPostnValue(short sq)
 {
-    short score;
-
     gotoXY(4 + 5 * VIR_C(sq), 5 + 2 * (7 - VIR_R(sq)));	/* CHECKME */
-    score = ScorePosition(color[sq]);
+    (void) ScorePosition(color[sq]);
 
     if (color[sq] != neutral)
 #if defined SAVE_SVALUE

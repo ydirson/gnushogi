@@ -350,7 +350,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
 
 
 static int
-parser(char *f, int side, short *fpiece)
+parser(char *f, short *fpiece)
 {
     int c1, r1, c2, r2;
     short i, p = false;
@@ -588,7 +588,7 @@ GetGame(void)
             InPtr = fname;
             skipb();
             g = &GameList[GameCnt];
-            g->gmove = parser(InPtr, side, &g->fpiece);
+            g->gmove = parser(InPtr, &g->fpiece);
             skip();
             g->score = atoi(InPtr);
             skip();
@@ -1419,7 +1419,7 @@ TestSpeed(void(*f)(short side, short ply,
 void
 TestPSpeed(short(*f) (short side), unsigned j)
 {
-    short i;
+    unsigned i;
     long cnt, t1, t2;
 #ifdef HAVE_GETTIMEOFDAY
     struct timeval tv;
@@ -1466,6 +1466,7 @@ SetOppTime(char *s)
     if (*time == ':')
     {
         time++;
+	/* FIXME: sec is parsed but ignored */
         sec = (int)strtol(time, &time, 10);
     }
 
@@ -1500,6 +1501,7 @@ SetMachineTime(char *s)
     if (*time == ':')
     {
         time++;
+	/* FIXME: sec is parsed but ignored */
         sec = (int)strtol(time, &time, 10);
     }
 

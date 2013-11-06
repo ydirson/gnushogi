@@ -365,7 +365,7 @@ RESET(void)
 
 static
 int
-Vparse (FILE * fd, USHORT *mv, USHORT *flags, USHORT side, int moveno)
+Vparse (FILE * fd, USHORT *mv, USHORT *flags, int moveno)
 {
     int c, i;
     char s[255];
@@ -646,7 +646,7 @@ GetOpenings(void)
 {
     short i;
     int mustwrite = false, first;
-    unsigned short xside, side;
+    unsigned short side;
     short c;
     USHORT mv, flags;
     unsigned int x;
@@ -715,11 +715,10 @@ GetOpenings(void)
         {
             /* setvbuf(fd, buffr, _IOFBF, 2048); */
             side = black;
-            xside = white;
             hashbd = hashkey = 0;
             i = 0;
 
-            while ((c = Vparse(fd, &mv, &flags, side, i)) >= 0)
+            while ((c = Vparse(fd, &mv, &flags, i)) >= 0)
             {
                 if (c == 1)
                 {
@@ -821,7 +820,6 @@ GetOpenings(void)
                     computer = opponent;
                     opponent = computer ^ 1;
 
-                    xside = side;
                     side = side ^ 1;
                 }
                 else if (i > 0)
@@ -832,8 +830,6 @@ GetOpenings(void)
                     RESET();
                     i = 0;
                     side = black;
-                    xside = white;
-
                 }
             }
 
@@ -875,7 +871,7 @@ GetOpenings(void)
 
         }
 
-        sprintf(msg, "Book used %d(%d).", B.bookcount, B.booksize);
+        sprintf(msg, "Book used %lu(%lu).", B.bookcount, B.booksize);
         dsp->ShowMessage(msg);
     }
 
@@ -894,7 +890,7 @@ GetOpenings(void)
 
 
 /*
- * OpeningBook(hint, side)
+ * OpeningBook(hint)
  *
  * Go through each of the opening lines of play and check for a match with
  * the current game listing. If a match occurs, generate a random
@@ -906,7 +902,7 @@ GetOpenings(void)
  */
 
 int
-OpeningBook(unsigned short *hint, short side)
+OpeningBook(unsigned short *hint)
 {
     unsigned short r, m;
     int possibles = TrPnt[2] - TrPnt[1];

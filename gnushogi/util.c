@@ -35,9 +35,9 @@ unsigned int TTadd = 0;
 short recycle;
 short ISZERO = 1;
 
-
+#if 0
 int
-parse(FILE * fd, unsigned short *mv, short side, char *opening)
+parse(FILE * fd, unsigned short *mv, char *opening)
 {
     int c, i, r1, r2, c1, c2;
     char s[128];
@@ -99,7 +99,7 @@ parse(FILE * fd, unsigned short *mv, short side, char *opening)
 
     return 1;
 }
-
+#endif
 
 /*
  * The field of a hashtable is computed as follows:
@@ -226,7 +226,6 @@ PutInTTable(short side,
             short score,
             short depth,
             short ply,
-            short alpha,
             short beta,
             unsigned short mv)
 {
