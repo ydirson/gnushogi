@@ -80,17 +80,14 @@ main (int argc, char **argv)
                 binbookfile = NULL;
 #endif
             }
-
             break;
 
 #ifdef BINBOOK
         case 'B':
             argc--;
             argv++;
-
             if (argc > 0)
                 binbookfile = argv[0];
-
             break;
 #endif
 
@@ -107,16 +104,13 @@ main (int argc, char **argv)
             hash = ((argv[0][0] == '-') ? false : true);
             break;
 
-
         case 'l':
             argc--;
             argv++;
 
             if (argc > 0)
                 Lang = argv[0];
-
             break;
-
 
         case 'L':
             argc--;
@@ -126,16 +120,13 @@ main (int argc, char **argv)
                 strcpy(listfile, argv[0]);
             break;
 
-
         case 's':
             argc--;
             argv++;
 
             if (argc > 0)
                 strcpy(savefile, argv[0]);
-
             break;
-
 
         case 'P':
             argc--;
@@ -143,16 +134,13 @@ main (int argc, char **argv)
 
             if (argc > 0)
                 bookmaxply = atoi(argv[0]);
-
             break;
-
 
         case 'R':
             /* Raw text interface. */
             display_type = DISPLAY_RAW;
             dsp = &raw_display;
             break;
-
 
         case 'S':
             argc--;
@@ -169,12 +157,9 @@ main (int argc, char **argv)
 
             if (argc > 0)
                 rehash = atoi(argv[0]);
-
             if (rehash > MAXrehash)
                 rehash = MAXrehash;
-
             break;
-
 
         case 'T':
             argc--;
@@ -182,10 +167,8 @@ main (int argc, char **argv)
 
             if (argc > 0)
                 ttblsize = atoi(argv[0]);
-
-            if ((ttblsize <= MINTTABLE))
+            if (ttblsize <= MINTTABLE)
                 ttblsize = (MINTTABLE) + 1;
-
             break;
 
 #ifdef HASHFILE
@@ -228,7 +211,6 @@ main (int argc, char **argv)
             }
 
             return 0;
-
 
         case 't':   /* Create or test persistent transposition table. */
             hashfile = fopen(HASHFILE, RWA_ACC);
@@ -281,7 +263,6 @@ main (int argc, char **argv)
 
             return 0;
 
-
 #endif /* HASHFILE */
 #endif /* ttblsz */
 
@@ -296,16 +277,13 @@ main (int argc, char **argv)
             dsp = &raw_display;
             break;
 
-
         case 'x':
             argc--;
             argv++;
 
             if (argc > 0)
                 xwin = argv[0];
-
             break;
-
 
         default:
             fputs("Usage: gnushogi [-a] [-t] [-c size] [-s savefile][-l listfile] [-x xwndw]\n", stderr);

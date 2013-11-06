@@ -124,8 +124,6 @@ movealgbr(short m, char *s)
 #endif /* BOOKTEST */
 
 
-
-
 /*
  * Generate move strings in different formats.
  *
@@ -215,7 +213,6 @@ algbr(short f, short t, short flag)
         mvstr[0][0] = mvstr[1][0] = mvstr[2][0] = mvstr[3][0] = '\0';
     }
 }
-
 
 
 /*
@@ -352,7 +349,6 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
 }
 
 
-
 static int
 parser(char *f, int side, short *fpiece)
 {
@@ -400,7 +396,6 @@ skip()
     while (*InPtr == ' ')
         InPtr++;
 }
-
 
 
 void
@@ -652,7 +647,6 @@ GetGame(void)
 }
 
 
-
 void
 SaveGame(void)
 {
@@ -798,7 +792,6 @@ SaveGame(void)
         dsp->ShowMessage("Could not open file");
     }
 }
-
 
 
 /*
@@ -1107,7 +1100,6 @@ BookSave(void)
 }
 
 
-
 void
 ListGame(void)
 {
@@ -1235,7 +1227,6 @@ ListGame(void)
 }
 
 
-
 void
 FlagMove(char c)
 {
@@ -1256,8 +1247,6 @@ FlagMove(char c)
 #endif
     }
 }
-
-
 
 
 /*
@@ -1321,7 +1310,6 @@ Undo(void)
 }
 
 
-
 void
 FlagString(unsigned short flags, char *s)
 {
@@ -1372,7 +1360,6 @@ FlagString(unsigned short flags, char *s)
     if (flags & book)
         strcat(s, " book");
 }
-
 
 
 void
@@ -1429,7 +1416,6 @@ TestSpeed(void(*f)(short side, short ply,
 }
 
 
-
 void
 TestPSpeed(short(*f) (short side), unsigned j)
 {
@@ -1467,7 +1453,6 @@ TestPSpeed(short(*f) (short side), unsigned j)
 }
 
 
-
 void
 SetOppTime(char *s)
 {
@@ -1502,7 +1487,6 @@ SetOppTime(char *s)
 }
 
 
-
 void
 SetMachineTime(char *s)
 {
@@ -1535,9 +1519,6 @@ SetMachineTime(char *s)
         printf("time %d %d\n", t, m);
     }
 }
-
-
-
 
 
 /* FIXME!  This is truly the function from hell! */
@@ -2059,8 +2040,6 @@ InputCommand(char *command)
 #endif
     }
 }
-
-
 
 
 void
