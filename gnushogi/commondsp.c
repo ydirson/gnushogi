@@ -47,6 +47,7 @@
 char mvstr[4][6];
 char *InPtr;
 int InBackground = false;
+struct display *dsp = &raw_display;
 
 
 #if defined(BOOKTEST)
@@ -164,7 +165,7 @@ algbr(short f, short t, short flag)
     if ((f == t) && ((f != 0) || (t != 0)))
     {
         if (!barebones) {
-            Printf("error in algbr: FROM=TO=%d, flag=0x%4x\n", t, flag);
+            dsp->Printf("error in algbr: FROM=TO=%d, flag=0x%4x\n", t, flag);
         }
 
         mvstr[0][0] = mvstr[1][0] = mvstr[2][0] = mvstr[3][0] = '\0';
@@ -297,7 +298,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
         if (SqAttacked(PieceList[opponent][0], computer, &blocked))
         {
             UnmakeMove(opponent, &xnode, &tempb, &tempc, &tempsf, &tempst);
-            AlwaysShowMessage("Illegal move (in check) %s", s);
+            dsp->AlwaysShowMessage("Illegal move (in check) %s", s);
             return false;
         }
         else
@@ -305,7 +306,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
             if (iop == VERIFY_AND_TRY_MODE)
                 return true;
 
-            UpdateDisplay(xnode.f, xnode.t, 0, (short) xnode.flags);
+            dsp->UpdateDisplay(xnode.f, xnode.t, 0, (short) xnode.flags);
             GameList[GameCnt].depth = GameList[GameCnt].score = 0;
             GameList[GameCnt].nodes = 0;
             ElapsedTime(COMPUTE_AND_INIT_MODE);
@@ -330,7 +331,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
                     char buf[20];
 
                     sprintf(buf, "%s mates!\n", ColorStr[opponent]);
-                    ShowMessage(buf);
+                    dsp->ShowMessage(buf);
                     flag.mate = true;
                 }
             }
@@ -339,12 +340,12 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
         }
     }
 
-    AlwaysShowMessage("Illegal move (no match) %s", s);
+    dsp->AlwaysShowMessage("Illegal move (no match) %s", s);
 
     if (!barebones && (cnt > 1))
     {
         sprintf(buffer, "Ambiguous Move %s!", s);
-        ShowMessage(buffer);
+        dsp->ShowMessage(buffer);
     }
 
     return false;
@@ -410,6 +411,23 @@ skipb()
 }
 
 
+void RequestInputString(char* buffer, unsigned bufsize)
+{
+    static char fmt[10];
+    int ret = snprintf(fmt, sizeof(fmt), "%%%us", bufsize);
+    if (ret < 0 ) {
+        perror("RequestInputString snprintf");
+        exit(1);
+    }
+    if (ret >= sizeof(fmt)) {
+        fprintf(stderr,
+                "Insufficient format-buffer size in %s for bufsize=%u\n",
+                __FUNCTION__, bufsize);
+        exit(1);
+    }
+    dsp->doRequestInputString(fmt, buffer);
+}
+
 
 void
 GetGame(void)
@@ -423,7 +441,7 @@ GetGame(void)
     if (savefile[0]) {
         strcpy(fname, savefile);
     } else {
-        ShowMessage("Enter file name: ");
+        dsp->ShowMessage("Enter file name: ");
         RequestInputString(fname, sizeof(fname)-1);
     }
 
@@ -628,7 +646,7 @@ GetGame(void)
 
     ZeroRPT();
     InitializeStats();
-    UpdateDisplay(0, 0, 1, 0);
+    dsp->UpdateDisplay(0, 0, 1, 0);
     Sdepth = 0;
     hint = 0;
 }
@@ -648,7 +666,7 @@ SaveGame(void)
     if (savefile[0]) {
         strcpy(fname, savefile);
     } else {
-        ShowMessage("Enter file name: ");
+        dsp->ShowMessage("Enter file name: ");
         RequestInputString(fname, sizeof(fname)-1);
     }
 
@@ -773,11 +791,11 @@ SaveGame(void)
 
         fclose(fd);
 
-        ShowMessage("Game saved");
+        dsp->ShowMessage("Game saved");
     }
     else
     {
-        ShowMessage("Could not open file");
+        dsp->ShowMessage("Could not open file");
     }
 }
 
@@ -797,7 +815,7 @@ GetXGame(void)
     short sq;
     short side, isp;
 
-    ShowMessage("Enter file name: ");
+    dsp->ShowMessage("Enter file name: ");
     RequestInputString(fname, sizeof(fname)-1);
 
     if (fname[0] == '\0')
@@ -911,7 +929,7 @@ GetXGame(void)
     Game50 = 1;
     ZeroRPT();
     InitializeStats();
-    UpdateDisplay(0, 0, 1, 0);
+    dsp->UpdateDisplay(0, 0, 1, 0);
     Sdepth = 0;
     hint = 0;
 }
@@ -926,7 +944,7 @@ SaveXGame(void)
     short sq, piece;
     short side, isp;
 
-    ShowMessage("Enter file name: ");
+    dsp->ShowMessage("Enter file name: ");
     RequestInputString(fname, sizeof(fname)-1);
 
     if (fname[0] == '\0')
@@ -1008,7 +1026,7 @@ BookSave(void)
         strcpy(fname, savefile);
     } else {
         /* Enter file name */
-        ShowMessage("Enter file name: ");
+        dsp->ShowMessage("Enter file name: ");
         RequestInputString(fname, sizeof(fname)-1);
     }
 
@@ -1080,11 +1098,11 @@ BookSave(void)
 
         fclose(fd);
 
-        ShowMessage("Game saved");
+        dsp->ShowMessage("Game saved");
     }
     else
     {
-        ShowMessage("Could not open file");
+        dsp->ShowMessage("Could not open file");
     }
 }
 
@@ -1295,8 +1313,8 @@ Undo(void)
     flag.mate = false;
     Sdepth = 0;
     player = player ^ 1;
-    ShowSidetoMove();
-    UpdateDisplay(0, 0, 1, 0);
+    dsp->ShowSidetoMove();
+    dsp->UpdateDisplay(0, 0, 1, 0);
 
     if (flag.regularstart)
         Book = false;
@@ -1407,7 +1425,7 @@ TestSpeed(void(*f)(short side, short ply,
     else
         et = 1;
 
-    ShowNodeCnt(cnt);
+    dsp->ShowNodeCnt(cnt);
 }
 
 
@@ -1445,7 +1463,7 @@ TestPSpeed(short(*f) (short side), unsigned j)
     else
         et = 1;
 
-    ShowNodeCnt(cnt);
+    dsp->ShowNodeCnt(cnt);
 }
 
 
@@ -1565,7 +1583,7 @@ InputCommand(char *command)
 
 #if !defined NOPOST
         if (flag.post)
-            GiveHint();
+            dsp->GiveHint();
 #endif
 
         /* do the hint move */
@@ -1574,7 +1592,7 @@ InputCommand(char *command)
             Sdepth = 0;
 
 #ifdef QUIETBACKGROUND
-            ShowPrompt();
+            dsp->ShowPrompt();
             have_shown_prompt = true;
 #endif /* QUIETBACKGROUND */
 
@@ -1621,7 +1639,7 @@ InputCommand(char *command)
         {
 #endif /* QUIETBACKGROUND */
 
-            ShowPrompt();
+            dsp->ShowPrompt();
 
 #ifdef QUIETBACKGROUND
         }
@@ -1633,7 +1651,7 @@ InputCommand(char *command)
             if (NOT_CURSES)
                 s[0] = '\0';
 
-            eof = GetString(sx);
+            eof = dsp->GetString(sx);
         } else {
             strcpy(sx, command);
             done = true;
@@ -1642,7 +1660,7 @@ InputCommand(char *command)
         sscanf(sx, "%s", s);
 
         if (eof)
-            ExitShogi();
+            dsp->ExitShogi();
 
         if (s[0] == '\0')
             continue;
@@ -1655,8 +1673,8 @@ InputCommand(char *command)
             if (old_xshogi)
                 display_type = DISPLAY_RAW;
 
-            ClearScreen();
-            UpdateDisplay(0, 0, 1, 0);
+            dsp->ClearScreen();
+            dsp->UpdateDisplay(0, 0, 1, 0);
 
             if (old_xshogi)
                 display_type = DISPLAY_X;
@@ -1683,11 +1701,11 @@ InputCommand(char *command)
         else if ((strcmp(s, "set") == 0)
                  || (strcmp(s, "edit") == 0))
         {
-            EditBoard();
+            dsp->EditBoard();
         }
         else if ((strcmp(s, "setup") == 0))
         {
-            SetupBoard();
+            dsp->SetupBoard();
         }
         else if (strcmp(s, "first") == 0)
         {
@@ -1711,7 +1729,7 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "help") == 0)
         {
-            help();
+            dsp->help();
         }
         else if (strcmp(s, "material") == 0)
         {
@@ -1737,7 +1755,7 @@ InputCommand(char *command)
         else if (strcmp(s, "new") == 0)
         {
             NewGame();
-            UpdateDisplay(0, 0, 1, 0);
+            dsp->UpdateDisplay(0, 0, 1, 0);
         }
         else if (strcmp(s, "list") == 0)
         {
@@ -1746,7 +1764,7 @@ InputCommand(char *command)
         else if ((strcmp(s, "level") == 0)
                  || (strcmp(s, "clock") == 0))
         {
-            SelectLevel(sx);
+            dsp->SelectLevel(sx);
         }
         else if (strcmp(s, "hash") == 0)
         {
@@ -1770,11 +1788,11 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "Awindow") == 0)
         {
-            ChangeAlphaWindow();
+            dsp->ChangeAlphaWindow();
         }
         else if (strcmp(s, "Bwindow") == 0)
         {
-            ChangeBetaWindow();
+            dsp->ChangeBetaWindow();
         }
         else if (strcmp(s, "rcptr") == 0)
         {
@@ -1782,7 +1800,7 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "hint") == 0)
         {
-            GiveHint();
+            dsp->GiveHint();
         }
         else if (strcmp(s, "both") == 0)
         {
@@ -1796,8 +1814,8 @@ InputCommand(char *command)
         else if (strcmp(s, "reverse") == 0)
         {
             flag.reverse = !flag.reverse;
-            ClearScreen();
-            UpdateDisplay(0, 0, 1, 0);
+            dsp->ClearScreen();
+            dsp->UpdateDisplay(0, 0, 1, 0);
         }
         else if (strcmp(s, "switch") == 0)
         {
@@ -1875,11 +1893,11 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "depth") == 0)
         {
-            ChangeSearchDepth();
+            dsp->ChangeSearchDepth();
         }
         else if (strcmp(s, "hashdepth") == 0)
         {
-            ChangeHashDepth();
+            dsp->ChangeHashDepth();
         }
         else if (strcmp(s, "random") == 0)
         {
@@ -1899,26 +1917,26 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "contempt") == 0)
         {
-            SetContempt();
+            dsp->SetContempt();
         }
         else if (strcmp(s, "xwndw") == 0)
         {
-            ChangeXwindow();
+            dsp->ChangeXwindow();
         }
         else if (strcmp(s, "rv") == 0)
         {
             flag.rv = !flag.rv;
-            UpdateDisplay(0, 0, 1, 0);
+            dsp->UpdateDisplay(0, 0, 1, 0);
         }
         else if (strcmp(s, "coords") == 0)
         {
             flag.coords = !flag.coords;
-            UpdateDisplay(0, 0, 1, 0);
+            dsp->UpdateDisplay(0, 0, 1, 0);
         }
         else if (strcmp(s, "stars") == 0)
         {
             flag.stars = !flag.stars;
-            UpdateDisplay(0, 0, 1, 0);
+            dsp->UpdateDisplay(0, 0, 1, 0);
         }
         else if (!XSHOGI && strcmp(s, "moves") == 0)
         {
@@ -1936,44 +1954,44 @@ InputCommand(char *command)
 #endif
                 SwagHt = 0;
 
-            ShowMessage("Testing MoveList Speed");
+            dsp->ShowMessage("Testing MoveList Speed");
             temp = generate_move_flags;
             generate_move_flags = true;
             TestSpeed(MoveList, 1);
             generate_move_flags = temp;
-            ShowMessage("Testing CaptureList Speed");
+            dsp->ShowMessage("Testing CaptureList Speed");
             TestSpeed(CaptureList, 1);
-            ShowMessage("Testing Eval Speed");
+            dsp->ShowMessage("Testing Eval Speed");
             ExaminePosition(opponent);
             TestPSpeed(ScorePosition, 1);
         }
         else if (!XSHOGI && strcmp(s, "test") == 0)
         {
 #ifdef SLOW_CPU
-            ShowMessage("Testing MoveList Speed");
+            dsp->ShowMessage("Testing MoveList Speed");
             TestSpeed(MoveList, 2000);
-            ShowMessage("Testing CaptureList Speed");
+            dsp->ShowMessage("Testing CaptureList Speed");
             TestSpeed(CaptureList, 3000);
-            ShowMessage("Testing Eval Speed");
+            dsp->ShowMessage("Testing Eval Speed");
             ExaminePosition(opponent);
             TestPSpeed(ScorePosition, 1500);
 #else
-            ShowMessage("Testing MoveList Speed");
+            dsp->ShowMessage("Testing MoveList Speed");
             TestSpeed(MoveList, 20000);
-            ShowMessage("Testing CaptureList Speed");
+            dsp->ShowMessage("Testing CaptureList Speed");
             TestSpeed(CaptureList, 30000);
-            ShowMessage("Testing Eval Speed");
+            dsp->ShowMessage("Testing Eval Speed");
             ExaminePosition(opponent);
             TestPSpeed(ScorePosition, 15000);
 #endif
         }
         else if (!XSHOGI && strcmp(s, "p") == 0)
         {
-            ShowPostnValues();
+            dsp->ShowPostnValues();
         }
         else if (!XSHOGI && strcmp(s, "debug") == 0)
         {
-            DoDebug();
+            dsp->DoDebug();
         }
         else
         {
@@ -1989,7 +2007,7 @@ InputCommand(char *command)
                 if (rpt >= 3)
                 {
                     DRAW = DRAW_REPETITION;
-                    ShowMessage(DRAW);
+                    dsp->ShowMessage(DRAW);
                     GameList[GameCnt].flags |= draw;
 
                         flag.mate = true;
@@ -2064,4 +2082,3 @@ SetTimeControl(void)
     et = 0;
     ElapsedTime(COMPUTE_AND_INIT_MODE);
 }
-

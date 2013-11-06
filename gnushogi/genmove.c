@@ -250,7 +250,7 @@ Link(short side, short piece,
 {
     if (*TrP == TREE)
     {
-        ShowMessage("TREE overflow\n");
+        dsp->ShowMessage("TREE overflow\n");
     }
     else
     {

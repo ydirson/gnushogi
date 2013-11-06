@@ -40,11 +40,15 @@ char *patternfile = PATTERNFILE;
 small_short pattern_data[MAX_PATTERN_DATA];
 
 /* minimal ShowMessage to avoid dependency on extraneous display code */
-void
-ShowMessage(char *s)
+static void
+Dummy_ShowMessage(char *s)
 {
     printf("%s\n", s);
 }
+static struct display dummydsp = {
+  .ShowMessage = Dummy_ShowMessage,
+};
+struct display *dsp = &dummydsp;
 
 #define is_digit(c) (((c) >= '0') && ((c) <= '9'))
 #define is_alpha(c) ((((c) >= 'a') && ((c) <= 'z')) \
@@ -221,7 +225,7 @@ ReadOpeningSequences (short *pindex)
             {
                 if (ScanPattern(s, pindex))
                 {
-                    ShowMessage("error in pattern sequence...");
+                    dsp->ShowMessage("error in pattern sequence...");
                     exit(1);
                 }
                 else
@@ -237,12 +241,12 @@ ReadOpeningSequences (short *pindex)
         sprintf(s,
                 "Pattern: %d bytes for %d sequences with %d patterns.\n",
                 *pindex, max_opening_sequence, max_pattern);
-        ShowMessage(s);
+        dsp->ShowMessage(s);
 
         fclose(fd);
     } else {
         sprintf(s, "no pattern file '%s'", patternfile);
-        ShowMessage(s);
+        dsp->ShowMessage(s);
     }
 }
 

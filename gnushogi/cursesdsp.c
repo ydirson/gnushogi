@@ -41,7 +41,6 @@
 #include <curses.h>
 
 #include "gnushogi.h"
-#include "cursesdsp.h"
 
 #if HAVE_UNISTD_H
 #include <unistd.h>
@@ -70,12 +69,16 @@ unsigned short MV[MAXDEPTH];
 int MSCORE;
 char *DRAW;
 
-/* Forward declarations. */
-/* FIXME: change this name, puh-leeze! */
+/****************************************
+ * forward declarations
+ ****************************************/
 
+/* FIXME: change this name, puh-leeze! */
 static void UpdateCatched(void);
 static void DrawPiece(short sq);
 static void ShowScore(short score);
+void Curses_UpdateDisplay(short f, short t, short redraw, short isspec);
+void Curses_Die(int sig);
 
 /****************************************
  * Trivial output functions.
@@ -165,20 +168,26 @@ Curses_ShowMessage(char *s)
 
 
 void
-Curses_AlwaysShowMessage(const char *format, va_list ap)
+Curses_AlwaysShowMessage(const char *format, ...)
 {
     static char buffer[60];
+    va_list ap;
+    va_start(ap, format);
     vsnprintf(buffer, sizeof(buffer), format, ap);
     Curses_ShowMessage(buffer);
+    va_end(ap);
 }
 
 
 void
-Curses_Printf(const char *format, va_list ap)
+Curses_Printf(const char *format, ...)
 {
     static char buffer[60];
+    va_list ap;
+    va_start(ap, format);
     vsnprintf(buffer, sizeof(buffer), format, ap);
     printw("%s", buffer);
+    va_end(ap);
 }
 
 
@@ -672,7 +681,7 @@ Curses_OutputMove(void)
             t = (l + h) >> 1;
         }
 
-        ShowNodeCnt(NodeCnt);
+        Curses_ShowNodeCnt(NodeCnt);
         gotoXY(TAB, 23);
         printw("Max Tree = %5d", t);
         ClearEoln();
@@ -714,7 +723,7 @@ Curses_UpdateClocks(void)
     printw("%d:%02d  ", m, s); 
 
     if (flag.post)
-        ShowNodeCnt(NodeCnt);
+        Curses_ShowNodeCnt(NodeCnt);
 
     refresh();
 }
@@ -1200,3 +1209,48 @@ Curses_SetupBoard(void)
 {
     Curses_ShowMessage("'setup' command is not supported in Cursesmode");
 }
+
+
+struct display curses_display =
+{
+    .ChangeAlphaWindow    = Curses_ChangeAlphaWindow,
+    .ChangeBetaWindow     = Curses_ChangeBetaWindow,
+    .ChangeHashDepth      = Curses_ChangeHashDepth,
+    .ChangeSearchDepth    = Curses_ChangeSearchDepth,
+    .ChangeXwindow        = Curses_ChangeXwindow,
+    .ClearScreen          = Curses_ClearScreen,
+    .DoDebug              = Curses_DoDebug,
+    .DoTable              = Curses_DoTable,
+    .EditBoard            = Curses_EditBoard,
+    .ExitShogi            = Curses_ExitShogi,
+    .GiveHint             = Curses_GiveHint,
+    .Initialize           = Curses_Initialize,
+    .ShowNodeCnt          = Curses_ShowNodeCnt,
+    .OutputMove           = Curses_OutputMove,
+    .PollForInput         = Curses_PollForInput,
+    .SetContempt          = Curses_SetContempt,
+    .SearchStartStuff     = Curses_SearchStartStuff,
+    .SelectLevel          = Curses_SelectLevel,
+    .ShowCurrentMove      = Curses_ShowCurrentMove,
+    .ShowDepth            = Curses_ShowDepth,
+    .ShowGameType         = Curses_ShowGameType,
+    .ShowLine             = Curses_ShowLine,
+    .ShowMessage          = Curses_ShowMessage,
+    .AlwaysShowMessage    = Curses_AlwaysShowMessage,
+    .Printf               = Curses_Printf,
+    .doRequestInputString = Curses_doRequestInputString,
+    .GetString            = Curses_GetString,
+    .SetupBoard           = Curses_SetupBoard,
+    .ShowPatternCount     = Curses_ShowPatternCount,
+    .ShowPostnValue       = Curses_ShowPostnValue,
+    .ShowPostnValues      = Curses_ShowPostnValues,
+    .ShowPrompt           = Curses_ShowPrompt,
+    .ShowResponseTime     = Curses_ShowResponseTime,
+    .ShowResults          = Curses_ShowResults,
+    .ShowSidetoMove       = Curses_ShowSidetoMove,
+    .ShowStage            = Curses_ShowStage,
+    .TerminateSearch      = Curses_TerminateSearch,
+    .UpdateClocks         = Curses_UpdateClocks,
+    .UpdateDisplay        = Curses_UpdateDisplay,
+    .help                 = Curses_help,
+};

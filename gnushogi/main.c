@@ -98,7 +98,7 @@ main (int argc, char **argv)
         case 'C':
             /* Curses interface. */
             display_type = DISPLAY_CURSES;
-
+            dsp = &curses_display;
             break;
 #endif
 
@@ -150,7 +150,7 @@ main (int argc, char **argv)
         case 'R':
             /* Raw text interface. */
             display_type = DISPLAY_RAW;
-
+            dsp = &raw_display;
             break;
 
 
@@ -293,7 +293,7 @@ main (int argc, char **argv)
         case 'X':
             /* X interface. */
             display_type = DISPLAY_X;
-
+            dsp = &raw_display;
             break;
 
 

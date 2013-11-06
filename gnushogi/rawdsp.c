@@ -41,7 +41,6 @@
 #endif
 
 #include "gnushogi.h"
-#include "rawdsp.h"
 
 unsigned short MV[MAXDEPTH];
 int MSCORE;
@@ -51,6 +50,11 @@ char *DRAW;
 extern char *InPtr;
 extern short pscore[];
 
+/****************************************
+ * forward declarations
+ ****************************************/
+
+void Raw_UpdateDisplay(short f, short t, short redraw, short isspec);
 
 /****************************************
  * Trivial output functions.
@@ -126,17 +130,23 @@ Raw_ShowMessage(char *s)
 
 
 void
-Raw_AlwaysShowMessage(const char *format, va_list ap)
+Raw_AlwaysShowMessage(const char *format, ...)
 {
+    va_list ap;
+    va_start(ap, format);
     vprintf(format, ap);
     printf("\n");
+    va_end(ap);
 }
 
 
 void
-Raw_Printf(const char *format, va_list ap)
+Raw_Printf(const char *format, ...)
 {
+    va_list ap;
+    va_start(ap, format);
     vprintf(format, ap);
+    va_end(ap);
 }
 
 
@@ -961,7 +971,7 @@ Raw_PollForInput(void)
     int cnt = poll(pollfds, sizeof(pollfds)/sizeof(pollfds[0]), 0);
     if (cnt < 0) {
         perror("polling standard input");
-        ExitShogi();
+        Raw_ExitShogi();
     }
 #endif
     if (cnt) { /* if anything to read, or error occured */
@@ -970,3 +980,47 @@ Raw_PollForInput(void)
         flag.bothsides = false;
     }
 }
+
+struct display raw_display =
+{
+    .ChangeAlphaWindow    = Raw_ChangeAlphaWindow,
+    .ChangeBetaWindow     = Raw_ChangeBetaWindow,
+    .ChangeHashDepth      = Raw_ChangeHashDepth,
+    .ChangeSearchDepth    = Raw_ChangeSearchDepth,
+    .ChangeXwindow        = Raw_ChangeXwindow,
+    .ClearScreen          = Raw_ClearScreen,
+    .DoDebug              = Raw_DoDebug,
+    .DoTable              = Raw_DoTable,
+    .EditBoard            = Raw_EditBoard,
+    .ExitShogi            = Raw_ExitShogi,
+    .GiveHint             = Raw_GiveHint,
+    .Initialize           = Raw_Initialize,
+    .ShowNodeCnt          = Raw_ShowNodeCnt,
+    .OutputMove           = Raw_OutputMove,
+    .PollForInput         = Raw_PollForInput,
+    .SetContempt          = Raw_SetContempt,
+    .SearchStartStuff     = Raw_SearchStartStuff,
+    .SelectLevel          = Raw_SelectLevel,
+    .ShowCurrentMove      = Raw_ShowCurrentMove,
+    .ShowDepth            = Raw_ShowDepth,
+    .ShowGameType         = Raw_ShowGameType,
+    .ShowLine             = Raw_ShowLine,
+    .ShowMessage          = Raw_ShowMessage,
+    .AlwaysShowMessage    = Raw_AlwaysShowMessage,
+    .Printf               = Raw_Printf,
+    .doRequestInputString = Raw_doRequestInputString,
+    .GetString            = Raw_GetString,
+    .SetupBoard           = Raw_SetupBoard,
+    .ShowPatternCount     = Raw_ShowPatternCount,
+    .ShowPostnValue       = Raw_ShowPostnValue,
+    .ShowPostnValues      = Raw_ShowPostnValues,
+    .ShowPrompt           = Raw_ShowPrompt,
+    .ShowResponseTime     = Raw_ShowResponseTime,
+    .ShowResults          = Raw_ShowResults,
+    .ShowSidetoMove       = Raw_ShowSidetoMove,
+    .ShowStage            = Raw_ShowStage,
+    .TerminateSearch      = Raw_TerminateSearch,
+    .UpdateClocks         = Raw_UpdateClocks,
+    .UpdateDisplay        = Raw_UpdateDisplay,
+    .help                 = Raw_help,
+};

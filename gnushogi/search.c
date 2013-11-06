@@ -180,7 +180,7 @@ SelectMove(short side, SelectMove_mode iop)
 #ifdef QUIETBACKGROUND
     if (!background)
 #endif /* QUIETBACKGROUND */
-        ShowResponseTime();
+        dsp->ShowResponseTime();
 
     ExtraTime = 0;
 
@@ -189,12 +189,12 @@ SelectMove(short side, SelectMove_mode iop)
 #ifdef QUIETBACKGROUND
     if (!background)
 #endif /* QUIETBACKGROUND */
-        ShowSidetoMove();
+        dsp->ShowSidetoMove();
 
 #ifdef QUIETBACKGROUND
     if (!background)
 #endif /* QUIETBACKGROUND */
-        SearchStartStuff(side);
+        dsp->SearchStartStuff(side);
 
 #ifdef HISTORY
     array_zero(history, sizeof_history);
@@ -304,7 +304,7 @@ SelectMove(short side, SelectMove_mode iop)
 # ifdef QUIETBACKGROUND
         if (!background)
 #endif /* QUIETBACKGROUND */
-            ShowDepth(' ');
+            dsp->ShowDepth(' ');
 
         /* search at this level returns score of PV */
         score = search(side, 1, Sdepth, alpha, beta, PrVar, &rpt);
@@ -320,7 +320,7 @@ SelectMove(short side, SelectMove_mode iop)
 #ifdef QUIETBACKGROUND
             if (!background)
 #endif /* QUIETBACKGROUND */
-                ShowDepth('-');
+                dsp->ShowDepth('-');
 
             if (TCflag && TCcount < MAXTCCOUNTR)
             {
@@ -342,7 +342,7 @@ SelectMove(short side, SelectMove_mode iop)
 #ifdef QUIETBACKGROUND
             if (!background)
 #endif /* QUIETBACKGROUND */
-                ShowDepth('+');
+                dsp->ShowDepth('+');
 
             score = search(side, 1, Sdepth, -(SCORE_LIMIT + 999),
                            (SCORE_LIMIT + 999), PrVar, &rpt);
@@ -395,7 +395,7 @@ SelectMove(short side, SelectMove_mode iop)
 #ifdef QUIETBACKGROUND
         if (!background)
 #endif /* QUIETBACKGROUND */
-            ShowResults(score, PrVar, '.');
+            dsp->ShowResults(score, PrVar, '.');
     }
 
     /********************** end of main loop ***************************/
@@ -452,7 +452,7 @@ SelectMove(short side, SelectMove_mode iop)
         ElapsedTime(COMPUTE_AND_INIT_MODE);
 
     /* update time control info */
-    OutputMove();
+    dsp->OutputMove();
 
     /* if mate set flag */
     if ((score == -(SCORE_LIMIT + 999) || score == (SCORE_LIMIT + 998)))
@@ -580,7 +580,7 @@ search(short side,
 #ifdef QUIETBACKGROUND
             if (!background)
 #endif
-                ShowResponseTime();
+                dsp->ShowResponseTime();
         }
         else if (!TCflag && flag.musttimeout && Sdepth > MINDEPTH)
         {
@@ -870,7 +870,7 @@ search(short side,
 #ifdef QUIETBACKGROUND
                 if (!background)
 #endif /* QUIETBACKGROUND */
-                    ShowCurrentMove(pnt, node->f, node->t);
+                    dsp->ShowCurrentMove(pnt, node->f, node->t);
             }
         }
 #endif
@@ -984,15 +984,15 @@ search(short side,
                     {
                         if (best > beta)
                         {
-                            ShowResults(best, bstline, '+');
+                            dsp->ShowResults(best, bstline, '+');
                         }
                         else if (best < alpha)
                         {
-                            ShowResults(best, bstline, '-');
+                            dsp->ShowResults(best, bstline, '-');
                         }
                         else
                         {
-                            ShowResults (best, bstline, '&');
+                            dsp->ShowResults(best, bstline, '&');
                         }
                     }
 #ifdef QUIETBACKGROUND

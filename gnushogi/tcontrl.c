@@ -345,7 +345,7 @@ CheckForTimeout(int score, int globalscore, int Jscore, int zwndw)
 #endif
 
     if (flag.timeout)
-        ShowMessage("timeout");
+        dsp->ShowMessage("timeout");
 }
 
 
@@ -365,7 +365,7 @@ ElapsedTime(ElapsedTime_mode iop)
     struct timeval tv;
 #endif
 
-    PollForInput();
+    dsp->PollForInput();
 
 #ifdef HAVE_GETTIMEOFDAY
     gettimeofday(&tv, NULL);
@@ -410,6 +410,6 @@ ElapsedTime(ElapsedTime_mode iop)
 #ifdef QUIETBACKGROUND
         if (!background)
 #endif
-            UpdateClocks();
+            dsp->UpdateClocks();
     }
 }

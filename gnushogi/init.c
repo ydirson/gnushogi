@@ -591,7 +591,7 @@ NewGame(void)
     }
 
     ClearCaptured();
-    ClearScreen();
+    dsp->ClearScreen();
     InitializeStats();
 
 #ifdef HAVE_GETTIMEOFDAY
@@ -614,9 +614,9 @@ NewGame(void)
         if (TCflag)
             SetTimeControl();
         else if (MaxResponseTime == 0)
-            SelectLevel(sx);
+            dsp->SelectLevel(sx);
 
-        UpdateDisplay(0, 0, 1, 0);
+        dsp->UpdateDisplay(0, 0, 1, 0);
         GetOpenings();
         GetOpeningPatterns(&max_opening_sequence);
 
@@ -675,7 +675,7 @@ InitMain(void)
         barebones    = 0;
     }
 
-    Initialize();
+    dsp->Initialize();
     Initialize_dist();
     Initialize_eval();
 #if !defined SAVE_NEXTPOS
@@ -725,6 +725,6 @@ ExitMain(void)
 #endif /* HASHFILE */
 #endif /* ttblsz */
 
-    ExitShogi();
+    dsp->ExitShogi();
 }
 

@@ -32,9 +32,6 @@
 #include "gnushogi.h"
 #include "pattern.h"
 
-extern void
-ShowStage(void);
-
 /* Hash table for preventing multiple scoring of the same position */
 
 int EADD = 0;       /* number of writes to the cache table */
@@ -2138,7 +2135,7 @@ UpdatePatterns(short side, short GameCnt)
     }
 
     if (flag.post)
-        ShowPatternCount(side, n);
+        dsp->ShowPatternCount(side, n);
 
     if (os != END_OF_SEQUENCES)
         update_advance_bonus(side, os);
@@ -2530,8 +2527,8 @@ DetermineGameType(short side_to_move)
     }
     else
     {
-        ShowPatternCount(black, -1);
-        ShowPatternCount(white, -1);
+        dsp->ShowPatternCount(black, -1);
+        dsp->ShowPatternCount(white, -1);
     }
 }
 
@@ -2708,7 +2705,7 @@ DetermineStage(short side)
         stage = 0;
 
     if (flag.post)
-        ShowStage();
+        dsp->ShowStage();
 
     /* Determine stage dependant weights */
 

@@ -119,7 +119,7 @@ Initialize_data(void)
 
         if (x >= 0)
         {
-            ShowMessage("datatype 'small_short' is unsigned; "
+            dsp->ShowMessage("datatype 'small_short' is unsigned; "
                         "check gnushogi.h\n");
             return 1;
         }
@@ -132,7 +132,7 @@ Initialize_data(void)
     {
         sprintf(buffer, "Cannot allocate %ld bytes for search tree",
                 (long)n);
-        ShowMessage(buffer);
+        dsp->ShowMessage(buffer);
         return 1;
     }
 
@@ -142,7 +142,7 @@ Initialize_data(void)
     if (!hashcode)
     {
         sprintf(buffer, "Cannot allocate %ld bytes for hashcode", (long)n);
-        ShowMessage(buffer);
+        dsp->ShowMessage(buffer);
         return 1;
     }
 
@@ -154,7 +154,7 @@ Initialize_data(void)
         sprintf(buffer,
                 "Cannot allocate %ld bytes for drop_hashcode",
                 (long)n);
-        ShowMessage(buffer);
+        dsp->ShowMessage(buffer);
         return 1;
     }
 
@@ -166,7 +166,7 @@ Initialize_data(void)
         sprintf(buffer,
                 "Cannot allocate %ld bytes for game record",
                 (long)n);
-        ShowMessage(buffer);
+        dsp->ShowMessage(buffer);
         return 1;
     }
 
@@ -183,7 +183,7 @@ Initialize_data(void)
             {
                 sprintf(buffer, "cannot allocate %ld space for nextdir %d",
                         (long)(n), i);
-                ShowMessage(buffer);
+                dsp->ShowMessage(buffer);
             }
 
             nextdir[i] = NULL;
@@ -198,7 +198,7 @@ Initialize_data(void)
             {
                 sprintf(buffer, "cannot allocate %ld space for nextpos %d",
                         (long)(n), i);
-                ShowMessage(buffer);
+                dsp->ShowMessage(buffer);
             }
 
             use_nextpos = false;
@@ -216,7 +216,7 @@ Initialize_data(void)
 
     if (!value)
     {
-        ShowMessage("cannot allocate value space");
+        dsp->ShowMessage("cannot allocate value space");
         return 1;
     }
 
@@ -225,7 +225,7 @@ Initialize_data(void)
 
     if (!fscore)
     {
-        ShowMessage("cannot allocate fscore space");
+        dsp->ShowMessage("cannot allocate fscore space");
         return 1;
     }
 
@@ -237,7 +237,7 @@ Initialize_data(void)
     {
         sprintf(buffer, "Cannot allocate %ld bytes for history table",
                 (long)sizeof_history);
-        ShowMessage(buffer);
+        dsp->ShowMessage(buffer);
         use_history = false;
     }
 #endif
@@ -253,7 +253,7 @@ Initialize_data(void)
         {
             sprintf(buffer, "Cannot allocate %ld bytes for cache table %ld",
                     (long)n, (long)i);
-            ShowMessage(buffer);
+            dsp->ShowMessage(buffer);
             use_etable = false;
         }
     }
@@ -303,7 +303,7 @@ Initialize_data(void)
     {
         sprintf(buffer, "Cannot allocate %ld bytes for transposition table",
                 (long)(2 * n));
-        ShowMessage(buffer);
+        dsp->ShowMessage(buffer);
         ttable[0] = ttable[1] = NULL;
     }
 #endif /* ttblsz */
@@ -314,7 +314,7 @@ Initialize_data(void)
 
     if (!distdata)
     {
-        ShowMessage("cannot allocate distdata space...");
+        dsp->ShowMessage("cannot allocate distdata space...");
         use_distdata = false;
     }
 #endif

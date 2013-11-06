@@ -115,7 +115,6 @@ NOTCOMMONFILES = \
                 book.o         \
                 commondsp.o    \
                 @CURSESDSP@    \
-                dspwrappers.o  \
                 eval.o         \
                 genmove.o      \
                 init.o         \
@@ -163,9 +162,6 @@ commondsp.o: commondsp.c
 	$(CC) $(CFLAGS) -c $<
 
 cursesdsp.o: cursesdsp.c
-	$(CC) $(CFLAGS) -c $<
-
-dspwrappers.o: dspwrappers.c
 	$(CC) $(CFLAGS) -c $<
 
 genmove.o: genmove.c
@@ -274,11 +270,11 @@ attacks.o:     attacks.c gnushogi.h
 book.o:        book.c gnushogi.h
 commondsp.o:   commondsp.c gnushogi.h
 cursesdsp.o:   cursesdsp.c gnushogi.h
-dspwrappers.o: dspwrappers.c gnushogi.h
 genmove.o:     genmove.c gnushogi.h
 globals.o:     globals.c gnushogi.h
 eval.o:        eval.c eval.h gnushogi.h $(SRCDIR)/pattern.h
 init.o:        init.c gnushogi.h $(SRCDIR)/pattern.h
+init-common.o: init-common.c gnushogi.h
 main.o:        main.c gnushogi.h
 makepattern.o: pattern.c gnushogi.h $(SRCDIR)/pattern.h
 pattern.o:     pattern.c gnushogi.h $(SRCDIR)/pattern.h pattern.inc

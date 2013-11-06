@@ -43,6 +43,8 @@
 #include "debug.h"
 #include "opts.h"          /* Various option-setting #defines.  */
 
+#include <stdarg.h>
+
 /*
  * Display options.
  */
@@ -1124,6 +1126,55 @@ typedef enum
 extern int VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv);
 extern unsigned short TTage;
 
-#include "dspwrappers.h"   /* Display functions. */
+/* display driver framework */
+
+struct display
+{
+    void (*ChangeAlphaWindow)(void);
+    void (*ChangeBetaWindow)(void);
+    void (*ChangeHashDepth)(void);
+    void (*ChangeSearchDepth)(void);
+    void (*ChangeXwindow)(void);
+    void (*ClearScreen)(void);
+    void (*DoDebug)(void);
+    void (*DoTable)(short table[NO_SQUARES]);
+    void (*EditBoard)(void);
+    void (*ExitShogi)(void);
+    void (*GiveHint)(void);
+    void (*Initialize)(void);
+    void (*ShowNodeCnt)(long NodeCnt);
+    void (*OutputMove)(void);
+    void (*PollForInput)(void);
+    void (*SetContempt)(void);
+    void (*SearchStartStuff)(short side);
+    void (*SelectLevel)(char *sx);
+    void (*ShowCurrentMove)(short pnt, short f, short t);
+    void (*ShowDepth)(char ch);
+    void (*ShowGameType)(void);
+    void (*ShowLine)(unsigned short *bstline);
+    void (*ShowMessage)(char *s);
+    void (*AlwaysShowMessage)(const char *format, ...);
+    void (*Printf)(const char *format, ...);
+    void (*doRequestInputString)(const char* fmt, char* buffer);
+    int  (*GetString)(char* sx);
+    void (*SetupBoard)(void);
+    void (*ShowPatternCount)(short side, short n);
+    void (*ShowPostnValue)(short sq);
+    void (*ShowPostnValues)(void);
+    void (*ShowPrompt)(void);
+    void (*ShowResponseTime)(void);
+    void (*ShowResults)(short score, unsigned short *bstline, char ch);
+    void (*ShowSidetoMove)(void);
+    void (*ShowStage)(void);
+    void (*TerminateSearch)(int sig);
+    void (*UpdateClocks)(void);
+    void (*UpdateDisplay)(short f, short t, short redraw, short isspec);
+    void (*help)(void);
+};
+
+extern struct display *dsp;
+
+extern struct display raw_display;
+extern struct display curses_display;
 
 #endif /* _GNUSHOGI_H_ */

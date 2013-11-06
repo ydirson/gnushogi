@@ -876,7 +876,7 @@ GetOpenings(void)
         }
 
         sprintf(msg, "Book used %d(%d).", B.bookcount, B.booksize);
-        ShowMessage(msg);
+        dsp->ShowMessage(msg);
     }
 
     /* Set everything back to start the game. */
@@ -886,7 +886,7 @@ GetOpenings(void)
     /* Now get ready to play .*/
     if (!B.bookcount)
     {
-        ShowMessage("Can't find book.");
+        dsp->ShowMessage("Can't find book.");
         Book = 0;
     }
 }
