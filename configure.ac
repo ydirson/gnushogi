@@ -57,7 +57,7 @@ AC_CHECK_LIB(termcap, tgoto)
 
 if [[ $ac_cv_c_compiler_gnu = yes ]]
 then
-WARNINGS="-Wall -Wno-implicit-int -Wstrict-prototypes -ansi -pedantic"
+WARNINGS="-Wall -Wno-implicit-int -Wstrict-prototypes -ansi"
 CEXTRAFLAGS="-fsigned-char -funroll-loops"
 # For profiling targets:
 CEXTRAFLAGS2="-fsigned-char -pg -fprofile-arcs -ftest-coverage"

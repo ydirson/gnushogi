@@ -956,8 +956,8 @@ Raw_PollForInput(void)
     if (!PeekNamedPipe(GetStdHandle(STD_INPUT_HANDLE), NULL, 0, NULL, &cnt, NULL))
         cnt = 1;
 #else
-    static struct pollfd pollfds[1] = { /* [0] = */ { /* .fd = */ STDIN_FILENO,
-                                                      /* .events = */ POLLIN } };
+    static struct pollfd pollfds[1] = { [0] = { .fd = STDIN_FILENO,
+                                                .events = POLLIN } };
     int cnt = poll(pollfds, sizeof(pollfds)/sizeof(pollfds[0]), 0);
     if (cnt < 0) {
         perror("polling standard input");
