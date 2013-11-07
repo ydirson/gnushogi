@@ -1,11 +1,17 @@
+Target for v1.5:
+
+- refactor dspwrappers into a driver-like structure
+- integrate H.G.Muller's work on the xboard protocol on top of that
+- deprecate xshogi in favor of xboard
+- make minishogi a run-time option rather than a compile-time one,
+  using the "variant" mechanism of the xboard protocol
+
 Generic cleanups
 
 - switch cli parsing to getopt
 - hunt for extern's and prototypes spread all over the source
 - merge old Makefile.profile.in back into Makefile.in if meaningful at all
 - use automake
-- drop gnushogi.lng, merge strings back into code
-- use version from configure.ac, get rid of version.h, drop patchlevel
 - hunt for more hardcoded variant-specific constants
   - position of captured pieces in curses mode
   - compile with bound-checker
@@ -17,7 +23,6 @@ Generic cleanups
 
 Minishogi-related stuff
 
-- make minishogi a run-time option rather than a compile-time one
 - minishogi patterns
 - tune difficulty levels
 - other tunings to investigate
