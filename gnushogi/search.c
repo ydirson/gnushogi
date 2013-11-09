@@ -861,7 +861,6 @@ search(short side,
         nxtline[ply + 1] = 0;
 
         /* if at top level */
-#if !defined NOPOST
         if (ply == 1)
         {
 /* at the top update search status */
@@ -873,7 +872,6 @@ search(short side,
                     dsp->ShowCurrentMove(pnt, node->f, node->t);
             }
         }
-#endif
 
         if (!(node->flags & exact))
         {

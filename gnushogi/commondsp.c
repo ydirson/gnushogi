@@ -1558,10 +1558,8 @@ InputCommand(char *command)
         algbr((short) hint >> 8, (short) hint & 0xff, false);
         strcpy(s, mvstr[0]);
 
-#if !defined NOPOST
         if (flag.post)
             dsp->GiveHint();
-#endif
 
         /* do the hint move */
         if (VerifyMove(s, VERIFY_AND_TRY_MODE, &mv))
@@ -1664,12 +1662,6 @@ InputCommand(char *command)
         {
             flag.quit = true;
         }
-#if !defined NOPOST
-        else if (strcmp(s, "post") == 0)
-        {
-            flag.post = !flag.post;
-        }
-#endif
         else if ((strcmp(s, "set") == 0)
                  || (strcmp(s, "edit") == 0))
         {
@@ -2015,8 +2007,6 @@ InputCommand(char *command)
         }
 
 #ifdef notdef /* optional pass best line to frontend with move */
-#  if !defined NOPOST
-
         if (flag.post && !flag.mate)
         {
             int i;
@@ -2029,7 +2019,6 @@ InputCommand(char *command)
                 printf("%5s ", mvstr[0]);
             }
         }
-#  endif
         printf("\n");
 #endif
     }
