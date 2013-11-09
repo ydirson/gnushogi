@@ -698,28 +698,16 @@ Raw_GiveHint(void)
 void
 Raw_SelectLevel(char *sx)
 {
+    char T[NO_SQUARES + 1], *p;
 
-    char T[NO_SQUARES + 1], *p, *q;
+    strncpy(T, sx, NO_SQUARES);
+    T[NO_SQUARES] = '\0';
 
-    if ((p = strstr(sx, "level")) != NULL)
-        p += strlen("level");
-    else if ((p = strstr(sx, "clock")) != NULL)
-        p += strlen("clock");
-
-    strcat(sx, "XX");
-    q = T;
-    *q = '\0';
-
-    for (; *p != 'X'; *q++ = *p++);
-
-    *q = '\0';
-
-    /* line empty ask for input */
+    /* if line empty, ask for input */
     if (!T[0])
     {
         fputs("Enter #moves #minutes: ", stdout);
         fgets(T, NO_SQUARES + 1, stdin);
-        strcat(T, "XX");
     }
 
     /* skip blackspace */
@@ -729,6 +717,7 @@ Raw_SelectLevel(char *sx)
     if (*p == 'f')
     {
         /* its a fischer clock game */
+        char *q;
         p++;
         TCminutes = (short)strtol(p, &q, 10);
         TCadd = (short)strtol(q, NULL, 10) *100;
@@ -738,6 +727,7 @@ Raw_SelectLevel(char *sx)
     else
     {
         /* regular game */
+        char *q;
         TCadd = 0;
         TCmoves = (short)strtol(p, &q, 10);
         TCminutes = (short)strtol(q, &q, 10);

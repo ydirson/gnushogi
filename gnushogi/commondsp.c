@@ -1744,10 +1744,13 @@ InputCommand(char *command)
         {
             ListGame();
         }
-        else if ((strcmp(s, "level") == 0)
-                 || (strcmp(s, "clock") == 0))
+        else if (strcmp(s, "level") == 0)
         {
-            dsp->SelectLevel(sx);
+            dsp->SelectLevel(sx + strlen("level"));
+        }
+        else if (strcmp(s, "clock") == 0)
+        {
+            dsp->SelectLevel(sx + strlen("clock"));
         }
         else if (strcmp(s, "hash") == 0)
         {
