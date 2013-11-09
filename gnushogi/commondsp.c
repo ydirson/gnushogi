@@ -1862,6 +1862,10 @@ InputCommand(char *command)
         {
             dsp->ChangeSearchDepth(sx + strlen("depth"));
         }
+        else if (strcmp(s, "sd") == 0)
+        {
+            dsp->ChangeSearchDepth(sx + strlen("sd"));
+        }
         else if (strcmp(s, "hashdepth") == 0)
         {
             dsp->ChangeHashDepth();

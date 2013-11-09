@@ -324,7 +324,7 @@ Raw_help(void)
     printf("edit      edit board              force     toggle manual move mode\n");
     printf("switch    sides with computer     both      computer match\n");
     printf("black     computer plays black    white     computer plays white\n");
-    printf("depth     set search depth        clock     set time control\n");
+    printf("sd        set search depth        clock     set time control\n");
     printf("post      principle variation     hint      suggest a move\n");
     printf("save      game to file            get       game from file\n");
     printf("xsave     pos. to xshogi file     xget      pos. from xshogi file\n");
@@ -344,7 +344,7 @@ Raw_help(void)
     printf("stars     turn %3s                moves                  \n",
            flag.stars ? "OFF" : "ON ");
     printf("test                              p                      \n");
-    printf("debug                                                    \n");
+    printf("debug                             depth     alias for 'sd'\n");
     printf("----------------------------------------------------------------\n");
     printf("Computer: %-12s Opponent:            %s\n",
            ColorStr[computer], ColorStr[opponent]);
