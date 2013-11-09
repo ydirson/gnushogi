@@ -307,27 +307,29 @@ Raw_help(void)
 {
     Raw_ClearScreen();
     printf("GNU Shogi %s command summary\n", PACKAGE_VERSION);
-    printf("----------------------------------"
-           "------------------------------\n");
-    fputs ("7g7f      move from 7g to 7f      quit      Exit Shogi\n", stdout);
-    printf("S6h       move silver to 6h       beep      turn %s\n", (flag.beep) ? "OFF" : "ON");
-    printf("2d2c+     move to 2c and promote  material  turn %s\n", (flag.material) ? "OFF" : "ON");
-    printf("P*5e      drop pawn to 5e         easy      turn %s\n", (flag.easy) ? "OFF" : "ON");
-    printf("tsume     toggle tsume mode       hash      turn %s\n", (flag.hash) ? "OFF" : "ON");
-    fputs ("bd        redraw board            reverse   board display\n", stdout);
-    printf("list      game to shogi.lst       book      turn %s used %d of %d\n", (Book) ? "OFF" : "ON", bookcount, booksize);
-    fputs ("undo      undo last ply           remove    take back a move\n", stdout);
-    fputs ("edit      edit board              force     toggle manual move mode\n", stdout);
-    fputs ("switch    sides with computer     both      computer match\n", stdout);
-    fputs ("black     computer plays black    white     computer plays white\n", stdout);
-    fputs ("depth     set search depth        clock     set time control\n", stdout);
-    fputs ("post      principle variation     hint      suggest a move\n", stdout);
-    fputs ("save      game to file            get       game from file\n", stdout);
-    printf("xsave     pos. to xshogi file     xget"
-           "      pos. from xshogi file\n");
-    fputs("random    randomize play          new       start new game\n", stdout);
-    printf("--------------------------------"
-           "--------------------------------\n");
+    printf("----------------------------------------------------------------\n");
+    printf("7g7f      move from 7g to 7f      quit      Exit Shogi\n");
+    printf("S6h       move silver to 6h       beep      turn %s\n",
+           (flag.beep) ? "OFF" : "ON");
+    printf("2d2c+     move to 2c and promote  material  turn %s\n",
+           (flag.material) ? "OFF" : "ON");
+    printf("P*5e      drop pawn to 5e         easy      turn %s\n",
+           (flag.easy) ? "OFF" : "ON");
+    printf("tsume     toggle tsume mode       hash      turn %s\n",
+           (flag.hash) ? "OFF" : "ON");
+    printf("bd        redraw board            reverse   board display\n");
+    printf("list      game to shogi.lst       book      turn %s used %d of %d\n",
+           (Book) ? "OFF" : "ON", bookcount, booksize);
+    printf("undo      undo last ply           remove    take back a move\n");
+    printf("edit      edit board              force     toggle manual move mode\n");
+    printf("switch    sides with computer     both      computer match\n");
+    printf("black     computer plays black    white     computer plays white\n");
+    printf("depth     set search depth        clock     set time control\n");
+    printf("post      principle variation     hint      suggest a move\n");
+    printf("save      game to file            get       game from file\n");
+    printf("xsave     pos. to xshogi file     xget      pos. from xshogi file\n");
+    printf("random    randomize play          new       start new game\n");
+    printf("----------------------------------------------------------------\n");
     printf("Computer: %-12s Opponent:            %s\n",
            ColorStr[computer], ColorStr[opponent]);
     printf("Depth:    %-12d Response time:       %ld sec\n",
