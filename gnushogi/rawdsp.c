@@ -794,10 +794,16 @@ Raw_SelectLevel(char *sx)
 
 
 void
-Raw_ChangeSearchDepth(void)
+Raw_ChangeSearchDepth(char *sx)
 {
-    printf("depth = ");
-    scanf("%hd", &MaxSearchDepth);
+    char buf[80+1];
+    strncpy(buf, sx, 80); buf[80] = '\0';
+    /* if line empty, ask for input */
+    if (!buf[0]) {
+        printf("depth = ");
+        fgets(buf, 80+1, stdin);
+    }
+    sscanf(buf, "%hd", &MaxSearchDepth);
     TCflag = !(MaxSearchDepth > 0);
 }
 

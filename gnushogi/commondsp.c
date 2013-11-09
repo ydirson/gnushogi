@@ -1860,7 +1860,7 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "depth") == 0)
         {
-            dsp->ChangeSearchDepth();
+            dsp->ChangeSearchDepth(sx + strlen("depth"));
         }
         else if (strcmp(s, "hashdepth") == 0)
         {

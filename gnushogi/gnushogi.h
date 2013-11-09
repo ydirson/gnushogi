@@ -1128,7 +1128,7 @@ struct display
     void (*ChangeAlphaWindow)(void);
     void (*ChangeBetaWindow)(void);
     void (*ChangeHashDepth)(void);
-    void (*ChangeSearchDepth)(void);
+    void (*ChangeSearchDepth)(char *sx);
     void (*ChangeXwindow)(void);
     void (*ClearScreen)(void);
     void (*DoDebug)(void);

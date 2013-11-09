@@ -965,7 +965,7 @@ Curses_GiveHint(void)
 
 
 void
-Curses_ChangeSearchDepth(void)
+Curses_ChangeSearchDepth(char* sx)
 {
     Curses_ShowMessage("depth = ");
     FLUSH_SCANW("%hd", &MaxSearchDepth);
