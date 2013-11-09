@@ -1655,7 +1655,7 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "alg") == 0)
         {
-            /* noop */ ; /* alg */
+            /* noop */ ;
         }
         else if ((strcmp(s, "quit") == 0)
                  || (strcmp(s, "exit") == 0))
@@ -1667,7 +1667,7 @@ InputCommand(char *command)
         {
             dsp->EditBoard();
         }
-        else if ((strcmp(s, "setup") == 0))
+        else if (strcmp(s, "setup") == 0)
         {
             dsp->SetupBoard();
         }
