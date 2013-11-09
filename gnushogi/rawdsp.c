@@ -162,10 +162,17 @@ int
 Raw_GetString(char* sx)
 {
     int eof = 0;
+    char *nl;
     sx[0] = '\0';
 
     while(!eof && !sx[0])
         eof = (fgets(sx, 80, stdin) == NULL);
+
+    /* remove any trailing newline */
+    nl = strchr(sx, '\n');
+    if (nl)
+        nl[0] = '\0';
+
     return eof;
 }
 
@@ -698,6 +705,7 @@ Raw_GiveHint(void)
 void
 Raw_SelectLevel(char *sx)
 {
+    /* FIXME: NO_SQUARES is nonsense here */
     char T[NO_SQUARES + 1], *p;
 
     strncpy(T, sx, NO_SQUARES);
