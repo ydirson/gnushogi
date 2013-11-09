@@ -59,8 +59,6 @@ typedef enum {
 extern display_t display_type;
 
 #define XSHOGI     (display_type == DISPLAY_X)
-#define NOT_CURSES ((display_type == DISPLAY_X) \
-  || (display_type == DISPLAY_RAW))
 
 
 /* Miscellaneous globals. */

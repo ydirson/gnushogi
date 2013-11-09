@@ -1529,15 +1529,13 @@ SetMachineTime(char *s)
  * Process the user's command. If easy mode is OFF (the computer is thinking
  * on opponents time) and the program is out of book, then make the 'hint'
  * move on the board and call SelectMove() to find a response. The user
- * terminates the search by entering ^C (quit siqnal) before entering a
- * command. If the opponent does not make the hint move, then set Sdepth to
- * zero.
+ * terminates the search by entering a command. If the opponent does not make
+ * the hint move, then set Sdepth to zero.
  */
 
 void
 InputCommand(char *command)
 {
-    int eof = 0;
     short have_shown_prompt = false;
     short ok, done, is_move = false;
     unsigned short mv;
@@ -1631,21 +1629,16 @@ InputCommand(char *command)
 #endif /* QUIETBACKGROUND */
 
         if (command == NULL) {
-            if (NOT_CURSES)
-                s[0] = '\0';
-
-            eof = dsp->GetString(sx);
+            int eof = dsp->GetString(sx);
+            if (eof)
+                dsp->ExitShogi();
         } else {
             strcpy(sx, command);
             done = true;
         }
 
-        sscanf(sx, "%s", s);
-
-        if (eof)
-            dsp->ExitShogi();
-
-        if (s[0] == '\0')
+        /* extract first word */
+        if (sscanf(sx, "%s", s) < 1)
             continue;
 
         if (strcmp(s, "bd") == 0)   /* bd -- display board */
