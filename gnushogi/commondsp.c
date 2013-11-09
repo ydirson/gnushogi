@@ -1454,13 +1454,11 @@ TestPSpeed(short(*f) (short side), unsigned j)
 
 
 static void
-SetOppTime(char *s)
+SetOppTime(char *time)
 {
-    char *time;
     int m, t, sec;
 
     sec = 0;
-    time = &s[strlen("otime")];
     t = (int)strtol(time, &time, 10);
 
     if (*time == ':')
@@ -1489,12 +1487,10 @@ SetOppTime(char *s)
 
 
 static void
-SetMachineTime(char *s)
+SetMachineTime(char *time)
 {
-    char *time;
     int m, t, sec;
 
-    time = &s[strlen("time")];
     sec = 0;
     t = (int)strtol(time, &time, 10);
 
@@ -1759,11 +1755,11 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "time") == 0)
         {
-            SetMachineTime(sx);
+            SetMachineTime(sx + strlen("time"));
         }
         else if (strcmp(s, "otime") == 0)
         {
-            SetOppTime(sx);
+            SetOppTime(sx + strlen("otime"));
         }
         else if (strcmp(s, "Awindow") == 0)
         {
