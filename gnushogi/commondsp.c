@@ -424,7 +424,7 @@ void RequestInputString(char* buffer, unsigned bufsize)
 }
 
 
-void
+static void
 GetGame(void)
 {
     FILE *fd;
@@ -647,7 +647,7 @@ GetGame(void)
 }
 
 
-void
+static void
 SaveGame(void)
 {
     FILE *fd;
@@ -799,7 +799,7 @@ SaveGame(void)
  * xshogi wasn't defined -- wonder why?
  */
 
-void
+static void
 GetXGame(void)
 {
     FILE *fd;
@@ -928,7 +928,7 @@ GetXGame(void)
 }
 
 
-void
+static void
 SaveXGame(void)
 {
     FILE *fd;
@@ -1008,7 +1008,7 @@ SaveXGame(void)
 }
 
 
-void
+static void
 BookSave(void)
 {
     FILE *fd;
@@ -1227,7 +1227,7 @@ ListGame(void)
 }
 
 
-void
+static void
 FlagMove(char c)
 {
     switch(c)
@@ -1253,7 +1253,7 @@ FlagMove(char c)
  * Undo the most recent half-move.
  */
 
-void
+static void
 Undo(void)
 {
     short f, t;
@@ -1362,7 +1362,7 @@ FlagString(unsigned short flags, char *s)
 }
 
 
-void
+static void
 TestSpeed(void(*f)(short side, short ply,
                    short in_check, short blockable),
           unsigned j)
@@ -1416,7 +1416,7 @@ TestSpeed(void(*f)(short side, short ply,
 }
 
 
-void
+static void
 TestPSpeed(short(*f) (short side), unsigned j)
 {
     unsigned i;
@@ -1453,7 +1453,7 @@ TestPSpeed(short(*f) (short side), unsigned j)
 }
 
 
-void
+static void
 SetOppTime(char *s)
 {
     char *time;
@@ -1488,7 +1488,7 @@ SetOppTime(char *s)
 }
 
 
-void
+static void
 SetMachineTime(char *s)
 {
     char *time;
