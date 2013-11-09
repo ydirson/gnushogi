@@ -329,6 +329,22 @@ Raw_help(void)
     printf("save      game to file            get       game from file\n");
     printf("xsave     pos. to xshogi file     xget      pos. from xshogi file\n");
     printf("random    randomize play          new       start new game\n");
+    printf("setup                             first     \n");
+    printf("go        computer plays now      material  turn %s\n",
+           flag.material ? "OFF" : "ON");
+    printf("level     time control            gamein    \n");
+    printf("time      set engine clock        otime     set opponent clock\n");
+    printf("Awindow                           Bwindow     \n");
+    printf("rcptr     turn %3s                bsave     book save\n",
+           flag.rcptr ? "OFF" : "ON ");
+    printf("hashdepth                         hard      turn easy OFF\n");
+    printf("contempt                          xwndw                  \n");
+    printf("rv        turn %3s                coords    turn %s\n",
+           flag.rv ? "OFF" : "ON ", flag.coords ? "OFF" : "ON");
+    printf("stars     turn %3s                moves                  \n",
+           flag.stars ? "OFF" : "ON ");
+    printf("test                              p                      \n");
+    printf("debug                                                    \n");
     printf("----------------------------------------------------------------\n");
     printf("Computer: %-12s Opponent:            %s\n",
            ColorStr[computer], ColorStr[opponent]);
