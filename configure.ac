@@ -103,12 +103,11 @@ AC_MSG_NOTICE([library functions])
 AC_FUNC_FORK
 AC_PROG_GCC_TRADITIONAL
 AC_FUNC_MALLOC
-AC_FUNC_SETVBUF_REVERSED
 AC_TYPE_SIGNAL
 AC_CHECK_FUNCS([dup2 gethostname gettimeofday memset pow strcasecmp])
 AC_CHECK_FUNCS([strchr strerror strrchr strstr strtol])
 AC_CHECK_FUNCS([memcpy bcopy])
-AC_CHECK_FUNCS([setlinebuf setvbuf])
+AC_CHECK_FUNCS([setvbuf setlinebuf])
 
 
 #

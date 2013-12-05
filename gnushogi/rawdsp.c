@@ -223,13 +223,13 @@ Raw_Initialize(void)
         /* needed because of inconsistency between MSVC run-time system and gcc includes */
         setbuf(stdout, NULL);
 #else
-#ifdef HAVE_SETLINEBUF
-        setlinebuf(stdout);
-#else
-#  ifdef HAVE_SETVBUF
+#ifdef HAVE_SETVBUF
         setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
+#else
+#  ifdef HAVE_SETLINEBUF
+        setlinebuf(stdout);
 #  else
-#    error "Need setlinebuf() or setvbuf() to compile gnushogi!"
+#    error "Need setvbuf() or setlinebuf() to compile gnushogi!"
 #  endif
 #endif
 #endif
