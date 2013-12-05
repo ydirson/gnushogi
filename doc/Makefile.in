@@ -18,7 +18,7 @@ pdf:
 # texi2html.
 
 html:
-	texi2html -split_node $(SRCDIR)/gnushogi.texinfo
+	makeinfo --html --split=section $(SRCDIR)/gnushogi.texinfo
 
 ps: dvi
 	dvips -t letter gnushogi.dvi -o gnushogi.ps
