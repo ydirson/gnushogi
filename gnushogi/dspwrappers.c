@@ -32,6 +32,9 @@
  *
  */
 
+/* request *snprintf prototypes*/
+#define _POSIX_C_SOURCE 200112L
+
 #include "gnushogi.h"
 #include "dspwrappers.h"
 #include "rawdsp.h"

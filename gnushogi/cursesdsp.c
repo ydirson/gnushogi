@@ -30,6 +30,8 @@
  * ----------------------------------------------------------------------
  */
 
+/* request *snprintf prototypes*/
+#define _POSIX_C_SOURCE 200112L
 
 #include <ctype.h>
 #include <signal.h>

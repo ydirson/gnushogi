@@ -31,6 +31,10 @@
  *
  */
 
+/* request *snprintf prototypes */
+#define _POSIX_C_SOURCE 200112L
+#include <stdio.h>
+
 #if defined HAVE_GETTIMEOFDAY
 #include <sys/time.h>
 #endif
