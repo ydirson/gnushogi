@@ -8,6 +8,7 @@
 /Makefile
 /gnushogi/Makefile
 /gnushogi/Makefile.profile
+/doc/Makefile
 /xshogi/Makefile
 
 *.o
@@ -23,7 +24,7 @@
 /xshogi/xshogi
 
 /doc/gnushogi*.info
-/doc/gnushogi*.html
+/doc/gnushogi/
 /doc/*.ps
 /doc/*.pdf
 /doc/*.aux

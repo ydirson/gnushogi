@@ -5,7 +5,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([gnushogi],[1.4.0+],[https://savannah.gnu.org/bugs/?group=gnushogi])
+AC_INIT([gnushogi],[1.4.1-rc0+],[https://savannah.gnu.org/bugs/?group=gnushogi])
 AC_CONFIG_SRCDIR([gnushogi/gnushogi.h])
 AC_CONFIG_HEADER(config.h)
 
@@ -47,8 +47,8 @@ AS_IF([test "x$with_curses" != xno],
     [-ltermcap])])
 
 # other libraries.
-AC_CHECK_LIB(m, pow)
-AC_CHECK_LIB(termcap, tgoto)
+AC_CHECK_LIB([m], [pow])
+AC_CHECK_LIB([termcap], [tgoto])
 
 
 
@@ -103,19 +103,18 @@ AC_MSG_NOTICE([library functions])
 AC_FUNC_FORK
 AC_PROG_GCC_TRADITIONAL
 AC_FUNC_MALLOC
-AC_FUNC_SETVBUF_REVERSED
 AC_TYPE_SIGNAL
 AC_CHECK_FUNCS([dup2 gethostname gettimeofday memset pow strcasecmp])
 AC_CHECK_FUNCS([strchr strerror strrchr strstr strtol])
-AC_CHECK_FUNCS(memcpy bcopy)
-AC_CHECK_FUNCS(setlinebuf setvbuf)
+AC_CHECK_FUNCS([memcpy bcopy])
+AC_CHECK_FUNCS([setvbuf setlinebuf])
 
 
 #
 # Set various user-definable options.
 #
 
-AC_ARG_ENABLE(minishogi,
+AC_ARG_ENABLE([minishogi],
 [  --enable-minishogi
         Build gnuminishogi instead of gnushogi (default: no)],
 [AC_DEFINE([MINISHOGI], [], [Define to build gnuminishogi instead of gnushogi])
@@ -130,36 +129,36 @@ SECOND_SHOGI_PROGRAM=gnushogi
 FIRST_HOST=localhost
 SECOND_HOST=localhost
 
-AC_ARG_ENABLE(xshogi,
+AC_ARG_ENABLE([xshogi],
 AS_HELP_STRING([--enable-xshogi],
   [compile the xshogi graphical interface to GNU shogi (default: no)]),
-enable_xshogi=$enableval,
-enable_xshogi=no)
+[enable_xshogi=$enableval],
+[enable_xshogi=no])
 
-AC_ARG_WITH(top-part-bitmaps,
+AC_ARG_WITH([top-part-bitmaps],
 AS_HELP_STRING([--with-top-part-bitmaps],
   [use top part of Kanji bitmaps only in xshogi]),
-OPT=-DTOP_PART_BITMAPS)
+[OPT=-DTOP_PART_BITMAPS])
 
-AC_ARG_WITH(first-shogi-program,
+AC_ARG_WITH([first-shogi-program],
 AS_HELP_STRING([--with-first-shogi-program=PROGNAME],
   [use PROGNAME as the first shogi program in xshogi (default: gnushogi)]),
-FIRST_SHOGI_PROGRAM=$withval)
+[FIRST_SHOGI_PROGRAM=$withval])
 
-AC_ARG_WITH(second-shogi-program,
+AC_ARG_WITH([second-shogi-program],
 AS_HELP_STRING([--with-second-shogi-program=PROGNAME],
   [use PROGNAME as the second shogi program in xshogi (default: gnushogi)]),
-SECOND_SHOGI_PROGRAM=$withval)
+[SECOND_SHOGI_PROGRAM=$withval])
 
-AC_ARG_WITH(first-host,
+AC_ARG_WITH([first-host],
 AS_HELP_STRING([--with-first-host=HOSTNAME],
   [use HOSTNAME as the machine on which the first shogi program runs in xshogi (default: localhost)]),
-FIRST_HOST=$withval)
+[FIRST_HOST=$withval])
 
-AC_ARG_WITH(second-host,
+AC_ARG_WITH([second-host],
 AS_HELP_STRING([--with-second-host=HOSTNAME],
   [use HOSTNAME as the machine on which the second shogi program runs in xshogi (default: localhost)]),
-SECOND_HOST=$withval)
+[SECOND_HOST=$withval])
 
 AC_SUBST(OPT)
 AC_SUBST(FIRST_SHOGI_PROGRAM)
