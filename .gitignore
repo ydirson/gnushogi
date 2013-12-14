@@ -23,6 +23,7 @@
 
 /xshogi/scanner.c
 /xshogi/parser.c
+/xshogi/parser.h
 /xshogi/xshogi
 
 /doc/gnushogi*.info

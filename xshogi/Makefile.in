@@ -83,7 +83,7 @@ SECOND_HOST           = -DSECOND_HOST=\"@SECOND_HOST@\"
 all: xshogi
 
 xshogi: 
-	$(CC) -o xshogi xshogi.o parser.o $(CFLAGS) $(LDFLAGS) 
+	$(CC) -o xshogi xshogi.o parser.o scanner.o $(CFLAGS) $(LDFLAGS) 
 
 xshogi.o: xshogi.c
 	$(CC) -c $< $(CWARNINGS) $(CFLAGS) \
@@ -98,10 +98,13 @@ xshogi.o: xshogi.c
 
 parser.o: parser.c
 	$(CC) $(CFLAGS) -I$(SRCDIR) -c $<
+scanner.o: scanner.c parser.h
+	$(CC) $(CFLAGS) -I$(SRCDIR) -c $<
 
-parser.c: parser.y
-	$(YACC) $<
+parser.c parser.h: parser.y
+	$(YACC) -d $<
 	mv y.tab.c parser.c
+	mv y.tab.h parser.h
 
 scanner.c: scanner.l
 	$(LEX) $<
@@ -143,7 +146,7 @@ clean:
 # Dependencies.
 #
 
-xshogi:     xshogi.o parser.o
+xshogi:     xshogi.o parser.o scanner.o
 xshogi.o:   xshogi.c $(SRCDIR)/sysdeps.h $(SRCDIR)/xshogi.h $(SRCDIR)/bitmaps.h ../config.h
 parser.o:   parser.c $(SRCDIR)/xshogi.h
 parser.c:   parser.y scanner.c

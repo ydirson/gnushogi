@@ -89,6 +89,8 @@ extern void SendToProgram(char *message, FILE *fp);
 extern void MakeMove(ShogiMove *move_type, int from_x, int from_y, 
                      int to_x, int to_y);
 
+int lines = 1, cols = 1;
+
 %}
 
 %start goal
@@ -198,10 +200,6 @@ extern void MakeMove(ShogiMove *move_type, int from_x, int from_y,
 %%
  
 
-
-#include "scanner.c"
-
-
 static void yyerror(char *errmsg)
 {                               
     if (strlen(token) > 0) 
@@ -219,6 +217,7 @@ static void yyerror(char *errmsg)
     exit(-1); 
 }
        
+extern FILE *yyin;
 
 void parseGameFile()
 { 

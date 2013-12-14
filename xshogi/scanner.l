@@ -61,8 +61,11 @@
  * ------------------------------------------------------------------------
  *
  */
- 
-static int lines = 1, cols = 1;
+
+#include "parser.h"
+
+extern int lines, cols;
+
 %}
 
 PIECE   [PLNSGBRK]               
