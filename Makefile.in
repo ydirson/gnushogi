@@ -101,7 +101,7 @@ dist:
 	tar -cf - --exclude .git --exclude $(DISTNAME) $(ROOT) | (cd $(DISTNAME) && tar -xf -)
 	cd $(DISTNAME) && $(ROOT)/autogen.sh && $(ROOT)/configure
 	cd $(DISTNAME)/doc && $(MAKE) info
-	cd $(DISTNAME) && make distclean
+	cd $(DISTNAME) && $(MAKE) distclean
 	tar -zcf $(DISTNAME).tar.gz $(DISTNAME)
 
 #
@@ -115,6 +115,7 @@ DISTCLEANFILES = \
 
 distclean: clean
 	rm -rf $(DISTCLEANFILES)
+	find -name '*~' | xargs rm
 	cd $(BUILDROOT)/doc && $(MAKE) distclean
 
 #
