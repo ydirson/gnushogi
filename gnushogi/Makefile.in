@@ -72,7 +72,7 @@ LCURSES = @LIBCURSES@
 CC          = @CC@
 CWARNINGS   = @WARNINGS@
 CEXTRAFLAGS = @CEXTRAFLAGS@
-CFLAGS      = @CFLAGS@ $(HASH) $(CEXTRAFLAGS) $(CWARNINGS) -I$(ROOT) -I@top_builddir@ -I.
+CFLAGS      = @CFLAGS@ $(HASH) $(CEXTRAFLAGS) $(CWARNINGS) -I. -I@top_builddir@ -I$(ROOT)
 LDFLAGS     = @LDFLAGS@
 
 # The hashfile is a record of positions seen. It is used by
