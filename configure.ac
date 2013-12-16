@@ -181,6 +181,7 @@ AC_SUBST(XSHOGICLEAN)
 ##########
 AC_CONFIG_FILES([Makefile
                  gnushogi/Makefile
+                 win32/config.h
                  doc/Makefile
                  xshogi/Makefile])
 AC_OUTPUT

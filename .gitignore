@@ -19,6 +19,8 @@
 /gnushogi/gnuminishogi
 /gnushogi/gnuminishogi.bbk
 
+/win32/
+
 /xshogi/scanner.c
 /xshogi/parser.c
 /xshogi/xshogi

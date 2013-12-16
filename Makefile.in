@@ -59,6 +59,13 @@ bbk:
 
 
 #
+# Alien target architectures
+#
+
+win32/Makefile: misc/mkmakefile.mingw-on-cygwin
+	$<
+
+#
 # Installation.
 #
 
@@ -101,6 +108,7 @@ dist:
 	tar -cf - --exclude .git --exclude $(DISTNAME) $(ROOT) | (cd $(DISTNAME) && tar -xf -)
 	cd $(DISTNAME) && $(ROOT)/autogen.sh && $(ROOT)/configure
 	cd $(DISTNAME)/doc && $(MAKE) info
+	cd $(DISTNAME) && $(MAKE) win32/Makefile
 	cd $(DISTNAME) && $(MAKE) distclean
 	tar -zcf $(DISTNAME).tar.gz $(DISTNAME)
 
@@ -122,7 +130,7 @@ distclean: clean
 # Extra cleanup, for the maintainer only.
 #
 
-MAINTAINERCLEANFILES = configure config.h.in
+MAINTAINERCLEANFILES = configure config.h.in win32/Makefile
 
 maintainerclean: distclean
 	rm -f $(MAINTAINERCLEANFILES)
