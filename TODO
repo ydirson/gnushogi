@@ -10,7 +10,6 @@ Generic cleanups
 
 - switch cli parsing to getopt
 - hunt for extern's and prototypes spread all over the source
-- use automake
 - hunt for more hardcoded variant-specific constants
   - position of captured pieces in curses mode
   - compile with bound-checker

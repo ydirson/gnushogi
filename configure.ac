@@ -6,6 +6,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
 AC_INIT([gnushogi],[1.4.1-rc1+],[https://savannah.gnu.org/bugs/?group=gnushogi])
+AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([gnushogi/gnushogi.h])
 AC_CONFIG_HEADER(config.h)
 
@@ -37,7 +38,8 @@ LIBCURSES=
 AS_IF([test "x$with_curses" != xno],
   [AC_CHECK_LIB([curses], [clrtoeol],
     [AC_SUBST([LIBCURSES], [-lcurses])
-     AC_SUBST([CURSESDSP], [cursesdsp.o])
+     AC_SUBST([CURSESDSP], [gnushogi-cursesdsp.o])
+     AC_SUBST([CURSESDSPMINI], [gnuminishogi-cursesdsp.o])
      AC_DEFINE([HAVE_LIBCURSES], [1],
                [Define if you have lib])
     ],
@@ -111,15 +113,6 @@ AC_CHECK_FUNCS([setvbuf setlinebuf])
 # Set various user-definable options.
 #
 
-AC_ARG_ENABLE([minishogi],
-[  --enable-minishogi
-        Build gnuminishogi instead of gnushogi (default: no)],
-[AC_DEFINE([MINISHOGI], [], [Define to build gnuminishogi instead of gnushogi])
-AC_SUBST([PROGNAME], [gnuminishogi])
-],
-[AC_SUBST([PROGNAME], [gnushogi])
-])
-
 OPT=
 FIRST_SHOGI_PROGRAM=gnushogi
 SECOND_SHOGI_PROGRAM=gnushogi
@@ -165,18 +158,18 @@ AC_SUBST(SECOND_HOST)
 
 if [[ $enable_xshogi = yes ]]
 then
-XSHOGI=xshogi_compile
-XSHOGIINSTALL=xshogi_install
-XSHOGICLEAN=xshogi_clean
+XSHOGI=xshogi
+XSHOGIMAN=xshogi.6
+XDOCS='$(XDOCS)'
 else
 XSHOGI=
-XSHOGIINSTALL=
-XSHOGICLEAN=
+XSHOGIMAN=
+XDOCS=
 fi
 
 AC_SUBST(XSHOGI)
-AC_SUBST(XSHOGIINSTALL)
-AC_SUBST(XSHOGICLEAN)
+AC_SUBST(XSHOGIMAN)
+AC_SUBST(XDOCS)
 
 ##########
 AC_CONFIG_FILES([Makefile

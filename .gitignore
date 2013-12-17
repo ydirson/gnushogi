@@ -1,23 +1,31 @@
 /config.h.in
 /configure
 
+Makefile.in
+.deps
+/aclocal.m4
+/compile
+/depcomp
+/install-sh
+/missing
+/ylwrap
+/stamp-h1
+
 /autom4te.cache/
 /config.log
 /config.status
 /config.h
-/Makefile
-/gnushogi/Makefile
+Makefile
 /gnushogi/Makefile.profile
-/doc/Makefile
-/xshogi/Makefile
 
 *.o
 /gnushogi/pat2inc
-/gnushogi/pattern.inc
+/gnushogi/*-pattern.inc
 /gnushogi/gnushogi
 /gnushogi/gnushogi.bbk
 /gnushogi/gnuminishogi
 /gnushogi/gnuminishogi.bbk
+/gnushogi/sizetest
 
 /win32/
 
