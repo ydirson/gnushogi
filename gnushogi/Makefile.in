@@ -94,7 +94,6 @@ BINBOOK    = -DBINBOOK=\"$(LIBDIR)/$(PROGNAME).bbk\"
 # patterns may be described in order to support the correct order of moves.
 
 PATTERNFILE=$(ROOT)/misc/$(PROGNAME).pat
-PATTERN    = -DPATTERNFILE=\"$(PATTERNFILE)\"
 
 
 all:
@@ -186,7 +185,7 @@ main.o: main.c
 # pattern textfile must be used.
 
 makepattern.o: makepattern.c
-	$(CC) $(CFLAGS) $(PATTERN) -c $<
+	$(CC) $(CFLAGS) -c $<
 
 pattern.o: pattern.c
 	$(CC)  $(CFLAGS) -c $<
@@ -216,7 +215,7 @@ sizetest.o: sizetest.c
 	$(CC) $(CFLAGS) -c $<
 
 pattern.inc: $(PATTERNFILE) pat2inc
-	./pat2inc
+	./pat2inc $< $@
 
 #
 # Other targets.

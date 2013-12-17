@@ -36,7 +36,6 @@
 #define MAX_OPENING_SEQUENCE 20
 #define MAX_PATTERN          200
 
-static char *patternfile = PATTERNFILE;
 small_short pattern_data[MAX_PATTERN_DATA];
 
 /* minimal ShowMessage to avoid dependency on extraneous display code */
@@ -191,7 +190,7 @@ ScanPattern (char *s, short *pindex)
 
 
 void
-ReadOpeningSequences (short *pindex)
+ReadOpeningSequences (short *pindex, const char* patternfile)
 {
     FILE *fd;
     char s[256];
@@ -250,14 +249,14 @@ ReadOpeningSequences (short *pindex)
 
 
 void
-WriteOpeningSequences (short pindex)
+WriteOpeningSequences (short pindex, const char* patternincfile)
 {
     FILE *fd;
     short n = 0;
     short max_pattern = 0;
     short max_opening_sequence = 0;
 
-    fd = fopen ("pattern.inc", "w");
+    fd = fopen (patternincfile, "w");
     fprintf(fd, "#define MAX_PATTERN_DATA %d\n\n", pindex);
     fprintf(fd, "small_short pattern_data[MAX_PATTERN_DATA] =\n{\n");
 

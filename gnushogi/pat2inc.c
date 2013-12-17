@@ -35,8 +35,8 @@
 #include "pattern.h"
 
 
-extern void ReadOpeningSequences(short *pindex);
-extern void WriteOpeningSequences(short pindex);
+extern void ReadOpeningSequences(short *pindex, const char* patternfile);
+extern void WriteOpeningSequences(short pindex, const char* patternincfile);
 
 small_short board[NO_SQUARES];
 small_short color[NO_SQUARES];
@@ -45,6 +45,13 @@ int
 main(int argc, char **argv)
 {
     short sq, side, max_pattern_data;
+
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s gnushogi.pat pattern.inc\n", argv[0]);
+        exit(1);
+    }
+    char* patternfile = argv[1];
+    char* patternincfile = argv[2];
 
 #ifdef TEST_DISTANCE
     short d;
@@ -83,8 +90,8 @@ main(int argc, char **argv)
 
 #endif
 
-    ReadOpeningSequences(&max_pattern_data);
-    WriteOpeningSequences(max_pattern_data);
+    ReadOpeningSequences(&max_pattern_data, patternfile);
+    WriteOpeningSequences(max_pattern_data, patternincfile);
 
     return 0;
 }
