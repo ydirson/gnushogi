@@ -214,7 +214,7 @@ util.o: util.c
 # Files specific to particular targets.
 
 pat2inc.o: pat2inc.c
-	$(CC) $(CFLAGS) $(BINBOOK) $(PATTERN) -c $<
+	$(CC) $(CFLAGS) -c $<
 
 sizetest.o: sizetest.c
 	$(CC) $(CFLAGS) -c $<
