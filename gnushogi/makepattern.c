@@ -200,9 +200,6 @@ ReadOpeningSequences (short *pindex)
 
     fd = fopen (patternfile, "r");
 
-    if (fd == NULL)
-        fd = fopen ("gnushogi.pat", "r");
-
     if (fd == NULL) {
         sprintf(s, "no pattern file '%s'", patternfile);
         dsp->ShowMessage(s);
