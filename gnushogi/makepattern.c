@@ -36,7 +36,7 @@
 #define MAX_OPENING_SEQUENCE 20
 #define MAX_PATTERN          200
 
-char *patternfile = PATTERNFILE;
+static char *patternfile = PATTERNFILE;
 small_short pattern_data[MAX_PATTERN_DATA];
 
 /* minimal ShowMessage to avoid dependency on extraneous display code */
@@ -188,7 +188,6 @@ ScanPattern (char *s, short *pindex)
 
 void
 ReadOpeningSequences (short *pindex)
-
 {
     FILE *fd;
     char s[256];

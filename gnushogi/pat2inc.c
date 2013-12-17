@@ -84,9 +84,7 @@ test_distance(void)
 
 int
 main(int argc, char **argv)
-
 {
-
     short sq, side, max_pattern_data;
 
 #ifdef TEST_DISTANCE
@@ -131,4 +129,3 @@ main(int argc, char **argv)
 
     return 0;
 }
-
