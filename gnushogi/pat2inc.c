@@ -38,49 +38,8 @@
 extern void ReadOpeningSequences(short *pindex);
 extern void WriteOpeningSequences(short pindex);
 
-/*
-
-small_short PieceCnt[2];
-small_short PieceList[2][NO_SQUARES];
-small_short PieceIndex[NO_SQUARES];
-*/
-
 small_short board[NO_SQUARES];
 small_short color[NO_SQUARES];
-
-void
-test_distance(void)
-{
-    short side, piece, f, t, d;
-
-    for (side = 0; side <= 1; side++)
-    {
-        printf("SIDE = %d\n", side);
-
-        for (piece = pawn; piece <= king; piece++)
-        {
-            printf("PIECE = %d\n", piece);
-
-            for (f = 0; f < NO_SQUARES; f++)
-            {
-                printf("FROM %d TO ", f);
-
-                for (t = 0; t < NO_SQUARES; t++)
-                {
-                    d = piece_distance(side, piece, f, t);
-
-                    if (d != CANNOT_REACH)
-                        printf("%d:%d ", t, d);
-                }
-
-                printf("\n");
-            }
-        }
-    }
-
-}
-
-
 
 int
 main(int argc, char **argv)
