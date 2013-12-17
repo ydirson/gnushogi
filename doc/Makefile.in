@@ -6,19 +6,19 @@ CLEANFILES = *.log *.dvi *.aux *.dlog \
 SRCDIR = @srcdir@
 
 info:
-	makeinfo $(SRCDIR)/gnushogi.texinfo
+	makeinfo $(SRCDIR)/gnushogi.texi
 
 dvi:
-	texi2dvi $(SRCDIR)/gnushogi.texinfo
+	texi2dvi $(SRCDIR)/gnushogi.texi
 
 pdf:
-	texi2pdf $(SRCDIR)/gnushogi.texinfo
+	texi2pdf $(SRCDIR)/gnushogi.texi
 
 # I do some egregious hacks to get around limitations of 
 # texi2html.
 
 html:
-	makeinfo --html --split=section $(SRCDIR)/gnushogi.texinfo
+	makeinfo --html --split=section $(SRCDIR)/gnushogi.texi
 
 ps: dvi
 	dvips -t letter gnushogi.dvi -o gnushogi.ps
@@ -27,7 +27,7 @@ ps2: dvi
 	dvi2ps gnushogi.dvi > gnushogi.ps
 
 spell:
-	tr '[A-Z]' '[a-z]' < $(SRCDIR)/gnushogi.texinfo | tr -cd '[A-Za-z0-9_ \012]' | \
+	tr '[A-Z]' '[a-z]' < $(SRCDIR)/gnushogi.texi | tr -cd '[A-Za-z0-9_ \012]' | \
 	tr -s '[ ]' '\012' | sort | uniq -c | sort -nr | spell | sort | uniq
 
 clean:
