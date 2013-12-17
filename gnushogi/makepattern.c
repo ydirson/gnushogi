@@ -198,55 +198,57 @@ ReadOpeningSequences (short *pindex)
     short max_pattern = 0;
     short max_opening_sequence = 0;
 
-    if ((fd = fopen (patternfile, "r")) == NULL)
+    fd = fopen (patternfile, "r");
+
+    if (fd == NULL)
         fd = fopen ("gnushogi.pat", "r");
 
-    if (fd != NULL)
+    if (fd == NULL) {
+        sprintf(s, "no pattern file '%s'", patternfile);
+        dsp->ShowMessage(s);
+        return;
+    }
+
+    *pindex = 0;
+
+    while (fgets (s, 256, fd) != NULL)
     {
-        *pindex = 0;
-
-        while (fgets (s, 256, fd) != NULL)
+        if (*s == '#')
         {
-            if (*s == '#')
+            /* comment, skip line */
+        }
+        else if (is_alpha(*s))
+        {
+            if (max_opening_sequence++ > 0)
             {
-                /* comment, skip line */
+                pattern_data[(*pindex)++] = END_OF_PATTERNS;
             }
-            else if (is_alpha(*s))
-            {
-                if (max_opening_sequence++ > 0)
-                {
-                    pattern_data[(*pindex)++] = END_OF_PATTERNS;
-                }
 
-                pattern_data[(*pindex)++] = ValueOfOpeningName(s);
+            pattern_data[(*pindex)++] = ValueOfOpeningName(s);
+        }
+        else
+        {
+            if (ScanPattern(s, pindex))
+            {
+                dsp->ShowMessage("error in pattern sequence...");
+                exit(1);
             }
             else
             {
-                if (ScanPattern(s, pindex))
-                {
-                    dsp->ShowMessage("error in pattern sequence...");
-                    exit(1);
-                }
-                else
-                {
-                    max_pattern++;
-                }
+                max_pattern++;
             }
         }
-
-        pattern_data[(*pindex)++] = END_OF_PATTERNS;
-        pattern_data[(*pindex)++] = END_OF_SEQUENCES;
-
-        sprintf(s,
-                "Pattern: %d bytes for %d sequences with %d patterns.\n",
-                *pindex, max_opening_sequence, max_pattern);
-        dsp->ShowMessage(s);
-
-        fclose(fd);
-    } else {
-        sprintf(s, "no pattern file '%s'", patternfile);
-        dsp->ShowMessage(s);
     }
+
+    pattern_data[(*pindex)++] = END_OF_PATTERNS;
+    pattern_data[(*pindex)++] = END_OF_SEQUENCES;
+
+    sprintf(s,
+            "Pattern: %d bytes for %d sequences with %d patterns.\n",
+            *pindex, max_opening_sequence, max_pattern);
+    dsp->ShowMessage(s);
+
+    fclose(fd);
 }
 
 
