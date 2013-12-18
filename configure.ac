@@ -5,7 +5,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([gnushogi],[1.4.1-rc0+],[https://savannah.gnu.org/bugs/?group=gnushogi])
+AC_INIT([gnushogi],[1.4.1-rc1],[https://savannah.gnu.org/bugs/?group=gnushogi])
 AC_CONFIG_SRCDIR([gnushogi/gnushogi.h])
 AC_CONFIG_HEADER(config.h)
 

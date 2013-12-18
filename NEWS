@@ -5,7 +5,9 @@ Changes in version 1.4.1 (unpublished):
 
 * Initial support for the MiniShogi variant, for now as a separate
   executable built using "./configure --enable-minishogi".
-* Support for building with the curses UI.
+* Support for building without the curses UI.
+* Preliminary win32 support: can be built on cygwin with gcc3, in the
+  win32 directory.
 * Build system enhancements.
 * Bug fixes.
 
