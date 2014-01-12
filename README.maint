@@ -5,3 +5,8 @@ Updating ChangeLog
 ------------------
 
 git log --pretty --numstat --summary v1.4.0..savannah/master | git2cl > ChangeLog
+
+Profiling
+---------
+
+Build with "-g -pg -fprofile-arcs -ftest-coverage"

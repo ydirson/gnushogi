@@ -72,7 +72,7 @@ LCURSES = @LIBCURSES@
 CC          = @CC@
 CWARNINGS   = @WARNINGS@
 CEXTRAFLAGS = @CEXTRAFLAGS@
-CFLAGS      = @CFLAGS@ $(HASH) $(CEXTRAFLAGS) $(CWARNINGS) -I$(ROOT) -I@top_builddir@ -I.
+CFLAGS      = @CFLAGS@ $(HASH) $(CEXTRAFLAGS) $(CWARNINGS) -I. -I@top_builddir@ -I$(ROOT)
 LDFLAGS     = @LDFLAGS@
 
 # The hashfile is a record of positions seen. It is used by
@@ -210,7 +210,7 @@ util.o: util.c
 # Files specific to particular targets.
 
 pat2inc.o: pat2inc.c
-	$(CC) $(CFLAGS) $(BINBOOK) $(PATTERN) -c $<
+	$(CC) $(CFLAGS) -c $<
 
 sizetest.o: sizetest.c
 	$(CC) $(CFLAGS) -c $<

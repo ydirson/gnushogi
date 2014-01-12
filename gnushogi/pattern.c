@@ -147,7 +147,6 @@ GetOpeningPatterns (short *max_opening_sequence)
 
 void
 ShowOpeningPatterns (short max_opening_sequence)
-
 {
     short os, p, n, i;
 

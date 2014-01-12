@@ -34,7 +34,8 @@
 
 /*
  * This file is for options that control the behavior of GNU shogi,
- * and also for debugging #defines.  They were previously placed on the
+ * probably only be of interest to people who are hacking the source codes.
+ * They were previously placed on the
  * command line as -D<option> statements, but this cluttered things
  * up so much that I changed it.  For the evaluator options, I recommend
  * you don't change anything unless you *really* know what you're doing.

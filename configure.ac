@@ -5,7 +5,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.57)
-AC_INIT([gnushogi],[1.4.1-rc0+],[https://savannah.gnu.org/bugs/?group=gnushogi])
+AC_INIT([gnushogi],[1.4.1-rc1+],[https://savannah.gnu.org/bugs/?group=gnushogi])
 AC_CONFIG_SRCDIR([gnushogi/gnushogi.h])
 AC_CONFIG_HEADER(config.h)
 
@@ -59,8 +59,6 @@ if [[ $ac_cv_c_compiler_gnu = yes ]]
 then
 WARNINGS="-Wall -Wno-implicit-int -Wstrict-prototypes -ansi"
 CEXTRAFLAGS="-fsigned-char -funroll-loops"
-# For profiling targets:
-CEXTRAFLAGS2="-fsigned-char -pg -fprofile-arcs -ftest-coverage"
 else
 # Who knows what warnings your compiler uses?
 WARNINGS=
@@ -69,7 +67,6 @@ fi
 
 AC_SUBST(WARNINGS)
 AC_SUBST(CEXTRAFLAGS)
-AC_SUBST(CEXTRAFLAGS2)
 
 ##########
 AC_MSG_NOTICE([header files])
@@ -184,7 +181,7 @@ AC_SUBST(XSHOGICLEAN)
 ##########
 AC_CONFIG_FILES([Makefile
                  gnushogi/Makefile
-		 gnushogi/Makefile.profile
+                 win32/config.h
                  doc/Makefile
                  xshogi/Makefile])
 AC_OUTPUT

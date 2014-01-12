@@ -1,0 +1,43 @@
+#!/bin/sh
+set -e
+
+# Script to generate cygwin.make from Makefile.in, to build a standard
+# win32 binary from a cygwin shell.
+#
+# Copyright (c) 2013 Yann Dirson and the Free Software Foundation
+#
+# This file is part of GNU Shogi.
+#
+# GNU Shogi is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either ../version 3 of the License, or (at your option)
+# any later ../version.
+#
+# GNU Shogi is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with GNU Shogi; see the file COPYING.
+# If not, see <http://www.gnu.org/licenses/>.
+
+mkdir -p win32
+cat <<'EOF' | sed -f - gnushogi/Makefile.in > win32/Makefile
+s,@INSTALL@,/usr/bin/install -c,
+s,@INSTALL_DATA@,${INSTALL} -m 644,
+s,@INSTALL_PROGRAM@,${INSTALL},
+s,@prefix@,/usr/local,
+s,@LIBCURSES@,,
+s,@CURSESDSP@,,
+s,@CC@,gcc,
+s,@WARNINGS@,-Wall -Wno-implicit-int -Wstrict-prototypes -ansi -pedantic,
+s,@CFLAGS@,-g -O2 -mno-cygwin -fsigned-char -funroll-loops,
+s,@CEXTRAFLAGS@,,
+s,@LDFLAGS@,,
+s,@top_srcdir@,..,
+s,@top_builddir@,.,
+s,@srcdir@,../gnushogi,
+s,@PROGNAME@,gnushogi,
+s,^LIBS *= *-lm$,#\0,
+EOF
