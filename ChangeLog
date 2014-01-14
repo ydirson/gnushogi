@@ -1,3 +1,519 @@
+2014-01-14  Yann Dirson <ydirson@free.fr>
+
+	* AUTHORS: Update maintainership info in AUTHORS.
+
+2014-01-14  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in, gnushogi/Makefile.in, gnushogi/attacks.c,
+	gnushogi/book.c, gnushogi/book.h, gnushogi/commondsp.c,
+	gnushogi/cursesdsp.c, gnushogi/cursesdsp.h, gnushogi/debug.h,
+	gnushogi/dspwrappers.c, gnushogi/dspwrappers.h, gnushogi/eval.c,
+	gnushogi/eval.h, gnushogi/genmove.c, gnushogi/globals.c,
+	gnushogi/gnushogi.h, gnushogi/init.c, gnushogi/main.c,
+	gnushogi/makepattern.c, gnushogi/opts.h, gnushogi/pat2inc.c,
+	gnushogi/pattern.c, gnushogi/pattern.h, gnushogi/rawdsp.c,
+	gnushogi/rawdsp.h, gnushogi/search.c, gnushogi/sizetest.c,
+	gnushogi/tcontrl.c, gnushogi/util.c: Update copyright info for 2008
+	(minishogi patches) and recent developments.
+
+2014-01-14  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/init-common.c, gnushogi/pattern-common.c: Add missing
+	copyright info to *-common.c, added by the minishogi patches.
+
+2014-01-14  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/pattern.c: Adjust comment to prevent licensecheck from
+	considering pattern.c as generated
+
+2014-01-14  Yann Dirson <ydirson@free.fr>
+
+	* doc/gnushogi.texi: Doc: mention 1.4.1
+
+2014-01-14  Yann Dirson <ydirson@free.fr>
+
+	* doc/gnushogi.texi: Doc: more on shogi variants in general, and
+	Mini Shogi in particular.
+
+2014-01-12  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac: Bump version to "1.4.1-rc1+".
+
+2013-12-18  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in: Fix "make distclean" when there is no editor backup
+	file to remove.
+
+2013-12-18  Yann Dirson <ydirson@free.fr>
+
+	* NEWS, configure.ac: Prepare v1.4.1rc1.
+
+2013-12-17  Yann Dirson <ydirson@free.fr>
+
+	* .gitignore, Makefile.in, configure.ac,
+	misc/mkmakefile.mingw-on-cygwin, win32/config.h.in: Add build
+	support for win32 on cygwin (gcc3).
+
+2013-12-17  Yann Dirson <ydirson@free.fr>
+
+	* README.maint, TODO, configure.ac, gnushogi/Makefile.profile.in: 
+	Get rid of Makefile.profile, document flags to use in README.maint
+	instead.  We don't want to maintain Makefile.profile as a quasi-copy of main
+	Makefile, that's not a good practice at all.
+
+2013-12-17  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/pat2inc.c: Kill dead code in pat2inc.
+
+2013-12-17  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/makepattern.c, gnushogi/pat2inc.c, gnushogi/pattern.c: 
+	Minor pat2inc code cleanups
+
+2013-12-17  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/Makefile.in: Drop useless defines for pat2inc build.
+
+2013-12-17  Yann Dirson <ydirson@free.fr>
+
+	* doc/Makefile.in, doc/{gnushogi.texinfo => gnushogi.texi}: Use
+	.texi suffix, preferred to .texinfo.
+
+2013-12-16  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/Makefile.in: Fix ordering of include dirs.  Local headers first, then build dir, then src dir.
+
+2013-12-16  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in: Minor makefile improvements
+
+2013-12-15  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/opts.h: Move into opts.h the "mostly for hacking" remark
+	from INSTALL file.
+
+2013-12-05  Yann Dirson <ydirson@free.fr>
+
+	* .gitignore: Update .gitignore for doc/ dir.
+
+2013-12-05  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c, gnushogi/cursesdsp.c,
+	gnushogi/dspwrappers.c: #define _POSIX_C_SOURCE to get proper access
+	to snprintf and vsnprintf.
+
+2013-12-05  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac, gnushogi/rawdsp.c: Use POSIX setvbuf in preference
+	to BSD setlinebuf.  This avoids implicit declaration of setlinebuf with GNU libc, which
+	would have required to define _BSD_SOURCE just to get rid of, and is
+	not an innocuous setting.  Drop call to no-op AC_FUNC_SETVBUF_REVERSED at the same time.
+
+2013-12-05  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac: Fully quote autoconf macro arguments, as they
+	should.
+
+2013-12-05  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac: Bump version to "1.4.1-rc0+".
+
+2013-12-05  Yann Dirson <ydirson@free.fr>
+
+	* doc/Makefile.in: Generate HTML doc using makeinfo, instead of
+	obsolecent texi2html
+
+2013-11-07  Yann Dirson <ydirson@free.fr>
+
+	* NEWS, README, configure.ac: Prepare v1.4.1rc0.
+
+2013-11-07  Yann Dirson <ydirson@free.fr>
+
+	* doc/gnushogi.texinfo: Update manual for maintainer, project
+	communication, and plans.
+
+2013-11-07  Yann Dirson <ydirson@free.fr>
+
+	* TODO: Update TODO: there are plans for v1.5, and things have been
+	done.
+
+2013-11-05  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in: Fix "make dist" not to include a recursive copy of
+	the dist.
+
+2013-11-05  Yann Dirson <ydirson@free.fr>
+
+	* doc/gnushogi.texinfo: Fix formatting of boards in texinfo doc.
+
+2013-11-05  Yann Dirson <ydirson@free.fr>
+
+	* NEWS: Update NEWS file for upcoming 1.4.1.
+
+2013-11-05  Yann Dirson <ydirson@free.fr>
+
+	* doc/gnushogi.6: Remove version number from manpage.  It was not very useful there, and has been out of sync with the
+	software version anyway.
+
+2013-11-05  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in, gnushogi/Makefile.in, gnushogi/Makefile.profile.in,
+	xshogi/Makefile.in: Remove unused obsolete version numbers from
+	Makefiles.
+
+2013-10-20  Yann Dirson <ydirson@free.fr>
+
+	* TODO: Take note of more cleanups to do.
+
+2013-10-20  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac, gnushogi/Makefile.in: Move hashfile definition from
+	configure.ac into Makefile.in Like other similar defs...
+
+2013-10-20  Yann Dirson <ydirson@free.fr>
+
+	* .gitignore, Makefile.in, configure.ac, gnushogi/Makefile.in,
+	misc/gnuminishogi.tbk: Use configure --enable-minishogi to select
+	build of gnuminishogi.  At the same time, provide an empty gnuminishogi.tbk so things work
+	more as they should.  Only the patterns are still necessary to specify manually at this
+	point.
+
+2013-09-27  H.G. Muller <h.g.muller@hccnet.nl>
+
+	* gnushogi/eval.c: Fix mini-Shogi out-of-bounds acces of board
+
+2011-09-29  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/eval.c: Avoid looking at the game type to determine
+	minishogi piece values.  We don't know how to determine the game type anyway, and a previous
+	patch disables its computation, but no need to compile dead code in
+	this case.  Another problem to look at is that "in_opening_stage" is surely
+	badly tuned for MiniShogi, but the program seems to score better
+	with current code that by telling there is opening stage.  Flag FIXME's where applicable so some willing soul would know where
+	to find things to improve for MiniShogi.
+
+2011-09-28  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/eval.c: Disable GuessGameType() for MiniShogi.  Game types for MiniShogi are surely different from the ones in
+	Shogi, so this would require serious thought to get it right.  Just
+	pretend we don't know.
+
+2011-09-28  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/eval.c: Fix ScorePosition() for MiniShogi.  Gcc's stack-smashing protection combined with glibc's
+	-D_FORTIFY_SOURCE detected with a segfault that we were using
+	9x9-board offsets on our 5x5 board.  This patch abstracts the
+	relevant hardcoded constants and provides correct values for
+	MiniShogi.
+
+2008-02-11  Yann Dirson <ydirson@altern.org>
+
+	* TODO, gnushogi/Makefile.in, gnushogi/init-common.c,
+	gnushogi/init.c, gnushogi/makepattern.c, gnushogi/pat2inc.c,
+	gnushogi/pattern-common.c, gnushogi/pattern.c,
+	gnushogi/pattern.inc, misc/gnuminishogi.pat: Generate patterns.inc
+	at build time.
+
+2008-02-11  Yann Dirson <ydirson@altern.org>
+
+	* TODO, gnushogi/attacks.c, gnushogi/commondsp.c,
+	gnushogi/cursesdsp.c, gnushogi/eval.c, gnushogi/genmove.c,
+	gnushogi/globals.c, gnushogi/gnushogi.h, gnushogi/init.c: Initial
+	attempt at minishogi.  This preliminar minishogi takes the approach of conditional
+	compilation, so I can focus on differences between shogi and
+	minishogi.  Those ifdef's are expected to progressively disappear as
+	the support code is made generic enough to support the needs of both
+	variants.
+
+2013-10-20  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in, configure.ac, doc/{Makefile => Makefile.in},
+	gnushogi/Makefile.in: Fix various regression for building out of
+	tree.  Most notably, doc was never buildable out of tree, but the recent
+	build enhancements did not take that into account.
+
+2013-09-27  H.G. Muller <h.g.muller@hccnet.nl>
+
+	* gnushogi/gnushogi.h, gnushogi/init.c, gnushogi/rawdsp.c: Windows
+	port This patch makes GNU Shogi compilable with gcc under Cygwin, using
+	the -mno-cygwin flag, so that it can run as a native Windows
+	application, independent of Cygwin1.dll.  The patch is fully conditional, based on defined(WIN32).  YD: rebased onto recent refactorings
+
+2013-11-03  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac: Normalize configure --help using AS_HELP_STRING.
+
+2013-11-03  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac: Don't bail out if configure (without --with-curses)
+	does not find libcurses.  Only fail when --with-curses was requested and libcurses cannot be
+	found.
+
+2013-11-03  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/Makefile.in, gnushogi/Makefile.profile.in: Fix funny
+	search-and-replace copyright typo.
+
+2013-11-03  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac, gnushogi/Makefile.in, gnushogi/commondsp.c,
+	gnushogi/cursesdsp.c, gnushogi/gnushogi.h, gnushogi/main.c,
+	gnushogi/pat2inc.c, gnushogi/rawdsp.c, gnushogi/sizetest.c,
+	version.h, xshogi/Makefile.in, xshogi/xshogi.c: Use centralized
+	version from configure.ac, drop use of separate patchlevel.
+
+2013-11-03  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/Makefile.in, gnushogi/book.c, gnushogi/commondsp.c,
+	gnushogi/cursesdsp.c, gnushogi/globals.c, gnushogi/gnushogi.h,
+	gnushogi/init.c, gnushogi/main.c, gnushogi/pat2inc.c,
+	gnushogi/rawdsp.c, gnushogi/search.c, gnushogi/util.c,
+	misc/gnushogi.lng: Move strings back into source code, from .lng
+	support.  * there is no point in translating the protocol * if someone wants to translate the curses UI, this should be done
+	  with gettext
+
+2013-10-23  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c, gnushogi/cursesdsp.h,
+	gnushogi/dspwrappers.c, gnushogi/dspwrappers.h,
+	gnushogi/gnushogi.h, gnushogi/rawdsp.c, gnushogi/rawdsp.h,
+	gnushogi/tcontrl.c: Move ElapsedTime to tcontrl.c, now that there is
+	a single implementation.
+
+2013-10-23  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c, gnushogi/cursesdsp.h,
+	gnushogi/dspwrappers.c, gnushogi/dspwrappers.h, gnushogi/rawdsp.c,
+	gnushogi/rawdsp.h, gnushogi/search.c: Make UpdateClocks and
+	input-polling dspwrappers-based too.  Those things are the only thing called from ElapsedTime() to be
+	different between Curses and Raw/X, and were not abstracted yet.  The poll-based polling code was not called from within
+	ElapsedTime(), which made it less frequently called, but that did
+	not seem to be a problem.  And it was redundant in Curses mode with
+	the FIONREAD call.
+
+2013-10-22  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c, gnushogi/cursesdsp.h,
+	gnushogi/dspwrappers.c, gnushogi/dspwrappers.h, gnushogi/rawdsp.c,
+	gnushogi/rawdsp.h: Fix regression with stdarg dspwrappers.  1be442641b610fa1b6172a38d9acffe2d22797b6 and
+	3f589711eb3ecc7644378d6a0f2f29bc4b4c7db9 are both broken, passing
+	the va_list inside another va_list to poor unsuspecting backend
+	implementations.
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/makepattern.c: Fixed minor regression in makepatter.  In 6cdb4afe21c8d0eb740a6a22a02a0adf922fddfc, I messed up a
+	conditional causing an error message to be written even when we did
+	find a pattern file.
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c, gnushogi/gnushogi.h: Fix build of
+	--with-curses mode.  Broken by 6030715dffdadf4402dccf6a8bf9966cfab2be1d and not checked
+	soon enough :(
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c: Drop non-curses support from
+	Curses_ElapsedTime.  Similar to 58e443e7ec0d834fe75a9eda53f4cfaf7f8b106c, was a remnant
+	from before 4a9acd2e4d21586f2af629ec44cd78c237dcd702.
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/makepattern.c: Drop NOT_CURSES occurences from
+	makepattern.  Why on earth are we supposing that pat2inc would run in Curses mode
+	one day ?
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c, gnushogi/cursesdsp.c, gnushogi/cursesdsp.h,
+	gnushogi/dspwrappers.c, gnushogi/dspwrappers.h, gnushogi/rawdsp.c,
+	gnushogi/rawdsp.h: Convert more stuff from #ifdef to dspwrappers:
+	SetupBoard.  Not a very big problem since that function is not curses-only this
+	time, but raw-only.  But this is the natural continuation of the
+	"nuke NOT_CURSES" movement.
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c, gnushogi/cursesdsp.h, gnushogi/gnushogi.h: 
+	Stop exporting Curses-internal functions to everyone.  Possible since cursesdsp is now self-contained.
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac, gnushogi/Makefile.in: Finish the --without-curses
+	support.  Now that all the silly problems refering to Curses-specific
+	functions from unrelated places are all solved, we can spare linking
+	cursesdsp when not required.
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/rawdsp.c: Remove dead Curses-specific code from
+	Raw_ElapsedTime()
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/search.c: Remove useless explicit prototype for pow().
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/Makefile.in, gnushogi/Makefile.profile.in,
+	gnushogi/cursesdsp.c, gnushogi/cursesdsp.h, gnushogi/dspwrappers.c,
+	gnushogi/dspwrappers.h, gnushogi/gnushogi.h, gnushogi/rawdsp.c,
+	gnushogi/rawdsp.h, gnushogi/sysdeps.c: Change ElapsedTime to a
+	normal display function.  The FIONREAD version is clearly tied to Curses, and the NOFIONREAD
+	works corectly with xshogi/xboard as well as Raw.  No reason for a
+	separate mechanism.  --without-curses now builds as expected.
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c, gnushogi/rawdsp.c: Make spacing consistent
+	in *dsp.c, kill unused global hidden between funcs.
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/sysdeps.c: Factorize ElapsedTime implementations by
+	restricting HAVE_GETTIMEOFDAY #ifdef's.  (and take the best-looking one on cosmetic differences)
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c, gnushogi/cursesdsp.c, gnushogi/cursesdsp.h,
+	gnushogi/dspwrappers.c, gnushogi/dspwrappers.h,
+	gnushogi/gnushogi.h, gnushogi/rawdsp.c, gnushogi/rawdsp.h: Fix
+	ShowPrompt implementation across display drivers.
+
+2013-10-17  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c, gnushogi/cursesdsp.c, gnushogi/cursesdsp.h,
+	gnushogi/dspwrappers.c, gnushogi/dspwrappers.h, gnushogi/rawdsp.c,
+	gnushogi/rawdsp.h: Convert more stuff from #ifdef to dspwrappers:
+	GetString.  Thin function is the first non-void one and shows the limits of the
+	current macro set.  Let's consider this stuff to be temporary.  At least it finally allows to drop #include <curses.h> from
+	commondsp.
+
+2013-10-16  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c, gnushogi/cursesdsp.c, gnushogi/cursesdsp.h,
+	gnushogi/dspwrappers.c, gnushogi/dspwrappers.h, gnushogi/rawdsp.c,
+	gnushogi/rawdsp.h: Convert more stuff from #ifdef to dspwrappers:
+	AlwaysShowMessage.
+
+2013-10-16  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c, gnushogi/cursesdsp.c, gnushogi/cursesdsp.h,
+	gnushogi/dspwrappers.c, gnushogi/dspwrappers.h, gnushogi/rawdsp.c,
+	gnushogi/rawdsp.h: Provide a Raw version of ShowNodeCnt to avoid
+	more #ifdef's.  At the same time, nuking "#ifdef DYNAMIC_ZNODES" (dead code).
+
+2013-10-16  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c: When in check, complain with the requested
+	move.  Looks like in xshogi mode we were complaining by explicitly using
+	the algebraic notation, but apparently noone forces us to do so.
+
+2013-10-15  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c, gnushogi/cursesdsp.c, gnushogi/cursesdsp.h,
+	gnushogi/dspwrappers.c, gnushogi/dspwrappers.h, gnushogi/rawdsp.c,
+	gnushogi/rawdsp.h: Add safeguard against buffer overflow when
+	calling scanf.
+
+2013-10-15  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c, gnushogi/cursesdsp.c, gnushogi/cursesdsp.h,
+	gnushogi/dspwrappers.c, gnushogi/dspwrappers.h, gnushogi/rawdsp.c,
+	gnushogi/rawdsp.h: Convert more stuff from #ifdef to dspwrappers.
+
+2013-10-19  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac: Configure: stop abusing AC_MSG_CHECKING, use correct
+	idioms.
+
+2013-10-14  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c, gnushogi/init.c, gnushogi/rawdsp.c,
+	xshogi/xshogi.c: Finally get rid of that highly non-standard use of
+	SIGINT.  People will at last be able to Ctrl-C gnushogi :)
+
+2013-10-14  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/search.c: Regularly check for user input when searching,
+	to have a chance to catch EOF from engine.  When an engine quits without terminating a searching gnushogi, it
+	would continue to search and never realize there was no reason to
+	continue.  This is a poll-based implementation of what H.G.Muller wrote for
+	WIN32 to circumvent the lack of UNIX signals there.
+
+2013-10-14  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c, gnushogi/rawdsp.c: Detect EOF waiting for
+	user input in xshogi and raw modes, and trigger exit.  No idea why the raw implementation of ExitShogi() did not call
+	exit().  Even after detecting EOF, we were thrown into a tight
+	loop...
+
+2013-10-13  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/commondsp.c, gnushogi/init.c, gnushogi/rawdsp.c,
+	xshogi/xshogi.c: Restore SIGINT for stopping gnushogi when thinking.  SIGINT is unfortunately part of the protocol inherited from
+	gnuchess4, and is used by xboard as such.  So this was not a proper
+	fix for the original issue.  This reverts commit 00e10bc4a760150665436b17c50abf264f28d435, "Don't
+	intercept INT and QUIT signals, and use USR1 instead of QUIT for".
+
+2013-10-14  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac: Rename configure --with-xshogi to --enable-xshogi
+	for correctness.
+
+2013-10-08  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in, configure.ac: Start of a "make dist" target.  The old one uses a script that was never published...
+
+2013-10-08  Yann Dirson <ydirson@free.fr>
+
+	* .gitignore, Makefile.in, doc/Makefile, doc/gnushogi.html,
+	doc/gnushogi.info, doc/gnushogi.info-1, doc/gnushogi.info-2,
+	doc/gnushogi.ps, doc/gnushogi_1.html, doc/gnushogi_10.html,
+	doc/gnushogi_11.html, doc/gnushogi_12.html, doc/gnushogi_13.html,
+	doc/gnushogi_14.html, doc/gnushogi_15.html, doc/gnushogi_16.html,
+	doc/gnushogi_17.html, doc/gnushogi_18.html, doc/gnushogi_19.html,
+	doc/gnushogi_2.html, doc/gnushogi_20.html, doc/gnushogi_21.html,
+	doc/gnushogi_22.html, doc/gnushogi_23.html, doc/gnushogi_24.html,
+	doc/gnushogi_3.html, doc/gnushogi_4.html, doc/gnushogi_5.html,
+	doc/gnushogi_6.html, doc/gnushogi_7.html, doc/gnushogi_8.html,
+	doc/gnushogi_9.html, doc/gnushogi_abt.html, doc/gnushogi_ovr.html,
+	doc/gnushogi_toc.html, doc/texinfo.tex: Rework doc-handing make
+	rules and remove generated files from version control.  Newer texinfo.tex was imported from texinfo 5.1.
+
+2013-10-08  Yann Dirson <ydirson@free.fr>
+
+	* doc/Makefile, doc/make_fig1, doc/make_fig2: Remove hack previously
+	used to insert diags into generated HTML.  Useless since db5c540ff7e9dd176f797b50031141e2c2059456.
+
+2013-10-08  Yann Dirson <ydirson@free.fr>
+
+	* autogen.sh: Don't cause autogen.sh to run configure.
+
+2013-10-08  Yann Dirson <ydirson@free.fr>
+
+	* ChangeLog, README.maint: Initiate new ChangeLog using git2cl.
+
+2013-10-08  Yann Dirson <ydirson@free.fr>
+
+	* ChangeLog => ChangeLog.old, NEWS: Start to fill NEWS, rotate
+	pre-git logs to ChangeLog.old.
+
+2013-10-08  Yann Dirson <ydirson@free.fr>
+
+	* doc/gnushogi.texinfo: Critical texinfo doc formatting fixes.  * "@sp 1" everywhere look ugly today * ASCII rendering of boards requires @verbatim
+
+2013-10-08  Yann Dirson <ydirson@free.fr>
+
+	* doc/gnushogi.texinfo: Use @ifnotex and not @ifinfo, or HTML does
+	not get its ToC.
+
+2013-10-08  Yann Dirson <ydirson@free.fr>
+
+	* doc/gnushogi.texinfo: Remove text of the GPL (v2) from texinfo
+	doc, it did not format any more though TeX.
+
 2013-09-30  Yann Dirson <ydirson@free.fr>
 
 	* gnushogi/Makefile.in, xshogi/Makefile.in: Honor LDFLAGS at
