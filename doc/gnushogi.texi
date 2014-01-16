@@ -77,7 +77,7 @@ by the Free Software Foundation.
 @c  The following two commands start the copyright page.
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2013 Yann Dirson and the Free Software Foundation
+Copyright @copyright{} 2013-2014 Yann Dirson and the Free Software Foundation
 Copyright @copyright{} 1999 Michael C. Vanier and the Free Software Foundation
 
 @end titlepage
@@ -129,16 +129,19 @@ GNU shogi is a program that plays shogi, the Japanese version of chess,
 against a human (or computer) opponent.  This file describes how to use
 GNU shogi and also gives background information about the game of shogi.
 
-This file describes GNU Shogi version 1.3.2.  It was written by Mike
-Vanier @email{mvanier@@cs.caltech.edu}, maintainer of GNU shogi at
-that time.
+This file describes GNU Shogi version 1.4.1, but most of it was
+written for version 1.3.2 by Mike Vanier
+@email{mvanier@@cs.caltech.edu}, maintainer of GNU shogi at that time.
 
 GNU Shogi is currently maintained by Yann Dirson
 @email{ydirson@@free.fr}.
 
 
 GNU Shogi is actually one program, 'gnushogi', the text-based program
-which also contains the game-playing engine.
+which also contains the game-playing engine.  By default it will play
+Standard Shogi, but can be built to play Mini Shogi (with GNU Shogi
+1.4.x, you will need to do that explicitely using `./configure
+--enable-minishogi'', but 1.5 will make this more straightforward).
 
 The GNU Shogi distribution also contains the 'xshogi' program, an
 X-Window graphical interface to gnushogi.  XShogi was forked off GNU
@@ -1057,7 +1060,7 @@ size of the game, checkmates can occur very suddenly (and often very
 early on) if one player makes a wrong move.  Tenjiku also has a small
 but fanatical following, one of whom (Colin Adams) has written a book on
 the game which is available for download at
-@uref{http://www.colina.demon.co.uk/tenjiku.html}.
+@uref{http://wayback.archive.org/web/20120717085827/http://www.colina.demon.co.uk/tenjiku.html}.
 
 @item
 Dai-dai (great-great) shogi, played on a 17x17 board with 192 pieces.
@@ -1087,6 +1090,32 @@ devised merely so that the creators could have the fun of inventing
 enormous games, amazing their friends and confounding their enemies.
 However, the games up to Tenjiku shogi at least appear to be quite
 playable, assuming one has the time.
+
+@end enumerate
+
+Many modern variants have also been devised, usually on small boards,
+and often by western people.  Those include:
+
+@enumerate
+
+@item
+Mini Shogi, played on a 5x5 board with 12 pieces.  Its rules are
+nearly identical to Standard Shogi, and GNU Shogi has some support for
+it.
+
+@item
+Judkins Shogi, similar to Mini Shogi on a 6x6 board.
+
+@item
+Cannon Shogi, played on a 9x9 board, adds pieces inspired by the
+Cannon found in Xiang Qi (chinese chess)
+
+@item
+Sannin Shogi, a 3-player variant on an hexagonal board, with specific
+rules governing alliance between two players
+
+@item
+Kyoto Shogi, Micro Shogi, and several others are much more different.
 
 @end enumerate
 
@@ -2092,6 +2121,10 @@ unfortunately it only runs on Windows :-(
 @item Hans Bodlaender's chess variant pages: @uref{http://www.cs.ruu.nl/~hansb/d.chessvar}
 This page has an almost unimaginable variety of rules for different
 chess variants, including many shogi variants (historical and non-historical).
+
+@item Wikipedia's shogi variant pages: @uref{http://en.wikipedia.org/wiki/Category:Shogi_variants}
+Those pages contain a large number of variant rules, both ancient and
+modern.
 
 @end table
 

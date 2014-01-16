@@ -4,6 +4,7 @@
  * ----------------------------------------------------------------------
  * Copyright (c) 1993, 1994, 1995 Matthias Mutz
  * Copyright (c) 1999 Michael Vanier and the Free Software Foundation
+ * Copyright (c) 2008, 2013, 2014 Yann Dirson and the Free Software Foundation
  *
  * GNU SHOGI is based on GNU CHESS
  *
