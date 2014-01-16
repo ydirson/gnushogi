@@ -10,6 +10,7 @@ Makefile.in
 /missing
 /ylwrap
 /stamp-h1
+/INSTALL
 
 /autom4te.cache/
 /config.log
