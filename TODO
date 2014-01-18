@@ -1,7 +1,8 @@
 Target for v1.5:
 
-- refactor dspwrappers into a driver-like structure
-- integrate H.G.Muller's work on the xboard protocol on top of that
+- make X and raw two different display drivers
+- integrate H.G.Muller's work on the xboard protocol on top of new driver-like
+  display handling
 - deprecate xshogi in favor of xboard
 - make minishogi a run-time option rather than a compile-time one,
   using the "variant" mechanism of the xboard protocol
@@ -14,7 +15,7 @@ Generic cleanups
   - position of captured pieces in curses mode
   - compile with bound-checker
 - add autosave mode to ease hunt for segfaults ?
-- use 2D array for the board, get rid of the (i)nunmap stuff
+- ? use 2D array for the board, get rid of the (i)nunmap stuff
 - fixup build procedure to support parallel make runs
 - investigate those preexisting "overflow in implicit constant
   conversion" warnings
@@ -28,3 +29,10 @@ Minishogi-related stuff
   * OPENING_HINT
 - add minishogi stuff to the doc
 - use valid minishogi moves in online help
+
+Improvements
+
+- find out why the engine is so weak
+  - make it battle against Mutz-era gnushogi, and other engines, and
+    compare their evaluation results
+  - see what needs updating in book
