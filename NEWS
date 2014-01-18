@@ -1,6 +1,10 @@
 GNU shogi news
 --------------
 
+Changes in version 1.5.0 (unreleased):
+
+* Build system switched from pure autoconf to automake
+
 Changes in version 1.4.1 (01/2014):
 
 * Initial support for the MiniShogi variant, for now as a separate
