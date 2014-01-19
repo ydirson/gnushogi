@@ -50,8 +50,6 @@
  */
 
 short hard_time_limit = 1;
-short barebones       = 0;  /* Suppress printing of statistics
-                             * (mainly for xshogi). */
 #ifdef LIST_ON_EXIT
 short nolist          = 0;  /* List the game after exit. */
 #else
@@ -667,13 +665,11 @@ InitMain(void)
 
         TCflag       = true;
         OperatorTime = 0;
-        barebones    = 1;
     }
     else
     {
         TCflag       = false;
         OperatorTime = 0;
-        barebones    = 0;
     }
 
     dsp->Initialize();

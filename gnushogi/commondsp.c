@@ -167,7 +167,7 @@ algbr(short f, short t, short flag)
 
     if ((f == t) && ((f != 0) || (t != 0)))
     {
-        if (!barebones) {
+        if (!XSHOGI) {
             dsp->Printf("error in algbr: FROM=TO=%d, flag=0x%4x\n", t, flag);
         }
 
@@ -344,7 +344,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
 
     dsp->AlwaysShowMessage("Illegal move (no match) %s", s);
 
-    if (!barebones && (cnt > 1))
+    if (!XSHOGI && (cnt > 1))
     {
         sprintf(buffer, "Ambiguous Move %s!", s);
         dsp->ShowMessage(buffer);

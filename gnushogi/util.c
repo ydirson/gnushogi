@@ -174,7 +174,7 @@ ProbeTTable (short side,
             {
                 HashCol++;
 
-                if (!barebones)
+                if (!XSHOGI)
                 {
                     ShowMessage("ttable collision detected");
                     ShowBD(ptbl->bd);

@@ -65,7 +65,7 @@ void Raw_UpdateDisplay(short f, short t, short redraw, short isspec);
 void
 Raw_ClearScreen(void)
 {
-    if (!barebones && !XSHOGI)
+    if (!XSHOGI)
         printf("\n");
 }
 
@@ -73,7 +73,7 @@ Raw_ClearScreen(void)
 void
 Raw_ShowPrompt(void)
 {
-    if (!barebones && !XSHOGI)
+    if (!XSHOGI)
         fputs("\nYour move is? ", stdout);
 }
 
@@ -87,7 +87,7 @@ Raw_ShowCurrentMove(short pnt, short f, short t)
 void
 Raw_ShowDepth(char ch)
 {
-    if (!barebones && !XSHOGI)
+    if (!XSHOGI)
         printf("Depth= %d%c \n", Sdepth, ch);
 }
 
@@ -594,10 +594,10 @@ Raw_OutputMove(void)
     else if (root->score == (SCORE_LIMIT + 998))
         printf("%s mates!\n", ColorStr[computer]);
 #ifdef VERYBUGGY
-    else if (!barebones && (root->score < -SCORE_LIMIT))
+    else if (!XSHOGI && (root->score < -SCORE_LIMIT))
         printf("%s has a forced mate in %d moves!\n",
                ColorStr[opponent], SCORE_LIMIT + 999 + root->score - 1);
-    else if (!barebones && (root->score > SCORE_LIMIT))
+    else if (!XSHOGI && (root->score > SCORE_LIMIT))
         printf("%s has a forced mate in %d moves!\n",
                ColorStr[computer], SCORE_LIMIT + 998 - root->score - 1);
 #endif /* VERYBUGGY */

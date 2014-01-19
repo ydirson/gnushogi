@@ -65,7 +65,6 @@ extern display_t display_type;
 /* Miscellaneous globals. */
 
 extern short hard_time_limit; /* If you exceed time limit, you lose.   */
-extern short barebones;       /* Don't print of stats for x interface. */
 extern short nolist;          /* Don't list game after exit.           */
 
 
