@@ -74,9 +74,7 @@ void
 Raw_ShowPrompt(void)
 {
     if (!barebones && !XSHOGI)
-    {
         fputs("\nYour move is? ", stdout);
-    }
 }
 
 
@@ -90,10 +88,7 @@ void
 Raw_ShowDepth(char ch)
 {
     if (!barebones && !XSHOGI)
-    {
-        printf("Depth= %d%c ", Sdepth, ch);
-        printf("\n");
-    }
+        printf("Depth= %d%c \n", Sdepth, ch);
 }
 
 
@@ -544,15 +539,11 @@ Raw_OutputMove(void)
         goto nomove;
 
     if (XSHOGI)
-    {
         /* add remaining time in milliseconds to xshogi */
         printf("%d. ... %s %ld\n", ++mycnt1, mvstr[0],
                (TimeControl.clock[player] - et) * 10);
-    }
     else
-    {
         printf("%d. ... %s\n", ++mycnt1, mvstr[0]);
-    }
 
  nomove:
     if ((root->flags & draw) || (root->score == -(SCORE_LIMIT + 999))
@@ -597,28 +588,18 @@ Raw_OutputMove(void)
 
  summary:
     if (root->flags & draw)
-    {
         fputs("Drawn game!\n", stdout);
-    }
     else if (root->score == -(SCORE_LIMIT + 999))
-    {
         printf("%s mates!\n", ColorStr[opponent]);
-    }
     else if (root->score == (SCORE_LIMIT + 998))
-    {
         printf("%s mates!\n", ColorStr[computer]);
-    }
 #ifdef VERYBUGGY
     else if (!barebones && (root->score < -SCORE_LIMIT))
-    {
         printf("%s has a forced mate in %d moves!\n",
                ColorStr[opponent], SCORE_LIMIT + 999 + root->score - 1);
-    }
     else if (!barebones && (root->score > SCORE_LIMIT))
-    {
         printf("%s has a forced mate in %d moves!\n",
                ColorStr[computer], SCORE_LIMIT + 998 - root->score - 1);
-    }
 #endif /* VERYBUGGY */
 }
 
