@@ -44,10 +44,6 @@
 
 #include "gnushogi.h"
 
-int mycnt1, mycnt2;
-char *DRAW;
-extern short pscore[];
-
 /****************************************
  * forward declarations
  ****************************************/

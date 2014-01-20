@@ -51,6 +51,7 @@
 
 char mvstr[4][6];
 char *InPtr;
+int mycnt1, mycnt2;
 struct display *dsp = &raw_display;
 
 
