@@ -44,12 +44,8 @@
 
 #include "gnushogi.h"
 
-unsigned short MV[MAXDEPTH];
-int MSCORE;
-
 int mycnt1, mycnt2;
 char *DRAW;
-extern char *InPtr;
 extern short pscore[];
 
 /****************************************
@@ -268,19 +264,6 @@ Raw_ExitShogi(void)
         ListGame();
 
     exit(0);
-}
-
-
-void
-Raw_Die(int sig)
-{
-    char s[80];
-
-    Raw_ShowMessage("Abort? ");
-    scanf("%s", s);
-
-    if (strcmp(s, "yes") == 0)
-        Raw_ExitShogi();
 }
 
 

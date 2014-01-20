@@ -51,7 +51,6 @@
 
 char mvstr[4][6];
 char *InPtr;
-int InBackground = false;
 struct display *dsp = &raw_display;
 
 
@@ -1315,58 +1314,6 @@ Undo(void)
 }
 
 
-void
-FlagString(unsigned short flags, char *s)
-{
-    short l, piece;
-    *s = '\0';
-
-    if (flags & promote)
-        strcat(s, " promote");
-
-    if (flags & dropmask)
-        strcat(s, " drop:");
-
-    if ((piece = (flags & pmask)))
-    {
-        l = strlen(s);
-
-        if (is_promoted[piece])
-            s[l++] = '+';
-
-        s[l++] = pxx[piece];
-        s[l] = '\0';
-    }
-
-    if (flags & capture)
-        strcat(s, " capture");
-
-    if (flags & exact)
-        strcat(s, " exact");
-
-    if (flags & tesuji)
-        strcat(s, " tesuji");
-
-    if (flags & check)
-        strcat(s, " check");
-
-    if (flags & draw)
-        strcat(s, " draw");
-
-    if (flags & stupid)
-        strcat(s, " stupid");
-
-    if (flags & questionable)
-        strcat(s, " questionable");
-
-    if (flags & kingattack)
-        strcat(s, " kingattack");
-
-    if (flags & book)
-        strcat(s, " book");
-}
-
-
 static void
 TestSpeed(void(*f)(short side, short ply,
                    short in_check, short blockable),
@@ -2014,22 +1961,6 @@ InputCommand(char *command)
             printf("%d. %s %ld\n",
                    ++mycnt2, s, TimeControl.clock[player] * 10);
         }
-
-#ifdef notdef /* optional pass best line to frontend with move */
-        if (flag.post && !flag.mate)
-        {
-            int i;
-
-            printf(" %6d ", MSCORE);
-
-            for (i = 1; MV[i] > 0; i++)
-            {
-                algbr((short) (MV[i] >> 8), (short) (MV[i] & 0xFF), false);
-                printf("%5s ", mvstr[0]);
-            }
-        }
-        printf("\n");
-#endif
     }
 }
 

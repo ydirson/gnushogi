@@ -682,8 +682,6 @@ extern long znodes;
 extern char ColorStr[2][10];
 
 extern char mvstr[4][6];
-extern unsigned short MV[MAXDEPTH];
-extern int MSCORE;
 extern int mycnt1, mycnt2;
 extern short ahead;
 extern struct leaf rootnode;
