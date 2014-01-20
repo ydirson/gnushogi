@@ -138,7 +138,10 @@ movealgbr(short m, char *s)
  *   - NO_SQUARES <= f NO_SQUARES + 2*NO_PIECES		dropped piece modulo NO_PIECES
  * - t & 0x7f				target square
  * - t & 0x80				promotion flag
- * - flag				FIXME: must be zero ?
+ * - flag
+ *   - if flag & dropmask, piece type encoded in flag & pmask
+ *
+ * FIXME: that makes 2 ways to specify drops and promotions, why ?
  *
  * OUTPUT:
  * - GLOBAL mvstr
@@ -188,20 +191,27 @@ algbr(short f, short t, short flag)
     }
     else if ((f != 0) || (t != 0))
     {
-        /* algebraic notation */
+        /* pure coordinates notation */
         mvstr[0][0] = cxx[column(f)];
         mvstr[0][1] = rxx[row(f)];
         mvstr[0][2] = cxx[column(t)];
         mvstr[0][3] = rxx[row(t)];
-        mvstr[0][4] = mvstr[3][0] = '\0';
-        mvstr[1][0] = pxx[board[f]];
+        mvstr[0][4] = '\0';
 
+        /* algebraic notation without disambiguation */
+        mvstr[1][0] = pxx[board[f]];
+        mvstr[1][1] = mvstr[0][2];    /* to column */
+        mvstr[1][2] = mvstr[0][3];    /* to row */
+        mvstr[1][3] = '\0';
+
+        /* algebraic notation with row disambiguation */
         mvstr[2][0] = mvstr[1][0];
         mvstr[2][1] = mvstr[0][1];
+        mvstr[2][2] = mvstr[0][2];    /* to column */
+        mvstr[2][3] = mvstr[0][3];    /* to row */
+        mvstr[2][4] = '\0';
 
-        mvstr[2][2] = mvstr[1][1] = mvstr[0][2];    /* to column */
-        mvstr[2][3] = mvstr[1][2] = mvstr[0][3];    /* to row */
-        mvstr[2][4] = mvstr[1][3] = '\0';
+        /* algebraic notation with column disambiguation */
         strcpy(mvstr[3], mvstr[2]);
         mvstr[3][1] = mvstr[0][0];
 
