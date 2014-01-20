@@ -1,6 +1,5 @@
 Target for v1.5:
 
-- make X and raw two different display drivers
 - integrate H.G.Muller's work on the xboard protocol on top of new driver-like
   display handling
 - deprecate xshogi in favor of xboard
@@ -36,3 +35,6 @@ Improvements
   - make it battle against Mutz-era gnushogi, and other engines, and
     compare their evaluation results
   - see what needs updating in book
+- express available commands as display-dependant, instead of using if(XSHOGI)
+  - make "help" list commands available for current display
+- make X and raw two different display drivers
