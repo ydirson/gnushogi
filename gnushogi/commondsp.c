@@ -1963,24 +1963,3 @@ InputCommand(char *command)
         }
     }
 }
-
-
-void
-SetTimeControl(void)
-{
-    if (TCflag)
-    {
-        TimeControl.moves[black] = TimeControl.moves[white] = TCmoves;
-        TimeControl.clock[black] += 6000L * TCminutes + TCseconds * 100;
-        TimeControl.clock[white] += 6000L * TCminutes + TCseconds * 100;
-    }
-    else
-    {
-        TimeControl.moves[black] = TimeControl.moves[white] = 0;
-        TimeControl.clock[black] = TimeControl.clock[white] = 0;
-    }
-
-    flag.onemove = (TCmoves == 1);
-    et = 0;
-    ElapsedTime(COMPUTE_AND_INIT_MODE);
-}
