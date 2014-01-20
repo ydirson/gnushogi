@@ -50,8 +50,8 @@
 #include "gnushogi.h"
 
 char mvstr[4][6];
-char *InPtr;
 int mycnt1, mycnt2;
+static char *InPtr;
 struct display *dsp = &raw_display;
 
 

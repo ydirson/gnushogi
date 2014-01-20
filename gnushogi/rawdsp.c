@@ -48,13 +48,13 @@
  * forward declarations
  ****************************************/
 
-void Raw_UpdateDisplay(short f, short t, short redraw, short isspec);
+static void Raw_UpdateDisplay(short f, short t, short redraw, short isspec);
 
 /****************************************
  * Trivial output functions.
  ****************************************/
 
-void
+static void
 Raw_ClearScreen(void)
 {
     if (!XSHOGI)
@@ -62,7 +62,7 @@ Raw_ClearScreen(void)
 }
 
 
-void
+static void
 Raw_ShowPrompt(void)
 {
     if (!XSHOGI)
@@ -70,13 +70,13 @@ Raw_ShowPrompt(void)
 }
 
 
-void
+static void
 Raw_ShowCurrentMove(short pnt, short f, short t)
 {
 }
 
 
-void
+static void
 Raw_ShowDepth(char ch)
 {
     if (!XSHOGI)
@@ -84,7 +84,7 @@ Raw_ShowDepth(char ch)
 }
 
 
-void
+static void
 Raw_ShowGameType(void)
 {
     if (flag.post)
@@ -92,7 +92,7 @@ Raw_ShowGameType(void)
 }
 
 
-void
+static void
 Raw_ShowLine(unsigned short *bstline)
 {
     int i;
@@ -110,7 +110,7 @@ Raw_ShowLine(unsigned short *bstline)
 }
 
 
-void
+static void
 Raw_ShowMessage(char *s)
 {
     if (!XSHOGI)
@@ -118,7 +118,7 @@ Raw_ShowMessage(char *s)
 }
 
 
-void
+static void
 Raw_AlwaysShowMessage(const char *format, ...)
 {
     va_list ap;
@@ -129,7 +129,7 @@ Raw_AlwaysShowMessage(const char *format, ...)
 }
 
 
-void
+static void
 Raw_Printf(const char *format, ...)
 {
     va_list ap;
@@ -139,14 +139,14 @@ Raw_Printf(const char *format, ...)
 }
 
 
-void
+static void
 Raw_doRequestInputString(const char* fmt, char* buffer)
 {
     scanf(fmt, buffer);
 }
 
 
-int
+static int
 Raw_GetString(char* sx)
 {
     int eof = 0;
@@ -165,7 +165,7 @@ Raw_GetString(char* sx)
 }
 
 
-void
+static void
 Raw_ShowNodeCnt(long NodeCnt)
 {
     printf("Nodes = %ld Nodes/sec = %ld\n",
@@ -173,7 +173,7 @@ Raw_ShowNodeCnt(long NodeCnt)
 }
 
 
-void
+static void
 Raw_ShowPatternCount(short side, short n)
 {
     if (flag.post)
@@ -181,13 +181,13 @@ Raw_ShowPatternCount(short side, short n)
 }
 
 
-void
+static void
 Raw_ShowResponseTime(void)
 {
 }
 
 
-void
+static void
 Raw_ShowResults(short score, unsigned short *bstline, char ch)
 {
     if (flag.post  && !XSHOGI)
@@ -200,13 +200,13 @@ Raw_ShowResults(short score, unsigned short *bstline, char ch)
 }
 
 
-void
+static void
 Raw_ShowSidetoMove(void)
 {
 }
 
 
-void
+static void
 Raw_ShowStage(void)
 {
     printf("stage = %d\n", stage);
@@ -218,7 +218,7 @@ Raw_ShowStage(void)
  * End of trivial output routines.
  ****************************************/
 
-void
+static void
 Raw_Initialize(void)
 {
     mycnt1 = mycnt2 = 0;
@@ -250,7 +250,7 @@ Raw_Initialize(void)
 }
 
 
-void
+static void
 Raw_ExitShogi(void)
 {
     /* CHECKME: what purpose does this next statement serve? */
@@ -263,7 +263,7 @@ Raw_ExitShogi(void)
 }
 
 
-void
+static void
 Raw_TerminateSearch(int sig)
 {
 #ifdef INTERRUPT_TEST
@@ -277,7 +277,7 @@ Raw_TerminateSearch(int sig)
 }
 
 
-void
+static void
 Raw_help(void)
 {
     Raw_ClearScreen();
@@ -342,7 +342,7 @@ Raw_help(void)
  * Set up a board position. Pieces are entered by typing the piece followed
  * by the location. For example, Nf3 will place a knight on square f3.
  */
-void
+static void
 Raw_EditBoard(void)
 {
     short a, r, c, sq, i, found;
@@ -443,7 +443,7 @@ Raw_EditBoard(void)
  * Nine lines of nine characters are used to setup the board. 9a-1a is the
  * first line. White pieces are  represented  by  uppercase characters.
  */
-void
+static void
 Raw_SetupBoard(void)
 {
     short r, c, sq, i;
@@ -493,7 +493,7 @@ Raw_SetupBoard(void)
 }
 
 
-void
+static void
 Raw_SearchStartStuff(short side)
 {
     if (flag.post)
@@ -505,7 +505,7 @@ Raw_SearchStartStuff(short side)
 }
 
 
-void
+static void
 Raw_OutputMove(void)
 {
     if (flag.illegal)
@@ -583,13 +583,13 @@ Raw_OutputMove(void)
 }
 
 
-void
+static void
 Raw_UpdateClocks(void)
 {
 }
 
 
-void
+static void
 Raw_UpdateDisplay(short f, short t, short redraw, short isspec)
 {
 
@@ -648,7 +648,7 @@ Raw_UpdateDisplay(short f, short t, short redraw, short isspec)
 }
 
 
-void
+static void
 Raw_ChangeAlphaWindow(void)
 {
     printf("WAwindow: ");
@@ -658,7 +658,7 @@ Raw_ChangeAlphaWindow(void)
 }
 
 
-void
+static void
 Raw_ChangeBetaWindow(void)
 {
     printf("WBwindow: ");
@@ -668,7 +668,7 @@ Raw_ChangeBetaWindow(void)
 }
 
 
-void
+static void
 Raw_GiveHint(void)
 {
     if (hint)
@@ -681,7 +681,7 @@ Raw_GiveHint(void)
 }
 
 
-void
+static void
 Raw_SelectLevel(char *sx)
 {
     /* FIXME: NO_SQUARES is nonsense here */
@@ -754,7 +754,7 @@ Raw_SelectLevel(char *sx)
 }
 
 
-void
+static void
 Raw_ChangeSearchDepth(char *sx)
 {
     char buf[80+1];
@@ -769,7 +769,7 @@ Raw_ChangeSearchDepth(char *sx)
 }
 
 
-void
+static void
 Raw_ChangeHashDepth(void)
 {
     printf("hashdepth = ");
@@ -779,7 +779,7 @@ Raw_ChangeHashDepth(void)
 }
 
 
-void
+static void
 Raw_SetContempt(void)
 {
     printf("contempt = ");
@@ -787,7 +787,7 @@ Raw_SetContempt(void)
 }
 
 
-void
+static void
 Raw_ChangeXwindow(void)
 {
     printf("xwndw = ");
@@ -799,7 +799,7 @@ Raw_ChangeXwindow(void)
  * Raw_ShowPostnValue(short sq)
  * must have called ExaminePosition() first
  */
-void
+static void
 Raw_ShowPostnValue(short sq)
 {
     (void) ScorePosition(color[sq]);
@@ -819,7 +819,7 @@ Raw_ShowPostnValue(short sq)
 }
 
 
-void
+static void
 Raw_DoDebug(void)
 {
     short c, p, sq, tp, tc, tsq, score, j, k;
@@ -897,7 +897,7 @@ Raw_DoDebug(void)
 }
 
 
-void
+static void
 Raw_DoTable(short table[NO_SQUARES])
 {
     short  sq, j, k;
@@ -916,7 +916,7 @@ Raw_DoTable(short table[NO_SQUARES])
 }
 
 
-void
+static void
 Raw_ShowPostnValues(void)
 {
     short sq, score, j, k;
@@ -941,7 +941,7 @@ Raw_ShowPostnValues(void)
 }
 
 
-void
+static void
 Raw_PollForInput(void)
 {
 #ifdef WIN32

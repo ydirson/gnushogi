@@ -75,9 +75,9 @@
 static void UpdateCatched(void);
 static void DrawPiece(short sq);
 static void ShowScore(short score);
-void Curses_UpdateDisplay(short f, short t, short redraw, short isspec);
-void Curses_Die(int sig);
-void Curses_ShowSidetoMove(void);
+static void Curses_UpdateDisplay(short f, short t, short redraw, short isspec);
+static void Curses_Die(int sig);
+static void Curses_ShowSidetoMove(void);
 
 /****************************************
  * Trivial output functions.
@@ -91,7 +91,7 @@ ClearEoln(void)
 }
 
 
-void
+static void
 Curses_ClearScreen(void)
 {
     clear();
@@ -106,7 +106,7 @@ gotoXY(short x, short y)
 }
 
 
-void
+static void
 Curses_ShowCurrentMove(short pnt, short f, short t)
 {
     algbr(f, t, false);
@@ -115,7 +115,7 @@ Curses_ShowCurrentMove(short pnt, short f, short t)
 }
 
 
-void
+static void
 Curses_ShowDepth(char ch)
 {
     gotoXY(TAB, 4);
@@ -124,7 +124,7 @@ Curses_ShowDepth(char ch)
 }
 
 
-void
+static void
 Curses_ShowGameType(void)
 {
     if (flag.post)
@@ -135,7 +135,7 @@ Curses_ShowGameType(void)
 }
 
 
-void
+static void
 ShowHeader(void)
 {
     gotoXY(TAB, 2);
@@ -143,13 +143,13 @@ ShowHeader(void)
 }
 
 
-void
+static void
 Curses_ShowLine(unsigned short *bstline)
 {
 }
 
 
-void
+static void
 Curses_ShowMessage(char *s)
 {
     gotoXY(TAB, 6);
@@ -158,7 +158,7 @@ Curses_ShowMessage(char *s)
 }
 
 
-void
+static void
 Curses_AlwaysShowMessage(const char *format, ...)
 {
     static char buffer[60];
@@ -170,7 +170,7 @@ Curses_AlwaysShowMessage(const char *format, ...)
 }
 
 
-void
+static void
 Curses_Printf(const char *format, ...)
 {
     static char buffer[60];
@@ -182,14 +182,14 @@ Curses_Printf(const char *format, ...)
 }
 
 
-void
+static void
 Curses_doRequestInputString(const char* fmt, char* buffer)
 {
     FLUSH_SCANW(fmt, buffer);
 }
 
 
-int
+static int
 Curses_GetString(char* sx)
 {
     fflush(stdout);
@@ -197,7 +197,7 @@ Curses_GetString(char* sx)
 }
 
 
-void
+static void
 Curses_ShowNodeCnt(long NodeCnt)
 {
     gotoXY(TAB, 22);
@@ -208,7 +208,7 @@ Curses_ShowNodeCnt(long NodeCnt)
 }
 
 
-void
+static void
 Curses_ShowPatternCount(short side, short n)
 {
     if (flag.post)
@@ -233,7 +233,7 @@ ShowPlayers(void)
 }
 
 
-void
+static void
 Curses_ShowPrompt(void)
 {
     Curses_ShowSidetoMove();
@@ -243,7 +243,7 @@ Curses_ShowPrompt(void)
 }
 
 
-void
+static void
 Curses_ShowResponseTime(void)
 {
     if (flag.post)
@@ -257,7 +257,7 @@ Curses_ShowResponseTime(void)
 }
 
 
-void
+static void
 Curses_ShowResults(short score, unsigned short *bstline, char ch)
 {
     unsigned char d, ply;
@@ -301,7 +301,7 @@ ShowScore(short score)
 }
 
 
-void
+static void
 Curses_ShowSidetoMove(void)
 {
     gotoXY(TAB, 14);
@@ -310,7 +310,7 @@ Curses_ShowSidetoMove(void)
 }
 
 
-void
+static void
 Curses_ShowStage(void)
 {
     gotoXY(TAB, 19);
@@ -323,7 +323,7 @@ Curses_ShowStage(void)
  * End of trivial output routines.
  ****************************************/
 
-void
+static void
 Curses_Initialize(void)
 {
     signal(SIGINT, Curses_Die);
@@ -333,7 +333,7 @@ Curses_Initialize(void)
 }
 
 
-void
+static void
 Curses_ExitShogi(void)
 { 
     if (!nolist)
@@ -349,7 +349,7 @@ Curses_ExitShogi(void)
 }
 
 
-void
+static void
 Curses_Die(int sig)
 {
     char s[80];
@@ -368,7 +368,7 @@ Curses_Die(int sig)
 }
 
 
-void
+static void
 Curses_TerminateSearch(int sig)
 {
     signal(SIGINT, SIG_IGN);
@@ -384,7 +384,7 @@ Curses_TerminateSearch(int sig)
 }
 
 
-void
+static void
 Curses_help(void)
 {
     Curses_ClearScreen();
@@ -452,7 +452,7 @@ static const short y0[2] = { 20, 4 };
  * P* will put a pawn to the captured pieces.
  */
 
-void
+static void
 Curses_EditBoard(void)
 {
     short a, c, sq, i;
@@ -601,7 +601,7 @@ UpdateCatched()
 }
 
 
-void
+static void
 Curses_SearchStartStuff(short side)
 {
     short i;
@@ -617,7 +617,7 @@ Curses_SearchStartStuff(short side)
 }
 
 
-void
+static void
 Curses_OutputMove(void)
 {
 
@@ -682,7 +682,7 @@ Curses_OutputMove(void)
 }
 
 
-void
+static void
 Curses_UpdateClocks(void)
 {
     short m, s;
@@ -761,7 +761,7 @@ DrawPiece(short sq)
 /*
  * Curses_ShowPostnValue(): must have called ExaminePosition() first
  */
-void
+static void
 Curses_ShowPostnValue(short sq)
 {
     gotoXY(4 + 5 * VIR_C(sq), 5 + 2 * (7 - VIR_R(sq)));	/* CHECKME */
@@ -784,7 +784,7 @@ Curses_ShowPostnValue(short sq)
 }
 
 
-void
+static void
 Curses_ShowPostnValues(void)
 {
     short sq, score;
@@ -804,7 +804,7 @@ Curses_ShowPostnValues(void)
 }
 
 
-void
+static void
 Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
 {
     short i, sq, z;
@@ -922,7 +922,7 @@ Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
 }
 
 
-void
+static void
 Curses_ChangeAlphaWindow(void)
 {
     Curses_ShowMessage("WAwindow = ");
@@ -932,7 +932,7 @@ Curses_ChangeAlphaWindow(void)
 }
 
 
-void
+static void
 Curses_ChangeBetaWindow(void)
 {
     Curses_ShowMessage("WBwindow = ");
@@ -942,7 +942,7 @@ Curses_ChangeBetaWindow(void)
 }
 
 
-void
+static void
 Curses_GiveHint(void)
 {
     char s[40];
@@ -961,7 +961,7 @@ Curses_GiveHint(void)
 }
 
 
-void
+static void
 Curses_ChangeSearchDepth(char* sx)
 {
     Curses_ShowMessage("depth = ");
@@ -970,7 +970,7 @@ Curses_ChangeSearchDepth(char* sx)
 }
 
 
-void
+static void
 Curses_ChangeHashDepth(void)
 {
     Curses_ShowMessage("hashdepth = ");
@@ -980,7 +980,7 @@ Curses_ChangeHashDepth(void)
 }
 
 
-void
+static void
 Curses_SetContempt(void)
 {
     Curses_ShowMessage("contempt = ");
@@ -988,7 +988,7 @@ Curses_SetContempt(void)
 }
 
 
-void
+static void
 Curses_ChangeXwindow(void)
 {
     Curses_ShowMessage("xwndw= ");
@@ -996,7 +996,7 @@ Curses_ChangeXwindow(void)
 }
 
 
-void
+static void
 Curses_SelectLevel(char *sx)
 {
     int item;
@@ -1106,7 +1106,7 @@ Curses_SelectLevel(char *sx)
 }
 
 
-void
+static void
 Curses_DoDebug(void)
 {
     short c, p, sq, tp, tc, tsq, score;
@@ -1153,7 +1153,7 @@ Curses_DoDebug(void)
 }
 
 
-void
+static void
 Curses_DoTable(short table[NO_SQUARES])
 {
     short  sq;
@@ -1167,7 +1167,7 @@ Curses_DoTable(short table[NO_SQUARES])
 } 
 
 
-void
+static void
 Curses_PollForInput(void)
 {
     int  i;
@@ -1193,7 +1193,7 @@ Curses_PollForInput(void)
 }
 
 
-void
+static void
 Curses_SetupBoard(void)
 {
     Curses_ShowMessage("'setup' command is not supported in Cursesmode");
