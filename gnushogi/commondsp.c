@@ -1621,7 +1621,9 @@ InputCommand(char *command)
         {
             flag.post = 0;
         }
-        else if (strcmp(s, "alg") == 0)
+        else if (strcmp(s, "alg") == 0 ||
+                 strcmp(s, "accepted") == 0 || strcmp(s, "rejected") == 0 ||
+                 strcmp(s, "variant") == 0 || strcmp(s, "computer") == 0)
         {
             /* noop */ ;
         }
@@ -1629,6 +1631,16 @@ InputCommand(char *command)
                  || (strcmp(s, "exit") == 0))
         {
             flag.quit = true;
+        }
+        else if (strcmp(s, "protover") == 0)
+        {
+            printf("feature myname=\"GNU %sShogi %s\" variants=\"%sshogi\" debug=1 setboard=0 done=1\n",
+#ifdef MINISHOGI
+                                       "mini", PACKAGE_VERSION, "5x5+5_"
+#else
+                                         "",   PACKAGE_VERSION, ""
+#endif
+                  );
         }
         else if ((strcmp(s, "set") == 0)
                  || (strcmp(s, "edit") == 0))
@@ -1717,7 +1729,8 @@ InputCommand(char *command)
         {
             SetMachineTime(sx + strlen("time"));
         }
-        else if (strcmp(s, "otime") == 0)
+        else if (strcmp(s, "otime") == 0 ||
+                 (xboard && strcmp(s, "otim")) == 0)
         {
             SetOppTime(sx + strlen("otime"));
         }
