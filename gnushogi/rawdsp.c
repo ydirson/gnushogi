@@ -694,56 +694,67 @@ Raw_SelectLevel(char *sx)
     strncpy(T, sx, NO_SQUARES);
     T[NO_SQUARES] = '\0';
 
-    /* if line empty, ask for input */
-    if (!T[0])
-    {
-        fputs("Enter #moves #minutes: ", stdout);
-        fgets(T, NO_SQUARES + 1, stdin);
-    }
 
-    /* skip blackspace */
-    for (p = T; *p == ' '; p++) ;
-
-    /* could be moves or a fischer clock */
-    if (*p == 'f')
-    {
-        /* its a fischer clock game */
-        char *q;
-        p++;
-        TCminutes = (short)strtol(p, &q, 10);
-        TCadd = (short)strtol(q, NULL, 10) *100;
-        TCseconds = 0;
-        TCmoves = 50;
-    }
-    else
-    {
-        /* regular game */
-        char *q;
-        TCadd = 0;
-        TCmoves = (short)strtol(p, &q, 10);
-        TCminutes = (short)strtol(q, &q, 10);
-
-        if (*q == ':')
-            TCseconds = (short)strtol(q + 1, (char **) NULL, 10);
-        else
+    if (!xboard) {
+        /* if line empty, ask for input */
+        if (!T[0])
+        {
+            fputs("Enter #moves #minutes: ", stdout);
+            fgets(T, NO_SQUARES + 1, stdin);
+        }
+    
+        /* skip blackspace */
+        for (p = T; *p == ' '; p++) ;
+    
+        /* could be moves or a fischer clock */
+        if (*p == 'f')
+        {
+            /* its a fischer clock game */
+            char *q;
+            p++;
+            TCminutes = (short)strtol(p, &q, 10);
+            TCadd = (short)strtol(q, NULL, 10) *100;
             TCseconds = 0;
-
-#ifdef OPERATORTIME
-        fputs("Operator time (hundredths) = ", stdout);
-        scanf("%hd", &OperatorTime);
-#endif
-
-        if (TCmoves == 0)
-        {
-            TCflag = false;
-            MaxResponseTime = TCminutes*60L * 100L + TCseconds * 100L;
-            TCminutes = TCseconds = 0;
+            TCmoves = 50;
         }
         else
         {
-            TCflag = true;
-            MaxResponseTime = 0;
+            /* regular game */
+            char *q;
+            TCadd = 0;
+            TCmoves = (short)strtol(p, &q, 10);
+            TCminutes = (short)strtol(q, &q, 10);
+    
+            if (*q == ':')
+                TCseconds = (short)strtol(q + 1, (char **) NULL, 10);
+            else
+                TCseconds = 0;
+    
+    #ifdef OPERATORTIME
+            fputs("Operator time (hundredths) = ", stdout);
+            scanf("%hd", &OperatorTime);
+    #endif
+    
+            if (TCmoves == 0)
+            {
+                TCflag = false;
+                MaxResponseTime = TCminutes*60L * 100L + TCseconds * 100L;
+                TCminutes = TCseconds = 0;
+            }
+            else
+            {
+                TCflag = true;
+                MaxResponseTime = 0;
+            }
         }
+    } else {
+        int min, sec=0, inc, mps;
+        /* parse regular "level MPS TC INC" command of WB protocol */
+        sscanf(sx, "%d %d %d", &mps, &min, &inc) == 3 ||
+        sscanf(sx, "%d %d:%d %d", &mps, &min, &sec, &inc);
+        TCminutes = min; TCseconds = sec;
+        TCadd = inc*100; TCmoves = mps ? mps : 50;
+        MaxResponseTime = 0; TCflag = true;
     }
 
     TimeControl.clock[black] = TimeControl.clock[white] = 0;
