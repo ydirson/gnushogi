@@ -521,12 +521,15 @@ Raw_OutputMove(void)
     if (mvstr[0][0] == '\0')
         goto nomove;
 
-    if (XSHOGI)
+    mycnt1++;
+    if (XSHOGI && xboard) /* xboard: print move in XBoard format, with 'move' prefix */
+        printf("move %s\n", mvstr[0]);
+    else if (XSHOGI)
         /* add remaining time in milliseconds to xshogi */
-        printf("%d. ... %s %ld\n", ++mycnt1, mvstr[0],
+        printf("%d. ... %s %ld\n", mycnt1, mvstr[0],
                (TimeControl.clock[player] - et) * 10);
     else
-        printf("%d. ... %s\n", ++mycnt1, mvstr[0]);
+        printf("%d. ... %s\n", mycnt1, mvstr[0]);
 
  nomove:
     if ((root->flags & draw) || (root->score == -(SCORE_LIMIT + 999))
