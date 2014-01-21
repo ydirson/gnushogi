@@ -1632,6 +1632,12 @@ InputCommand(char *command)
         {
             flag.quit = true;
         }
+        else if (strcmp(s, "xboard") == 0)
+        {
+            xboard = true;
+            strcpy(ColorStr[0], "White");
+            strcpy(ColorStr[1], "Black");
+        }
         else if (strcmp(s, "protover") == 0)
         {
             printf("feature myname=\"GNU %sShogi %s\" variants=\"%sshogi\" debug=1 setboard=0 sigint=0 done=1\n",
@@ -1775,7 +1781,7 @@ InputCommand(char *command)
             ok = true;
             dsp->UpdateDisplay(0, 0, 1, 0);
         }
-        else if (strcmp(s, "black") == 0)
+        else if (xboard ? strcmp(s, "white") == 0 : strcmp(s, "black") == 0)
         {
             computer = white;
             opponent = black;
@@ -1787,7 +1793,7 @@ InputCommand(char *command)
              * ok = true; don't automatically start with black command
              */
         }
-        else if (strcmp(s, "white") == 0)
+        else if (xboard ? strcmp(s, "black") == 0 : strcmp(s, "white") == 0)
         {
             computer = black;
             opponent = white;
