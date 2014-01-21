@@ -190,7 +190,7 @@ Raw_ShowResponseTime(void)
 static void
 Raw_ShowResults(short score, unsigned short *bstline, char ch)
 {
-    if (flag.post  && !XSHOGI)
+    if (flag.post && (xboard || !XSHOGI))
     {
         ElapsedTime(2);
         printf("%2d%c %6d %4ld %8ld  ",

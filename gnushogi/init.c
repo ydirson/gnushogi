@@ -485,9 +485,10 @@ NewGame(void)
     compptr = oppptr = 0;
     stage = 0;
     stage2 = -1;    /* the game is not yet started */
-    flag.illegal = flag.mate = flag.post = flag.quit
+    flag.illegal = flag.mate = flag.quit
         = flag.reverse = flag.bothsides = flag.onemove = flag.force
         = false;
+    flag.post &= xboard; /* xboard: do not alter post status on 'new' */
     flag.material = flag.coords = flag.hash = flag.easy
         = flag.beep = flag.rcptr
         = true;

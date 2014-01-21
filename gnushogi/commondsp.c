@@ -1615,7 +1615,11 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "post") == 0)
         {
-            flag.post = !flag.post;
+            flag.post = (xboard ? 1 : !flag.post);
+        }
+        else if (strcmp(s, "nopost") == 0)
+        {
+            flag.post = 0;
         }
         else if (strcmp(s, "alg") == 0)
         {

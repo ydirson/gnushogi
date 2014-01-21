@@ -334,9 +334,11 @@ RESET(void)
 {
     short l;
 
-    flag.illegal = flag.mate = flag.post = flag.quit
+    flag.illegal = flag.mate = flag.quit
         = flag.reverse = flag.bothsides = flag.onemove = flag.force
         = false;
+
+    flag.post &= xboard; /* [HGM] xboard: do not clear in XBoard mode */
 
     flag.material = flag.coords = flag.hash = flag.easy
         = flag.beep = flag.rcptr
