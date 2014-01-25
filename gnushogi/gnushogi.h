@@ -170,12 +170,14 @@ extern void movealgbr(short m, char *s);
 #define NO_PTYPE_PIECES 11
 #define NO_COLS          5
 #define NO_ROWS          5
+#define NO_CAMP_ROWS     1
 #else
 #define NO_PIECES       15
 #define MAX_CAPTURED    19
 #define NO_PTYPE_PIECES 15
 #define NO_COLS          9
 #define NO_ROWS          9
+#define NO_CAMP_ROWS     3
 #endif
 #define NO_SQUARES      (NO_COLS*NO_ROWS)
 
@@ -228,13 +230,8 @@ extern void movealgbr(short m, char *s);
 
 
 /* board properties */
-#ifndef MINISHOGI
-#define InBlackCamp(sq) ((sq) < 27)
-#define InWhiteCamp(sq) ((sq) > 53)
-#else
-#define InBlackCamp(sq) ((sq) < 5)
-#define InWhiteCamp(sq) ((sq) > 19)
-#endif
+#define InBlackCamp(sq) ((sq) < (NO_COLS * NO_CAMP_ROWS))
+#define InWhiteCamp(sq) ((sq) >= (NO_COLS * (NO_ROWS - NO_CAMP_ROWS)))
 #define InPromotionZone(side, sq) \
 (((side) == black) ? InWhiteCamp(sq) : InBlackCamp(sq))
 
