@@ -182,7 +182,7 @@ algbr(short f, short t, short flag)
         short piece = flag & pmask;
 
         mvstr[0][0] = pxx[piece];
-        mvstr[0][1] = '*';
+        mvstr[0][1] = xboard ? '@' : '*';
         mvstr[0][2] = COL_NAME(column(t));
         mvstr[0][3] = ROW_NAME(row(t));
         mvstr[0][4] = '\0';

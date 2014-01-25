@@ -182,10 +182,11 @@ extern void movealgbr(short m, char *s);
 #endif
 #define NO_SQUARES      (NO_COLS*NO_ROWS)
 
-#define ROW_NAME(n) ('a' + NO_ROWS - 1 - n)
-#define COL_NAME(n) ('1' + NO_COLS - 1 - n)
-#define ROW_NUM(c) ('a' + NO_ROWS - 1 - c)
-#define COL_NUM(c) ('1' + NO_COLS - 1 - c)
+#define ROW_NAME(n) ( xboard ? '1' + n : ('a' + NO_ROWS - 1 - n) )
+#define COL_NAME(n) ( xboard ? 'a' + n : ('1' + NO_COLS - 1 - n) )
+#define ROW_NUM(c) ( xboard ? c - '1' : ('a' + NO_ROWS - 1 - c) )
+#define COL_NUM(c) ( xboard ? c - 'a' : ('1' + NO_COLS - 1 - c) )
+ 
 
 #if defined HASHFILE || defined CACHE
 #  define PTBLBDSIZE (NO_SQUARES + NO_PIECES)
