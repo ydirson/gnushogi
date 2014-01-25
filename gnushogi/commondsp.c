@@ -94,20 +94,20 @@ movealgbr(short m, char *s)
         s++;
         *s = '*';
         s++;
-        *s = cxx[column(t)];
+        *s = COL_NAME(column(t));
         s++;
-        *s = rxx[row(t)];
+        *s = ROW_NAME(row(t));
         s++;
     }
     else
     {
-        *s = cxx[column(f)];
+        *s = COL_NAME(column(f));
         s++;
-        *s = rxx[row(f)];
+        *s = ROW_NAME(row(f));
         s++;
-        *s = cxx[column(t)];
+        *s = COL_NAME(column(t));
         s++;
-        *s = rxx[row(t)];
+        *s = ROW_NAME(row(t));
         s++;
 
         if (flag & promote)
@@ -182,8 +182,8 @@ algbr(short f, short t, short flag)
 
         mvstr[0][0] = pxx[piece];
         mvstr[0][1] = '*';
-        mvstr[0][2] = cxx[column(t)];
-        mvstr[0][3] = rxx[row(t)];
+        mvstr[0][2] = COL_NAME(column(t));
+        mvstr[0][3] = ROW_NAME(row(t));
         mvstr[0][4] = '\0';
         strcpy(mvstr[1], mvstr[0]);
         strcpy(mvstr[2], mvstr[0]);
@@ -192,10 +192,10 @@ algbr(short f, short t, short flag)
     else if ((f != 0) || (t != 0))
     {
         /* pure coordinates notation */
-        mvstr[0][0] = cxx[column(f)];
-        mvstr[0][1] = rxx[row(f)];
-        mvstr[0][2] = cxx[column(t)];
-        mvstr[0][3] = rxx[row(t)];
+        mvstr[0][0] = COL_NAME(column(f));
+        mvstr[0][1] = ROW_NAME(row(f));
+        mvstr[0][2] = COL_NAME(column(t));
+        mvstr[0][3] = ROW_NAME(row(t));
         mvstr[0][4] = '\0';
 
         /* algebraic notation without disambiguation */

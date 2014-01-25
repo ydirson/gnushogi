@@ -117,8 +117,8 @@ Balgbr(short f, short t, short flag)
             short piece = flag & pmask;
             bmvstr[0][0] = pxx[piece];
             bmvstr[0][1] = '*';
-            bmvstr[0][2] = cxx[column(t)];
-            bmvstr[0][3] = rxx[row(t)];
+            bmvstr[0][2] = COL_NAME(column(t));
+            bmvstr[0][3] = ROW_NAME(row(t));
             bmvstr[0][4] = bmvstr[2][0] = '\0';
             strcpy(bmvstr[1], bmvstr[0]);
             bmvstr[1][1] = '\'';
@@ -130,10 +130,10 @@ Balgbr(short f, short t, short flag)
                 /* algebraic notation */
                 /* bmvstr[0]: 7g7f bmvstr[1]:
                  * (+)P7g7f(+) bmvstr[2]: (+)P7f(+) */
-                bmvstr[0][0] = cxx[column(f)];
-                bmvstr[0][1] = rxx[row(f)];
-                bmvstr[0][2] = cxx[column(t)];
-                bmvstr[0][3] = rxx[row(t)];
+                bmvstr[0][0] = COL_NAME(column(f));
+                bmvstr[0][1] = ROW_NAME(row(f));
+                bmvstr[0][2] = COL_NAME(column(t));
+                bmvstr[0][3] = ROW_NAME(row(t));
                 bmvstr[0][4] = '\0';
 
                 if (promoted)

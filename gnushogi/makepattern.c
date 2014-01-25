@@ -124,7 +124,7 @@ ScanPiece(char **s, small_short *side,
         /* determine column */
         for (c = 0; c < NO_COLS; c++)
         {
-            if (**s == cxx[c])
+            if (**s == COL_NAME(c))
             {
                 (*s)++;
                 break;
@@ -137,7 +137,7 @@ ScanPiece(char **s, small_short *side,
         /* determine row */
         for (r = 0; r < NO_ROWS; r++)
         {
-            if (**s == rxx[r])
+            if (**s == ROW_NAME(r))
             {
                 (*s)++;
                 break;

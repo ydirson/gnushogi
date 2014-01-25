@@ -326,13 +326,9 @@ enum {
 #ifndef MINISHOGI
 #define pxx (" PLNSGBRPLNSBRK ")
 #define qxx (" plnsgbrplnsbrk ")
-#define rxx ("ihgfedcba")
-#define cxx ("987654321")
 #else
 #define pxx (" PSGBRPSBRK ")
 #define qxx (" psgbrpsbrk ")
-#define rxx ("edcba")
-#define cxx ("54321")
 #endif
 
 /***************** Table limits ********************************************/
