@@ -1,5 +1,5 @@
 #
-# Makefile for GNU Shogi and xshogi
+# Makefile for GNU Shogi
 #
 # Copyright (c) 1993, 1994 Matthias Mutz
 # Copyright (c) 1998, 1999 Michael Vanier and the Free Software Foundation
@@ -28,7 +28,6 @@
 ROOT        = @top_srcdir@
 BUILDROOT   = @top_builddir@
 GNUSHOGIDIR = $(BUILDROOT)/gnushogi
-XSHOGIDIR   = $(BUILDROOT)/xshogi
 
 PROGNAME = @PROGNAME@
 
@@ -36,7 +35,7 @@ PROGNAME = @PROGNAME@
 # Default targets.
 #
 
-all : gnushogi_compile pat2inc bbk @XSHOGI@
+all : gnushogi_compile pat2inc bbk
 
 
 #
@@ -51,9 +50,6 @@ pat2inc:
 
 sizetest:
 	-cd $(GNUSHOGIDIR) && $(MAKE) sizetest
-
-xshogi_compile:
-	-cd $(XSHOGIDIR) && $(MAKE)
 
 bbk:
 	-cd $(GNUSHOGIDIR) && $(MAKE) $(PROGNAME).bbk
@@ -70,13 +66,10 @@ win32/Makefile: misc/mkmakefile.mingw-on-cygwin
 # Installation.
 #
 
-install: gnushogi_install @XSHOGIINSTALL@
+install: gnushogi_install
 
 gnushogi_install:
 	-cd $(GNUSHOGIDIR) && $(MAKE) install
-
-xshogi_install: $(XSHOGIDIR)/xshogi
-	-cd $(XSHOGIDIR) && $(MAKE) install
 
 
 
@@ -84,13 +77,10 @@ xshogi_install: $(XSHOGIDIR)/xshogi
 # Cleanup.
 #
 
-clean: gnushogi_clean @XSHOGICLEAN@ doc_clean
+clean: gnushogi_clean doc_clean
 
 gnushogi_clean:
 	cd $(GNUSHOGIDIR) && $(MAKE) clean
-
-xshogi_clean:
-	cd $(XSHOGIDIR) && $(MAKE) clean
 
 doc_clean:
 	cd $(BUILDROOT)/doc && $(MAKE) clean
@@ -120,7 +110,7 @@ dist:
 DISTCLEANFILES = \
 	config.cache config.log config.status config.h Makefile \
     $(GNUSHOGIDIR)/Makefile $(GNUSHOGIDIR)/Makefile.profile \
-    $(XSHOGIDIR)/Makefile autom4te.cache
+    autom4te.cache
 
 distclean: clean
 	rm -rf $(DISTCLEANFILES)

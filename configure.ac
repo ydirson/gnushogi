@@ -12,16 +12,7 @@ AC_CONFIG_HEADER(config.h)
 ##########
 AC_MSG_NOTICE([C compiler])
 AC_PROG_CC
-
-##########
-AC_MSG_NOTICE([yacc/bison, lex/flex, and install])
-AC_PROG_YACC
-AC_PROG_LEX
 AC_PROG_INSTALL
-
-##########
-AC_MSG_NOTICE([X])
-AC_PATH_XTRA
 
 ##########
 AC_MSG_NOTICE([libs])
@@ -97,11 +88,10 @@ AC_CHECK_SIZEOF(long)
 ##########
 AC_MSG_NOTICE([library functions])
 
-AC_FUNC_FORK
 AC_PROG_GCC_TRADITIONAL
 AC_FUNC_MALLOC
 AC_TYPE_SIGNAL
-AC_CHECK_FUNCS([dup2 gethostname gettimeofday memset pow strcasecmp])
+AC_CHECK_FUNCS([gettimeofday memset pow])
 AC_CHECK_FUNCS([strchr strerror strrchr strstr strtol])
 AC_CHECK_FUNCS([memcpy bcopy])
 AC_CHECK_FUNCS([setvbuf setlinebuf])
@@ -120,68 +110,9 @@ AC_SUBST([PROGNAME], [gnuminishogi])
 [AC_SUBST([PROGNAME], [gnushogi])
 ])
 
-OPT=
-FIRST_SHOGI_PROGRAM=gnushogi
-SECOND_SHOGI_PROGRAM=gnushogi
-FIRST_HOST=localhost
-SECOND_HOST=localhost
-
-AC_ARG_ENABLE([xshogi],
-AS_HELP_STRING([--enable-xshogi],
-  [compile the xshogi graphical interface to GNU shogi (default: no)]),
-[enable_xshogi=$enableval],
-[enable_xshogi=no])
-
-AC_ARG_WITH([top-part-bitmaps],
-AS_HELP_STRING([--with-top-part-bitmaps],
-  [use top part of Kanji bitmaps only in xshogi]),
-[OPT=-DTOP_PART_BITMAPS])
-
-AC_ARG_WITH([first-shogi-program],
-AS_HELP_STRING([--with-first-shogi-program=PROGNAME],
-  [use PROGNAME as the first shogi program in xshogi (default: gnushogi)]),
-[FIRST_SHOGI_PROGRAM=$withval])
-
-AC_ARG_WITH([second-shogi-program],
-AS_HELP_STRING([--with-second-shogi-program=PROGNAME],
-  [use PROGNAME as the second shogi program in xshogi (default: gnushogi)]),
-[SECOND_SHOGI_PROGRAM=$withval])
-
-AC_ARG_WITH([first-host],
-AS_HELP_STRING([--with-first-host=HOSTNAME],
-  [use HOSTNAME as the machine on which the first shogi program runs in xshogi (default: localhost)]),
-[FIRST_HOST=$withval])
-
-AC_ARG_WITH([second-host],
-AS_HELP_STRING([--with-second-host=HOSTNAME],
-  [use HOSTNAME as the machine on which the second shogi program runs in xshogi (default: localhost)]),
-[SECOND_HOST=$withval])
-
-AC_SUBST(OPT)
-AC_SUBST(FIRST_SHOGI_PROGRAM)
-AC_SUBST(SECOND_SHOGI_PROGRAM)
-AC_SUBST(FIRST_HOST)
-AC_SUBST(SECOND_HOST)
-
-if [[ $enable_xshogi = yes ]]
-then
-XSHOGI=xshogi_compile
-XSHOGIINSTALL=xshogi_install
-XSHOGICLEAN=xshogi_clean
-else
-XSHOGI=
-XSHOGIINSTALL=
-XSHOGICLEAN=
-fi
-
-AC_SUBST(XSHOGI)
-AC_SUBST(XSHOGIINSTALL)
-AC_SUBST(XSHOGICLEAN)
-
 ##########
 AC_CONFIG_FILES([Makefile
                  gnushogi/Makefile
                  win32/config.h
-                 doc/Makefile
-                 xshogi/Makefile])
+                 doc/Makefile])
 AC_OUTPUT

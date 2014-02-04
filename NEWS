@@ -1,6 +1,11 @@
 GNU shogi news
 --------------
 
+Changes in version 1.4.2 (unreleased):
+
+* XShogi is no longer included in the GNU Shogi source, it is
+  available as a separate source archive.
+
 Changes in version 1.4.1 (01/2014):
 
 * Initial support for the MiniShogi variant, for now as a separate
