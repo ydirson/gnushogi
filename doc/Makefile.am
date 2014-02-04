@@ -23,8 +23,7 @@
 info_TEXINFOS = gnushogi.texi
 AM_MAKEINFOHTMLFLAGS = --split=section
 
-dist_man_MANS = gnushogi.6 @XSHOGIMAN@
-EXTRA_MANS = xshogi.6
+dist_man_MANS = gnushogi.6
 
 dist_doc_DATA = \
 	BOOKFILES \
