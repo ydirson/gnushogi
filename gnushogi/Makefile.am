@@ -58,7 +58,12 @@ gnuminishogi_CPPFLAGS = \
 	-DBOOK=\"$(pkglibdir)/gnuminishogi.tbk\" \
 	-DBINBOOK=\"$(pkglibdir)/gnuminishogi.bbk\"
 
+BUILTHEADERS = \
+	gnushogi-pattern.inc \
+	gnuminishogi-pattern.inc
+
 noinst_HEADERS = \
+	$(BUILTHEADERS) \
 	book.h \
 	debug.h \
 	eval.h \
@@ -98,9 +103,7 @@ EXTRA_gnushogi_SOURCES = \
 EXTRA_gnuminishogi_SOURCES = \
 	cursesdsp.c
 
-BUILT_SOURCES = \
-	gnushogi-pattern.inc \
-	gnuminishogi-pattern.inc
+BUILT_SOURCES = $(BUILTHEADERS)
 
 gnushogi_DEPENDENCIES = @CURSESDSP@
 gnushogi_LDADD = @CURSESDSP@ @LIBCURSES@
