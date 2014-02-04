@@ -114,17 +114,17 @@ pat2inc_SOURCES = \
 
 pat2inc_LDADD = @LIBCURSES@
 
-gnushogi-pattern.inc: $(top_srcdir)/misc/gnushogi.pat pat2inc
+gnushogi-pattern.inc: $(top_srcdir)/misc/gnushogi.pat pat2inc$(EXEEXT)
 	./pat2inc $< $@
-gnuminishogi-pattern.inc: $(top_srcdir)/misc/gnuminishogi.pat pat2inc
+gnuminishogi-pattern.inc: $(top_srcdir)/misc/gnuminishogi.pat pat2inc$(EXEEXT)
 	./pat2inc $< $@
 
-gnushogi.bbk: $(top_srcdir)/misc/gnushogi.tbk gnushogi
+gnushogi.bbk: $(top_srcdir)/misc/gnushogi.tbk gnushogi$(EXEEXT)
 	rm -f $@
 	cat $< > _tmp_t
 	echo quit | ./gnushogi -R -b _tmp_t -B $@ -S 8000 -P 40 3 0
 	rm _tmp_t
-gnuminishogi.bbk: $(top_srcdir)/misc/gnuminishogi.tbk gnuminishogi
+gnuminishogi.bbk: $(top_srcdir)/misc/gnuminishogi.tbk gnuminishogi$(EXEEXT)
 	rm -f $@
 	cat $< > _tmp_t
 	echo quit | ./gnuminishogi -R -b _tmp_t -B $@ -S 8000 -P 40 3 0
