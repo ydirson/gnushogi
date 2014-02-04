@@ -59,7 +59,7 @@ AC_CHECK_LIB([termcap], [tgoto])
 
 if [[ $ac_cv_c_compiler_gnu = yes ]]
 then
-WARNINGS="-Wall -Wno-implicit-int -Wstrict-prototypes -ansi"
+WARNINGS="-Wall -Wno-implicit-int -Wstrict-prototypes"
 CEXTRAFLAGS="-fsigned-char -funroll-loops"
 else
 # Who knows what warnings your compiler uses?
