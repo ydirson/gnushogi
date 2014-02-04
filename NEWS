@@ -4,6 +4,9 @@ GNU shogi news
 Changes in version 1.5.0 (unreleased):
 
 * Build system switched from pure autoconf to automake
+* Support for cross-compilation using standard "./configure --host=...",
+  including building windows binaries (both 32bit and 64bit) using
+  the gcc-mingw toolchain
 
 Changes in version 1.4.2 (unreleased):
 

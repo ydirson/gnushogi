@@ -11,6 +11,8 @@ Makefile.in
 /ylwrap
 /stamp-h1
 /INSTALL
+/config.guess
+/config.sub
 
 /autom4te.cache/
 /config.log

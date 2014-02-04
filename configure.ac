@@ -13,6 +13,7 @@ AC_CONFIG_HEADER(config.h)
 ##########
 AC_MSG_NOTICE([C compiler])
 AC_PROG_CC
+AC_CANONICAL_BUILD
 AC_PROG_INSTALL
 
 ##########
