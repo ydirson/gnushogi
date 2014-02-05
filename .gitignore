@@ -36,6 +36,7 @@ Makefile
 /xshogi/xshogi
 
 /doc/gnushogi*.info
+/doc/texinfo.tex
 /doc/gnushogi/
 /doc/*.ps
 /doc/*.pdf
