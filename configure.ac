@@ -123,6 +123,5 @@ fi
 ##########
 AC_CONFIG_FILES([Makefile
                  gnushogi/Makefile
-                 win32/config.h
                  doc/Makefile])
 AC_OUTPUT
