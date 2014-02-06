@@ -3,6 +3,8 @@ Target for v1.5:
 - integrate H.G.Muller's work on the xboard protocol on top of new driver-like
   display handling
 - deprecate xshogi in favor of xboard
+- use ~/.gnushogi for binary book and hash file
+
 - make minishogi a run-time option rather than a compile-time one,
   using the "variant" mechanism of the xboard protocol
 

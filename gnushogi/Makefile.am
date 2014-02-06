@@ -25,7 +25,7 @@ pkgbindatadir = $(pkglibdir)
 bin_PROGRAMS = gnushogi gnuminishogi
 noinst_PROGRAMS = pat2inc sizetest
 
-pkgbindata_DATA = gnushogi.bbk
+pkgbindata_DATA = $(top_srcdir)/misc/gnushogi.tbk
 # gnuminishogi.bbk would be empty
 
 AM_CFLAGS = @CEXTRAFLAGS@ @WARNINGS@
@@ -118,6 +118,8 @@ gnushogi-pattern.inc: $(top_srcdir)/misc/gnushogi.pat pat2inc$(EXEEXT)
 	./pat2inc $< $@
 gnuminishogi-pattern.inc: $(top_srcdir)/misc/gnuminishogi.pat pat2inc$(EXEEXT)
 	./pat2inc $< $@
+
+# optional support for prebuilding a bbk
 
 gnushogi.bbk: $(top_srcdir)/misc/gnushogi.tbk gnushogi$(EXEEXT)
 	rm -f $@
