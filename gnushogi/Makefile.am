@@ -122,6 +122,10 @@ gnushogi-pattern.inc: $(top_srcdir)/misc/gnushogi.pat pat2inc$(EXEEXT)
 gnuminishogi-pattern.inc: $(top_srcdir)/misc/gnuminishogi.pat pat2inc$(EXEEXT)
 	./pat2inc $< $@
 
+# just get *.inc generated
+gnushogi_bootstrap: $(BUILTHEADERS)
+	:
+
 # optional support for prebuilding a bbk
 
 gnushogi.bbk: $(top_srcdir)/misc/gnushogi.tbk gnushogi$(EXEEXT)
