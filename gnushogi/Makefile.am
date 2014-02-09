@@ -23,7 +23,8 @@
 pkgbindatadir = $(pkglibdir)
 
 bin_PROGRAMS = gnushogi gnuminishogi
-noinst_PROGRAMS = pat2inc sizetest
+noinst_PROGRAMS = @PAT2INC@ sizetest
+EXTRA_PROGRAMS = pat2inc
 
 pkgbindata_DATA = $(top_srcdir)/misc/gnushogi.tbk
 # gnuminishogi.bbk would be empty
@@ -117,9 +118,9 @@ pat2inc_SOURCES = \
 
 pat2inc_LDADD = @LIBCURSES@
 
-gnushogi-pattern.inc: $(top_srcdir)/misc/gnushogi.pat pat2inc$(EXEEXT)
+gnushogi-pattern.inc: $(top_srcdir)/misc/gnushogi.pat @PAT2INCEXE@
 	./pat2inc $< $@
-gnuminishogi-pattern.inc: $(top_srcdir)/misc/gnuminishogi.pat pat2inc$(EXEEXT)
+gnuminishogi-pattern.inc: $(top_srcdir)/misc/gnuminishogi.pat @PAT2INCEXE@
 	./pat2inc $< $@
 
 # just get *.inc generated

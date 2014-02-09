@@ -112,6 +112,14 @@ AC_SUBST([PROGNAME], [gnuminishogi])
 ])
 
 ##########
+
+# don't build pat2inc when cross-compiling, we don't need it
+if test "$cross_compiling" = no; then
+   AC_SUBST([PAT2INC], [pat2inc])
+   AC_SUBST([PAT2INCEXE], [pat2inc$(EXEEXT)])
+fi
+
+##########
 AC_CONFIG_FILES([Makefile
                  gnushogi/Makefile
                  win32/config.h
