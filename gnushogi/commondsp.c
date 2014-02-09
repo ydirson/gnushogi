@@ -1634,7 +1634,7 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "protover") == 0)
         {
-            printf("feature myname=\"GNU %sShogi %s\" variants=\"%sshogi\" debug=1 setboard=0 done=1\n",
+            printf("feature myname=\"GNU %sShogi %s\" variants=\"%sshogi\" debug=1 setboard=0 sigint=0 done=1\n",
 #ifdef MINISHOGI
                                        "mini", PACKAGE_VERSION, "5x5+5_"
 #else
