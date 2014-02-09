@@ -91,7 +91,6 @@ AC_CHECK_SIZEOF(long)
 AC_MSG_NOTICE([library functions])
 
 AC_PROG_GCC_TRADITIONAL
-AC_FUNC_MALLOC
 AC_TYPE_SIGNAL
 AC_CHECK_FUNCS([gettimeofday memset pow])
 AC_CHECK_FUNCS([strchr strerror strrchr strstr strtol])
