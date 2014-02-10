@@ -128,6 +128,10 @@ GNU shogi is a program that plays shogi, the Japanese version of chess,
 against a human (or computer) opponent.  This file describes how to use
 GNU shogi and also gives background information about the game of shogi.
 
+In 1994, GNU Shogi 1.2p02, then developed by Matthias Mutz, played in
+the 5th Computer Shogi Championship, and finished 17th out of 22
+opponents.
+
 This file describes GNU Shogi version 1.4.1, but most of it was
 written for version 1.3.2 by Mike Vanier
 @email{mvanier@@cs.caltech.edu}, maintainer of GNU shogi at that time.
