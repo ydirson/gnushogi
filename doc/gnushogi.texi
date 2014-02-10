@@ -151,6 +151,15 @@ graphical interfaces:
 
 @enumerate
 @item
+@uref{http://www.gnu.org/software/xboard/, XBoard/Winboard}, a GUI for
+much more than Shogi, part of the GNU Project.  While XBoard has been
+supporting Shogi for a long time, current version only makes it easy
+to use a Chessified western-looking set of pieces; upcoming version
+XBoard 4.8 will allow easy usage of traditional japanese pieces.
+Supported by GNU Shogi since version 1.5.0 only: 1.4.x and earlier
+versions cannot talk to it.
+
+@item
 @uref{http://repo.or.cz/w/tagua/yd.git, Tagua}, a KDE-based GUI for
 Chess and Shogi. Developement stopped several years ago, and it is
 still somewhat maintained at Debian.  Probably the most sophisticated
@@ -168,22 +177,16 @@ successor to Tagua, but development of this still young program seem
 to have stalled.
 
 @item
-@uref{http://www.gnu.org/software/xboard/, XBoard/Winboard}, a GUI for
-much more than Shogi, part of the GNU Project.  Patches for GNU Shogi
-to support it are being integrated into the developement version,
-1.4.x and earlier versions cannot talk to it.
-
-@item
-@uref{http://ftp.gnu.org/gnu/gnushogi/, XShogi}, an X-Window graphical
+@uref{http://ftp.gnu.org/gnu/gnushogi/, XShogi}, an X Window graphical
 interface to gnushogi, forked off GNU XBoard years ago, and far from
 today's UI standards. It has barely been maintained recently, while
-XBoard has grown much and is able to play Shogi, and will be soon
-retired.
+XBoard has grown much and is able to play Shogi; XShogi is now
+deprecated and will soon be retired.
 
 The GNU Shogi distribution used to contain the 'xshogi' program, In
 future versions, GNU Shogi will be able to use XBoard as a GUI and
-XShogi will be retired.  XShogi is still available as a separate
-source archive on the GNU project FTP server.
+XShogi will be retired, replaced by XBoard.  XShogi is still available
+as a separate source archive on the GNU project FTP server.
 
 @end enumerate
 
@@ -788,7 +791,7 @@ links}).  I have made some minor corrections.  Note that captures are
 denoted by the ``x'' symbol e.g. Rx3f and drops are denoted by the ``*''
 symbol e.g. R*3f.  Check is indicated by a ``+'' after the move,
 e.g. R3f+.  I recommend you use a graphical interface to play along with this
-game.  In xshogi simply hit the ``Force Moves'' button after starting
+game.  In XBoard or XShogi simply hit the ``Force Moves'' button after starting
 up, while in gnushogi enter the word ``force'' at the prompt.  This will
 allow you to enter moves for both sides.
 
@@ -1292,11 +1295,12 @@ looks for a book file.  If it is present it adds its contents to the
 binbook data.  If the binbook file is writable a new combined binbook
 file is written.
 
-Gnushogi is a modified version of the gnuchess program.  It has a simple
-alphanumeric board display, or it can be used with the xshogi program
-under X windows.  The program gets its opening moves from the file
-gnushogi.bbk which is located in a directory specified in the Makefile.
-To invoke the program type:
+Gnushogi is a modified version of the gnuchess program.  It has a
+simple alphanumeric board display, or it can be used with a graphical
+interface like XBoard under X Window, or Winboard under Windows.  The
+program gets its opening moves from the file gnushogi.bbk which is
+located in a directory specified in the Makefile.  To invoke the
+program type:
 
 @table @samp
 
@@ -1304,7 +1308,7 @@ To invoke the program type:
 simple curses based version
 
 @item  gnushogi -X (or just gnushogi)
-xshogi compatible version
+XBoard/XShogi compatible version
 
 @item gnushogi -R
 raw test display version
@@ -1433,7 +1437,7 @@ Show version and patchlevel.
 Use value as the evaluation window xwndw.
 
 @item  -X   
-Use xshogi display mode (the default).
+Use XBoard/XShogi display mode (the default).
 
 @end table
 
@@ -1650,16 +1654,16 @@ causes the computer to play as Black; if the computer is to move
 first the go command must be given.
 
 @item xget 
-read an xshogi position file.
+read an XShogi position file.
 
 @item xsave 
-save as an xshogi position file.
+save as an XShogi position file.
 
 @item xwndw 
 change X window. The window around alpha/beta used to determine whether
 the position should be scored or just estimated.  Note: this has
-@emph{nothing} to do with xshogi or X windows; the terms are completely
-separate.
+@emph{nothing} to do with XBoard, XShogi or X Window; the terms are
+completely separate.
 
 @end table
 

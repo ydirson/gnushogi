@@ -3,6 +3,8 @@ GNU shogi news
 
 Changes in version 1.5.0 (unreleased):
 
+* XBoard protocol support, enabling the use of XBoard as a graphical
+  interface, officially deprecating XShogi.
 * Build system switched from pure autoconf to automake
 * Support for cross-compilation using standard "./configure --host=...",
   including building windows binaries (both 32bit and 64bit) using
