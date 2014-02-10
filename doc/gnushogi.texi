@@ -99,7 +99,6 @@ Copyright @copyright{} 1999 Michael C. Vanier and the Free Software Foundation
 * Introduction::         What is GNU shogi?
 * About shogi::          General information, rules, etc.
 * gnushogi::             How to play GNU shogi (gnushogi).
-* xshogi::               The X interface to GNU shogi.
 * References and links:: Where to go for more information.
 * Acknowledgements::
 * Bugs::                 Where and how to report bugs.
@@ -141,17 +140,49 @@ GNU Shogi is actually one program, 'gnushogi', the text-based program
 which also contains the game-playing engine.  By default it will play
 Standard Shogi, but can be built to play Mini Shogi (with GNU Shogi
 1.4.x, you will need to do that explicitely using `./configure
---enable-minishogi'', but 1.5 will make this more straightforward).
+--enable-minishogi', but 1.5 will make this more straightforward).
 
-The GNU Shogi distribution also contains the 'xshogi' program, an
-X-Window graphical interface to gnushogi.  XShogi was forked off GNU
-XBoard years ago, is far from today's UI standards, and has barely
-been maintained recently, while XBoard has grown much and is able to
-play Shogi.  In future versions, GNU Shogi will be able to use XBoard
-as a GUI and XShogi will be retired.
+Most players will just run GNU Shogi through one of the compatible
+graphical interfaces:
 
-Since xshogi invokes gnushogi, most players will just type ``xshogi''
-and start playing.
+@enumerate
+@item
+@uref{http://repo.or.cz/w/tagua/yd.git, Tagua}, a KDE-based GUI for
+Chess and Shogi. Developement stopped several years ago, and it is
+still somewhat maintained at Debian.  Probably the most sophisticated
+and best-looking free GUI available today.
+
+@item
+@uref{https://alioth.debian.org/projects/omaha/, Omaha}, a generic
+board-game GUI, supporting Shogi and other games, with currently only
+a Gtk2-based UI.  Still under developement, but already usable for
+casual games.
+
+@item
+@uref{https://github.com/pcapriotti/kaya, Kaya}, a small KDE-based GUI
+successor to Tagua, but development of this still young program seem
+to have stalled.
+
+@item
+@uref{http://www.gnu.org/software/xboard/, XBoard/Winboard}, a GUI for
+much more than Shogi, part of the GNU Project.  Patches for GNU Shogi
+to support it are being integrated into the developement version,
+1.4.x and earlier versions cannot talk to it.
+
+@item
+@uref{http://ftp.gnu.org/gnu/gnushogi/, XShogi}, an X-Window graphical
+interface to gnushogi, forked off GNU XBoard years ago, and far from
+today's UI standards. It has barely been maintained recently, while
+XBoard has grown much and is able to play Shogi, and will be soon
+retired.
+
+The GNU Shogi distribution used to contain the 'xshogi' program, In
+future versions, GNU Shogi will be able to use XBoard as a GUI and
+XShogi will be retired.  XShogi is still available as a separate
+source archive on the GNU project FTP server.
+
+@end enumerate
+
 
 Disclaimer: I use the personal pronouns ``him'', ``his'' etc. to refer
 to a shogi player regardless of gender.  That's easier than writing
@@ -257,9 +288,9 @@ identity of a given piece is indicated by two Japanese Kanji characters
 on each piece.  In fact, only the top character is needed to identify
 the piece and thus only the top character is used in shogi diagrams.  I
 will use alphabetical equivalents in the diagrams here; to see what the
-Kanji characters look like, start up xshogi (@pxref{xshogi}) and compare
-the starting setup there with the starting setup in this file
-(@pxref{The opening setup}).
+Kanji characters look like, start up a graphical interface
+(@pxref{Introduction}) and compare the starting setup there with the
+starting setup in this file (@pxref{The opening setup}).
 
 The object of the game is to capture the opponent's King.  The board is
 a grid of 9x9 uncolored squares, and pieces are placed on the squares.
@@ -752,7 +783,7 @@ This game was annotated by Pieter Stouten (@pxref{References and
 links}).  I have made some minor corrections.  Note that captures are
 denoted by the ``x'' symbol e.g. Rx3f and drops are denoted by the ``*''
 symbol e.g. R*3f.  Check is indicated by a ``+'' after the move,
-e.g. R3f+.  I recommend you use gnushogi/xshogi to play along with this
+e.g. R3f+.  I recommend you use a graphical interface to play along with this
 game.  In xshogi simply hit the ``Force Moves'' button after starting
 up, while in gnushogi enter the word ``force'' at the prompt.  This will
 allow you to enter moves for both sides.
@@ -1235,7 +1266,7 @@ dropping a piece.
 @c gnushogi.
 @c --------------------
 
-@node    gnushogi, xshogi, About shogi, Top
+@node    gnushogi, References and links, About shogi, Top
 @chapter gnushogi
 @cindex  gnushogi
 
@@ -1294,9 +1325,6 @@ specified.
 
 If no argument is given the program will prompt the user for level of
 play.
-
-For use with xshogi see the documentation on that program.
-@xref{xshogi}.
 
 @page
 
@@ -1632,415 +1660,11 @@ separate.
 @end table
 
 
-@c --------------------
-@c xshogi.
-@c --------------------
-
-@node    xshogi, References and links, gnushogi, Top
-@chapter xshogi
-@cindex  xshogi
-
-This section describes how to run the ``xshogi'' program.
-
-SYNOPSIS
-
-xshogi [ options ]
-
-DESCRIPTION
-
-xshogi provides an X11/Xt/Athena Widgets user interface for gnushogi.
-With xshogi you can play gnushogi, set up arbitrary positions, force
-variations, or watch xshogi manage a game between two shogi programs.
-Furthermore, it can be used as an interface between two players on
-different displays.
-
-xshogi can also be used as a shogi board to play out games.  It will
-read through a game file or allow a player to play through a variation
-manually (force mode).  This is useful for keeping track of email postal
-games or browsing games off the net.
-
-After starting xshogi, you can make moves by pressing mouse button 1
-while the cursor is over a square with your piece on it and dragging the
-mouse to another square.  If the move is illegal, gnushogi will not
-allow it.  xshogi will then retract the move.
-
-COMMAND-LINE OPTIONS
-
-The following command line options also correspond to X resources that
-you can set in your .Xdefaults file.
-
-@table @samp
-
-@item [standard Xt options]
-xshogi accepts standard Xt options like -display, -geometry, and
--iconic.
-
-@item -tc or -timeControl minutes[:seconds]
-Amount of time for a set of moves determined by movesPerSession.  If
-this number of moves is played within the time control period, xshogi
-resets the time clocks.  Default: 5 minutes.
-
-@item -mps or -movesPerSession moves
-Number of moves in a time control period.  Default: 40 moves.
-
-@item -st or -searchTime minutes[:seconds]
-Tell gnushogi to spend at most the given amount of time searching for
-each of its moves.  Without this option, gnushogi chooses its search
-time based on the number of moves and amount of time remaining until the
-next time control.  Setting this option also sets -clockMode to False.
-
-@item -sd or -searchDepth number
-Tell gnushogi to look ahead at most the given number of moves when
-searching for a move to make.  Without this option, gnushogi chooses
-its search depth based on the number of moves and amount of time
-remaining until the next time control.  Setting this option also sets
--clockMode to False.
-
-@item -clock or -clockMode (True | False)
-Determines whether or not to use the clock.  If clockMode is False, the
-clock does not run, but the side that is to play next is still
-highlighted.
-
-@item -td or -timeDelay seconds
-Time delay between moves during ``Load Game''.  This doesn't have to be
-a round number.  Try -td 0.4.  Default: 1 second.
-
-@item -nsp or -noShogiProgram (True | False)
-If this option is True, xshogi acts as a passive shogi board; it does
-not try to start a shogi program, not even to check whether moves made
-in Force mode are legal.  It also sets -clockMode to False.  Default:
-False.
-
-@item -fsp or -firstShogiProgram program
-Name of first shogi program.  In matches between two machines, this
-program plays white.  Default: ``gnushogi''.
-
-@item -ssp or -secondShogiProgram program
-Name of second shogi program, if needed.  In matches between two
-machines, this program plays black; otherwise it is not started.
-Default: ``gnushogi''.
-
-@item -fh or -firstHost host
-Name of host the first shogi program plays on.  Default: ``localhost''.
-
-@item -sh or -secondHost host
-Name of host the second shogi program plays on.  Default: ``localhost''.
-
-@item -rsh or -remoteShell shell_name
-Some systems do not use rsh as the remote shell.  This option allows a
-user to name the remote shell command.  This should be done in the
-resource file.
-
-@item -mm or -matchMode (False | Init | Position | Opening)
-Automatically run a game between firstShogiProgram and
-secondShogiProgram.  If matchMode is set to Init, xshogi will start the
-game with the initial shogi position.  If matchMode is set to Position,
-xshogi will start the game with the position specified by the
-loadPositionFile resource.  If matchMode is set to Opening, xshogi will
-play out the opening moves specified by the -loadGameFile resource.  If
-the -saveGameFile resource is set, a move record for the match will be
-saved in the specified file.  Default: ``False''.
-
-@item -lgf or -loadGameFile file
-Name of file to read a game record from.  Game files are found in the
-directory named by the SHOGIDIR environment variable.  If this variable
-is not set, the current directory is used unless the file name starts
-with a /.
-
-@item -lpf or -loadPositionFile file
-Name of file to read a game position from.  Position files are found in
-the directory named by the SHOGIDIR environment variable.  If this
-variable is not set, the current directory is used unless the file name
-starts with a /.
-
-@item -sgf or -saveGameFile file
-Name of file to save a game record to.  Game files are saved in the
-directory named by the SHOGIDIR environment variable.  If this variable
-is not set, the current directory is used unless the file name starts
-with a /.
-
-@item -spf or -savePositionFile file
-Name of file to save a game position to.  Position files are saved in
-the directory named by the SHOGIDIR environment variable.  If this
-variable is not set, the current directory is used unless the file name
-starts with a /.
-
-@item -coords or -showCoords (True | False)
-If this option is True, xshogi displays algebraic coordinates along the
-board's left and bottom edges.  The default is False.  The coordFont
-resource specifies what font to use.
-
-@item -mono or -monoMode (True | False)
-Determines whether xshogi displays its pieces and squares with two
-colors or four.  You shouldn't have to specify monochrome.  xshogi will
-determine if this is necessary.
-
-@item -pc or -pieceColor color
-Color specification for pieces suitable for XParseColor().
-Default: #FFFFD7.  
-
-@item -sc or -squareColor color
-Same for squares.  Default: #EBDFB0.
-
-@item -wps or -westernPieceSet (True | False)
-Choose the Western style piece set.
-
-@item -npb or -normalPawnBitmap file
-@item -nnb or -normalKnightBitmap file
-@item -nbb or -normalBishopBitmap file
-@item -nrb or -normalRookBitmap file
-@item -nkb or -normalKingBitmap file
-Names of the bitmap files for the bitmap piece icons.
-
-@item -rpb or -reversePawnBitmap file
-@item -rnb or -reverseKnightBitmap file
-@item -rbb or -reverseBishopBitmap file
-@item -rrb or -reverseRookBitmap file
-@item -rkb or -reverseKingBitmap file
-Names of the bitmap files for the outline piece icons.
-
-@item -debug or -debugMode (True | False)
-Turns on debugging printout.
-
-@end table
-
-@page
-
-OTHER X RESOURCES
-
-@table @samp
-
-@item initString
-The actual string that is sent to initialize the shogi program can be
-set from .Xdefaults.  It can't be set from the command line because of
-syntax problems.  The default value is ``new\nbeep\nrandom\neasy\n''.
-The ``new'' and ``beep'' commands are required. You can remove the
-``random'' command if you like; including it causes gnushogi to
-randomize its move selection slightly so that it doesn't play the same
-moves in every game.  Even without ``random'', gnushogi randomizes its
-choice of moves from its opening book.  You can also remove ``easy'' if
-you like; including it toggles easy mode off, causing gnushogi to think
-on your time.  That is, if ``easy'' is included in the initString, GNU
-Shogi thinks on your time; if not, it does not.  (Yes, this does seem
-backwards, doesn't it.)  You can also try adding other commands to the
-initString; see the gnushogi documentation (@pxref{gnushogi}) for
-details.
-
-@item blackString and whiteString
-These resources control what is sent when the Machine Black and Machine
-White buttons are selected.  This is mostly for compatibility with
-obsolete versions of gnushogi.
-
-Alternate bitmaps for piece icons can be specified either by choosing
-one of the built-in sets or with the file name resources described
-above.  There are three built-in sets of piece bitmaps available, large
-(the default), medium, or small.  It is easiest to select the set you
-prefer in the .Xdefaults file:
-
-     XShogi*boardSize:   Medium
-
-The font used for button labels and comments can be changed in the
-.Xdefaults file.  You may want to choose a smaller font if you are using
-the small pieces:
-
-     XShogi*font:    helvetica_oblique12
-
-The font used for coordinates (when the showCoords option is True) can
-be set similarly:
-
-     XShogi*coordFont:    helvetica_10
-
-If you are using a grayscale monitor, try setting the colors to:
-
-     XShogi*pieceColor:     gray100 @*
-     XShogi*squareColor:    gray60  @*
-
-@end table
-
-COMMAND BUTTONS AND KEYS
-
-@table @samp
-
-@item Quit    
-Quits xshogi.  Q or q is a keyboard equivalent.
-
-@item Reset   
-Resets xshogi to the beginning of a shogi game.  It also deselects any
-game or position files.
-
-@item Flip View
-inverts the view of the shogi board.
-
-@item Hint    
-displays a move hint from gnushogi.
-
-@item Load Game
-plays a game from a record file.  If no file is specified a popup dialog
-asks for a filename.  Game files are found in the directory named by the
-SHOGIDIR environment variable.  If this variable is not declared then
-the current directory is used unless the file name starts with a /.  G
-or g is a keyboard equivalent.  The game file parser will accept almost
-any file that contains moves in algebraic notation.  If the first line
-begins with `#', it is assumed to be a title and is displayed.  Text
-enclosed in parentheses or square brackets is assumed to be commentary
-and is displayed in a pop-up window.  Any other text in the file is
-ignored.
-
-@item Load Position
-sets up a position from a position file.  If no file is specified a
-popup dialog asks for a filename.  Position files are found in the
-directory named by the SHOGIDIR environment variable.  If this variable
-is not declared then the current directory is used unless the file name
-starts with a /.  Position files must be in the format that the Save
-Position command writes.
-
-@item Save Game
-saves a game to a record file.  If no file is specified a popup dialog
-asks for a filename.  If the filename exists, the user is asked whether
-the current game record is be appended to this file or if the file
-should be replaced.  Game files are saved in the directory named by the
-SHOGIDIR environment variable.  If this variable is not declared then
-the current directory is used unless the file name starts with a /.
-Game files are human-readable, and can also be read back by the Load
-Game command. Furthermore, they are accepted as gnushogi text bookfiles.
-
-@item Save Position
-saves a position to a position file.  If no file is specified a popup
-dialog asks for a filename.  Position files are saved in the directory
-named by the SHOGIDIR environment variable.  If this variable is not
-declared then the current directory is used unless the file name starts
-with a /.  Position files are human-readable, and can also be read back
-by the Load Position command.
-
-@item Machine White
-forces gnushogi to play white.
-
-@item Machine Black
-forces gnushogi to play black.
-
-@item Force Moves
-forces a series of moves.  That is, gnushogi stops playing and xshogi
-allows you to make moves for both white and black.
-
-@item Two Machines
-plays a game between two computer programs.
-
-@item Forward 
-moves forward through a series of remembered moves.  F or f is a
-keyboard equivalent.
-
-@item Backward
-moves backward through a series of remembered moves.  As a side effect,
-puts xshogi into Force Moves mode.  B or b is a keyboard equivalent.
-
-@item Pause   
-pauses the clocks or (in Load Game mode) pauses the game being loaded.
-Press Pause again to continue.  P or p is a keyboard equivalent.
-
-@item Edit Position
-lets you set up an arbitrary board position.  Use mouse button 1 to drag
-pieces to new squares, or to delete a piece by dragging it off the board
-or dragging an empty square on top of it.  To drop a new piece on a
-square, press mouse button 2 or 3 over the square.  This brings up a
-menu of black pieces (button 2) or white pieces (button 3).  Additional
-menu choices let you empty the square or clear the board.  You can set
-the side to play next by clicking on the Black or White indicator at the
-top of the screen.
-
-@item Challenge
-allows you to make a two display game between two human players.  Enter
-the display you want to connect to.  If you are allowed to connect, a
-new board is displayed at the remote display.  Challenge mode can only
-be stopped by pressing ``quit''.
-
-@item Select Level
-allows you to reset the clocks for both players.  Enter the number of
-moves and the number of minutes in which the moves should be done.
-
-@item Move NOW
-force computer to stop thinking and to make the current best move.
-
-@item Iconify I, i, C or c 
-iconifies xshogi.
-
-@end table
-
-LIMITATIONS
-
-If you press the  Pause  button  during  GNU  Shogi's  turn,
-xshogi will stop the clocks, but gnushogi will still make a
-move.
-
-After a mate or draw when playing against gnushogi, if  you
-back  up  with  the  Backward  button,  the clocks are reset
-(because gnushogi has exited and must be restarted).
-
-The game parser recognizes only algebraic notation.
-
-AUTHORS
-
-Original authors of XBoard:  Chris Sears and Dan Sears.
-
-Enhancements for XBoard (Version 2.0):  Tim Mann.
-
-Conversion to XShogi (Version 1.1):  Matthias Mutz.
-
-Current maintainer: Mike Vanier.
-
-COPYRIGHT INFORMATION
-
-XShogi borrows its piece bitmaps from CRANES Shogi.
-
-Copyright 1991 by Digital Equipment Corporation, Maynard, Massachusetts.
-Enhancements Copyright 1992 Free Software Foundation, Inc.  Enhancements
-Copyright 1993 Matthias Mutz.  Further enhancements copyright 1999 by
-Michael Vanier and the Free Software Foundation, Inc.
-
-The following terms apply to Digital Equipment Corporation's copyright
-interest in XBoard:
-
-All Rights Reserved
-
-Permission to use, copy, modify, and distribute this software and its
-documentation for any purpose and without fee is hereby granted,
-provided that the above copyright notice appear in all copies and that
-both that copyright notice and this permission notice appear in
-supporting documentation, and that the name of Digital not be used in
-advertising or publicity pertaining to distribution of the software
-without specific, written prior permission.
-
-DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
-ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
-DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
-ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
-WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
-ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
-SOFTWARE.
-
-The following terms apply to the enhanced version of XShogi distributed
-by the Free Software Foundation:
-
-This file is part of XSHOGI.
-
-XSHOGI is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY.  No author or distributor accepts responsibility to anyone
-for the consequences of using it or for whether it serves any particular
-purpose or works at all, unless he says so in writing.  Refer to the
-XSHOGI General Public License for full details.
-
-Everyone is granted permission to copy, modify and redistribute XSHOGI,
-but only under the conditions described in the XSHOGI General Public
-License. A copy of this license is supposed to have been given to you
-along with XSHOGI so you can know your rights and responsibilities.  It
-should be in a file named COPYING.  Among other things, the copyright
-notice and this notice must be preserved on all copies.
-
-
 @c ---------------------
 @c References and links.
 @c ---------------------
 
-@node    References and links, Acknowledgements, xshogi, Top
+@node    References and links, Acknowledgements, gnushogi, Top
 @chapter References and links
 @cindex  References
 @cindex  Books
