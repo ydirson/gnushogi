@@ -377,17 +377,17 @@ parser(char *f, int side, short *fpiece)
 
     if (f[1] == '*' || f[1] == '\'')
     {
-        c2 = COL_NAME(f[2]);
-        r2 = ROW_NAME(f[3]);
+        c2 = COL_NUM(f[2]);
+        r2 = ROW_NUM(f[3]);
 
         return ((NO_SQUARES + *fpiece) << 8) | locn(r2, c2);
     }
     else
     {
-        c1 = COL_NAME(f[1]);
-        r1 = ROW_NAME(f[2]);
-        c2 = COL_NAME(f[3]);
-        r2 = ROW_NAME(f[4]);
+        c1 = COL_NUM(f[1]);
+        r1 = ROW_NUM(f[2]);
+        c2 = COL_NUM(f[3]);
+        r2 = ROW_NUM(f[4]);
         p = (f[5] == '+') ? 0x80 : 0;
 
         return (locn(r1, c1) << 8) | locn(r2, c2) | p;

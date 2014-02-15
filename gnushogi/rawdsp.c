@@ -385,8 +385,8 @@ Raw_EditBoard(void)
         }
         else
         {
-            c = COL_NAME(s[1]);
-            r = ROW_NAME(s[2]);
+            c = COL_NUM(s[1]);
+            r = ROW_NUM(s[2]);
         }
 
         if ((c >= 0) && (c < NO_COLS) && (r >= 0) && (r < NO_ROWS))

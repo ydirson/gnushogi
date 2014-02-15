@@ -182,6 +182,8 @@ extern void movealgbr(short m, char *s);
 
 #define ROW_NAME(n) ('a' + NO_ROWS - 1 - n)
 #define COL_NAME(n) ('1' + NO_COLS - 1 - n)
+#define ROW_NUM(c) ('a' + NO_ROWS - 1 - c)
+#define COL_NUM(c) ('1' + NO_COLS - 1 - c)
 
 #if defined HASHFILE || defined CACHE
 #  define PTBLBDSIZE (NO_SQUARES + NO_PIECES)
