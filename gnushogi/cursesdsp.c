@@ -476,7 +476,7 @@ Curses_EditBoard(void)
     printw("Enter piece & location: ");
     a = black;
 
-    do
+    while(1)
     {
         gotoXY(TAB, 6);
         printw("Editing: %s", ColorStr[a]);
@@ -484,6 +484,9 @@ Curses_EditBoard(void)
         ClearEoln();
         FLUSH_SCANW("%s", s);
         found = 0;
+
+        if (s[0] == '.')
+            break;
 
         if (s[0] == '#')
         {
@@ -549,7 +552,6 @@ Curses_EditBoard(void)
             DrawPiece(sq);
         }
     }
-    while (s[0] != '.');
 
     for (sq = 0; sq < NO_SQUARES; sq++)
         Mvboard[sq] = ((board[sq] != Stboard[sq]) ? 10 : 0);

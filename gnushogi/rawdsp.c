@@ -349,10 +349,13 @@ Raw_EditBoard(void)
 
     a = black;
 
-    do
+    while(1)
     {
         scanf("%s", s);
         found = 0;
+
+        if (s[0] == '.')
+            break;
 
         if (s[0] == '#')
         {
@@ -413,7 +416,6 @@ Raw_EditBoard(void)
                 color[sq] = neutral;
         }
     }
-    while (s[0] != '.');
 
     for (sq = 0; sq < NO_SQUARES; sq++)
         Mvboard[sq] = ((board[sq] != Stboard[sq]) ? 10 : 0);
