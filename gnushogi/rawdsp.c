@@ -366,10 +366,13 @@ Raw_EditBoard(void)
             }
 
             ClearCaptured();
+            continue;
         }
 
-        if (s[0] == 'c')
+        if (s[0] == 'c') {
             a = otherside[a];
+            continue;
+        }
 
         if (s[1] == '*')
         {
@@ -382,39 +385,36 @@ Raw_EditBoard(void)
                     break;
                 }
             }
-
-            c = -1;
-            r = -1;
-        }
-        else
-        {
-            c = COL_NUM(s[1]);
-            r = ROW_NUM(s[2]);
+            continue;
         }
 
-        if ((c >= 0) && (c < NO_COLS) && (r >= 0) && (r < NO_ROWS))
-        {
-            sq = locn(r, c);
-            color[sq] = a;
-            board[sq] = no_piece;
+        c = COL_NUM(s[1]);
+        r = ROW_NUM(s[2]);
 
-            for (i = no_piece; i <= king; i++)
+        if ((c < 0) || (c >= NO_COLS) || (r < 0) || (r >= NO_ROWS)) {
+            continue;
+        }
+
+        sq = locn(r, c);
+        color[sq] = a;
+        board[sq] = no_piece;
+
+        for (i = no_piece; i <= king; i++)
+        {
+            if ((s[0] == pxx[i]) || (s[0] == qxx[i]))
             {
-                if ((s[0] == pxx[i]) || (s[0] == qxx[i]))
-                {
-                    if (s[3] == '+')
-                        board[sq] = promoted[i];
-                    else
-                        board[sq] = i;
+                if (s[3] == '+')
+                    board[sq] = promoted[i];
+                else
+                    board[sq] = i;
 
-                    found = 1;
-                    break;
-                }
+                found = 1;
+                break;
             }
-
-            if (found == 0)
-                color[sq] = neutral;
         }
+
+        if (found == 0)
+            color[sq] = neutral;
     }
 
     for (sq = 0; sq < NO_SQUARES; sq++)
