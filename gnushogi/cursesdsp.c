@@ -458,7 +458,7 @@ static const short y0[2] = { 20, 4 };
 void
 Curses_EditBoard(void)
 {
-    short a, c, sq, i;
+    short a, c, sq, i, found;
     short r = 0;
     char s[80];
 
@@ -483,6 +483,7 @@ Curses_EditBoard(void)
         gotoXY(TAB + 24, 7);
         ClearEoln();
         FLUSH_SCANW("%s", s);
+        found = 0;
 
         if (s[0] == '#')
         {
@@ -505,11 +506,14 @@ Curses_EditBoard(void)
             for (i = NO_PIECES; i > no_piece; i--)
             {
                 if ((s[0] == pxx[i]) || (s[0] == qxx[i]))
+                {
+                    Captured[a][unpromoted[i]]++;
+                    UpdateCatched();
+                    found = 1;
                     break;
+                }
             }
 
-            Captured[a][unpromoted[i]]++;
-            UpdateCatched();
             c = -1;
         }
         else
@@ -521,20 +525,27 @@ Curses_EditBoard(void)
         if ((c >= 0) && (c < NO_COLS) && (r >= 0) && (r < NO_ROWS))
         {
             sq = locn(r, c);
-
+            color[sq] = a;
+            board[sq] = no_piece;
+    
             for (i = NO_PIECES; i > no_piece; i--)
             {
                 if ((s[0] == pxx[i]) || (s[0] == qxx[i]))
+                {
+                    if (s[3] == '+')
+                        board[sq] = promoted[i];
+                    else
+                        board[sq] = unpromoted[i];
+
+                    found = 1;
                     break;
+                }
             }
+    
 
-            if (s[3] == '+')
-                i = promoted[i];
-            else
-                i = unpromoted[i];
+            if (found == 0)
+                color[sq] = neutral;
 
-            board[sq] = i;
-            color[sq] = ((board[sq] == no_piece) ? neutral : a);
             DrawPiece(sq);
         }
     }
