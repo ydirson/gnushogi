@@ -1,3 +1,10 @@
+Known bugs:
+
+- some positions show problem in the evaluation algorithm
+- minishogi repetition rule, different from standard shogi, is
+  not implemented
+- with no piece on board, computer generates invalid move
+
 Target for v1.5:
 
 - refactor dspwrappers into a driver-like structure
