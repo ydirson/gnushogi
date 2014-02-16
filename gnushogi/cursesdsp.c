@@ -531,13 +531,12 @@ Curses_EditBoard(void)
             continue;
 
         sq = locn(r, c);
-        color[sq] = a;
-        board[sq] = no_piece;
 
         for (i = NO_PIECES; i > no_piece; i--)
         {
             if ((s[0] == pxx[i]) || (s[0] == qxx[i]))
             {
+                color[sq] = a;
                 if (s[3] == '+')
                     board[sq] = promoted[i];
                 else
@@ -547,10 +546,6 @@ Curses_EditBoard(void)
                 break;
             }
         }
-
-
-        if (found == 0)
-            color[sq] = neutral;
 
         DrawPiece(sq);
     }

@@ -5,6 +5,7 @@ Changes in version 1.4.2 (unreleased):
 
 * XShogi is no longer included in the GNU Shogi source, it is
   available as a separate source archive.
+* Fix clobbering of board on invalid input when editing board.
 * Fixed Curses mode display:
   - reversed column number for MiniShogi
   - clock position for MiniShogi

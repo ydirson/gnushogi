@@ -396,13 +396,12 @@ Raw_EditBoard(void)
         }
 
         sq = locn(r, c);
-        color[sq] = a;
-        board[sq] = no_piece;
 
         for (i = no_piece; i <= king; i++)
         {
             if ((s[0] == pxx[i]) || (s[0] == qxx[i]))
             {
+                color[sq] = a;
                 if (s[3] == '+')
                     board[sq] = promoted[i];
                 else
@@ -412,9 +411,6 @@ Raw_EditBoard(void)
                 break;
             }
         }
-
-        if (found == 0)
-            color[sq] = neutral;
     }
 
     for (sq = 0; sq < NO_SQUARES; sq++)
