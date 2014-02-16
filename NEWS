@@ -10,7 +10,7 @@ Changes in version 1.4.2 (unreleased):
   - display a message on wrong input
 * Fixed Curses mode display:
   - reversed column number for MiniShogi
-  - clock position for MiniShogi
+  - clock and captures position for MiniShogi
   - layout fixes, notably when using only 80 columns
 * Minor code cleanups.
 

@@ -446,8 +446,8 @@ Curses_help(void)
 }
 
 
-static const short x0[2] = { 54, 2 };
-static const short y0[2] = { 20, 4 };
+static const short x0[2] = { MARGIN + 5*NO_COLS + 4, 2 };
+static const short y0[2] = { 4 + 2 * (NO_ROWS - 1), 4 };
 
 
 /*
