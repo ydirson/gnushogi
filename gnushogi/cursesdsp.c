@@ -485,6 +485,7 @@ Curses_EditBoard(void)
         ClearEoln();
         FLUSH_SCANW("%s", s);
         found = 0;
+        ClearMessage();
 
         if (s[0] == '.')
             break;
@@ -520,15 +521,18 @@ Curses_EditBoard(void)
                     break;
                 }
             }
-
+            if (!found)
+                AlwaysShowMessage("Invalid piece type '%c'", s[0]);
             continue;
         }
 
         c = COL_NUM(s[1]);
         r = ROW_NUM(s[2]);
 
-        if ((c < 0) || (c >= NO_COLS) || (r < 0) || (r >= NO_ROWS))
+        if ((c < 0) || (c >= NO_COLS) || (r < 0) || (r >= NO_ROWS)) {
+            AlwaysShowMessage("Out-of-board '%c%c'", s[1], s[2]);
             continue;
+        }
 
         sq = locn(r, c);
 
@@ -546,6 +550,9 @@ Curses_EditBoard(void)
                 break;
             }
         }
+
+        if (!found)
+            AlwaysShowMessage("Invalid piece type '%c'", s[0]);
 
         DrawPiece(sq);
     }

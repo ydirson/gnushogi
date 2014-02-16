@@ -385,6 +385,8 @@ Raw_EditBoard(void)
                     break;
                 }
             }
+            if (!found)
+                printf("# Invalid piece type '%c'\n", s[0]);
             continue;
         }
 
@@ -392,6 +394,7 @@ Raw_EditBoard(void)
         r = ROW_NUM(s[2]);
 
         if ((c < 0) || (c >= NO_COLS) || (r < 0) || (r >= NO_ROWS)) {
+            printf("# Out-of-board position '%c%c'\n", s[1], s[2]);
             continue;
         }
 
@@ -411,6 +414,9 @@ Raw_EditBoard(void)
                 break;
             }
         }
+
+        if (!found)
+            printf("# Invalid piece type '%c'\n", s[0]);
     }
 
     for (sq = 0; sq < NO_SQUARES; sq++)
