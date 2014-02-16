@@ -11,6 +11,7 @@ Changes in version 1.4.2 (unreleased):
 * Fixed Curses mode display:
   - reversed column number for MiniShogi
   - clock and captures position for MiniShogi
+  - refresh display after "switch" to get player names updated
   - layout fixes, notably when using only 80 columns
 * Minor code cleanups.
 

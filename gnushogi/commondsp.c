@@ -1812,6 +1812,7 @@ InputCommand(char *command)
             flag.force = false;
             Sdepth = 0;
             ok = true;
+            UpdateDisplay(0, 0, 1, 0);
         }
         else if (strcmp(s, "black") == 0)
         {
