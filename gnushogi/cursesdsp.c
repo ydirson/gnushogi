@@ -481,7 +481,7 @@ Curses_EditBoard(void)
     {
         gotoXY(TAB, 6);
         printw("Editing: %s", ColorStr[a]);
-        gotoXY(TAB + 24, 7);
+        gotoXY(TAB + 2, 8);
         ClearEoln();
         FLUSH_SCANW("%s", s);
         found = 0;
