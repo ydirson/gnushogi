@@ -64,6 +64,7 @@
 
 int mycnt1, mycnt2;
 
+#define MARGIN (4)
 #define TAB (58)
 
 #define VIR_C(s)  ((flag.reverse) ? (NO_COLS - 1 - column(s)) : column(s))
@@ -770,7 +771,7 @@ DrawPiece(short sq)
         y = pxx[(int)piece];
     }
 
-    gotoXY(8 + 5 * VIR_C(sq), 4 + 2 * ((NO_ROWS - 1) - VIR_R(sq)));
+    gotoXY(MARGIN + 3 + 5 * VIR_C(sq), 4 + 2 * ((NO_ROWS - 1) - VIR_R(sq)));
     printw("%c%c%c%c", l, p, y, r);
 }
 
@@ -835,42 +836,41 @@ Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
         ShowPlayers();
 
         i = 2;
-        gotoXY(3, ++i);
+        gotoXY(MARGIN, ++i);
 
-        printw("    +");
+        printw("  +");
 	for (j=0; j<NO_COLS; j++)
 	    printw("----+");
 
         while (i <= 1 + 2*NO_ROWS)
         {
-            gotoXY(1, ++i);
+            gotoXY(MARGIN, ++i);
 
             if (flag.reverse)
                 z = (i / 2) - 1;
             else
                 z = NO_ROWS + 2 - ((i + 1) / 2);
 
-            printw("    %c |", ROW_NAME(z+1));
+            printw("%c |", ROW_NAME(z+1));
 	    for (j=0; j<NO_COLS; j++)
 		printw("    |");
 
-            gotoXY(3, ++i);
+            gotoXY(MARGIN, ++i);
 
             if (i < 2 + 2*NO_ROWS)
             {
-		printw("    +");
+		printw("  +");
 		for (j=0; j<NO_COLS; j++)
 		    printw("----+");
             }
         }
 
-	printw("    +");
+	printw("  +");
 	for (j=0; j<NO_COLS; j++)
 	    printw("----+");
 
-        gotoXY(3, 4 + 2*NO_ROWS);
-        printw("    ");
-
+        gotoXY(MARGIN, 4 + 2*NO_ROWS);
+        printw("  ");
 #ifndef MINISHOGI
         if (flag.reverse)
             printw("  1    2    3    4    5    6    7    8    9");
