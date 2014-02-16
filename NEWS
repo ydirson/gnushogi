@@ -5,6 +5,7 @@ Changes in version 1.4.2 (unreleased):
 
 * XShogi is no longer included in the GNU Shogi source, it is
   available as a separate source archive.
+* Fixed display of column number for MiniShogi in Curses mode.
 * Minor code cleanups.
 
 Changes in version 1.4.1 (01/2014):

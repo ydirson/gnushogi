@@ -880,7 +880,7 @@ Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
         if (flag.reverse)
             printw("  1    2    3    4    5");
         else
-            printw("  1    2    3    4    5");
+            printw("  5    4    3    2    1");
 #endif
 
         for (sq = 0; sq < NO_SQUARES; sq++)
