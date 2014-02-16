@@ -342,10 +342,10 @@ Raw_EditBoard(void)
     Book = BOOKFAIL;
     Raw_ClearScreen();
     Raw_UpdateDisplay(0, 0, 1, 0);
-    fputs(".   Exit to main\n", stdout);
-    fputs("#   Clear board\n", stdout);
-    fputs("c   Change sides\n", stdout);
-    fputs("enter piece & location: \n", stdout);
+    printf(".   Exit to main\n");
+    printf("#   Clear board\n");
+    printf("c   Change sides\n");
+    printf("enter piece & location:\n");
 
     a = black;
 
