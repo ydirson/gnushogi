@@ -724,9 +724,9 @@ Curses_UpdateClocks(void)
         s = 0;
 
     if (player == black)
-        gotoXY(20, (flag.reverse) ? 2 : 23);
+        gotoXY(20, (flag.reverse) ? 2 : (5 + 2*NO_ROWS));
     else
-        gotoXY(20, (flag.reverse) ? 23 : 2);
+        gotoXY(20, (flag.reverse) ? (5 + 2*NO_ROWS) : 2);
 
     /* printw("%d:%02d %ld  ", m, s, dt); */
     printw("%d:%02d  ", m, s); 
