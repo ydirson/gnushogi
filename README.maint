@@ -10,3 +10,10 @@ Profiling
 ---------
 
 Build with "-g -pg -fprofile-arcs -ftest-coverage"
+
+Announcing new releases
+-----------------------
+
+* gnushogi-devel@gnu.org
+* info-gnu@gnu.org
+* https://freecode.com/projects/gnu-shogi
