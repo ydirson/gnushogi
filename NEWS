@@ -11,7 +11,7 @@ Changes in version 1.4.2 (unreleased):
 * Fixed Curses mode display:
   - reversed column number for MiniShogi
   - clock position for MiniShogi
-  - artifacts while prompting in edit mode with only 80 columns
+  - layout fixes, notably when using only 80 columns
 * Minor code cleanups.
 
 Changes in version 1.4.1 (01/2014):

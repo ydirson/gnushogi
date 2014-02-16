@@ -64,7 +64,7 @@
 
 int mycnt1, mycnt2;
 
-#define MARGIN (4)
+#define MARGIN (5)
 #define TAB (58)
 
 #define VIR_C(s)  ((flag.reverse) ? (NO_COLS - 1 - column(s)) : column(s))
