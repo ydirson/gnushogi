@@ -467,11 +467,11 @@ Curses_EditBoard(void)
     Book = BOOKFAIL;
     Curses_ClearScreen();
     Curses_UpdateDisplay(0, 0, 1, 0);
-    gotoXY(TAB, 3);
+    gotoXY(TAB, 11);
     printw(".   Exit to main\n");
-    gotoXY(TAB, 4);
+    gotoXY(TAB, 12);
     printw("#   Clear board\n");
-    gotoXY(TAB, 5);
+    gotoXY(TAB, 13);
     printw("c   Change sides\n");
     gotoXY(TAB, 7);
     printw("Enter piece & location: ");
@@ -479,7 +479,7 @@ Curses_EditBoard(void)
 
     while(1)
     {
-        gotoXY(TAB, 6);
+        gotoXY(TAB, 4);
         printw("Editing: %s", ColorStr[a]);
         gotoXY(TAB + 2, 8);
         ClearEoln();
