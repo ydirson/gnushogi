@@ -352,17 +352,20 @@ Raw_EditBoard(void)
     Book = BOOKFAIL;
     Raw_ClearScreen();
     Raw_UpdateDisplay(0, 0, 1, 0);
-    fputs(".   Exit to main\n", stdout);
-    fputs("#   Clear board\n", stdout);
-    fputs("c   Change sides\n", stdout);
-    fputs("enter piece & location: \n", stdout);
+    printf(".   Exit to main\n");
+    printf("#   Clear board\n");
+    printf("c   Change sides\n");
+    printf("enter piece & location:\n");
 
     a = black;
 
-    do
+    while(1)
     {
         scanf("%s", s);
         found = 0;
+
+        if (s[0] == '.')
+            break;
 
         if (s[0] == '#')
         {
@@ -373,10 +376,13 @@ Raw_EditBoard(void)
             }
 
             ClearCaptured();
+            continue;
         }
 
-        if (s[0] == 'c')
+        if (s[0] == 'c') {
             a = otherside[a];
+            continue;
+        }
 
         if (s[1] == '*')
         {
@@ -389,41 +395,39 @@ Raw_EditBoard(void)
                     break;
                 }
             }
-
-            c = -1;
-            r = -1;
-        }
-        else
-        {
-            c = COL_NAME(s[1]);
-            r = ROW_NAME(s[2]);
+            if (!found)
+                printf("# Invalid piece type '%c'\n", s[0]);
+            continue;
         }
 
-        if ((c >= 0) && (c < NO_COLS) && (r >= 0) && (r < NO_ROWS))
-        {
-            sq = locn(r, c);
-            color[sq] = a;
-            board[sq] = no_piece;
+        c = COL_NUM(s[1]);
+        r = ROW_NUM(s[2]);
 
-            for (i = no_piece; i <= king; i++)
+        if ((c < 0) || (c >= NO_COLS) || (r < 0) || (r >= NO_ROWS)) {
+            printf("# Out-of-board position '%c%c'\n", s[1], s[2]);
+            continue;
+        }
+
+        sq = locn(r, c);
+
+        for (i = no_piece; i <= king; i++)
+        {
+            if ((s[0] == pxx[i]) || (s[0] == qxx[i]))
             {
-                if ((s[0] == pxx[i]) || (s[0] == qxx[i]))
-                {
-                    if (s[3] == '+')
-                        board[sq] = promoted[i];
-                    else
-                        board[sq] = i;
+                color[sq] = a;
+                if (s[3] == '+')
+                    board[sq] = promoted[i];
+                else
+                    board[sq] = i;
 
-                    found = 1;
-                    break;
-                }
+                found = 1;
+                break;
             }
-
-            if (found == 0)
-                color[sq] = neutral;
         }
+
+        if (!found)
+            printf("# Invalid piece type '%c'\n", s[0]);
     }
-    while (s[0] != '.');
 
     for (sq = 0; sq < NO_SQUARES; sq++)
         Mvboard[sq] = ((board[sq] != Stboard[sq]) ? 10 : 0);

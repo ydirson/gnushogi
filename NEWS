@@ -8,10 +8,19 @@ Changes in version 1.5.0 (unreleased):
   including building windows binaries (both 32bit and 64bit) using
   the gcc-mingw toolchain
 
-Changes in version 1.4.2 (unreleased):
+Changes in version 1.4.2 (02/2014):
 
 * XShogi is no longer included in the GNU Shogi source, it is
   available as a separate source archive.
+* Fixes for edit mode:
+  - fixed clobbering of board on invalid input
+  - display a message on wrong input
+* Fixed Curses mode display:
+  - reversed column number for MiniShogi
+  - clock and captures position for MiniShogi
+  - refresh display after "switch" to get player names updated
+  - layout fixes, notably when using only 80 columns
+* Minor code cleanups.
 
 Changes in version 1.4.1 (01/2014):
 

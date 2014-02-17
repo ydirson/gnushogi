@@ -62,6 +62,7 @@
 
 #define FLUSH_SCANW fflush(stdout), scanw
 
+#define MARGIN (5)
 #define TAB (58)
 
 #define VIR_C(s)  ((flag.reverse) ? (NO_COLS - 1 - column(s)) : column(s))
@@ -105,6 +106,13 @@ gotoXY(short x, short y)
     move(y - 1, x - 1);
 }
 
+
+static void
+ClearMessage(void)
+{
+    gotoXY(TAB, 6);
+    ClearEoln();
+}
 
 static void
 Curses_ShowCurrentMove(short pnt, short f, short t)
@@ -442,8 +450,8 @@ Curses_help(void)
 }
 
 
-static const short x0[2] = { 54, 2 };
-static const short y0[2] = { 20, 4 };
+static const short x0[2] = { MARGIN + 5*NO_COLS + 4, 2 };
+static const short y0[2] = { 4 + 2 * (NO_ROWS - 1), 4 };
 
 
 /*
@@ -455,7 +463,7 @@ static const short y0[2] = { 20, 4 };
 static void
 Curses_EditBoard(void)
 {
-    short a, c, sq, i;
+    short a, c, sq, i, found;
     short r = 0;
     char s[80];
 
@@ -463,23 +471,28 @@ Curses_EditBoard(void)
     Book = BOOKFAIL;
     Curses_ClearScreen();
     Curses_UpdateDisplay(0, 0, 1, 0);
-    gotoXY(TAB, 3);
+    gotoXY(TAB, 11);
     printw(".   Exit to main\n");
-    gotoXY(TAB, 4);
+    gotoXY(TAB, 12);
     printw("#   Clear board\n");
-    gotoXY(TAB, 5);
+    gotoXY(TAB, 13);
     printw("c   Change sides\n");
     gotoXY(TAB, 7);
     printw("Enter piece & location: ");
     a = black;
 
-    do
+    while(1)
     {
-        gotoXY(TAB, 6);
+        gotoXY(TAB, 4);
         printw("Editing: %s", ColorStr[a]);
-        gotoXY(TAB + 24, 7);
+        gotoXY(TAB + 2, 8);
         ClearEoln();
         FLUSH_SCANW("%s", s);
+        found = 0;
+        ClearMessage();
+
+        if (s[0] == '.')
+            break;
 
         if (s[0] == '#')
         {
@@ -492,50 +505,61 @@ Curses_EditBoard(void)
 
             ClearCaptured();
             UpdateCatched();
+            continue;
         }
 
-        if (s[0] == 'c')
+        if (s[0] == 'c') {
             a = otherside[a];
+            continue;
+        }
 
         if (s[1] == '*')
         {
             for (i = NO_PIECES; i > no_piece; i--)
             {
                 if ((s[0] == pxx[i]) || (s[0] == qxx[i]))
+                {
+                    Captured[a][unpromoted[i]]++;
+                    UpdateCatched();
+                    found = 1;
                     break;
+                }
             }
-
-            Captured[a][unpromoted[i]]++;
-            UpdateCatched();
-            c = -1;
-        }
-        else
-        {
-            c = COL_NAME(s[1]);
-            r = ROW_NAME(s[2]);
+            if (!found)
+                dsp->AlwaysShowMessage("Invalid piece type '%c'", s[0]);
+            continue;
         }
 
-        if ((c >= 0) && (c < NO_COLS) && (r >= 0) && (r < NO_ROWS))
-        {
-            sq = locn(r, c);
+        c = COL_NUM(s[1]);
+        r = ROW_NUM(s[2]);
 
-            for (i = NO_PIECES; i > no_piece; i--)
+        if ((c < 0) || (c >= NO_COLS) || (r < 0) || (r >= NO_ROWS)) {
+            dsp->AlwaysShowMessage("Out-of-board '%c%c'", s[1], s[2]);
+            continue;
+        }
+
+        sq = locn(r, c);
+
+        for (i = NO_PIECES; i > no_piece; i--)
+        {
+            if ((s[0] == pxx[i]) || (s[0] == qxx[i]))
             {
-                if ((s[0] == pxx[i]) || (s[0] == qxx[i]))
-                    break;
+                color[sq] = a;
+                if (s[3] == '+')
+                    board[sq] = promoted[i];
+                else
+                    board[sq] = unpromoted[i];
+
+                found = 1;
+                break;
             }
-
-            if (s[3] == '+')
-                i = promoted[i];
-            else
-                i = unpromoted[i];
-
-            board[sq] = i;
-            color[sq] = ((board[sq] == no_piece) ? neutral : a);
-            DrawPiece(sq);
         }
+
+        if (!found)
+            dsp->AlwaysShowMessage("Invalid piece type '%c'", s[0]);
+
+        DrawPiece(sq);
     }
-    while (s[0] != '.');
 
     for (sq = 0; sq < NO_SQUARES; sq++)
         Mvboard[sq] = ((board[sq] != Stboard[sq]) ? 10 : 0);
@@ -706,9 +730,9 @@ Curses_UpdateClocks(void)
         s = 0;
 
     if (player == black)
-        gotoXY(20, (flag.reverse) ? 2 : 23);
+        gotoXY(20, (flag.reverse) ? 2 : (5 + 2*NO_ROWS));
     else
-        gotoXY(20, (flag.reverse) ? 23 : 2);
+        gotoXY(20, (flag.reverse) ? (5 + 2*NO_ROWS) : 2);
 
     /* printw("%d:%02d %ld  ", m, s, dt); */
     printw("%d:%02d  ", m, s); 
@@ -753,7 +777,7 @@ DrawPiece(short sq)
         y = pxx[(int)piece];
     }
 
-    gotoXY(8 + 5 * VIR_C(sq), 4 + 2 * ((NO_ROWS - 1) - VIR_R(sq)));
+    gotoXY(MARGIN + 3 + 5 * VIR_C(sq), 4 + 2 * ((NO_ROWS - 1) - VIR_R(sq)));
     printw("%c%c%c%c", l, p, y, r);
 }
 
@@ -816,42 +840,41 @@ Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
         ShowPlayers();
 
         i = 2;
-        gotoXY(3, ++i);
+        gotoXY(MARGIN, ++i);
 
-        printw("    +");
+        printw("  +");
 	for (j=0; j<NO_COLS; j++)
 	    printw("----+");
 
         while (i <= 1 + 2*NO_ROWS)
         {
-            gotoXY(1, ++i);
+            gotoXY(MARGIN, ++i);
 
             if (flag.reverse)
                 z = (i / 2) - 1;
             else
                 z = NO_ROWS + 2 - ((i + 1) / 2);
 
-            printw("    %c |", ROW_NAME(z+1));
+            printw("%c |", ROW_NAME(z+1));
 	    for (j=0; j<NO_COLS; j++)
 		printw("    |");
 
-            gotoXY(3, ++i);
+            gotoXY(MARGIN, ++i);
 
             if (i < 2 + 2*NO_ROWS)
             {
-		printw("    +");
+		printw("  +");
 		for (j=0; j<NO_COLS; j++)
 		    printw("----+");
             }
         }
 
-	printw("    +");
+	printw("  +");
 	for (j=0; j<NO_COLS; j++)
 	    printw("----+");
 
-        gotoXY(3, 4 + 2*NO_ROWS);
-        printw("    ");
-
+        gotoXY(MARGIN, 4 + 2*NO_ROWS);
+        printw("  ");
 #ifndef MINISHOGI
         if (flag.reverse)
             printw("  1    2    3    4    5    6    7    8    9");
@@ -861,7 +884,7 @@ Curses_UpdateDisplay(short f, short t, short redraw, short isspec)
         if (flag.reverse)
             printw("  1    2    3    4    5");
         else
-            printw("  1    2    3    4    5");
+            printw("  5    4    3    2    1");
 #endif
 
         for (sq = 0; sq < NO_SQUARES; sq++)

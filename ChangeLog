@@ -1,3 +1,312 @@
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* TODO: Note remaining known bugs
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* NEWS, gnushogi/commondsp.c: Ensure the player names are refreshed
+	after a switch (impacts Curses mode).
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/rawdsp.c: EditBoard: use printf for conciseness
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* NEWS, gnushogi/cursesdsp.c: Curses: parametrize hardcoded values
+	for captures pieces, fixing minishogi display.
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* NEWS, gnushogi/cursesdsp.c: Curses: shift board one char to the
+	right to leave enough space for captures.  There was not really enough space to display top player's captures
+	correctly.
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* NEWS, gnushogi/cursesdsp.c, gnushogi/rawdsp.c: EditBoard: display
+	message on wrong input.
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* NEWS, gnushogi/cursesdsp.c, gnushogi/rawdsp.c: EditBoard: fix
+	error handling in piece setting.  On invalid piece name, the code was anyway destroying any piece in
+	the target location, and the whole logic was diluted.
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c: Curses: move things around in EditBoard to
+	free the message line.
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* NEWS, gnushogi/cursesdsp.c: Curses: fix position of lower clock
+	for minishogi.  The hunt for hardcoded values goes on...
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* NEWS, gnushogi/cursesdsp.c: Curses: avoid getting out of 80
+	columns when editing board.  Now print user-provided chars on line following the long prompt.
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* NEWS, gnushogi/cursesdsp.c: Curses: fix inverted column numbers
+	display for minishogi.
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c: Curses: use a macro for left margin of
+	display
+
+2014-02-15  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c, gnushogi/rawdsp.c: EditBoard: simplify loop
+	logic by ending iterations early.
+
+2014-02-15  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c, gnushogi/rawdsp.c: EditBoard: restructure
+	loop for consistency.
+
+2014-02-16  Yann Dirson <ydirson@free.fr>
+
+	* gnushogi/cursesdsp.c: EditBoard: resync Curses implementation with
+	the Raw one.
+
+2014-02-15  Yann Dirson <ydirson@free.fr>
+
+	* NEWS, gnushogi/commondsp.c, gnushogi/cursesdsp.c,
+	gnushogi/gnushogi.h, gnushogi/rawdsp.c, gnushogi/util.c: Fix use of
+	(COL|ROW)_NAME macros to compute numbers from names.  The formula is reversible for the somewhat-standard default position
+	notation, but that does not mean we should write silly things.  As a
+	proof, if that was needed, the formula necessary to support the
+	xboard protocol is not reversible.
+
+2014-02-05  Yann Dirson <ydirson@free.fr>
+
+	* doc/gnushogi.texi: Remove XShogi doc from the manual, and add
+	information about available GUIs.
+
+2014-02-05  Yann Dirson <ydirson@free.fr>
+
+	* Makefile.in, NEWS, configure.ac, doc/xshogi.6, xshogi/BUGS,
+	xshogi/Makefile.in, xshogi/NEWS, xshogi/README,
+	xshogi/README.xboard, xshogi/REMOTEHOSTS, xshogi/bitmaps.h,
+	xshogi/eastern_bitmaps/bigblank.xbm,
+	xshogi/eastern_bitmaps/bigblankR.xbm,
+	xshogi/eastern_bitmaps/biglight.xbm,
+	xshogi/eastern_bitmaps/bigsolid.xbm,
+	xshogi/eastern_bitmaps/bigsolidR.xbm,
+	xshogi/eastern_bitmaps/bigsolidR_l.xbm,
+	xshogi/eastern_bitmaps/bigsolidR_m.xbm,
+	xshogi/eastern_bitmaps/bigsolid_l.xbm,
+	xshogi/eastern_bitmaps/bigsolid_m.xbm,
+	xshogi/eastern_bitmaps/bishop.xbm,
+	xshogi/eastern_bitmaps/bishopP.top.xbm,
+	xshogi/eastern_bitmaps/bishopP.xbm,
+	xshogi/eastern_bitmaps/bishopPR.top.xbm,
+	xshogi/eastern_bitmaps/bishopPR.xbm,
+	xshogi/eastern_bitmaps/bishopPR_l.top.xbm,
+	xshogi/eastern_bitmaps/bishopPR_l.xbm,
+	xshogi/eastern_bitmaps/bishopPR_m.top.xbm,
+	xshogi/eastern_bitmaps/bishopPR_m.xbm,
+	xshogi/eastern_bitmaps/bishopP_l.top.xbm,
+	xshogi/eastern_bitmaps/bishopP_l.xbm,
+	xshogi/eastern_bitmaps/bishopP_m.top.xbm,
+	xshogi/eastern_bitmaps/bishopP_m.xbm,
+	xshogi/eastern_bitmaps/bishopR.xbm,
+	xshogi/eastern_bitmaps/bishopR_l.xbm,
+	xshogi/eastern_bitmaps/bishopR_m.xbm,
+	xshogi/eastern_bitmaps/bishop_l.xbm,
+	xshogi/eastern_bitmaps/bishop_m.xbm,
+	xshogi/eastern_bitmaps/gold.xbm, xshogi/eastern_bitmaps/goldR.xbm,
+	xshogi/eastern_bitmaps/goldR_l.xbm,
+	xshogi/eastern_bitmaps/goldR_m.xbm,
+	xshogi/eastern_bitmaps/gold_l.xbm,
+	xshogi/eastern_bitmaps/gold_m.xbm, xshogi/eastern_bitmaps/icon.xbm,
+	xshogi/eastern_bitmaps/king.xbm, xshogi/eastern_bitmaps/kingR.xbm,
+	xshogi/eastern_bitmaps/kingR_l.xbm,
+	xshogi/eastern_bitmaps/kingR_m.xbm,
+	xshogi/eastern_bitmaps/king_l.xbm,
+	xshogi/eastern_bitmaps/king_m.xbm,
+	xshogi/eastern_bitmaps/knight.xbm,
+	xshogi/eastern_bitmaps/knightP.xbm,
+	xshogi/eastern_bitmaps/knightPR.xbm,
+	xshogi/eastern_bitmaps/knightPR_l.xbm,
+	xshogi/eastern_bitmaps/knightPR_m.xbm,
+	xshogi/eastern_bitmaps/knightP_l.xbm,
+	xshogi/eastern_bitmaps/knightP_m.xbm,
+	xshogi/eastern_bitmaps/knightR.xbm,
+	xshogi/eastern_bitmaps/knightR_l.xbm,
+	xshogi/eastern_bitmaps/knightR_m.xbm,
+	xshogi/eastern_bitmaps/knight_l.xbm,
+	xshogi/eastern_bitmaps/knight_m.xbm,
+	xshogi/eastern_bitmaps/lance.xbm,
+	xshogi/eastern_bitmaps/lanceP.xbm,
+	xshogi/eastern_bitmaps/lancePR.xbm,
+	xshogi/eastern_bitmaps/lancePR_l.xbm,
+	xshogi/eastern_bitmaps/lancePR_m.xbm,
+	xshogi/eastern_bitmaps/lanceP_l.xbm,
+	xshogi/eastern_bitmaps/lanceP_m.xbm,
+	xshogi/eastern_bitmaps/lanceR.xbm,
+	xshogi/eastern_bitmaps/lanceR_l.xbm,
+	xshogi/eastern_bitmaps/lanceR_m.xbm,
+	xshogi/eastern_bitmaps/lance_l.xbm,
+	xshogi/eastern_bitmaps/lance_m.xbm,
+	xshogi/eastern_bitmaps/none.xbm, xshogi/eastern_bitmaps/none_l.xbm,
+	xshogi/eastern_bitmaps/none_m.xbm, xshogi/eastern_bitmaps/pawn.xbm,
+	xshogi/eastern_bitmaps/pawnP.xbm,
+	xshogi/eastern_bitmaps/pawnPR.xbm,
+	xshogi/eastern_bitmaps/pawnPR_l.xbm,
+	xshogi/eastern_bitmaps/pawnPR_m.xbm,
+	xshogi/eastern_bitmaps/pawnP_l.xbm,
+	xshogi/eastern_bitmaps/pawnP_m.xbm,
+	xshogi/eastern_bitmaps/pawnR.xbm,
+	xshogi/eastern_bitmaps/pawnR_l.xbm,
+	xshogi/eastern_bitmaps/pawnR_m.xbm,
+	xshogi/eastern_bitmaps/pawn_l.xbm,
+	xshogi/eastern_bitmaps/pawn_m.xbm, xshogi/eastern_bitmaps/rook.xbm,
+	xshogi/eastern_bitmaps/rookP.top.xbm,
+	xshogi/eastern_bitmaps/rookP.xbm,
+	xshogi/eastern_bitmaps/rookPR.top.xbm,
+	xshogi/eastern_bitmaps/rookPR.xbm,
+	xshogi/eastern_bitmaps/rookPR_l.top.xbm,
+	xshogi/eastern_bitmaps/rookPR_l.xbm,
+	xshogi/eastern_bitmaps/rookPR_m.top.xbm,
+	xshogi/eastern_bitmaps/rookPR_m.xbm,
+	xshogi/eastern_bitmaps/rookP_l.top.xbm,
+	xshogi/eastern_bitmaps/rookP_l.xbm,
+	xshogi/eastern_bitmaps/rookP_m.top.xbm,
+	xshogi/eastern_bitmaps/rookP_m.xbm,
+	xshogi/eastern_bitmaps/rookR.xbm,
+	xshogi/eastern_bitmaps/rookR_l.xbm,
+	xshogi/eastern_bitmaps/rookR_m.xbm,
+	xshogi/eastern_bitmaps/rook_l.xbm,
+	xshogi/eastern_bitmaps/rook_m.xbm,
+	xshogi/eastern_bitmaps/silver.xbm,
+	xshogi/eastern_bitmaps/silverP.xbm,
+	xshogi/eastern_bitmaps/silverPR.xbm,
+	xshogi/eastern_bitmaps/silverPR_l.xbm,
+	xshogi/eastern_bitmaps/silverPR_m.xbm,
+	xshogi/eastern_bitmaps/silverP_l.xbm,
+	xshogi/eastern_bitmaps/silverP_m.xbm,
+	xshogi/eastern_bitmaps/silverR.xbm,
+	xshogi/eastern_bitmaps/silverR_l.xbm,
+	xshogi/eastern_bitmaps/silverR_m.xbm,
+	xshogi/eastern_bitmaps/silver_l.xbm,
+	xshogi/eastern_bitmaps/silver_m.xbm,
+	xshogi/eastern_bitmaps/smallblank.xbm,
+	xshogi/eastern_bitmaps/smallblankR.xbm,
+	xshogi/eastern_bitmaps/smalllight.xbm,
+	xshogi/eastern_bitmaps/smallsolid.xbm,
+	xshogi/eastern_bitmaps/smallsolidR.xbm,
+	xshogi/eastern_bitmaps/smallsolidR_l.xbm,
+	xshogi/eastern_bitmaps/smallsolidR_m.xbm,
+	xshogi/eastern_bitmaps/smallsolid_l.xbm,
+	xshogi/eastern_bitmaps/smallsolid_m.xbm,
+	xshogi/new_eastern_bitmaps/bigsolidR_l.xbm,
+	xshogi/new_eastern_bitmaps/bigsolid_l.xbm,
+	xshogi/new_eastern_bitmaps/bishopPR_l.xbm,
+	xshogi/new_eastern_bitmaps/bishopP_l.xbm,
+	xshogi/new_eastern_bitmaps/bishopR_l.xbm,
+	xshogi/new_eastern_bitmaps/bishop_l.xbm,
+	xshogi/new_eastern_bitmaps/goldR_l.xbm,
+	xshogi/new_eastern_bitmaps/gold_l.xbm,
+	xshogi/new_eastern_bitmaps/kingR_l.xbm,
+	xshogi/new_eastern_bitmaps/king_l.xbm,
+	xshogi/new_eastern_bitmaps/knightPR_l.xbm,
+	xshogi/new_eastern_bitmaps/knightP_l.xbm,
+	xshogi/new_eastern_bitmaps/knightR_l.xbm,
+	xshogi/new_eastern_bitmaps/knight_l.xbm,
+	xshogi/new_eastern_bitmaps/lancePR_l.xbm,
+	xshogi/new_eastern_bitmaps/lanceP_l.xbm,
+	xshogi/new_eastern_bitmaps/lanceR_l.xbm,
+	xshogi/new_eastern_bitmaps/lance_l.xbm,
+	xshogi/new_eastern_bitmaps/none_l.xbm,
+	xshogi/new_eastern_bitmaps/pawnPR_l.xbm,
+	xshogi/new_eastern_bitmaps/pawnP_l.xbm,
+	xshogi/new_eastern_bitmaps/pawnR_l.xbm,
+	xshogi/new_eastern_bitmaps/pawn_l.xbm,
+	xshogi/new_eastern_bitmaps/rookPR_l.xbm,
+	xshogi/new_eastern_bitmaps/rookP_l.xbm,
+	xshogi/new_eastern_bitmaps/rookR_l.xbm,
+	xshogi/new_eastern_bitmaps/rook_l.xbm,
+	xshogi/new_eastern_bitmaps/silverPR_l.xbm,
+	xshogi/new_eastern_bitmaps/silverP_l.xbm,
+	xshogi/new_eastern_bitmaps/silverR_l.xbm,
+	xshogi/new_eastern_bitmaps/silver_l.xbm,
+	xshogi/new_eastern_bitmaps/smallsolidR_l.xbm,
+	xshogi/new_eastern_bitmaps/smallsolid_l.xbm,
+	xshogi/new_western_bitmaps/bishopPRW.xbm,
+	xshogi/new_western_bitmaps/bishopPW.xbm,
+	xshogi/new_western_bitmaps/bishopRW.xbm,
+	xshogi/new_western_bitmaps/bishopW.xbm,
+	xshogi/new_western_bitmaps/goldRW.xbm,
+	xshogi/new_western_bitmaps/goldW.xbm,
+	xshogi/new_western_bitmaps/kingRW.xbm,
+	xshogi/new_western_bitmaps/kingW.xbm,
+	xshogi/new_western_bitmaps/knightPRW.xbm,
+	xshogi/new_western_bitmaps/knightPW.xbm,
+	xshogi/new_western_bitmaps/knightRW.xbm,
+	xshogi/new_western_bitmaps/knightW.xbm,
+	xshogi/new_western_bitmaps/lancePRW.xbm,
+	xshogi/new_western_bitmaps/lancePW.xbm,
+	xshogi/new_western_bitmaps/lanceRW.xbm,
+	xshogi/new_western_bitmaps/lanceW.xbm,
+	xshogi/new_western_bitmaps/noneW.xbm,
+	xshogi/new_western_bitmaps/pawnPRW.xbm,
+	xshogi/new_western_bitmaps/pawnPW.xbm,
+	xshogi/new_western_bitmaps/pawnRW.xbm,
+	xshogi/new_western_bitmaps/pawnW.xbm,
+	xshogi/new_western_bitmaps/rookPRW.xbm,
+	xshogi/new_western_bitmaps/rookPW.xbm,
+	xshogi/new_western_bitmaps/rookRW.xbm,
+	xshogi/new_western_bitmaps/rookW.xbm,
+	xshogi/new_western_bitmaps/silverPRW.xbm,
+	xshogi/new_western_bitmaps/silverPW.xbm,
+	xshogi/new_western_bitmaps/silverRW.xbm,
+	xshogi/new_western_bitmaps/silverW.xbm, xshogi/parser.y,
+	xshogi/scanner.l, xshogi/sysdeps.h,
+	xshogi/western_bitmaps/bishopPRW.xbm,
+	xshogi/western_bitmaps/bishopPW.xbm,
+	xshogi/western_bitmaps/bishopRW.xbm,
+	xshogi/western_bitmaps/bishopW.xbm,
+	xshogi/western_bitmaps/goldRW.xbm,
+	xshogi/western_bitmaps/goldW.xbm,
+	xshogi/western_bitmaps/kingRW.xbm,
+	xshogi/western_bitmaps/kingW.xbm,
+	xshogi/western_bitmaps/knightPRW.xbm,
+	xshogi/western_bitmaps/knightPW.xbm,
+	xshogi/western_bitmaps/knightRW.xbm,
+	xshogi/western_bitmaps/knightW.xbm,
+	xshogi/western_bitmaps/lancePRW.xbm,
+	xshogi/western_bitmaps/lancePW.xbm,
+	xshogi/western_bitmaps/lanceRW.xbm,
+	xshogi/western_bitmaps/lanceW.xbm,
+	xshogi/western_bitmaps/noneW.xbm,
+	xshogi/western_bitmaps/pawnPRW.xbm,
+	xshogi/western_bitmaps/pawnPW.xbm,
+	xshogi/western_bitmaps/pawnRW.xbm,
+	xshogi/western_bitmaps/pawnW.xbm,
+	xshogi/western_bitmaps/rookPRW.xbm,
+	xshogi/western_bitmaps/rookPW.xbm,
+	xshogi/western_bitmaps/rookRW.xbm,
+	xshogi/western_bitmaps/rookW.xbm,
+	xshogi/western_bitmaps/silverPRW.xbm,
+	xshogi/western_bitmaps/silverPW.xbm,
+	xshogi/western_bitmaps/silverRW.xbm,
+	xshogi/western_bitmaps/silverW.xbm, xshogi/xshogi.c,
+	xshogi/xshogi.h, xshogi/xshogifn.h: Remove XShogi from the source
+	tree
+
+2014-01-16  Yann Dirson <ydirson@free.fr>
+
+	* configure.ac: Bump version to "1.4.1+".
+
+2014-01-14  Yann Dirson <ydirson@free.fr>
+
+	* ChangeLog, NEWS, README, configure.ac: Prepare v1.4.1
+
 2014-01-14  Yann Dirson <ydirson@free.fr>
 
 	* AUTHORS: Update maintainership info in AUTHORS.
