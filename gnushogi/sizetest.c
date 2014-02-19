@@ -244,7 +244,7 @@ main(int argc, char **argv)
     n = 0;
 #endif
 
-    printf("history:\t%4d\tkByte\t[unsigned short:%d "
+    printf("history:\t%4d\tkByte\t[unsigned short:%lu "
            "* HISTORY_SIZE:%ld]\n",
            n, sizeof(unsigned short), (long)HISTORY_SIZE);
 
