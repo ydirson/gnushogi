@@ -1420,16 +1420,15 @@ TestPSpeed(short(*f) (short side), unsigned j)
 static void
 SetOppTime(char *time)
 {
-    int m, t, sec;
+    int m, t;
 
-    sec = 0;
     t = (int)strtol(time, &time, 10);
 
     if (*time == ':')
     {
         time++;
 	/* FIXME: sec is parsed but ignored */
-        sec = (int)strtol(time, &time, 10);
+        (void)strtol(time, &time, 10);
     }
 
     m = (int)strtol(time, &time, 10);
@@ -1453,16 +1452,15 @@ SetOppTime(char *time)
 static void
 SetMachineTime(char *time)
 {
-    int m, t, sec;
+    int m, t;
 
-    sec = 0;
     t = (int)strtol(time, &time, 10);
 
     if (*time == ':')
     {
         time++;
 	/* FIXME: sec is parsed but ignored */
-        sec = (int)strtol(time, &time, 10);
+        (void)strtol(time, &time, 10);
     }
 
     m = (int)strtol(time, &time, 10);

@@ -758,8 +758,8 @@ Raw_SelectLevel(char *sx)
     } else {
         int min, sec=0, inc, mps;
         /* parse regular "level MPS TC INC" command of WB protocol */
-        sscanf(sx, "%d %d %d", &mps, &min, &inc) == 3 ||
-        sscanf(sx, "%d %d:%d %d", &mps, &min, &sec, &inc);
+        if (sscanf(sx, "%d %d %d", &mps, &min, &inc) != 3)
+            sscanf(sx, "%d %d:%d %d", &mps, &min, &sec, &inc);
         TCminutes = min; TCseconds = sec;
         TCadd = inc*100; TCmoves = mps ? mps : 50;
         MaxResponseTime = 0; TCflag = true;
