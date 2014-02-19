@@ -73,7 +73,7 @@ static ULONG bhashkey;
  * Generate move strings in different formats.
  */
 
-void
+static void
 Balgbr(short f, short t, short flag)
 {
     short promoted = false;
@@ -166,10 +166,8 @@ Balgbr(short f, short t, short flag)
 }
 
 
-
-
 #ifndef QUIETBOOKGEN
-void
+static void
 bkdisplay(char *s, int cnt, int moveno)
 {
     static short pnt;
@@ -240,9 +238,7 @@ bkdisplay(char *s, int cnt, int moveno)
     }
 #endif /* SEMIQUIETBOOKGEN */
 }
-
 #endif /* QUIETBOOKGEN */
-
 
 
 /*
@@ -252,7 +248,7 @@ bkdisplay(char *s, int cnt, int moveno)
  * opponent. If a match is found, make the move on the board.
  */
 
-int
+static int
 BVerifyMove(char *s, unsigned short *mv, int moveno)
 {
     static short pnt, tempb, tempc, tempsf, tempst, cnt;
@@ -320,8 +316,6 @@ BVerifyMove(char *s, unsigned short *mv, int moveno)
 }
 
 
-
-
 /*
  * RESET()
  *
@@ -329,7 +323,7 @@ BVerifyMove(char *s, unsigned short *mv, int moveno)
  *
  */
 
-void
+static void
 RESET(void)
 {
     short l;
@@ -365,9 +359,7 @@ RESET(void)
 }
 
 
-
-static
-int
+static int
 Vparse (FILE * fd, USHORT *mv, USHORT *flags, int moveno)
 {
     int c, i;
@@ -891,7 +883,6 @@ GetOpenings(void)
 }
 
 
-
 /*
  * OpeningBook(hint)
  *
@@ -1056,6 +1047,3 @@ OpeningBook(unsigned short *hint)
     Book--;
     return false;
 }
-
-
-
