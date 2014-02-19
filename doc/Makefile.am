@@ -27,10 +27,12 @@ dist_man_MANS = gnushogi.6
 
 dist_doc_DATA = \
 	BOOKFILES \
-	PORTING \
 	shogi.rules \
 	tutorial1.gam \
 	tutorial2.gam
+
+dist_noinst_DATA = \
+	PORTING
 
 spell:
 	tr '[A-Z]' '[a-z]' < $(srcdir)/gnushogi.texi | tr -cd '[A-Za-z0-9_ \012]' | \
