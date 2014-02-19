@@ -593,7 +593,7 @@ static ULONG currentoffset;
 
 #define WriteAdmin() \
 { \
-  lseek(gfd, 0, 0); \
+  lseek(gfd, 0, SEEK_SET); \
   write(gfd, (char *)&ADMIN, sizeof_gdxadmin); \
 }
 
@@ -601,7 +601,7 @@ static ULONG currentoffset;
 { \
   if (mustwrite ) \
   { \
-    lseek(gfd, currentoffset, 0); \
+    lseek(gfd, currentoffset, SEEK_SET); \
     write(gfd, (char *)&DATA, sizeof_gdxdata); \
     mustwrite = false; \
   } \
@@ -609,13 +609,13 @@ static ULONG currentoffset;
 
 static int ReadAdmin(void)
 {
-    lseek(gfd, 0, 0);
+    lseek(gfd, 0, SEEK_SET);
     return (sizeof_gdxadmin == read(gfd, (char *)&ADMIN, sizeof_gdxadmin));
 }
 
 static int ReadData(struct gdxdata *DATA)
 {
-    lseek(gfd, currentoffset, 0);
+    lseek(gfd, currentoffset, SEEK_SET);
     return (sizeof_gdxdata == read(gfd, (char *)DATA, sizeof_gdxdata));
 }
 
