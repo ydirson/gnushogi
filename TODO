@@ -30,6 +30,8 @@ Minishogi-related stuff
 - minishogi patterns
 - tune difficulty levels
 - other tunings to investigate
+  * eval.c has lots of heuristic code specific to standard shogi that
+    probably should not been used
   * PromotionZoneDistanceBonus
   * OPENING_HINT
 - add minishogi stuff to the doc

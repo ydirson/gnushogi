@@ -339,6 +339,7 @@ on_csquare(short side, short piece, short square)
 }
 
 
+#ifndef MINISHOGI
 inline static short
 on_column(short side, short piece, short c)
 {
@@ -385,11 +386,10 @@ on_right_side(short side, short piece)
 
     return false;
 }
+#endif
 
 
 short pscore[2];  /* piece score for each side */
-
-
 
 
 /*
@@ -826,7 +826,10 @@ BRLscan(short sq, short *mob)
 #endif
 
     short s, mobx;
-    short u, xu, pin, ptyp, csq = column(sq);
+    short u, xu, pin, ptyp;
+#ifndef MINISHOGI
+    short csq = column(sq);
+#endif
     short piece, upiece, xupiece, rvalue, ds;
     small_short *Kd = Kdist[c2];
 
@@ -1334,7 +1337,9 @@ PawnValue(short sq, short side)
 {
     short s = 0;
     short ds;
+#ifndef MINISHOGI
     short ccol = ccolumn(c1, sq);
+#endif
 
     PromotionZoneDistanceValue(sq, 3);
 

@@ -1494,7 +1494,9 @@ SetMachineTime(char *time)
 void
 InputCommand(char *command)
 {
+#ifdef QUIETBACKGROUND
     short have_shown_prompt = false;
+#endif
     short ok, done, is_move = false;
     unsigned short mv;
     char s[80], sx[80];
