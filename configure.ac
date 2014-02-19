@@ -9,6 +9,7 @@ AC_INIT([gnushogi],[1.4.2+],[https://savannah.gnu.org/bugs/?group=gnushogi])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([gnushogi/gnushogi.h])
 AC_CONFIG_HEADER(config.h)
+AM_MAINTAINER_MODE
 
 ##########
 AC_MSG_NOTICE([C compiler])
