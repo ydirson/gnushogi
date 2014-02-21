@@ -111,10 +111,15 @@ Raw_ShowLine(unsigned short *bstline)
 
 
 static void
-Raw_ShowMessage(char *s)
+Raw_ShowMessage(char *format, ...)
 {
-    if (!XSHOGI)
-        printf("%s\n", s);
+    if (XSHOGI)
+        return;
+    va_list ap;
+    va_start(ap, format);
+    vprintf(format, ap);
+    printf("\n");
+    va_end(ap);
 }
 
 

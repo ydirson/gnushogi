@@ -43,9 +43,12 @@ small_short pattern_data[MAX_PATTERN_DATA];
 
 /* minimal ShowMessage to avoid dependency on extraneous display code */
 static void
-Dummy_ShowMessage(char *s)
+Dummy_ShowMessage(char *format, ...)
 {
-    printf("%s\n", s);
+    va_list ap;
+    va_start(ap, format);
+    vprintf(format, ap);
+    va_end(ap);
 }
 static struct display dummydsp = {
   .ShowMessage = Dummy_ShowMessage,

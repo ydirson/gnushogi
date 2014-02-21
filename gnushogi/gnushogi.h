@@ -1076,7 +1076,7 @@ extern void  algbr(short f, short t, short flag);
 extern void  OutputMove(void);
 extern void  ShowCurrentMove(short pnt, short f, short t);
 extern void  ListGame(void);
-extern void  ShowMessage(char *s);
+extern void  ShowMessage(char *s, ...);
 extern void  ClearScreen(void);
 extern void  DoDebug(void);
 extern void  DoTable(short table[NO_SQUARES]);
@@ -1142,7 +1142,7 @@ struct display
     void (*ShowDepth)(char ch);
     void (*ShowGameType)(void);
     void (*ShowLine)(unsigned short *bstline);
-    void (*ShowMessage)(char *s);
+    void (*ShowMessage)(char *s, ...);
     void (*AlwaysShowMessage)(const char *format, ...);
     void (*Printf)(const char *format, ...);
     void (*doRequestInputString)(const char* fmt, char* buffer);

@@ -158,34 +158,42 @@ Curses_ShowLine(unsigned short *bstline)
 
 
 static void
-Curses_ShowMessage(char *s)
+_vprintw(const char *format, va_list ap)
 {
-    gotoXY(TAB, 6);
-    printw("%s", s);
-    ClearEoln();
+    static char buffer[60];
+    vsnprintf(buffer, sizeof(buffer), format, ap);
+    printw("%s", buffer);
 }
 
+static void
+Curses_ShowMessage(char *format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+    gotoXY(TAB, 6);
+    _vprintw(format, ap);
+    va_end(ap);
+    ClearEoln();
+}
 
 static void
 Curses_AlwaysShowMessage(const char *format, ...)
 {
-    static char buffer[60];
     va_list ap;
     va_start(ap, format);
-    vsnprintf(buffer, sizeof(buffer), format, ap);
-    Curses_ShowMessage(buffer);
+    gotoXY(TAB, 6);
+    _vprintw(format, ap);
     va_end(ap);
+    ClearEoln();
 }
 
 
 static void
 Curses_Printf(const char *format, ...)
 {
-    static char buffer[60];
     va_list ap;
     va_start(ap, format);
-    vsnprintf(buffer, sizeof(buffer), format, ap);
-    printw("%s", buffer);
+    _vprintw(format, ap);
     va_end(ap);
 }
 
