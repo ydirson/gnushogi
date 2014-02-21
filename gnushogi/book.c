@@ -569,24 +569,22 @@ static USHORT ltsimp(long x)
 /* #define HashValue(l) lts(l) */
 #define HashValue(l) (USHORT)(l & 0xffff)
 
-
 static int gfd;
-static ULONG currentoffset;
-
 
 #define MAXOFFSET(B) ((B.booksize - 1) * sizeof_gdxdata + sizeof_gdxadmin)
 
-static void HashOffset(ULONG hashkey, struct gdxadmin *B)
+static ULONG HashOffset(ULONG hashkey, struct gdxadmin *B)
 {
-    currentoffset = (hashkey % B->booksize) * sizeof_gdxdata + sizeof_gdxadmin;
+    return (hashkey % B->booksize) * sizeof_gdxdata + sizeof_gdxadmin;
 }
 
 
-static void NextOffset(struct gdxadmin *B)
+static ULONG NextOffset(struct gdxadmin *B, ULONG offset)
 {
-    currentoffset += sizeof_gdxdata;
-    if (currentoffset > B->maxoffset)
-        currentoffset = sizeof_gdxadmin;
+    offset += sizeof_gdxdata;
+    if (offset > B->maxoffset)
+        offset = sizeof_gdxadmin;
+    return offset;
 }
 
 
@@ -596,12 +594,12 @@ static void WriteAdmin(void)
     write(gfd, (char *)&ADMIN, sizeof_gdxadmin);
 }
 
-static void WriteData(int *mustwrite)
+static void WriteData(ULONG offset, int *mustwrite)
 {
     if (!*mustwrite)
         return;
 
-    lseek(gfd, currentoffset, SEEK_SET);
+    lseek(gfd, offset, SEEK_SET);
     write(gfd, (char *)&DATA, sizeof_gdxdata);
     *mustwrite = false;
 }
@@ -612,9 +610,9 @@ static int ReadAdmin(void)
     return (sizeof_gdxadmin == read(gfd, (char *)&ADMIN, sizeof_gdxadmin));
 }
 
-static int ReadData(struct gdxdata *DATA)
+static int ReadData(ULONG offset, struct gdxdata *DATA)
 {
-    lseek(gfd, currentoffset, SEEK_SET);
+    lseek(gfd, offset, SEEK_SET);
     return (sizeof_gdxdata == read(gfd, (char *)DATA, sizeof_gdxdata));
 }
 
@@ -638,6 +636,7 @@ static int ReadData(struct gdxdata *DATA)
 void
 GetOpenings(void)
 {
+    ULONG currentoffset = 0;
     short i;
     int mustwrite = false, first;
     unsigned short side;
@@ -735,13 +734,13 @@ GetOpenings(void)
                              * exist from some other opening.
                              */
 
-                            WriteData(&mustwrite);
-                            HashOffset(bhashkey, &B);
+                            WriteData(currentoffset, &mustwrite);
+                            currentoffset = HashOffset(bhashkey, &B);
                             first = true;
 
                             while (true)
                             {
-                                if (!ReadData(&DATA))
+                                if (!ReadData(currentoffset, &DATA))
                                     break; /* corrupted binbook file */
 
                                 if (DATA.bmove == 0)
@@ -773,12 +772,12 @@ GetOpenings(void)
                                         {
                                             DATA.flags &= (~LASTMOVE);
                                             mustwrite = true;
-                                            WriteData(&mustwrite);
+                                            WriteData(currentoffset, &mustwrite);
                                         }
                                     }
                                 }
 
-                                NextOffset(&B);
+                                currentoffset = NextOffset(&B, currentoffset);
                                 first = false;
                             }
 
@@ -820,14 +819,14 @@ GetOpenings(void)
                 {
                     /* reset for next opening */
                     games++;
-                    WriteData(&mustwrite);
+                    WriteData(currentoffset, &mustwrite);
                     RESET();
                     i = 0;
                     side = black;
                 }
             }
 
-            WriteData(&mustwrite);
+            WriteData(currentoffset, &mustwrite);
             fclose(fd);
             /* write admin rec with counts */
             ADMIN.bookcount = B.bookcount;
@@ -897,6 +896,7 @@ GetOpenings(void)
 int
 OpeningBook(unsigned short *hint)
 {
+    ULONG currentoffset;
     unsigned short r, m;
     int possibles = TrPnt[2] - TrPnt[1];
 
@@ -922,14 +922,14 @@ OpeningBook(unsigned short *hint)
         }
 
         x = 0;
-        HashOffset(hashkey, &B);
+        currentoffset = HashOffset(hashkey, &B);
 #ifdef BOOKTEST
         printf("looking for book move, bhashbd = 0x%lx bhashkey = 0x%x\n",
                (ULONG)hashbd, HashValue(hashkey));
 #endif
         while (true)
         {
-            if (!ReadData(&OBB[x]))
+            if (!ReadData(currentoffset, &OBB[x]))
                 break;
 
             if (OBB[x].bmove == 0)
@@ -948,7 +948,7 @@ OpeningBook(unsigned short *hint)
                     break;
             }
 
-            NextOffset(&B);
+            currentoffset = NextOffset(&B, currentoffset);
         }
 
 #ifdef BOOKTEST
