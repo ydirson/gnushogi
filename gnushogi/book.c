@@ -590,20 +590,20 @@ static void NextOffset(struct gdxadmin *B)
 }
 
 
-#define WriteAdmin() \
-{ \
-  lseek(gfd, 0, SEEK_SET); \
-  write(gfd, (char *)&ADMIN, sizeof_gdxadmin); \
+static void WriteAdmin(void)
+{
+    lseek(gfd, 0, SEEK_SET);
+    write(gfd, (char *)&ADMIN, sizeof_gdxadmin);
 }
 
-#define WriteData() \
-{ \
-  if (mustwrite ) \
-  { \
-    lseek(gfd, currentoffset, SEEK_SET); \
-    write(gfd, (char *)&DATA, sizeof_gdxdata); \
-    mustwrite = false; \
-  } \
+static void WriteData(int *mustwrite)
+{
+    if (*mustwrite)
+    {
+        lseek(gfd, currentoffset, SEEK_SET);
+        write(gfd, (char *)&DATA, sizeof_gdxdata);
+        *mustwrite = false;
+    }
 }
 
 static int ReadAdmin(void)
@@ -735,7 +735,7 @@ GetOpenings(void)
                              * exist from some other opening.
                              */
 
-                            WriteData();
+                            WriteData(&mustwrite);
                             HashOffset(bhashkey, &B);
                             first = true;
 
@@ -773,7 +773,7 @@ GetOpenings(void)
                                         {
                                             DATA.flags &= (~LASTMOVE);
                                             mustwrite = true;
-                                            WriteData();
+                                            WriteData(&mustwrite);
                                         }
                                     }
                                 }
@@ -820,14 +820,14 @@ GetOpenings(void)
                 {
                     /* reset for next opening */
                     games++;
-                    WriteData();
+                    WriteData(&mustwrite);
                     RESET();
                     i = 0;
                     side = black;
                 }
             }
 
-            WriteData();
+            WriteData(&mustwrite);
             fclose(fd);
             /* write admin rec with counts */
             ADMIN.bookcount = B.bookcount;
