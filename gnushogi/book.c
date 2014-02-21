@@ -598,12 +598,12 @@ static void WriteAdmin(void)
 
 static void WriteData(int *mustwrite)
 {
-    if (*mustwrite)
-    {
-        lseek(gfd, currentoffset, SEEK_SET);
-        write(gfd, (char *)&DATA, sizeof_gdxdata);
-        *mustwrite = false;
-    }
+    if (!*mustwrite)
+        return;
+
+    lseek(gfd, currentoffset, SEEK_SET);
+    write(gfd, (char *)&DATA, sizeof_gdxdata);
+    *mustwrite = false;
 }
 
 static int ReadAdmin(void)
