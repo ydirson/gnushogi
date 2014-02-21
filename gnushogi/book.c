@@ -576,18 +576,17 @@ static ULONG currentoffset;
 
 #define MAXOFFSET(B) ((B.booksize - 1) * sizeof_gdxdata + sizeof_gdxadmin)
 
-#define HashOffset(hashkey, B) \
-{ \
-  currentoffset = ((ULONG)hashkey % B.booksize) \
-    * sizeof_gdxdata + sizeof_gdxadmin; \
+static void HashOffset(ULONG hashkey, struct gdxadmin *B)
+{
+    currentoffset = (hashkey % B->booksize) * sizeof_gdxdata + sizeof_gdxadmin;
 }
 
 
-#define NextOffset(B) \
-{ \
-  currentoffset += sizeof_gdxdata; \
-  if (currentoffset > B.maxoffset) \
-    currentoffset = sizeof_gdxadmin; \
+static void NextOffset(struct gdxadmin *B)
+{
+    currentoffset += sizeof_gdxdata;
+    if (currentoffset > B->maxoffset)
+        currentoffset = sizeof_gdxadmin;
 }
 
 
@@ -737,7 +736,7 @@ GetOpenings(void)
                              */
 
                             WriteData();
-                            HashOffset(bhashkey, B);
+                            HashOffset(bhashkey, &B);
                             first = true;
 
                             while (true)
@@ -779,7 +778,7 @@ GetOpenings(void)
                                     }
                                 }
 
-                                NextOffset(B);
+                                NextOffset(&B);
                                 first = false;
                             }
 
@@ -923,7 +922,7 @@ OpeningBook(unsigned short *hint)
         }
 
         x = 0;
-        HashOffset(hashkey, B);
+        HashOffset(hashkey, &B);
 #ifdef BOOKTEST
         printf("looking for book move, bhashbd = 0x%lx bhashkey = 0x%x\n",
                (ULONG)hashbd, HashValue(hashkey));
@@ -949,7 +948,7 @@ OpeningBook(unsigned short *hint)
                     break;
             }
 
-            NextOffset(B);
+            NextOffset(&B);
         }
 
 #ifdef BOOKTEST
