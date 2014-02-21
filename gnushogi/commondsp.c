@@ -1629,8 +1629,8 @@ InputCommand(char *command)
         {
             /* noop */ ;
         }
-        else if ((strcmp(s, "quit") == 0)
-                 || (strcmp(s, "exit") == 0))
+        else if ((strcmp(s, "quit") == 0) ||
+                 (strcmp(s, "exit") == 0))
         {
             flag.quit = true;
         }
@@ -1650,8 +1650,8 @@ InputCommand(char *command)
 #endif
                   );
         }
-        else if ((strcmp(s, "set") == 0)
-                 || (strcmp(s, "edit") == 0))
+        else if ((strcmp(s, "set") == 0) ||
+                 (strcmp(s, "edit") == 0))
         {
             dsp->EditBoard();
         }
@@ -1830,12 +1830,12 @@ InputCommand(char *command)
             BookSave();
         }
 #ifdef EASY_OPENINGS
-        else if ((strcmp(s, "?") == 0)
-                 || (strcmp(s, "!") == 0)
-                 || (strcmp(s, "~") == 0))
+        else if ((strcmp(s, "?") == 0) ||
+                 (strcmp(s, "!") == 0) ||
+                 (strcmp(s, "~") == 0))
 #else
-        else if ((strcmp(s, "?") == 0)
-                 || (strcmp(s, "!") == 0))
+        else if ((strcmp(s, "?") == 0) ||
+                 (strcmp(s, "!") == 0))
 #endif
         {
             FlagMove(*s);
