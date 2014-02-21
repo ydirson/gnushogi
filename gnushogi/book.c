@@ -638,7 +638,7 @@ GetOpenings(void)
 {
     ULONG currentoffset = 0;
     short i;
-    int mustwrite = false, first;
+    int first;
     unsigned short side;
     short c;
     USHORT mv, flags;
@@ -694,18 +694,20 @@ GetOpenings(void)
             DATA.flags = 0;
             DATA.hint = 0;
             DATA.count = 0;
-            write(gfd, (char *)&ADMIN, sizeof_gdxadmin);
+            WriteAdmin();
             printf("creating bookfile %s %ld %ld\n",
                     binbookfile, B.maxoffset, B.booksize);
 
             for (x = 0; x < B.booksize; x++)
             {
-                write(gfd, (char *)&DATA, sizeof_gdxdata);
+                int mustwrite = true;
+                WriteData(sizeof_gdxadmin + x* sizeof_gdxdata, &mustwrite);
             }
         }
 
         if (gfd >= 0)
         {
+            int mustwrite = false;
             /* setvbuf(fd, buffr, _IOFBF, 2048); */
             side = black;
             hashbd = hashkey = 0;
