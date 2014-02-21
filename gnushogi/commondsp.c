@@ -1039,8 +1039,10 @@ BookSave(void)
         RequestInputString(fname, sizeof(fname)-1);
     }
 
-    if (fname[0] == '\0')
+    if (fname[0] == '\0') {
+        dsp->AlwaysShowMessage("aborting book save");
         return;
+    }
 
     if ((fd = fopen(fname, "a")) != NULL)
     {
