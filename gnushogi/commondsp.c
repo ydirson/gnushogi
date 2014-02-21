@@ -1735,8 +1735,8 @@ InputCommand(char *command)
         {
             SetMachineTime(sx + strlen("time"));
         }
-        else if (strcmp(s, "otime") == 0 ||
-                 (xboard && strcmp(s, "otim")) == 0)
+        else if ((strcmp(s, "otime") == 0) ||
+                 (xboard && (strcmp(s, "otim")) == 0))
         {
             SetOppTime(sx + strlen("otime"));
         }
