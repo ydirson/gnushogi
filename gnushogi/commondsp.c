@@ -1648,13 +1648,22 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "protover") == 0)
         {
-            printf("feature myname=\"GNU %sShogi %s\" variants=\"%s\" debug=1 setboard=0 sigint=0 done=1\n",
+            printf("feature myname=\"GNU %s %s\" ",
 #ifdef MINISHOGI
-                                       "mini", PACKAGE_VERSION, "5x5+5_shogi,mini"
+                   "MiniShogi",
 #else
-                                         "",   PACKAGE_VERSION, "shogi"
+                   "Shogi",
 #endif
-                  );
+                   PACKAGE_VERSION
+                );
+            printf("variants=\"%s\" ",
+#ifdef MINISHOGI
+                   "5x5+5_shogi,minishogi"
+#else
+                   "shogi"
+#endif
+                );
+            printf("debug=1 setboard=0 sigint=0 done=1\n");
         }
         else if ((strcmp(s, "set") == 0) ||
                  (strcmp(s, "edit") == 0))
