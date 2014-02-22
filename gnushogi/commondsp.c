@@ -1623,6 +1623,12 @@ InputCommand(char *command)
         {
             flag.post = 0;
         }
+#ifdef MINISHOGI
+        else if (strcmp(s, "variant") == 0)
+        {   /* only variant we play is minishogi */
+            printf("setup (P.BR.S...G.+.++.+Kp.br.s...g.+.++.+k) 5x5+5_shogi rbsgk/4p/5/P4/KGSBR [-] w 0 1\n");
+        }
+#endif
         else if (strcmp(s, "alg") == 0 ||
                  strcmp(s, "accepted") == 0 || strcmp(s, "rejected") == 0 ||
                  strcmp(s, "variant") == 0 || strcmp(s, "computer") == 0)
@@ -1642,11 +1648,11 @@ InputCommand(char *command)
         }
         else if (strcmp(s, "protover") == 0)
         {
-            printf("feature myname=\"GNU %sShogi %s\" variants=\"%sshogi\" debug=1 setboard=0 sigint=0 done=1\n",
+            printf("feature myname=\"GNU %sShogi %s\" variants=\"%s\" debug=1 setboard=0 sigint=0 done=1\n",
 #ifdef MINISHOGI
-                                       "mini", PACKAGE_VERSION, "5x5+5_"
+                                       "mini", PACKAGE_VERSION, "5x5+5_shogi,mini"
 #else
-                                         "",   PACKAGE_VERSION, ""
+                                         "",   PACKAGE_VERSION, "shogi"
 #endif
                   );
         }
