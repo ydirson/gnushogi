@@ -285,6 +285,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
     MoveList(opponent, 2, -1, true);
     generate_move_flags = false;
     pnt = TrPnt[2];
+    if(s[4] == '=') s[4] = '\0'; /* deferral is implied */
 
     while (pnt < TrPnt[3])
     {
