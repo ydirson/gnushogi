@@ -43,16 +43,16 @@ all : gnushogi_compile pat2inc bbk
 #
 
 gnushogi_compile:
-	-cd $(GNUSHOGIDIR) && $(MAKE) $(PROGNAME)
+	cd $(GNUSHOGIDIR) && $(MAKE) $(PROGNAME)
 
 pat2inc:
-	-cd $(GNUSHOGIDIR) && $(MAKE) pat2inc
+	cd $(GNUSHOGIDIR) && $(MAKE) pat2inc
 
 sizetest:
-	-cd $(GNUSHOGIDIR) && $(MAKE) sizetest
+	cd $(GNUSHOGIDIR) && $(MAKE) sizetest
 
 bbk:
-	-cd $(GNUSHOGIDIR) && $(MAKE) $(PROGNAME).bbk
+	cd $(GNUSHOGIDIR) && $(MAKE) $(PROGNAME).bbk
 
 
 #
