@@ -35,8 +35,8 @@ PROGNAME = @PROGNAME@
 # Default targets.
 #
 
-all : gnushogi_compile pat2inc bbk
-
+all:
+	cd $(GNUSHOGIDIR) && $(MAKE) all
 
 #
 # Primary targets.
