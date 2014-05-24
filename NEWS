@@ -1,6 +1,11 @@
 GNU shogi news
 --------------
 
+Changes in version 1.4.3 (unreleased):
+
+* Fixed a bug with forced promotion of pawns in minishogi.
+* Fix support for parallel build.
+
 Changes in version 1.4.2 (02/2014):
 
 * XShogi is no longer included in the GNU Shogi source, it is
