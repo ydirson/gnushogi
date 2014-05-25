@@ -156,7 +156,6 @@ extern char *binbookfile;
 #endif
 
 extern char *bookfile;
-extern short ahead;
 extern char  *xwin;
 extern char  *Lang;
 extern void movealgbr(short m, char *s);
@@ -680,7 +679,6 @@ extern char ColorStr[2][10];
 
 extern char mvstr[4][6];
 extern int mycnt1, mycnt2;
-extern short ahead;
 extern struct leaf rootnode;
 extern struct leaf  *Tree;
 extern struct leaf  *root;
