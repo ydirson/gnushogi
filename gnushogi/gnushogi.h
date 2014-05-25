@@ -1101,9 +1101,6 @@ extern void  TimeCalc(void);
 extern void  ElapsedTime(ElapsedTime_mode iop);
 
 extern short
-DropPossible(short piece, short side, short sq); /* genmoves.c */
-
-extern short
 IsCheckmate(short side, short in_check,
             short blockable); /* genmoves.c */
 

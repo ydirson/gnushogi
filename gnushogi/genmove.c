@@ -580,7 +580,7 @@ field_bonus(short side, short piece,
  * If the flag.tsume is set, assign a high bonus for checks.
  */
 
-/* inline */ void
+static void
 LinkMove(short ply, short f,
          short t,
          unsigned short local_flag,
@@ -880,7 +880,7 @@ LinkMove(short ply, short f,
 
 
 
-short
+static short
 DropPossible(short piece, short side, short sq)
 {
     short r = row(sq), possible = true;
