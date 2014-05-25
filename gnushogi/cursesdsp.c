@@ -117,7 +117,7 @@ ClearMessage(void)
 static void
 Curses_ShowCurrentMove(short pnt, short f, short t)
 {
-    algbr(f, t, false);
+    algbr(f, t, 0);
     gotoXY(TAB, 7);
     printw("(%2d) %5s ", pnt, mvstr[0]);
 }
@@ -293,7 +293,7 @@ Curses_ShowResults(short score, unsigned short *bstline, char ch)
             }
 
             algbr((short) bstline[ply] >> 8, 
-                  (short) bstline[ply] & 0xFF, false);
+                  (short) bstline[ply] & 0xFF, 0);
             printw("%5s ", mvstr[0]);
         }
 
@@ -980,7 +980,7 @@ Curses_GiveHint(void)
 
     if (hint)
     {
-        algbr((short) (hint >> 8), (short) (hint & 0xFF), false);
+        algbr((short) (hint >> 8), (short) (hint & 0xFF), 0);
         strcpy(s, "try ");
         strcat(s, mvstr[0]);
         Curses_ShowMessage(s);

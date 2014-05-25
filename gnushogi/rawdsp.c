@@ -102,7 +102,7 @@ Raw_ShowLine(unsigned short *bstline)
         if ((i > 1) && (i % 8 == 1))
             printf("\n                          ");
 
-        algbr((short)(bstline[i] >> 8), (short)(bstline[i] & 0xFF), false);
+        algbr((short)(bstline[i] >> 8), (short)(bstline[i] & 0xFF), 0);
         printf("%5s ", mvstr[0]);
     }
 
@@ -685,7 +685,7 @@ Raw_GiveHint(void)
 {
     if (hint)
     {
-        algbr((short) (hint >> 8), (short) (hint & 0xFF), false);
+        algbr((short) (hint >> 8), (short) (hint & 0xFF), 0);
         printf("Hint: %s\n", mvstr[0]);
     }
     else

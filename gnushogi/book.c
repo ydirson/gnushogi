@@ -299,9 +299,9 @@ BVerifyMove(char *s, unsigned short *mv, int moveno)
             *mv = (xnode.f << 8) | xnode.t;
 
             if (is_promoted[board[xnode.t]] )
-                Balgbr(xnode.f | 0x80, xnode.t, false);
+                Balgbr(xnode.f | 0x80, xnode.t, 0);
             else
-                Balgbr(xnode.f, xnode.t, false);
+                Balgbr(xnode.f, xnode.t, 0);
 
             return true;
         }

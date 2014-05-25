@@ -335,7 +335,7 @@ VerifyMove(char *s, VerifyMove_mode iop, unsigned short *mv)
             }
 
             *mv = (xnode.f << 8) | xnode.t;
-            algbr(xnode.f, xnode.t, false);
+            algbr(xnode.f, xnode.t, 0);
 
             /* in force mode, check for mate conditions */
             if (flag.force)
@@ -1522,7 +1522,7 @@ InputCommand(char *command)
 
         ft = time0; /* Save reference time for the player. */
         fflush(stdout);
-        algbr((short) hint >> 8, (short) hint & 0xff, false);
+        algbr((short) hint >> 8, (short) hint & 0xff, 0);
         strcpy(s, mvstr[0]);
 
         if (flag.post)
