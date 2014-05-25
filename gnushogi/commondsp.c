@@ -149,7 +149,7 @@ movealgbr(short m, char *s)
  */
 
 void
-algbr(short f, short t, short flag)
+algbr(short f, short t, short flags)
 {
     if (f > NO_SQUARES)
     {
@@ -160,26 +160,26 @@ algbr(short f, short t, short flag)
         if (f > (NO_SQUARES + NO_PIECES))
             piece -= NO_PIECES;
 
-        flag = (dropmask | piece);
+        flags = (dropmask | piece);
     }
 
     if ((t & 0x80) != 0)
     {
-        flag |= promote;
+        flags |= promote;
         t &= 0x7f;
     }
 
     if ((f == t) && ((f != 0) || (t != 0)))
     {
         if (!XSHOGI) {
-            dsp->Printf("error in algbr: FROM=TO=%d, flag=0x%4x\n", t, flag);
+            dsp->Printf("error in algbr: FROM=TO=%d, flags=0x%4x\n", t, flags);
         }
 
         mvstr[0][0] = mvstr[1][0] = mvstr[2][0] = mvstr[3][0] = '\0';
     }
-    else if ((flag & dropmask) != 0)
+    else if ((flags & dropmask) != 0)
     {
-        short piece = flag & pmask;
+        short piece = flags & pmask;
 
         mvstr[0][0] = pxx[piece];
         mvstr[0][1] = xboard ? '@' : '*';
@@ -216,7 +216,7 @@ algbr(short f, short t, short flag)
         strcpy(mvstr[3], mvstr[2]);
         mvstr[3][1] = mvstr[0][0];
 
-        if (flag & promote)
+        if (flags & promote)
         {
             strcat(mvstr[0], "+");
             strcat(mvstr[1], "+");

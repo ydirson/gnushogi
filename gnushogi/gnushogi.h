@@ -1072,7 +1072,7 @@ extern void  ShowDepth(char ch);
 extern void  TerminateSearch(int);
 extern void  ShowResults(short score, unsigned short *bstline, char ch);
 extern void  SetupBoard(void);
-extern void  algbr(short f, short t, short flag);
+extern void  algbr(short f, short t, short flags);
 extern void  OutputMove(void);
 extern void  ShowCurrentMove(short pnt, short f, short t);
 extern void  ListGame(void);

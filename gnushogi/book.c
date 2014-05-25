@@ -68,13 +68,13 @@ static ULONG bhashkey;
 
 
 /*
- * Balgbr(f, t, flag)
+ * Balgbr(f, t, flags)
  *
  * Generate move strings in different formats.
  */
 
 static void
-Balgbr(short f, short t, short flag)
+Balgbr(short f, short t, short flags)
 {
     short promoted = false;
 
@@ -92,12 +92,12 @@ Balgbr(short f, short t, short flag)
         if (f > (NO_SQUARES + NO_PIECES))
             piece -= NO_PIECES;
 
-        flag = (dropmask | piece);
+        flags = (dropmask | piece);
     }
 
     if ((t & 0x80) != 0)
     {
-        flag |= promote;
+        flags |= promote;
         t &= 0x7f;
     }
 
@@ -111,10 +111,10 @@ Balgbr(short f, short t, short flag)
     }
     else
     {
-        if ((flag & dropmask) != 0)
+        if ((flags & dropmask) != 0)
         {
             /* bmvstr[0]: P*3c bmvstr[1]: P'3c */
-            short piece = flag & pmask;
+            short piece = flags & pmask;
             bmvstr[0][0] = pxx[piece];
             bmvstr[0][1] = '*';
             bmvstr[0][2] = COL_NAME(column(t));
@@ -150,7 +150,7 @@ Balgbr(short f, short t, short flag)
                     strcpy(&bmvstr[2][1], &bmvstr[0][2]);
                 }
 
-                if (flag & promote)
+                if (flags & promote)
                 {
                     strcat(bmvstr[0], "+");
                     strcat(bmvstr[1], "+");
