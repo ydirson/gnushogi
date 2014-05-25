@@ -34,7 +34,7 @@
 
 /* #define DONTUSE_HEURISTIC */
 
-short *TrP;
+static short *TrP;
 
 static struct leaf  *node;
 static short sqking, sqxking;
