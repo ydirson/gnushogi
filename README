@@ -20,7 +20,14 @@ See the file NEWS for the new features of this release.
 For the installation procedure read the file "INSTALL".  For more information
 on shogi please look at the files in the doc directory or read the info file.
 
-Please email bugs, comments, suggestions, and wish lists regarding GNU shogi
-to me.  And enjoy the program :-)
+The project is maintained at https://savannah.gnu.org/projects/gnushogi/
+where you will find pointers to the bug tracker, mailing lists, git
+repository for the source code, etc.
+
+The prefered way to contribute patches is through "git send-email" to
+the gnushogi-devel mailing-list.  You may also wish to publish them in
+a public repository; the repo.or.cz Free-Software-based platform
+allows you to do that easily, as a fork of
+http://repo.or.cz/w/gnushogi.git.
 
 Yann Dirson <ydirson@free.fr>
