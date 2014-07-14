@@ -10,6 +10,11 @@ Changes in version 1.5.0 (unreleased):
   including building windows binaries (both 32bit and 64bit) using
   the gcc-mingw toolchain
 
+Changes in version 1.4.3 (unreleased):
+
+* Fixed a bug with forced promotion of pawns in minishogi.
+* Fix support for parallel build.
+
 Changes in version 1.4.2 (02/2014):
 
 * XShogi is no longer included in the GNU Shogi source, it is

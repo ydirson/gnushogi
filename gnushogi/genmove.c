@@ -350,13 +350,13 @@ NonPromotionPossible(short color,
     case pawn :
         if (color == black)
         {
-            return ((t < 72)
+            return ((t < NO_COLS * (NO_ROWS - 1))
                     ? true
                     : (generate_move_flags ? ILLEGAL_TRAPPED : false));
         }
         else
         {
-            return ((t > 8)
+            return ((t >= NO_COLS)
                     ? true
                     : (generate_move_flags ? ILLEGAL_TRAPPED : false));
         }
@@ -365,13 +365,13 @@ NonPromotionPossible(short color,
     case lance:
         if (color == black)
         {
-            return ((t < 72)
+            return ((t < NO_COLS * (NO_ROWS - 1))
                     ? true
                     : (generate_move_flags ? ILLEGAL_TRAPPED : false));
         }
         else
         {
-            return ((t > 8)
+            return ((t >= NO_COLS)
                     ? true
                     : (generate_move_flags ? ILLEGAL_TRAPPED : false));
         }
@@ -379,13 +379,13 @@ NonPromotionPossible(short color,
     case knight:
         if (color == black)
         {
-            return ((t < 63)
+            return ((t < NO_COLS * (NO_ROWS - 2))
                     ? true
                     : (generate_move_flags ? ILLEGAL_TRAPPED : false));
         }
         else
         {
-            return ((t > 17)
+            return ((t >= 2 * NO_COLS)
                     ? true
                     : (generate_move_flags ? ILLEGAL_TRAPPED : false));
         }

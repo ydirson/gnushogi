@@ -68,8 +68,16 @@ display_t display_type = DISPLAY_X;
 #ifdef SAVE_NEXTPOS
 const small_short psweep[NO_PTYPE_PIECES] =
 {
-    false, true, false, false, false, true, true, true, true, false,
-    false, true, false, false, false
+    false,
+#ifndef MINISHOGI
+    true, false,
+#endif
+    false, false, true, true,
+    true, true, false, false,
+#ifndef MINISHOGI
+    true, false,
+#endif
+    false, false
 };
 #endif
 
