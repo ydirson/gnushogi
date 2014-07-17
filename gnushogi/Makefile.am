@@ -31,20 +31,6 @@ pkgbindata_DATA = $(top_srcdir)/misc/gnushogi.tbk
 
 AM_CFLAGS = @CEXTRAFLAGS@ @WARNINGS@
 
-# The hashfile is a record of positions seen. It is used by
-# GNU Shogi to avoid making the same mistakes, a form of learning.
-
-HASH       = -DHASHFILE=\"$(pkglibdir)/$(PROGNAME).hsh\"
-
-
-# The "book" is a record of the first few moves, for playing good
-# moves easily and quickly, saving time, and irritating the human
-# opponent.
-
-TEXTBOOK   = -DBOOK=\"$(pkglibdir)/$(PROGNAME).tbk\"
-BINBOOK    = -DBINBOOK=\"$(pkglibdir)/$(PROGNAME).bbk\"
-
-
 # The pattern file contains various opening patterns. The program tries to
 # obtain such a pattern in the opening stage. Sequences of opening
 # patterns may be described in order to support the correct order of moves.

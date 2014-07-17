@@ -100,20 +100,6 @@ AC_CHECK_FUNCS([strchr strerror strrchr strstr strtol])
 AC_CHECK_FUNCS([memcpy bcopy])
 AC_CHECK_FUNCS([setvbuf setlinebuf])
 
-
-#
-# Set various user-definable options.
-#
-
-AC_ARG_ENABLE([minishogi],
-[  --enable-minishogi
-        Build gnuminishogi instead of gnushogi (default: no)],
-[AC_DEFINE([MINISHOGI], [], [Define to build gnuminishogi instead of gnushogi])
-AC_SUBST([PROGNAME], [gnuminishogi])
-],
-[AC_SUBST([PROGNAME], [gnushogi])
-])
-
 ##########
 
 # don't build pat2inc when cross-compiling, we don't need it
