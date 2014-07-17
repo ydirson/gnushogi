@@ -104,9 +104,19 @@ pat2inc_SOURCES = \
 
 pat2inc_LDADD = @LIBCURSES@
 
-gnushogi-pattern.inc: $(top_srcdir)/misc/gnushogi.pat @PAT2INCEXE@
+gnushogi-pattern.inc: $(top_srcdir)/misc/gnushogi.pat $(pat2inc_SOURCES)
+	if [ "x@PAT2INCEXE@" = "x" ]; then \
+	  echo "$@ needs rebuilding, which can only be done when NOT cross-compiling"; \
+	  exit 1; \
+	fi
+	$(MAKE) $(AM_MAKEFLAGS) @PAT2INCEXE@
 	./pat2inc $< $@
-gnuminishogi-pattern.inc: $(top_srcdir)/misc/gnuminishogi.pat @PAT2INCEXE@
+gnuminishogi-pattern.inc: $(top_srcdir)/misc/gnuminishogi.pat $(pat2inc_SOURCES)
+	if [ "x@PAT2INCEXE@" = "x" ]; then \
+	  echo "$@ needs rebuilding, which can only be done when NOT cross-compiling"; \
+	  exit 1; \
+	fi
+	$(MAKE) $(AM_MAKEFLAGS) @PAT2INCEXE@
 	./pat2inc $< $@
 
 # just get *.inc generated
