@@ -34,6 +34,9 @@
 
 /* request *snprintf prototypes */
 #define _POSIX_C_SOURCE 200112L
+
+#include "gnushogi.h"
+
 #include <stdio.h>
 
 #if defined HAVE_GETTIMEOFDAY
@@ -46,8 +49,6 @@
 #include <sys/param.h>
 #include <sys/types.h>
 #include <sys/file.h>
-
-#include "gnushogi.h"
 
 char mvstr[4][6];
 int mycnt1, mycnt2;

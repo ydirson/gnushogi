@@ -30,6 +30,8 @@
  *
  */
 
+#include "gnushogi.h"
+
 #include <ctype.h>
 #include <signal.h>
 #include <stdarg.h>
@@ -41,8 +43,6 @@
 #include <poll.h>
 #include <unistd.h>
 #endif
-
-#include "gnushogi.h"
 
 /****************************************
  * forward declarations

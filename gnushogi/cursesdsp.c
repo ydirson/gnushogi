@@ -31,8 +31,10 @@
  * ----------------------------------------------------------------------
  */
 
-/* request *snprintf prototypes*/
+/* request *snprintf prototypes */
 #define _POSIX_C_SOURCE 200112L
+
+#include "gnushogi.h"
 
 #include <ctype.h>
 #include <signal.h>
@@ -43,8 +45,6 @@
 #include <sys/types.h>
 #include <sys/file.h>
 #include <curses.h>
-
-#include "gnushogi.h"
 
 #if HAVE_UNISTD_H
 #include <unistd.h>
